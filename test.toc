@@ -1,7 +1,0 @@
-\select@language {english}
-\contentsline {chapter}{\numberline {1}Kapitel Einfuehrung}{2}
-\contentsline {section}{\numberline {1.1}Sektion bla}{2}
-\contentsline {subsection}{\numberline {1.1.1}Subsektion blabla}{2}
-\contentsline {subsubsection}{\numberline {1.1.1.1}Subsubsektion blablabla}{2}
-\contentsline {paragraph}{Paragraph soundso}{2}
-\contentsline {subparagraph}{SubParagraph soundso}{2}
