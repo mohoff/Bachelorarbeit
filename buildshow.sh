@@ -35,11 +35,11 @@ filename="${file%%.*}"
 
 # Proper order for building latex sources with bibtex extra.
 # Show output of last build only.
-{
+#{
   pdflatex "$filename"
   bibtex "$filename"
   pdflatex "$filename"
-} &> /dev/null
+#} &> /dev/null
 pdflatex "$filename"
 printf "\n"
 
