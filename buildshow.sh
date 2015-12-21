@@ -2,6 +2,7 @@
 
 #################################################
 # Script to build latex and bibtex files to pdf #
+# by Moritz Hoffmann                            #
 #################################################
 
 # Check for one input parameter specifying file or filename of .tex and .bib file.
