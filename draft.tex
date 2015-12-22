@@ -1,9 +1,10 @@
 \documentclass[11pt,a4paper,oneside]{report}
 \usepackage[ngerman]{babel}
-% \usepackage{url} or \usepackage{hyperref}
+% \usepackage{url} or
 \usepackage[utf8]{inputenc} % Displays German 'Umlaute' correctly. Also some workaround, see Bibliography Management#BibTeX in wikibooks
 \usepackage{graphicx}
 %\usepackage{titlesec}
+\usepackage{hyperref}
 
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{5}
@@ -12,6 +13,7 @@
 %\renewcommand{\abstractname}{Abstract}
 
 \newcommand{\thema}{Sicherheitsbetrachtungen von Applikations-Containersystemen in Cloud-Infrastukturen am Beispiel Docker}
+\newcommand{\bibtexFilename}{draft} % written without extension
 \newcommand*{\signatureAndDate}{
     \par\noindent\makebox[2.5in]{\hrulefill} \hfill\makebox[2.0in]{\hrulefill}%
     \par\noindent\makebox[2.5in][l]{Unterschrift}      \hfill\makebox[2.0in][l]{Datum}%
@@ -108,7 +110,7 @@
 % this is a comment
 Hallo %\cite{myquote1}
 One more line %\cite[S.2]{myquote1,myquote2}
-jooooo \cite{Senn2009}
+jooooo \cite{presContainerDockerSec}
 
 \begin{figure}[h] % with [p], images is displayed on own page
     \centering
@@ -213,6 +215,6 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
 
 % Bibliography
 \bibliographystyle{plain}
-\bibliography{test} % specify name of bibfile
+\bibliography{\bibtexFilename} % specify name of bibfile
 
 \end{document}

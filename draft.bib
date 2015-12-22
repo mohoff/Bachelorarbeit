@@ -1,17 +1,32 @@
-% online quellen: misc
+% online quellen, Praesentationen, Slides: misc
 % einfache Artikel, Journal-Artikel: article
 % alle Buecher: book
 % Handbuecher, Docs: manual
 
 % BOOKS
+% pages = "175-191"
 @book{dockerBook,
   title  = "The Docker Book",
   author = "James Turnbull",
   year   = "2014",
+  month  = "September",
   edition = "1.2.0"
 }
 
-$ ARTICLES
+% Maybe inserit IT Nordic Conference Paper here
+@conference{nordicITConf,
+  author = "",
+  editor = "",
+  title = "",
+  booktitle = "",
+  year = "",
+  packages = "",
+  month = "",
+  organization = "",
+  publisher = ""
+}
+
+$ ARTICLES (auch Papers hier?)
 @article{containerVirtPerformance,
   title  = "Performance Evaluation of Container-based Virtualization for High Performance Computing Environements",
   author = "Miguel G. Xavier and Marcelo V. Neves and Fabio D. Rossi and Tiago C. Ferreto and Timoteo Lange and Cesar A. F. De Rose",
@@ -27,8 +42,56 @@ $ ARTICLES
 }
 
 @article{dockerLXCKub,
-  title = "Docker",
-  author = "Charles Anderson",
-  journal = "IEEE Software",
-  year = "2015"
+  title   = "Containers and Cloud: From LXC to Docker to Kubnernetes",
+  author  = "David Bernstein",
+  journal = "IEEE Cloud Computing",
+  year    = "2014",
+  month   = "September"
+}
+
+@article{virtVSContainer,
+  title   = "Virtualization vs Containerization to support PaaS",
+  author  = "Rajdeep Duo and A Reddy Raja and Dharmesh Kakadia",
+  journal = "IEEE International Conference on Cloud Engineering",
+  year    = "2014"
+}
+
+% TECHREPORTS
+@techreport{dockerMAC,
+  title       = "DockerPolicyModules: Mandatory Access Control for Docker Containers",
+  author      = "Enrico Bacis and Simone Mutti and Steven Capelli and Stefano Paraboschi",
+  institution = "DIGIP, University of Bergamo, Italy",
+  year        = "2015"
+}
+
+@techreport{dockerSec1,
+  title       = "Analysis of Docker Security",
+  author      = "Thanh Bui",
+  institution = "Aalto Univerity School of Science",
+  month       = "January",
+  year        = "2015"
+}
+
+% extracted from Nordic IT Security Conference PDF (virtSec....pdf)
+@techreport{secOSLevelVirt,
+  title       = "Security of OS-Level Virtualization Technologies",
+  author      = "Elena Reshetove and Janne Karhunen and Thomas Nyman and N. Asokan",
+  institution = "Intel OTC, Finland ...",
+  year        = "2014"
+}
+
+% MISC (presentations, BSI info sheet)
+@misc{presContainerDockerSec,
+  title = "Containers, Docker, and Security: State of the Union",
+  author = "Jérôme Petazzoni",
+  year = "2015",
+  month = "October",
+  howpublished = "über Website http://de.slideshare.net/jpetazzo/containers-docker-and-security-state-of-the-union-bay-area-infracoders-meetup , aufgerufen am 22.12.2015"
+}
+
+@misc{bsiVirtGoldeneRegeln,
+  title = "Goldene Regeln Baustein B 3.304 Virtualisierung",
+  author = "Bundesamt für Sicherheit in der Informationstechnik",
+  year = "2011",
+  howpublished = "über Website https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Grundschutz/Download/IT-GS-Bausteine/Virtualisierung/Goldene-Regeln-Virtualisierung.pdf?__blob=publicationFile , aufgerufen am 22.12.2015"
 }
