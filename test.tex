@@ -131,22 +131,39 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
 %{\chaptertitlename~\thechapter} {0.5em} {}
 
 
-\chapter{Überblick/Einführung}
+\chapter{Überblick}
 	\section{Arten von Virtualisierungen}
-	\section{Einordnung Docker}
+	  \subsection{Einordnung Docker}
+  \section{Einführung in Docker}
+  % @Charzinski: Ist es OK das erste kapitel zu untergliedern? Oder besser separate chapters um Docker zu erklären?
 \chapter{Ziel der Arbeit/Forschungsfrage}
+  % Kommt man von Container auf Host-OS? Von Container auf anderen Container? ~etc.
+  % 5-6 Sicherheitsziele erwähnen. Mit Forschungsfrage in Bezug bringen --> später bei Isolierung und Ressourcenverwaltung wieder aufgreifen
 \chapter{Security aus Linux Kernel-Features}
+  % namespaces/etc (was es ist) in Einleitung mit rein? 1.) Erklaeren, 2.) Security/Docker untersuchen dazu im Security Hauptteil
+  % 2 Unterkapitel, inhatliche Überschneidung evtl., Grund nennen warum so gegliedert, ...
 	\section{Isolierung}
+    % Isolierung erklären, erfüllt X Schutzziele, Bezug auf Forschungsfrage
 		\subsection{\texttt{namespaces}}
 			\subsubsection{\texttt{user namespaces}}
+      % Future implementation, da sehr neu. Trotzdem Konzept erklären und wie Docker-Security davon profitiert.
 		\subsection{\texttt{capabilities}}
 			\subsubsection{Beispiele, \texttt{/proc}-Verzeichnis, (Un-)Mounten des Host-Filesystems}
+      % Gehört das unter 'capabilities'? Oder eigener Punkt bzw. woanders dazu?
 		\subsection{Mandatory Access Control (MAC)}
 			\subsubsection{Beispiel SELinux}
+      % Macht Sinn das erst am Ende zu machen, wenn noch Zeit ist. Weil SELinux im Detail mehr Exkurs wird.
 	\section{Ressourcenverwaltung}
+    % Sicherheitsziel: Availability, Bezug auf Forschungsfrage
+    % Ressourcenverteilung und -management
+    % Storage, CPU, HDD, RAM, IO, Network
 		\subsection{\texttt{cgroups}}
 	\section{Docker im Vergleich zu anderen Containerlösungen}
+  % Mandatory?
 \chapter{Security im Docker-Ökosystem}
+  % ### Hier mit Patrick weitermachen ###
+  % Je nach Vorankommen, können hier ganze Sektions weggelassen werden imo.
+  % Tendenziell mehr die Themen zuerst, die direkt mit Security zu tun haben.
   \section{Docker Images und Repositories}
 		\subsection{neues Signierungs-Feature}
 	\section{Docker Daemon}
@@ -168,12 +185,20 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
 		\subsection{Vagrant}
 		\subsection{Kubernetes}
 \chapter{Docker in Unternehmen/Clound-Infrastrukturen}
-% HIER: welche Security-Features uebernimmt die Cloud, welche muss Docker
-% geaehrleisten. Was bieten MS Azure/Amazon's AWS/etc fuer Mechanismen an?
-% Welche Moeglichkeiten zur sicheren Docker-Integration bieten diese?
+% Wichtiges Kapitel für Daimler, mein Chef, Management
+% Kapitel, das erst angegangen wird, wenn min. Kapitel 1 steht (Januar 2016 oder später).
+
+% ???: Transscript aus Besprechung mit Herr Fahner und Patrick:
+% Welche Security-Features uebernimmt die Cloud, welche muss Docker gewaehrleisten. Was
+% bieten MS Azure/Amazon's AWS/etc fuer Mechanismen an?
+% Welche Möglichkeiten zur sicheren Docker-Integration bieten diese?
 % Wortlaut Patrick: Wie funktionierts bei Azure, wie funktionierts wenn man es
 % selbst implementiert.
-\chapter{Fazit}
+\chapter{Fazit/Ausblick}
+% Wenig Angriffsvektoren auf Docker/Container bekannt. "Sichergehen" kann man nur mit Konzepten wie "Docker in VMs" und "VMs in Docker".
+% neuste Docker-Releases und deren Fokus (Enterprise,Production-Readiness,Security)
+% seit Juli 2015 ist standardisiertes Containerformat der big player in Arbeit
+% Ausblick im Kontext von Container VS. konventioneller Virtualisierung
 
 %\subsection{Subsektion blabla}
 %\subsubsection{Subsubsektion blablabla}
