@@ -20,6 +20,7 @@
 }
 
 \begin{document}
+\pagenumbering{gobble} % No page numbers
 
 \begin{titlepage}
 	\centering
@@ -66,6 +67,8 @@
 \date{Dezember 2015}
 % \date{\today}
 \maketitle
+
+%\pagenumbering{roman}
 
 \chapter*{Eidesstattliche Erklärung}
 \emph{„Hiermit versichere ich, Moritz Hoffmann, ehrenwörtlich, dass ich die vorliegende Bachelorarbeit mit dem Titel: „\thema“ selbstständig und ohne fremde Hilfe verfasst und keine anderen als die angegebenen Hilfsmittel benutzt habe. Die Stellen der Arbeit, die dem Wortlaut oder dem Sinn nach anderen Werken entnommen wurden, sind in jedem Fall unter Angabe der Quelle kenntlich gemacht. Die Arbeit ist noch nicht veröffentlicht oder in anderer Form als Prüfungsleistung vorgelegt worden. Ich habe die Bedeutung der ehrenwörtlichen Versicherung und die prüfungsrechtlichen Folgen (§26 Abs. 2 Bachelor-SPO (6 Semester), § 24 Abs. 2 Bachelor-SPO (7 Semester), § 23 Abs. 2 Master-SPO (3 Semester) bzw. § 19 Abs. 2 Master-SPO (4 Semester und berufsbegleitend) der HdM) einer unrichtigen oder unvollständigen ehrenwörtlichen Versicherung zur Kenntnis genommen.“
@@ -133,12 +136,16 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
 %{\chaptertitlename~\thechapter} {0.5em} {}
 
 
+
 % GLIEDERUNG
 \chapter{Überblick}
+\pagenumbering{arabic}
 	\section{Arten von Virtualisierungen}
 	  \subsection{Einordnung Docker}
   \section{Einführung in Docker}
-  % @Charzinski: Ist es OK das erste kapitel zu untergliedern? Oder besser separate chapters um Docker zu erklären?
+    \subsection{Images}
+    \subsection{Repositories}
+    \subsection{Container}
 \chapter{Ziel der Arbeit/Forschungsfrage}
   % Kommt man von Container auf Host-OS? Von Container auf anderen Container? ~etc.
   % 5-6 Sicherheitsziele erwähnen. Mit Forschungsfrage in Bezug bringen --> später bei Isolierung und Ressourcenverwaltung wieder aufgreifen
@@ -154,24 +161,30 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
 			\subsubsection{Beispiele, \texttt{/proc}-Verzeichnis, (Un-)Mounten des Host-Filesystems}
       % Gehört das unter 'capabilities'? Oder eigener Punkt bzw. woanders dazu?
 		\subsection{Mandatory Access Control (MAC)}
+      % Herausfinden, ob das wirklich Unterkapitel von "Isolierung" wird. Evtl. getrennt davon listen.
 			\subsubsection{Beispiel SELinux}
       % Macht Sinn das erst am Ende zu machen, wenn noch Zeit ist. Weil SELinux im Detail mehr Exkurs wird.
+      \subsubsection{AppArmor}
+      % Optional, da auf MAC alzu sehr eingehen nicht zu sehr im Scope sein sollte.
 	\section{Ressourcenverwaltung}
     % Sicherheitsziel: Availability, Bezug auf Forschungsfrage
     % Ressourcenverteilung und -management
     % Storage, CPU, HDD, RAM, IO, Network
 		\subsection{\texttt{cgroups}}
 	\section{Docker im Vergleich zu anderen Containerlösungen}
-  % Mandatory?
+  % Optional?
 \chapter{Security im Docker-Ökosystem}
   % ### Hier mit Patrick weitermachen ###
   % Je nach Vorankommen, können hier ganze Sektions weggelassen werden imo.
   % Tendenziell mehr die Themen zuerst, die direkt mit Security zu tun haben.
+  % Auch Fokus auf die neusten Entwicklungen (2015 und 2016) in Sachen Sicherheit und neue Docker-Features
   \section{Docker Images und Repositories}
 		\subsection{neues Signierungs-Feature}
 	\section{Docker Daemon}
 		\subsection{REST-API}
 		\subsection{Support von Zertifikaten}
+  \section{Containerprozesse}
+    % offenbar gibts Probleme mit PID=0, da dieser Besonderheiten aufweist (siehe Hackernews Link)
 	\section{Docker Cache}
 	\section{\texttt{privileged} Container}
 	\section{Networking}
@@ -181,37 +194,44 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
 		\subsection{Portmapping}
 	\section{Daten-Container}
 	\section{Docker mit VMs}
+  \section{Sicherheitskontrollen für Docker}
+    % Gibt auf Github Skripte, die einige Docker-Parameter/Einstellungen prüfen (Links iwo in den Bookmarks)
 	\section{Tools rund um Docker}
 		\subsection{Docker Swarm}
 		\subsection{Docker Compose}
 		\subsection{Nautilus Project}
 		\subsection{Vagrant}
 		\subsection{Kubernetes}
+      % neueres Cluster-Management Tool von Google
+      % Hat Relevanz fuer Herr Fahner/Daimler
 \chapter{Docker in Unternehmen/Clound-Infrastrukturen}
-% Wichtiges Kapitel für Daimler, mein Chef, Management
-% Kapitel, das erst angegangen wird, wenn min. Kapitel 1 steht (Januar 2016 oder später).
+  % Wichtiges Kapitel für Daimler, mein Chef, Management
+  % Kapitel, das erst angegangen wird, wenn min. Kapitel 1 steht (Januar 2016 oder später).
 
-% ???: Transscript aus Besprechung mit Herr Fahner und Patrick:
-% Welche Security-Features uebernimmt die Cloud, welche muss Docker gewaehrleisten. Was
-% bieten MS Azure/Amazon's AWS/etc fuer Mechanismen an?
-% Welche Möglichkeiten zur sicheren Docker-Integration bieten diese?
-% Wortlaut Patrick: Wie funktionierts bei Azure, wie funktionierts wenn man es
-% selbst implementiert.
+  % ???: Transscript aus Besprechung mit Herr Fahner und Patrick:
+  % Welche Security-Features uebernimmt die Cloud, welche muss Docker gewaehrleisten. Was
+  % bieten MS Azure/Amazon's AWS/etc fuer Mechanismen an?
+  % Welche Möglichkeiten zur sicheren Docker-Integration bieten diese?
+  % Wortlaut Patrick: Wie funktionierts bei Azure, wie funktionierts wenn man es
+  % selbst implementiert.
+
+  % --> mir ist nich klar, was ich da untersuchen kann.
 \chapter{Fazit/Ausblick}
-% Wenig Angriffsvektoren auf Docker/Container bekannt. "Sichergehen" kann man nur mit Konzepten wie "Docker in VMs" und "VMs in Docker".
-% neuste Docker-Releases und deren Fokus (Enterprise,Production-Readiness,Security)
-% seit Juli 2015 ist standardisiertes Containerformat der big player in Arbeit
-% Ausblick im Kontext von Container VS. konventioneller Virtualisierung
+  % Wenig Angriffsvektoren auf Docker/Container bekannt. "Sichergehen" kann man nur mit Konzepten wie "Docker in VMs" und "VMs in Docker".
+  % neuste Docker-Releases und deren Fokus (Enterprise,Production-Readiness,Security)
+  % seit Juli 2015 ist standardisiertes Containerformat der big player in Arbeit
+  % Ausblick im Kontext von Container VS. konventioneller Virtualisierung
+
 
 %\subsection{Subsektion blabla}
 %\subsubsection{Subsubsektion blablabla}
 %\paragraph{Paragraph soundso}
 %\subparagraph{SubParagraph soundso}
 
-
-
 % Anhang
 \appendix
+  % Falls benoetigt
+  % Evtl. beispielhafte Dockerfiles anzeigen
 
 % Bibliography
 \bibliographystyle{plain}
