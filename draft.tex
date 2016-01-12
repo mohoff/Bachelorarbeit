@@ -147,35 +147,70 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
 \chapter{Überblick}
 \pagenumbering{arabic}
   % Container als leichtgewichtige Virtualisierung
+  Virtualisierte Komponenten nutzen im Vergleich zu nativ (physisch) eingesetzten Komponenten eine zusätzliche Softwareschicht, die den virtualisierten Komponenten, üblicherweise als virtuelle Maschinen (VMs) bezeichnet, mehrere Abstraktionen anbietet, um Funktionen des Gastsystems zu nutzen \cite[S.2]{containerVirtPerformance}.
+
+  Es existieren heutzutage mehrere Virtualisierungstechniken, wovon die Hypervisor-gestützen Methoden mit den Vertretern Xen, VMware und KVM die meistverbreitesten sind \cite[S.2]{containerVirtPerformance}. Die zwei prominentesten Virtualisierungstechniken, Hypervisor-basierte und Container-basierte Virtualisierung, werden in dieser Arbeit gegenübergestellt (INTERNE-REFERENZ hier?).
+
+  Mit dem Release von Docker im Jahr 2013 erlebte die containerbasierte Virtualisierung einen Aufschwung, obwohl sie schon einige Jahre zuvor in der Form von XXXX und XXXX existierte (QUELLEN,mehrere da mehrere Bsp). Wie Docker den bis 2013 vorherrschenden Ruf von Containersystemen nachhaltig verändern konnte, nämlich dass Container noch nicht ausgereift seien \cite[S.8]{containerVirtPerformance}, ist im Kapitel \hyperref[dockerIntro]{\glqq{}Einführung in Docker\glqq{}} beschreiben.
+
+
+
+  Virtualisierungstechnologien sind in den letzten Jahren sehr beliebt geworden. Einige Softwarelösungen wie Xen, VMware und KVM (QUELLEN) sowie Hardwaresupport von handelsüblichen Prozessoren (QUELLEN, siehe containerVirtPerformance) haben sich auf dem Markt etabliert.
+  Die Vorteile von Virtualisierung sind Hardwareunabhängigkeit, Verfügbarkeit, Isolierung und Sicherheit, welche die Erfolgsgrundlage der Virtualisierung in Cloud-Infrastrukturen bilden.
+  \cite[S.1]{containerVirtPerformance}
 
   Trotz ein paar intrinsischen Schwächen von Containerlösungen, werden Container bereits in einer Vielzahl von Szenarien eingesetzt \cite[S.6]{dockerBook}.
 
   Container sind in Infrastrukturen, in denen es auf Skalierbarkeit ankommt, trotz Sicherheitsbedenken beliebt. Vor allem "Multi-Tenant" Services werden gerne mit Docker eingesetzt.
+
+  \section{Struktur dieser Arbeit}
+    % Ist das die richtige Stelle für die Struktur? Oder besser als Punkt 1.1 direkt unter "Überblick"?
+
 	\section{Arten von Virtualisierungen}
     % AUCH: Vergleich von Virtualisierungsarten
     \subsection{Hypervisor-basierte Virtualisierung}
-      Bei Hypervisor-basierten Systemen laufen unabhängig voneinander eine oder mehrere Maschinen virtuell auf physischer Hardware (in der englischen Literatur auch "bare metal" genannt). Der Hypervisor nimmt dabei die Rolle eines Vermittlers zwischen Host-OS und Gast-OS ein \cite[S.6]{dockerBook}.
+      Bei Hypervisor-basierten Systemen laufen unabhängig voneinander eine oder mehrere Maschinen virtuell auf physischer Hardware (in der englischen Literatur auch "bare metal" genannt). Der Hypervisor, der auch \emph{Virtual Machine Monitor} (\emph{VMM}) genannt wird \cite[S.2]{containerVirtPerformance}, nimmt dabei die Rolle eines Vermittlers zwischen Host-OS und Gast-OS ein \cite[S.6]{dockerBook} und abstrahiert dem Gast, also einer VM, die Funktionen des Hosts.
+
+      Durch diese Technik läuft in jeder VM ein eigenes Betriebssystem, das von solchen anderer VMs komplett isoliert läuft. Durch die Abstraktion des zwischenliegenden Hypervisors ist es möglich, mehrere unterschiedliche Betriebssysteme auf einem physikalischen Host auszuführen \cite[S.2]{containerVirtPerformance}.
+
+      Der größte Kritikpunkt dieser Art von Virtualisierung ist deren hoher Bedarf an Hostressourcen, da diese für jede gestartete VM komplett virtualisiert werden müssen, sodass innerhalb der VM ein Gast-OS ausgeführt werden kann \cite[S.1]{dockerIntroIEEE}.
+
     \subsection{Container-basierte Virtualisierung}
       (Benötigt keine Emulations- oder Hypervisorschicht \cite[S.7]{dockerBook}.)
 
-      Container-Virtualisierung wird oftmals Virtualisierung auf Betriebsystemebene genannt \cite[S.6]{dockerBook}.
+      Container-basierte Virtualisierung ist eine leichtgewichtige Alternative zu Hypervisor-basierten Virtualisierungen. \cite[S.2]{containerVirtPerformance}.
 
-      Containerlösungen umfassen die Technologien \emph{OpenVZ}, \emph{Solaris Zones}, sowie Linux-Container wie \emph{LXC} \cite[S.7]{dockerBook} und \emph{Docker}, welches im Fokus dieser Arbeit steht.
+      Einen Hypervisor wird in diesem Ansatz nicht eingesetzt. Vielmehr wird das native System und dessen Ressourcen partitioniert, sodass mehrere isolierte User-Space Instanzen betrieben werden können, die Container genannt werden \cite[S.2]{containerVirtPerformance} .
+
+      Während ein Hypervisor für jede VM das komplette Gast-OS abstrahiert, werden für Container direkt Funktionen des Hosts zur Verfügung gestellt. Deswegen werden Containerlösungen auch als Virtualisierungen auf Betriebssystemebene (des Hosts) bezeichnet \cite[S.6]{dockerBook}\cite[S.2]{containerVirtPerformance}. Aus technischer Sicht ist der Hypervisor ein Stück Software, das eine Abstraktion der Hardware bereitstellt, während Container direkt via \emph{System Calls} mit der Hostmaschine kommunizieren. Das hat zur Folge, dass alle Container direkt mit einem Host kommunizieren und sich damit den Kernel dessen teilen \cite[S.2]{containerVirtPerformance}.
+
+      Sowohl Hypervisor-gestützte VMs als auch Container erwecken aus Sicht des Gasts den Eindruck, dass ein alleinstehendes Betriebssystem ausgeführt wird (QUELLE: “OpenVZ,” 2012. [Online]. Available: http://www.openvz.org). Um diese Illusion zu schaffen, wird jedoch wie beschrieben jeweils ein anderer Ansatz eingesetzt.
+
+      Das Containern zugrunde liegende Feature der Isolation wird in der Regel mit \emph{namespaces}, einem Feature des Kernels, realisiert. Die Verteilung und das Management der Hostressourcen wird mit \emph{control groups} umgesetzt (QUELLE?). Beide Techniken werden den Kapiteln \hyperref[secNamespaces]{\glqq{}Namespaces\grqq{}} und \hyperref[secCgroups]{\glqq{}Control Groups\grqq{}} genauer betrachtet.
+
+      % Grafik für Container-based und Hypervisor-based Virtualization und deren Schichten (einmal mit, einmal ohne Hypervisor)
+
+      Containerlösungen umfassen die Technologien \emph{OpenVZ}, \emph{Solaris Zones}, sowie Linux-Container wie \emph{Linux VServer}, \emph{LXC} \cite[S.7]{dockerBook}\cite[S.1]{containerVirtPerformance} und \emph{Docker}, welches im Fokus dieser Arbeit steht.
 
       Moderne Container können als vollwertige Systeme betrachtet werden, nicht mehr als ursprünglich vorgesehen, reine Ausführungsumgebungen \cite[S.7]{dockerBook}.
 
-      In Container-basierten Systemen hingegen, laufen die Container im "User Space" direkt auf dem Kernel des Host-OS und nutzen dessen \emph{System Call}-Interface \cite[S.6+7]{dockerBook}. Dadurch kommt es im Vergleich zu Hypervisor-Virtualisierungen zu einem erheblichen Performancegewinn, da der Virtualisierungs-Overhead des Hypervisors wegfällt. In der Praxis macht das eine hohe Dichte an Containern auf einem Host und dadurch indirekt eine bessere Resourcenausnutzung möglich \cite[S.7+8]{dockerBook}.
+      In Container-basierten Systemen hingegen, laufen die Container im "User Space" direkt auf dem Kernel des Host-OS und nutzen dessen \emph{System Call}-Interface \cite[S.6+7]{dockerBook}. Dadurch kommt es im Vergleich zu Hypervisor-Virtualisierungen zu einer fast nativen Performance \cite[S.1]{containerVirtPerformance}, da der Virtualisierungs-Overhead des Hypervisors wegfällt. Unter dem Gesichtspunkt der Rechenleistung beispielsweise, kommt es bei Containerlösungen im Durchschnitt zu einem Overhead von ca. 4\%, wenn diese mit der nativen Leistung einer festen Hardwarekonfiguration verglichen wird \cite[S.4]{containerVirtPerformance}. In der Praxis macht sich dieser Umstand an eine hohe Dichte an Containern auf einem Host und dadurch einer indirekt besseren Resourcenausnutzung bemerkbar \cite[S.7+8]{dockerBook}.
 
       Container-Lösungen erlauben es, mehrere voneinander isolierte "User Space"-Instanzen parallel auf einem einzigen physischen Host zu betreiben \cite[S.6]{dockerBook}. Dadurch, dass ein Hypervisor in einer solchen Konfiguration nicht existiert und die Container direkt Hostkernel-Features nutzen, gibt es einen entscheidenden Nachteil für Containerlösungen - und damit auch Docker - gegenüber Hypervisor-basierter Virtualisierung: Das Container-Betriebssystem muss wie das Host-Betriebsystem Linux-basiert sein. In einem Host auf dem Ubuntu Server installiert ist, können nur weitere Linux-Distributionen als Container laufen. Ein Microsoft Windows kann also nicht als Container auf genannten Host gestartet werden, da die Kernel miteinander nicht kompatibel sind \cite[S.6]{dockerBook}. Diese Inflexibilität im Spektrum der einsetzbaren Betriebssysteme liegt den Containerlösungen zugrunde.
 
       Außerdem werden Container als weniger sicher im Vergleich zur Hypervisor-gestützen Virtualisierung gesehen \cite[S.6]{dockerBook}.
 
       Hingegen muss in containerbasierten Systemen nicht das gesamte Betriebssystem virtualisiert werden, da von den Containern direkt auf den Host-Kernel zugegriffen wird. Zum Einen schrumpft dadurch die Angriffsfläche des Hosts \cite[S.6]{dockerBook}, da, wie später noch zu sehen ist, die Zugriffsrechte der Container auf den Host sehr feingranular festgelegt werden müssen. Zum Anderen entsteht durch diese Tatsache ein Risko im Design, weil Host-Features ohne Hypervisor direkt genutzt werden.
+
 	  \subsection{Einordnung Docker}
+      Docker gehört zu den Technologien der Container-basierten Virtualisierung.
+      % Unbedingt Quelle containerVirtPerformance anschauen, da werden mehrere Containerloesungen miteinander verglichen.
+
       Docker nutzt moderne Linux-Kernelfeatures, wie z.b. \emph{control groups} und \emph{namespaces}, um ein Resourcenmanagement zwischen Containern und eine effektive Isolierung der Container vom Hostsystem zu realisieren \cite[S.7]{dockerBook}.
 
       Docker ist wie in KAPITEL-ZUVOR angedeutet, nicht die erste containerbasierte Virtualisierungslösung. Einige ältere Containersysteme, wie z.B. \emph{Solaris Zones}, gibt es schon viel länger als Docker, aber wurden allerdings nie von der Industrie als Lösung akzeptiert. Worauf beruht also der Erfolg von Docker in den letzten Jahren? Dieser Frage werde ich im folgenden Kapitel nachgehen.
   \section{Einführung in Docker}
+  \label{dockerIntro}
     Docker ist eine unter der Apache 2.0 Lizenz veröffentlichte Open-Source Engine, die den Einsatz von Anwendungen in Containern automatisiert. Es ist überwiegend in der Programmiersprache \emph{Golang} von dem Unternehmen \emph{Docker, Inc.} (vormals \emph{dotCloud Inc.}), implementiert \cite{githubDocker}\cite[S.7]{dockerBook}.
 
     % Erfolg von Docker von businessinsiders.com trends.
@@ -183,26 +218,66 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
     % Auch checken: Statistika, google trends
 
 
-    Der große Vorteil von Docker gegenüber älteren Containerlösungen ist das Level an Abstraktion und die Bedienungsfreundlichkeit, die Nutzern ermöglicht wird. Während sich Lösungen vor Docker auf dem Markt durch deren schwierige Installation und Management sowie schwachen Automatisierungsfunktionen nicht etablieren konnten, addressiert Docker genau diese Schwachpunkte \cite[S.7]{dockerBook} und bietet neben Containern viele Tools, die die Arbeit mit Containern und weiteren Modulen, erleichtern.
+    Der große Vorteil von Docker gegenüber älteren Containerlösungen ist das Level an Abstraktion und die Bedienungsfreundlichkeit, die Nutzern ermöglicht wird. Während sich Lösungen vor Docker auf dem Markt durch deren schwierige Installation und Management sowie schwachen Automatisierungsfunktionen nicht etablieren konnten, addressiert Docker genau diese Schwachpunkte \cite[S.7]{dockerBook} und bietet neben Containern viele Tools und einen Workflow für Entwickler, die beide die Arbeit mit Containern erleichtern soll \cite[S.1]{dockerIntroIEEE}.
 
-    Quellcode kann samt virtualisierter Ausführungsumgebung flexibel von einem Laptop auf einen Testserver und später auf einen Produktionsserver geschoben werden. Dieser kurzlebige Zyklus zwischen Entwicklung, Testen und Deployment erlaubt einen effizienten Workflow \cite[S.8]{dockerBook}.
+
 
     % Einfaches "Getting Started": es braucht nur einen minimalen Host mit einem kompatiblen Linux-Kernel und die Docker-Binary, die ausgeführt werden soll \cite[S.8]{dockerBook}.
 
-    Eine weitere wichtige Eigenschaft von Docker ist Konsistenz: Die Umgebungen, in denen Softwareentwickler Code schreiben, sind identisch mit den Umgebungen, die später auf Servern laufen. Die Wahrscheinlichkeit, dass ein Fehler erst im Betrieb auftritt, nicht aber in der Entwicklung, wird dadurch sehr klein gehalten \cite[S.8]{dockerBook}.
+    Wenn wie von Docker empfohlen in jedem Container nur eine Anwendung läuft, begünstigt das eine moderne Service-orientierte Architektur mit \emph{Microservices}. Nach dieser Architektur werden Anwendungen oder Services verteilt zur Verfügung gestellt und durch eine Serie an miteinander kommunizierenden Containern umgesetzt. Der Grad an Modularisierung der dadurch ensteht, kann für die Verteilung, die Skalierung und das Debugging von Service- oder Anwedungskomponeten (Container) eingesetzt werden \cite[S.9]{dockerBook}. Je nach Usecase können Container Testumgebungen, Anwendungen bzw. Teile davon, oder Replikate komplexer Anwendungen für Entwicklungs- und Produktionszwecke abbilden. Container also nehmen die Rolle austauschbarer, kombinierbarer und portierbarer Module eines Systems ein \cite[S.12]{dockerBook}.
 
-    Wenn wie von Docker empfohlen in jedem Container nur eine Anwendung läuft, begünstigt das eine moderne Service-orientierte Architektur mit \emph{Microservices}. Nach dieser Architektur werden Anwendungen oder Services verteilt zur Verfügung gestellt und durch eine Serie an miteinander kommunizierenden Containern umgesetzt. Der Grad an Modularisierung der dadurch ensteht, kann für die Verteilung, die Skalierung und das Debugging von Service- oder Anwedungskomponeten (Container) gewinnbringend eingesetzt werden \cite[S.9]{dockerBook}.
+    Ein bekanntes Problem bei der Softwareentwicklung ist, dass Code in der Umgebung eines Entwicklers fehlerfrei ausgeführt wird, jedoch in Produktionsumgebungen Fehler verursacht. In der Regel fallen beide Umgebungen in unterschiedliche personelle Zuständigkeitsbereiche, was vereinfacht eine Übergabe von Entwicklungs- nach Produktionsumgebung mit sich zieht. Diesem Umstand wurde mit der Einführung von \emph{DevOps}-Teams entgegengewirkt. Diese Teams sind sowohl für die Entwicklung (\emph{Dev} = Development) eines Produkts als auch den Betrieb (\emph{Ops} = Operations) dessen verantwortlich. Der Overhead einer Übergabe fällt dadurch weg. (DAZU QUELLEN FINDBAR?)
+
+    Einen anderen Ansatz dieses Problem zu lösen, liefern Container: Das Kernproblem im genanntem Szenario sind die Entwicklungs- und Produktionsumgebung, zwischen denen Code ausgetauscht wird, da diese nicht identisch sind. Mithilfe von Containern können in der ansonsten gleichen Konstellation nun ganze Container, die den Code beinhalten, zwischen den Umgebungen ausgetauscht werden. Der große Vorteil der Container ist, dass die Ausführungsumgebung in diesem bereits enthalten ist, also mit sehr hoher Wahrscheinlichkeit in einer Entwicklerinfrastruktur als auch auf einem Produktionsinfrastruktur startfähig ist (Anstelle von "-infrastruktur" kann auch von "Umgebung" gesprochen werden)(BEGRIFFLICHKEIT ERKLAEREN: es sind alles "Umgebungen" (Entwicklerumgebung, Produktionsumgebung, Containerumgebung) --> KLARER FORMULIEREN).
+    % Unterschiedliche "Cuts" im Schichtenmodell von Visulisierung. Alt: Zwischen Guest und App. NEU: Zwischen Guest und Host.
+
+
+
+    Eine weitere wichtige Eigenschaft von Docker ist Konsistenz: Die Umgebungen, in denen Softwareentwickler Code schreiben, sind identisch mit den Umgebungen, die später auf Servern laufen.
+
+
+    Die Wahrscheinlichkeit, dass ein Fehler erst im Betrieb auftritt, nicht aber in der Entwicklung, wird dadurch sehr klein gehalten \cite[S.8]{dockerBook}.
+
+
+
+    Quellcode kann inklusive virtualisierter Ausführungsumgebung flexibel von einem Laptop auf einen Testserver und später auf einen physischen oder virtualisierten Produktionsserver oder Cloud-Infrastruktur, wie z.B. Microsoft Azure, geschoben werden. Dieser kurzlebige Zyklus zwischen Entwicklung, Testen und Deployment erlaubt einen effizienten Workflow \cite[S.8+12]{dockerBook}.
+    Da Quellcode das wertvollste Asset der meisten IT-Firmen ist und dieser erst dann Wert hat, wenn er bei einem Kunden ausgeführt wird, macht den beschriebenen Workflow zu einem wichtigen Entscheidungsgrund bei der Wahl der Entwicklerumgebung \cite[S.1]{dockerIntroIEEE}.
+
+    % Docker kann auf jedem x64 Host installiert und gestartet werden \cite[S.15]{dockerBook}.
 
     Die Eigenheiten von Docker sowie die gängige Begrifflichkeiten im Docker-Ökosystem, werden in den folgenden Unterkapiteln genauer beleuchtet.
     \subsection{Container}
+      % Metapher mit dem Docker-Wal, der Container lädt: Docker als Frachtschiff, mit dem Container verschifft werden.
+
       Der Begriff \glqq{}Container\grqq{} ist bisher schon oft gefallen, deswegen will ich auf ihn zuerst eingehen.
 
       Docker-Container beinhalten eine idealerweise minimale Laufzeitumgebung, in der eine oder mehrere Anwendungen laufen.
 
+      In Bezug zu anderen Docker-Begriffen, enthält ein Container ein Software-Image und erlaubt eine Reihen von Operationen, die auf ihn angewandt werden können. Darunter fallen z.B. das Erstellen, Starten, Stopen, Neustarten und Beenden eines Containers. Welchen Inhalt einen Container hat, also ob ein Container auf einem Datenbank- oder Webserver-Image beruht, ist dafür unerheblich \cite[S.12]{dockerBook}.
+
       Basiert auf einem \emph{Copy-on-write}-Modell, das Änderungen der Anwendung schnell handhabt \cite[S.8]{dockerBook}.
       % Copy-on-write erklären.
+
+      Container werden als priveligiert bezeichnet, wenn sie mit Root-Rechten gestartet werden. Standardmäßig startet ein Container mit einem reduzierten Set an sog. \texttt{capabilities}, welches keine vollen Root-Rechte umfasst (BELEG).
+
+      % Der Hosts selbst muss auch gemanaged werden.
+      % Docker als Anwendung muss installiert, gemanaged, und deployed werden auf einem Host.
+      % Docker-Container müssen orchestriert, gemanged und deployed werden. Oft im Zusammenspiel mit externen Service und Tools.
+      % In Hypervisor-basierten Virtualisierungen kommen meist Puppet, Chef )und Vagrant) zum Einsatz, die obigen Management-Anforderungen erfüllen können.
+      % Aber beim Einsatz von Docker sind diese Tools nicht unbedingt notwendig,  Docker repräsentiert oft kurzlebige Container, read-only Container, die einfach zu ersetzen sind ohne die Notwendigkeit Containerzustände zu speichern oder wiederherzustellen. Wenn ein Zustand von Bedeutung ist, kann es einfacher sein diesen neu zu erstellen anstatt einen bestehnden Zustand zu korrigieren.
+      % ^  \cite[S.14]{dockerBook}
+
+      % In der Praxis werden herkömmliche, oft historisch gewachsene Lösungen nicht vollständig und sofort auf Docker umgerüstet. Mit der Koexistenz von Hypervisor-basierten Virtualisierungen und Containerlösungen, werden auch Configuration Management Tools wie Puppet und Chef im Zusammenhang mit Docker verwendet.
+      % ^  \cite[S.14]{dockerBook}
+
+
+      % Container können innerhalb von Sekundenbruchteilen starten
+      % ^  \cite[S.1]{dockerIntroIEEE}
+
     \subsection{Images}
     \label{dockerImages}
+      Ein Image besteht aus ein oder mehreren Schichten (Layers), wobei eine Schicht auch ein Image darstellen kann.
+
       Images liegen Containern als statische Files zugrunde. Container werden auf der Basis von Images gestartet. Images sind durch das eingesetzte \emph{Union-Filesystem} in Schichten gegliedert, die zusammen ein Image ergeben, das als Container gestartet werden kann \cite[S.11]{dockerBook}.
 
       % Screenshot von Imagelayer.io, um Aufbau von einem Image zu sehen
@@ -213,6 +288,7 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
 
 
       Images werden Schritt für Schritt erstellt, z.B. mit den folgenden Aktionen \cite[S.11]{dockerBook}:
+
       \begin{itemize}
         \item Eine Datei hinzufügen
         \item Ein Kommando ausführen, z.B. ein Tool mittels des Paketmanagers \texttt{apt} installieren
@@ -228,6 +304,8 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
       %Was eine Registry ist wird im folgenden Kapitel erklärt.
 
     \subsection{Registries}
+      Eine Registry ist ein gehosteter Service, der Images in Repositories anbietet.
+
       Docker stellt eine Vielzahl an Images öffentlich in einer eigenen Registry, dem Docker Hub \cite[S.11]{dockerBook}, zur Verfügung. Für dieses System kann jeder Nutzer einen Account anlegen und eigenständig Images hochladen. Das Docker-Hub bietet bereits mehr als 150.000 Repositories, die etwa 240.000 Nutzer zusammenstellten und hochluden, zur freien Verwendung an (Stand Juni 2015) \cite[S.16]{slideshareDockercon15}. Die Einträge im Hub können von Nutzern bewertet werden. Außerdem wird angezeigt, wie oft ein Image bereits über das Hub bezogen wurde.
 
       Ein Repository besteht aus mindestens einem Image. Um Images in einem Repository voneinander zu unterscheiden, werden Images Tags zugewiesen, um beispielweise mehrere Versionen eines Images in einem Repository zu kennzeichnen. Die Images werden nach dem Schema \texttt{<repository>:<tag>} identifiziert. So gibt es z.B. im offiziellen Repository des Webservers \emph{Nginx} Images mit den Tags \texttt{latest}, \texttt{1}, \texttt{1.9} und \texttt{1.9.9} \cite{dockerhubNginx}. Wenn bei dem Download kein Tag angegeben ist, wie in Kapitel wird automatisch das aktuellste Image \texttt{latest} bezogen, wie es im \hyperref[dockerImages]{letzten Kapitel \glqq{}Images\grqq{}} praktiziert wurde.
@@ -239,6 +317,8 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
       % Weitere beispiele aus dockerBook: Nginx web server, MySQL Datenbank
 
       % Es gibt offizielle Images, die von trusted parties verwaltet werden
+
+      Docker bietet außerdem an, private Registries zu erstellen. Diese können dann, z.B. gesichert von einer unternehmenseigenen Firewall, betrieben werden.
     \subsection{Dockerfile}
 
 
@@ -256,6 +336,11 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
 
       % Kommunikation zwischen Client und Server via TCPIP oder Unix Sockets?
 
+    \subsection{Containerformat \texttt{libcontainer}}
+      \texttt{libcontainer} ist ein natives Linux Containerformat, das sowohl Docker als auch die Containerplatform \emph{Linux Containers} (\emph{LXC}) verwendet.
+
+      % Seit XXX ist \texttt{libcontainer} das Standardformat für Docker.
+
 \chapter{Ziel der Arbeit/Forschungsfrage}
   % Kommt man von Container auf Host-OS? Von Container auf anderen Container? ~etc.
   % 5-6 Sicherheitsziele erwähnen. Mit Forschungsfrage in Bezug bringen --> später bei Isolierung und Ressourcenverwaltung wieder aufgreifen
@@ -265,6 +350,7 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
 	\section{Isolierung}
     % Isolierung erklären, erfüllt X Schutzziele, Bezug auf Forschungsfrage
 		\subsection{\texttt{namespaces}}
+    \label{secNamespaces}
 			\subsubsection{\texttt{user namespaces}}
       % Future implementation, da sehr neu. Trotzdem Konzept erklären und wie Docker-Security davon profitiert.
 		\subsection{\texttt{capabilities}}
@@ -281,6 +367,7 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
     % Ressourcenverteilung und -management
     % Storage, CPU, HDD, RAM, IO, Network
 		\subsection{\texttt{cgroups}}
+    \label{secCgroups}
 	\section{Docker im Vergleich zu anderen Containerlösungen}
   % Optional?
 \chapter{Security im Docker-Ökosystem}
@@ -308,13 +395,15 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
   \section{Sicherheitskontrollen für Docker}
     % Gibt auf Github Skripte, die einige Docker-Parameter/Einstellungen prüfen (Links iwo in den Bookmarks)
 	\section{Tools rund um Docker}
-		\subsection{Docker Swarm}
-		\subsection{Docker Compose}
-		\subsection{Nautilus Project}
-		\subsection{Vagrant}
-		\subsection{Kubernetes}
-      % neueres Cluster-Management Tool von Google
-      % Hat Relevanz fuer Herr Fahner/Daimler
+    \subsection{Docker-Erweiterungen}
+      \subsubsection{Docker Swarm}
+      \subsubsection{Docker Compose}
+      \subsubsection{Nautilus Project}
+    \subsection{Third-Party Tools}
+  		\subsection{Vagrant}
+  		\subsection{Kubernetes}
+        % neueres Cluster-Management Tool von Google
+        % Hat Relevanz fuer Herr Fahner/Daimler
 \chapter{Docker in Unternehmen/Clound-Infrastrukturen}
   % Wichtiges Kapitel für Daimler, mein Chef, Management
   % Kapitel, das erst angegangen wird, wenn min. Kapitel 1 steht (Januar 2016 oder später).
