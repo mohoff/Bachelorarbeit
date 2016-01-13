@@ -173,16 +173,20 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
 
       Durch diese Technik läuft in jeder VM ein eigenes Betriebssystem, das von solchen anderer VMs komplett isoliert läuft. Durch die Abstraktion des zwischenliegenden Hypervisors ist es möglich, mehrere unterschiedliche Betriebssysteme auf einem physikalischen Host auszuführen \cite[S.2]{containerVirtPerformance}.
 
-      Der größte Kritikpunkt dieser Art von Virtualisierung ist deren hoher Bedarf an Hostressourcen, da diese für jede gestartete VM komplett virtualisiert werden müssen, sodass innerhalb der VM ein Gast-OS ausgeführt werden kann \cite[S.1]{dockerIntroIEEE}.
+      Der größte Kritikpunkt dieser Art von Virtualisierung ist deren hoher Bedarf an Hostressourcen, da diese für jede gestartete VM komplett virtualisiert werden müssen, sodass innerhalb der VM ein Gast-OS ausgeführt werden kann \cite[S.1]{dockerIntroIEEE}\cite[S.3]{dockerLXCKub}.
+
+      Bekannte Vertreter von Hypervisorn sind die kommerziellen \emph{ESXI} von VMware und \emph{Hyper-V} von Mircosoft, sowie die Open-Source Hypervisor \emph{Xen} und \emph{KVM} (QUELLEN, u.a. \cite[S.1]{dockerLXCKub}).
 
     \subsection{Container-basierte Virtualisierung}
       (Benötigt keine Emulations- oder Hypervisorschicht \cite[S.7]{dockerBook}.)
 
-      Container-basierte Virtualisierung ist eine leichtgewichtige Alternative zu Hypervisor-basierten Virtualisierungen. \cite[S.2]{containerVirtPerformance}.
+      Container-basierte Virtualisierung ist eine leichtgewichtige Alternative zu Hypervisor-basierten Virtualisierungen \cite[S.2]{containerVirtPerformance}.
+
+      Container sind durch den Unix-Befehl \emph{chroot} inspriert, der schon seit 1979 im Linux-Kernel integriert ist. In \emph{FreeBSD} wurde eine erweiterte Variante von \emph{chroot} verwendet, um \emph{Jails} (FreeBSD-spezifischer Begriff) umzusetzen. In Solaris wurde dieser Mechanismus in Form von \emph{Zones} (Solaris-spezifischer Begriff) weiter verbessert und es etablierte sich der Name \emph{Container}, als weitere proprietäre Lösungen von HP und IBM zur selben Zeit auf dem Markt erschienen \cite[S.2]{dockerLXCKub}.
 
       Einen Hypervisor wird in diesem Ansatz nicht eingesetzt. Vielmehr wird das native System und dessen Ressourcen partitioniert, sodass mehrere isolierte User-Space Instanzen betrieben werden können, die Container genannt werden \cite[S.2]{containerVirtPerformance} .
 
-      Während ein Hypervisor für jede VM das komplette Gast-OS abstrahiert, werden für Container direkt Funktionen des Hosts zur Verfügung gestellt. Deswegen werden Containerlösungen auch als Virtualisierungen auf Betriebssystemebene (des Hosts) bezeichnet \cite[S.6]{dockerBook}\cite[S.2]{containerVirtPerformance}. Aus technischer Sicht ist der Hypervisor ein Stück Software, das eine Abstraktion der Hardware bereitstellt, während Container direkt via \emph{System Calls} mit der Hostmaschine kommunizieren. Das hat zur Folge, dass alle Container direkt mit einem Host kommunizieren und sich damit den Kernel dessen teilen \cite[S.2]{containerVirtPerformance}.
+      Während ein Hypervisor für jede VM das komplette Gast-OS abstrahiert, werden für Container direkt Funktionen des Hosts zur Verfügung gestellt. Deswegen werden Containerlösungen auch als Virtualisierungen auf Betriebssystemebene (des Hosts) bezeichnet \cite[S.6]{dockerBook}\cite[S.2]{containerVirtPerformance}. Aus technischer Sicht ist der Hypervisor ein Stück Software, das eine Abstraktion der Hardware bereitstellt, während Container direkt via \emph{System Calls} mit der Hostmaschine kommunizieren. Das hat zur Folge, dass alle Container direkt mit einem Host kommunizieren und sich damit den Kernel dessen teilen \cite[S.2]{containerVirtPerformance}\cite[S.3]{dockerLXCKub}.
 
       Sowohl Hypervisor-gestützte VMs als auch Container erwecken aus Sicht des Gasts den Eindruck, dass ein alleinstehendes Betriebssystem ausgeführt wird (QUELLE: “OpenVZ,” 2012. [Online]. Available: http://www.openvz.org). Um diese Illusion zu schaffen, wird jedoch wie beschrieben jeweils ein anderer Ansatz eingesetzt.
 
@@ -194,7 +198,11 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
 
       Moderne Container können als vollwertige Systeme betrachtet werden, nicht mehr als ursprünglich vorgesehen, reine Ausführungsumgebungen \cite[S.7]{dockerBook}.
 
-      In Container-basierten Systemen hingegen, laufen die Container im "User Space" direkt auf dem Kernel des Host-OS und nutzen dessen \emph{System Call}-Interface \cite[S.6+7]{dockerBook}. Dadurch kommt es im Vergleich zu Hypervisor-Virtualisierungen zu einer fast nativen Performance \cite[S.1]{containerVirtPerformance}, da der Virtualisierungs-Overhead des Hypervisors wegfällt. Unter dem Gesichtspunkt der Rechenleistung beispielsweise, kommt es bei Containerlösungen im Durchschnitt zu einem Overhead von ca. 4\%, wenn diese mit der nativen Leistung einer festen Hardwarekonfiguration verglichen wird \cite[S.4]{containerVirtPerformance}. In der Praxis macht sich dieser Umstand an eine hohe Dichte an Containern auf einem Host und dadurch einer indirekt besseren Resourcenausnutzung bemerkbar \cite[S.7+8]{dockerBook}.
+      In Container-basierten Systemen hingegen, laufen die Container im "User Space" direkt auf dem Kernel des Host-OS und nutzen dessen \emph{System Call}-Interface \cite[S.6+7]{dockerBook}. Dadurch kommt es im Vergleich zu Hypervisor-Virtualisierungen zu einer fast nativen Performance \cite[S.1]{containerVirtPerformance}, da der Virtualisierungs-Overhead des Hypervisors wegfällt. Unter dem Gesichtspunkt der Rechenleistung beispielsweise, kommt es bei Containerlösungen im Durchschnitt zu einem Overhead von ca. 4\%, wenn diese mit der nativen Leistung einer festen Hardwarekonfiguration verglichen wird \cite[S.4]{containerVirtPerformance}\cite[S.5]{IBMcontVMcomparison}. In traditionellen Virtualisierungen beansprucht der Hypervisor allein etwa 10-20\% der Hostkapazität \cite[S.2]{dockerIntroIEEE}\cite[S.5]{IBMcontVMcomparison}. In der Praxis machen sich diese beiden Verhältnisse an einer hohe Dichte an Containern auf einem Container-basiertem Host und dadurch einer indirekt besseren Resourcenausnutzung bemerkbar \cite[S.7+8]{dockerBook}.
+
+      Ein Benchmarktest, der den Durchsatz (Operationen pro Sekunde) eines \emph{VoltDB}-Setups von Hypervisor-basierte Cloudlösungen mit Container-basierten Cloudlösungen verglich, kam zu dem Ergebnis, dass die Containerlösung unter genanntem Gesichtspunkt eine fünffache Leistung aufwies \cite[S.2+3]{voltdb}.
+
+      Auch im Lifecycle von virtuellen Instanzen bieten Container Vorteile: Während in traditionellen VMs das komplette Gast-OS neu gestartet werden muss, um Änderungen zu übernehmen, entspricht ein Containerneustart nur einem Neustart eines Prozesses auf Host \cite[S.2]{dockerLXCKub}.
 
       Container-Lösungen erlauben es, mehrere voneinander isolierte "User Space"-Instanzen parallel auf einem einzigen physischen Host zu betreiben \cite[S.6]{dockerBook}. Dadurch, dass ein Hypervisor in einer solchen Konfiguration nicht existiert und die Container direkt Hostkernel-Features nutzen, gibt es einen entscheidenden Nachteil für Containerlösungen - und damit auch Docker - gegenüber Hypervisor-basierter Virtualisierung: Das Container-Betriebssystem muss wie das Host-Betriebsystem Linux-basiert sein. In einem Host auf dem Ubuntu Server installiert ist, können nur weitere Linux-Distributionen als Container laufen. Ein Microsoft Windows kann also nicht als Container auf genannten Host gestartet werden, da die Kernel miteinander nicht kompatibel sind \cite[S.6]{dockerBook}. Diese Inflexibilität im Spektrum der einsetzbaren Betriebssysteme liegt den Containerlösungen zugrunde.
 
@@ -212,6 +220,8 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
   \section{Einführung in Docker}
   \label{dockerIntro}
     Docker ist eine unter der Apache 2.0 Lizenz veröffentlichte Open-Source Engine, die den Einsatz von Anwendungen in Containern automatisiert. Es ist überwiegend in der Programmiersprache \emph{Golang} von dem Unternehmen \emph{Docker, Inc.} (vormals \emph{dotCloud Inc.}), implementiert \cite{githubDocker}\cite[S.7]{dockerBook}.
+
+    Docker erweitert \emph{LXC} um eine Schnittstelle auf Kernel- und Applikationslevel \cite[S.2]{dockerLXCKub}.
 
     % Erfolg von Docker von businessinsiders.com trends.
     % --> siehe Quelle slideshareDockercon15
@@ -243,7 +253,13 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
     Quellcode kann inklusive virtualisierter Ausführungsumgebung flexibel von einem Laptop auf einen Testserver und später auf einen physischen oder virtualisierten Produktionsserver oder Cloud-Infrastruktur, wie z.B. Microsoft Azure, geschoben werden. Dieser kurzlebige Zyklus zwischen Entwicklung, Testen und Deployment erlaubt einen effizienten Workflow \cite[S.8+12]{dockerBook}.
     Da Quellcode das wertvollste Asset der meisten IT-Firmen ist und dieser erst dann Wert hat, wenn er bei einem Kunden ausgeführt wird, macht den beschriebenen Workflow zu einem wichtigen Entscheidungsgrund bei der Wahl der Entwicklerumgebung \cite[S.1]{dockerIntroIEEE}.
 
+    % Zwei große Usecases: Continous Integration (Jenkins...) und Continuous Deployment \cite[S.2]{dockerIntroIEEE}.
+
     % Docker kann auf jedem x64 Host installiert und gestartet werden \cite[S.15]{dockerBook}.
+
+    % WOHIN HIERMIT ?
+    % Auch Startups wie CoreOS, MesoSphere und SaltStack, die an den Erfolg von Docker anschließen wollen, haben sich gebildet und unterstützen Kubernetes.
+    % ^    /cite[S.4]{dockerLXCKub}
 
     Die Eigenheiten von Docker sowie die gängige Begrifflichkeiten im Docker-Ökosystem, werden in den folgenden Unterkapiteln genauer beleuchtet.
     \subsection{Container}
@@ -253,10 +269,9 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
 
       Docker-Container beinhalten eine idealerweise minimale Laufzeitumgebung, in der eine oder mehrere Anwendungen laufen.
 
-      In Bezug zu anderen Docker-Begriffen, enthält ein Container ein Software-Image und erlaubt eine Reihen von Operationen, die auf ihn angewandt werden können. Darunter fallen z.B. das Erstellen, Starten, Stopen, Neustarten und Beenden eines Containers. Welchen Inhalt einen Container hat, also ob ein Container auf einem Datenbank- oder Webserver-Image beruht, ist dafür unerheblich \cite[S.12]{dockerBook}.
+      In Bezug zu anderen Docker-Begriffen, enthält ein Container ein Software-Image und erlaubt eine Reihen von Operationen, die auf ihn angewandt werden können. Darunter fallen z.B. das Erstellen, Starten, Stopen, Neustarten und Beenden eines Containers. Welchen Inhalt einen Container hat, also ob ein Container auf einem Datenbank- oder Webserver-Image beruht, ist dafür unerheblich \cite[S.12]{dockerBook}\cite[S.2]{dockerLXCKub}.
 
-      Basiert auf einem \emph{Copy-on-write}-Modell, das Änderungen der Anwendung schnell handhabt \cite[S.8]{dockerBook}.
-      % Copy-on-write erklären.
+
 
       Container werden als priveligiert bezeichnet, wenn sie mit Root-Rechten gestartet werden. Standardmäßig startet ein Container mit einem reduzierten Set an sog. \texttt{capabilities}, welches keine vollen Root-Rechte umfasst (BELEG).
 
@@ -278,7 +293,15 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
     \label{dockerImages}
       Ein Image besteht aus ein oder mehreren Schichten (Layers), wobei eine Schicht auch ein Image darstellen kann.
 
-      Images liegen Containern als statische Files zugrunde. Container werden auf der Basis von Images gestartet. Images sind durch das eingesetzte \emph{Union-Filesystem} in Schichten gegliedert, die zusammen ein Image ergeben, das als Container gestartet werden kann \cite[S.11]{dockerBook}.
+      Images liegen Containern als statische Files zugrunde. Container werden auf der Basis von Images gestartet. Images sind durch ein \emph{Union}-Dateisystem in Schichten gegliedert, die überlagert ein Image ergeben, das als Container gestartet werden kann \cite[S.11]{dockerBook}.
+
+      \emph{Union}-Dateisysteme haben gemeinsam, dass sie alle auf dem \emph{Copy-on-write}-Modell basieren \cite[S.8]{dockerBook}. Konkrete Vertreter sind \emph{AuFS}, \emph{Btrfs} und \emph{Device Mapper} \cite[S.3]{dockerIntroIEEE}.
+
+      Die Schichten eines Images umfassen in der Regel jeweils eine minimale Ausführungsumgebung mit Bibliotheken, Binaries und Hilfspaketen sowie den Quellcode der Anwendung, die im Container ausgeführt werden soll. Die Schichtenstruktur erlaubt es, Images modularisiert aufzubauen, sodass sich Änderungen eines Images zur auf eine Schicht auswirkt. Soll z.B. in ein bestehendes Image der Webserver \emph{Nginx} integriert werden, kann dieser mit dem Kommando \texttt{sudo apt-get install nginx} installiert werden, was eine neue Schicht im Image erzeugt. Mit mehreren ähnlichen Images ist gewährleistet, dass nur die konkreten Unterschiede zwischen diesen als eigene Schichten hinterlegt sind. Eine gemeinsame Codebasis, die von mehreren Images genutzt wird, liegt in wenigen Schichten, die sich die Images teilen \cite[S.3]{dockerIntroIEEE}.
+      % Vergleich mit git commit und VCS (S.3 dockerIntroIEEE)
+
+
+      % Copy-on-write erklären.
 
       % Screenshot von Imagelayer.io, um Aufbau von einem Image zu sehen
 
@@ -320,6 +343,12 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
 
       Docker bietet außerdem an, private Registries zu erstellen. Diese können dann, z.B. gesichert von einer unternehmenseigenen Firewall, betrieben werden.
     \subsection{Dockerfile}
+      Ein Dockerfile ist eine Datei mit selbigem Namen, die ein oder mehrere Anweisungen enthält. Letztere werden konsekutiv ausgeführt und führen jeweils zu einer neuen Schicht, die später in das generierte Image einfließt. Damit stellen Dockerfiles eine Möglichkeit dar, Images automatisiert und einfach zu generieren.
+      % "einfach" schreiben? Klingt populistisch
+
+      Eine Anweisung kann z.B. sein, ein Tool zu installieren oder zu starten, eine Umgebungsvariable festlegen oder einen Port öffnen.
+
+      % Bsp. Dockerfile (mit drin: envvar, export port, baseimage, maintainer, authoer, apt-get)
 
 
     \subsection{Client und Server}
@@ -347,6 +376,7 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
 \chapter{Security aus Linux Kernel-Features}
   % namespaces/etc (was es ist) in Einleitung mit rein? 1.) Erklaeren, 2.) Security/Docker untersuchen dazu im Security Hauptteil
   % 2 Unterkapitel, inhatliche Überschneidung evtl., Grund nennen warum so gegliedert, ...
+  % \cite[S.3]{dockerIntroIEEE} --> umgangsprachlich erkleart wie mit namespaces und cgroups gearbeitet wird
 	\section{Isolierung}
     % Isolierung erklären, erfüllt X Schutzziele, Bezug auf Forschungsfrage
 		\subsection{\texttt{namespaces}}
@@ -368,6 +398,13 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
     % Storage, CPU, HDD, RAM, IO, Network
 		\subsection{\texttt{cgroups}}
     \label{secCgroups}
+
+    % network namespace:
+    % Standardmäßig werden für Container keine Ports geöffnet. Manche Applikationen machen jedoch nur Sinn, wenn sie Ports nutzen können, daher können diese manuell in dem Dockerfile (INTERNE REFERENZ) freigegeben werden.
+    % Container werden virtuelle Netzwerkinterfaces zur Verfügung gestellt. Dadurch können z.B. mehrere Container betrieben werden, die Webserver beinhalten, die alle auf Port 80 eingestellt sind. Außerhalb der Container können diese Containerports mithilfe von NAT (sicher NAT?) auf unterschiedliche Ports des Hosts abgebildet werden.
+    % ^ \cite[S.3]{dockerIntroIEEE}
+
+
 	\section{Docker im Vergleich zu anderen Containerlösungen}
   % Optional?
 \chapter{Security im Docker-Ökosystem}
@@ -404,6 +441,13 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
   		\subsection{Kubernetes}
         % neueres Cluster-Management Tool von Google
         % Hat Relevanz fuer Herr Fahner/Daimler
+
+        Ein Hauptfeature von Containern ist deren flexibler Einsatz in Anwendungsclustern, die eine Multi-Tier-Anwendung / Multi-Tenant-Architektur abbilden.
+        Im Juni 2014 hat Google das Open-Source Tool \emph{Kubernetes} angekündigt, das Cluster mit Docker-Containern verwalten soll. Laut Google ist Kubernetes die Entkopplung von Anwendungscontainern von Details des Hosts.
+        Soll in Datencentern die Arbeit mit Containern vereinfachen.
+        % Brint angeblich tolles Networking-Feature mit.
+
+        Neben einigen Startups, haben sich Google, Microsoft, VMware, IBM und Red Hat als \emph{Kubernetes}-Unterstützer geäußert.
 \chapter{Docker in Unternehmen/Clound-Infrastrukturen}
   % Wichtiges Kapitel für Daimler, mein Chef, Management
   % Kapitel, das erst angegangen wird, wenn min. Kapitel 1 steht (Januar 2016 oder später).
@@ -416,11 +460,44 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
   % selbst implementiert.
 
   % --> mir ist nich klar, was ich da untersuchen kann.
+
+  % Hypervisor-basierte Clouds:
+  % Amazon Web Services (AWS) nutzt XEN.
+  % Terremark, Savvis, Bluelock nutzen ESXi.
+  % AT&T, HP, Comcast, Orange nutzen KVM.
+  % Microsoft Azure und MS Private Cloud nutzen hauseigenen Hyper-V.
+  % Container-basierte CLouds:
+  % Google, IBM/Softlayer, Joyent (RECHERCHIEN: welche Containerplatform sie nutzen. Google glaube ich lmctfy)
+  % ^  \cite[S.2]{dockerLXCKub}
+
+  % formale Definitionen von "Cloud Computing" ...
+  % "bare metal cloud": Zuweisung von rein physikalischen Servern und Setups. Kein Overhead von Hypervisorn oder Containerization.
+  % ^  \cite[S.1]{dockerLXCKub}
+
+  % Containeranwedungen (Service Discovery Tools) wie HAProxy, Zookeeper, etcd und Consul können eingehende Verbindungen auf mehrere Webserver-Container verteilen --> flexibel und skalierbar. Komplizierte Anwendungen sind deswegen realisierbar.
+  % ^   \cite[S.4]{dockerIntroIEEE}
+
+  % Tools wie Docker Swarm und Kubernetes erlauben es, Docker-basierte Appliaktionsstacks auch auf mehreren physikalischen Hosts zu realisieren.
+  % Prototyp \emph{libswarm}, jetzt Docker Swarm.
+  % Auch für Skalierung, Autoskalierung und Redundanz sehr gut
+  % ^   \cite[S.4]{dockerIntroIEEE}
+
+  % Moegliche Kombinationen von VMs, OS, Container, Anwedungen sind in \cite[S.3]{dockerLXCKub}
+
+  % Evtl. mit in Ausblick mit rein:
+  % However, using containers for security isolation might not be a good idea. In an August 2013 blog, 4 one of Docker’s engineers expressed optimism that containers would eventually catch up to VMs from a security standpoint. But in a presentation given in January 2014, 5 the same engineer said that the only way to have real isolation with Docker is to either run one Docker per host, or one Docker per VM. If high security is needed, it might be worth sacrificing the performance of a pure-container deployment by introducing a VM to obtain more tried and true isolation. As with any other technology, you need to know the deployment’s security requirements, and make appropriate decisions.
+  % ^   \cite[S.3]{dockerLXCKub}
+
+
+
 \chapter{Fazit/Ausblick}
   % Wenig Angriffsvektoren auf Docker/Container bekannt. "Sichergehen" kann man nur mit Konzepten wie "Docker in VMs" und "VMs in Docker".
   % neuste Docker-Releases und deren Fokus (Enterprise,Production-Readiness,Security)
   % seit Juli 2015 ist standardisiertes Containerformat der big player in Arbeit
   % Ausblick im Kontext von Container VS. konventioneller Virtualisierung
+
+
+  Spekulation in der Industrie ist, dass sich Organisationen und Unternehmen zusammenschließen und sich auf eine neue, universale Lösung einigen, die die heutigen Fähigkeiten der sich ergänzenden Technologien Docker und Kubernetes, abdeckt \cite[S.4]{dockerLXCKub}.
 
 
 %\subsection{Subsektion blabla}
