@@ -1,0 +1,49 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\chapter{Security aus Linux Kernel-Features}
+\label{secLinux}
+  % namespaces/etc (was es ist) in Einleitung mit rein? 1.) Erklaeren, 2.) Security/Docker untersuchen dazu im Security Hauptteil
+  % 2 Unterkapitel, inhatliche Überschneidung evtl., Grund nennen warum so gegliedert, ...
+  % \cite[S.3]{dockerIntroIEEE} --> umgangsprachlich erkleart wie mit namespaces und cgroups gearbeitet wird
+	\section{Isolierung durch \texttt{namespaces}}
+  \label{secIsolierung}
+    % Isolierung erklären, erfüllt X Schutzziele, Bezug auf Forschungsfrage
+    % Es gibt 6 Namespaces, die im folgenden *anhand der verschiedenen Betriebssystemkomponenten?) untersucht werden.
+		\subsection{Prozessisolierung (process namepsace)}
+    \subsection{Dateisystemisolierung (filesystem namespace)}
+    \subsection{Geräteisolierung (device namespace)}
+    \subsection{IPC-Isolierung (ipc namespace)}
+    \subsection{UTS-Isolierung (uts namespace)}
+    \subsection{Netzwerkisolierung (network namespace)}
+    \subsection{Userisolierung (user namespace)}
+      % \texttt{user namespaces} ist Future implementation, da neues Kernelfeature. Trotzdem Konzept erklären und wie Docker-Security davon profitiert.
+	\section{Ressourcenverwaltung / Limitierung von Ressourcen durch \texttt{control groups}}
+  \label{secResLimit}
+    % Sicherheitsziel: Availability, Bezug auf Forschungsfrage
+    % Ressourcenverteilung und -management
+    % Storage, CPU, HDD, RAM, IO, Network
+
+    % network namespace:
+    % Standardmäßig werden für Container keine Ports geöffnet. Manche Applikationen machen jedoch nur Sinn, wenn sie Ports nutzen können, daher können diese manuell in dem Dockerfile (INTERNE REFERENZ) freigegeben werden.
+    % Container werden virtuelle Netzwerkinterfaces zur Verfügung gestellt. Dadurch können z.B. mehrere Container betrieben werden, die Webserver beinhalten, die alle auf Port 80 eingestellt sind. Außerhalb der Container können diese Containerports mithilfe von NAT (sicher NAT?) auf unterschiedliche Ports des Hosts abgebildet werden.
+    % ^ \cite[S.3]{dockerIntroIEEE}
+
+  \section{Einschränkungen von Zugriffsrechten}
+    \subsection{\texttt{capabilities}}
+      \subsubsection{Beispiele, \texttt{/proc}-Verzeichnis, (Un-)Mounten des Host-Filesystems}
+      % Gehört das unter 'capabilities'? Oder eigener Punkt bzw. woanders dazu? --> Eher Mount namespace --> Isolierung
+      % Einschränkung in libcontainer vorgennnomenn? --> check github libcontainer repo.
+
+    \subsection{Linux Security Module (LSM) und Mandatory Access Control (MAC)}
+      % Herausfinden, ob das wirklich Unterkapitel von "Isolierung" wird. Evtl. getrennt davon listen.
+  		\subsubsection{SELinux}
+      % Macht Sinn das erst am Ende zu machen, wenn noch Zeit ist. Weil SELinux im Detail mehr Exkurs wird.
+      \subsubsection{AppArmor}
+      % Optional, da auf MAC alzu sehr eingehen nicht zu sehr im Scope sein sollte.
+      \subsubsection{Seccomp}
+
+	\section{Docker im Vergleich zu anderen Containerlösungen}
+  % Optional?
+
+\end{document}

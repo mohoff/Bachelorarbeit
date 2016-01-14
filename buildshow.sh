@@ -13,8 +13,7 @@ if [ $# -eq 0 ]
 fi
 
 # Check for mandatory packages to build pdf.
-# To reduce set of packages, 'texlive' is asked instead of 'texlive-base'.
-NEEDED="texlive texlive-lang-german texlive-bibtex-extra"
+NEEDED="texlive texlive-lang-german texlive-bibtex-extra texlive-latex-extra texlive-generic-extra"
 printf "\n"
 for pkg in $NEEDED; do
   if dpkg --get-selections | grep -q "^$pkg[[:space:]]*install$" >/dev/null; then
@@ -34,11 +33,15 @@ printf "\n"
 file="$1"
 filename="${file%%.*}"
 
+# Clear directory
+mv -f *.log *.aux *.bbl *.blg *.lof *.lot *.toc *.out *.glo *.glg *.gls *.glsdefs *.ist output/
+
 # Proper order for building latex sources with bibtex extra.
 # Show output of last build only.
 #{
   pdflatex "$filename"
   bibtex "$filename"
+  makeglossaries "$filename"
   pdflatex "$filename"
 #} &> /dev/null
 pdflatex "$filename"
@@ -46,7 +49,7 @@ printf "\n"
 
 # Move all output files in an output directory. Keep copy of output pdf.
 mkdir -p output
-mv *.log *.aux *.bbl *.blg *.lof *.lot *.toc output/
+mv -f *.log *.aux *.bbl *.blg *.lof *.lot *.toc *.out *.glo *.glg *.gls *.glsdefs *.ist output/
 cp "$filename".pdf output/
 
 # Open output pdf with system's default pdf viewer.

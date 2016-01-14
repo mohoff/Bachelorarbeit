@@ -1,0 +1,45 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\chapter{Docker in Unternehmen/Clound-Infrastrukturen}
+\label{secInfrastructure}
+  % Wichtiges Kapitel für Daimler, mein Chef, Management
+  % Kapitel, das erst angegangen wird, wenn min. Kapitel 1 steht (Januar 2016 oder später).
+
+  % ???: Transscript aus Besprechung mit Herr Fahner und Patrick:
+  % Welche Security-Features uebernimmt die Cloud, welche muss Docker gewaehrleisten. Was
+  % bieten MS Azure/Amazon's AWS/etc fuer Mechanismen an?
+  % Welche Möglichkeiten zur sicheren Docker-Integration bieten diese?
+  % Wortlaut Patrick: Wie funktionierts bei Azure, wie funktionierts wenn man es
+  % selbst implementiert.
+
+  % --> mir ist nich klar, was ich da untersuchen kann.
+
+  % Hypervisor-basierte Clouds:
+  % Amazon Web Services (AWS) nutzt XEN.
+  % Terremark, Savvis, Bluelock nutzen ESXi.
+  % AT&T, HP, Comcast, Orange nutzen KVM.
+  % Microsoft Azure und MS Private Cloud nutzen hauseigenen Hyper-V.
+  % Container-basierte CLouds:
+  % Google, IBM/Softlayer, Joyent (RECHERCHIEN: welche Containerplatform sie nutzen. Google glaube ich lmctfy)
+  % ^  \cite[S.2]{dockerLXCKub}
+
+  % formale Definitionen von "Cloud Computing" ...
+  % "bare metal cloud": Zuweisung von rein physikalischen Servern und Setups. Kein Overhead von Hypervisorn oder Containerization.
+  % ^  \cite[S.1]{dockerLXCKub}
+
+  % Containeranwedungen (Service Discovery Tools) wie HAProxy, Zookeeper, etcd und Consul können eingehende Verbindungen auf mehrere Webserver-Container verteilen --> flexibel und skalierbar. Komplizierte Anwendungen sind deswegen realisierbar.
+  % ^   \cite[S.4]{dockerIntroIEEE}
+
+  % Tools wie Docker Swarm und Kubernetes erlauben es, Docker-basierte Appliaktionsstacks auch auf mehreren physikalischen Hosts zu realisieren.
+  % Prototyp \emph{libswarm}, jetzt Docker Swarm.
+  % Auch für Skalierung, Autoskalierung und Redundanz sehr gut
+  % ^   \cite[S.4]{dockerIntroIEEE}
+
+  % Moegliche Kombinationen von VMs, OS, Container, Anwedungen sind in \cite[S.3]{dockerLXCKub}
+
+  % Evtl. mit in Ausblick mit rein:
+  % However, using containers for security isolation might not be a good idea. In an August 2013 blog, 4 one of Docker’s engineers expressed optimism that containers would eventually catch up to VMs from a security standpoint. But in a presentation given in January 2014, 5 the same engineer said that the only way to have real isolation with Docker is to either run one Docker per host, or one Docker per VM. If high security is needed, it might be worth sacrificing the performance of a pure-container deployment by introducing a VM to obtain more tried and true isolation. As with any other technology, you need to know the deployment’s security requirements, and make appropriate decisions.
+  % ^   \cite[S.3]{dockerLXCKub}
+
+\end{document}

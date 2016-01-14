@@ -1,0 +1,50 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\chapter{Security im Docker-Ökosystem}
+\label{secEcosysstem}
+  % ### Hier mit Patrick weitermachen ###
+  % Je nach Vorankommen, können hier ganze Sektions weggelassen werden imo.
+  % Tendenziell mehr die Themen zuerst, die direkt mit Security zu tun haben.
+  % Auch Fokus auf die neusten Entwicklungen (2015 und 2016) in Sachen Sicherheit und neue Docker-Features
+  \section{Docker Images und Registries}
+    % Siehe /cite{slideshareDockercon15}, slide 51
+		\subsection{neues Signierungs-Feature}
+	\section{Docker Daemon}
+		\subsection{REST-API}
+		\subsection{Support von Zertifikaten}
+  \section{Containerprozesse}
+    % offenbar gibts Probleme mit PID=0, da dieser Besonderheiten aufweist (siehe Hackernews Link)
+	\section{Docker Cache}
+	\section{\texttt{privileged} Container}
+	\section{Networking}
+		\subsection{\texttt{bridge} Netzwerk}
+		\subsection{\texttt{overlay} Netzwerk}
+		\subsection{DNS}
+		\subsection{Portmapping}
+	\section{Daten-Container}
+	\section{Docker mit VMs}
+  \section{Sicherheitskontrollen für Docker}
+    % Gibt auf Github Skripte, die einige Docker-Parameter/Einstellungen prüfen (Links iwo in den Bookmarks)
+	\section{Tools rund um Docker}
+    % Oder Aufteilung in DevOops Tools (Puppet, Ansible, Vagrant) und Orchestrierungstools (Mesos, Shipyard, Kubernetes)
+    % Diese Tools bieten eine weitere Abstraktionsschicht für den Betrieb von Docker-Containern.
+
+    \subsection{Docker-Erweiterungen}
+      \subsubsection{Docker Swarm}
+      \subsubsection{Docker Compose}
+      \subsubsection{Nautilus Project}
+    \subsection{Third-Party Tools}
+  		\subsection{Vagrant}
+  		\subsection{Kubernetes}
+        % neueres Cluster-Management Tool von Google
+        % Hat Relevanz fuer Herr Fahner/Daimler
+
+        Ein Hauptfeature von Containern ist deren flexibler Einsatz in Anwendungsclustern, die eine Multi-Tier-Anwendung / Multi-Tenant-Architektur abbilden.
+        Im Juni 2014 hat Google das Open-Source Tool \emph{Kubernetes} angekündigt, das Cluster mit Docker-Containern verwalten soll. Laut Google ist Kubernetes die Entkopplung von Anwendungscontainern von Details des Hosts.
+        Soll in Datencentern die Arbeit mit Containern vereinfachen.
+        % Brint angeblich tolles Networking-Feature mit.
+
+        Neben einigen Startups, haben sich Google, Microsoft, VMware, IBM und Red Hat als \emph{Kubernetes}-Unterstützer geäußert.
+
+\end{document}

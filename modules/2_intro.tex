@@ -1,151 +1,8 @@
-\documentclass[11pt,a4paper,oneside]{report}
-\usepackage[ngerman]{babel}
-% \usepackage{url} or
-\usepackage[utf8]{inputenc} % Displays German 'Umlaute' correctly. Also some workaround, see Bibliography Management#BibTeX in wikibooks
-\usepackage{graphicx}
-%\usepackage{titlesec}
-\usepackage{hyperref}
-\usepackage{chngcntr}
-
-\setcounter{secnumdepth}{3}
-\setcounter{tocdepth}{5}
-
-% Enables consecutive figure and table numbering, independent of chapter count
-\counterwithout{figure}{chapter}
-\counterwithout{table}{chapter}
-
-\addto{\captionsngerman}{\renewcommand*{\abstractname}{Abstract}}
-%\renewcommand{\abstractname}{Abstract}
-
-\newcommand{\bibtexFilename}{draft} % written without extension
-\newcommand{\thema}{Sicherheitsbetrachtungen von Applikations-Containersystemen in Cloud-Infrastukturen am Beispiel Docker}
-\newcommand{\fig}{Abb.}
-\newcommand*{\signatureAndDate}{
-    \par\noindent\makebox[2.5in]{\hrulefill} \hfill\makebox[2.0in]{\hrulefill}%
-    \par\noindent\makebox[2.5in][l]{Unterschrift}      \hfill\makebox[2.0in][l]{Datum}%
-}
-
+\documentclass[../main.tex]{subfiles}
 \begin{document}
-\pagenumbering{gobble} % No page numbers
 
-\begin{titlepage}
-	\centering
-	% \includegraphics[width=0.15\textwidth]{example-image-1x1}\par\vspace{1cm}
-	{\scshape\LARGE
-		Hochschule der Medien
-	\par}
-	\vspace{1cm}
-	{\scshape\Large
-		Bachelorarbeit
-	\par}
-	\vspace{1.5cm}
-	{\huge\bfseries
-		\thema
-	\par}
-	\vspace{2cm}
-	{\Large\itshape
-		Moritz Hoffmann
-	\par}
-	\vspace{0.5cm}
-	{\Large
-		Studiengang: Mobile Medien\\
-		Matrikelnummer: 26135\\
-		E-Mail: \texttt{mh203@hdm-stuttgart.de}
-	\par}
-	\vspace{1.5cm}
-	{\Large Dezember 2015\par}
-	% Bottom of the page
-	\vfill
-	{\Large
-		\emph{Erstbetreuer:}\hfill\emph{Zweitbetreuer:}\\
-		Prof. Dr. Joachim Charzinski\hfill Patrick Fröger\\
-		Hochschule der Medien\hfill ITI/GN, Daimler AG
-	\par}
-
-\end{titlepage}
-
-
-\title{\thema}
-\author{Moritz Hoffmann\\
-  Studiengang Mobile Medien,\\
-  Hochschule der Medien\\
-  \texttt{mh203@hdm-stuttgart.de}}
-\date{Dezember 2015}
-% \date{\today}
-\maketitle
-
-%\pagenumbering{roman}
-
-\chapter*{Eidesstattliche Erklärung}
-\emph{„Hiermit versichere ich, Moritz Hoffmann, ehrenwörtlich, dass ich die vorliegende Bachelorarbeit mit dem Titel: „\thema“ selbstständig und ohne fremde Hilfe verfasst und keine anderen als die angegebenen Hilfsmittel benutzt habe. Die Stellen der Arbeit, die dem Wortlaut oder dem Sinn nach anderen Werken entnommen wurden, sind in jedem Fall unter Angabe der Quelle kenntlich gemacht. Die Arbeit ist noch nicht veröffentlicht oder in anderer Form als Prüfungsleistung vorgelegt worden. Ich habe die Bedeutung der ehrenwörtlichen Versicherung und die prüfungsrechtlichen Folgen (§26 Abs. 2 Bachelor-SPO (6 Semester), § 24 Abs. 2 Bachelor-SPO (7 Semester), § 23 Abs. 2 Master-SPO (3 Semester) bzw. § 19 Abs. 2 Master-SPO (4 Semester und berufsbegleitend) der HdM) einer unrichtigen oder unvollständigen ehrenwörtlichen Versicherung zur Kenntnis genommen.“
-}
-\vspace{1.5cm}
-\signatureAndDate
-\newpage
-
-
-% Abstract
-\begin{abstract}
-\noindent\emph{English version:}\newline\newline
-\noindent
-....\\
-..\\
-
-\vspace{1cm}
-\noindent\emph{Deutsche Version:}\newline\newline
-\noindent
-....\\
-...\\
-.\\
-..\\
-
-\end{abstract}
-
-% Table of Contents
-\tableofcontents
-
-% Abbildungsverzeichnis
-\listoffigures
-
-% Tabellenverzeichnis
-\listoftables
-
-% \linespread{1.3}            % 1.5x line spacing
-% \linespread{1.6}            % Double line spacing
-% \hfill test                 % insert horizontal stretched space
-% \vfill test                 % insert vertical stretched space
-% ,,German quotation marks``  % deutsche Anfuehrungszeichen
-
-% this is a comment
-Hallo %\cite{myquote1}
-One more line %\cite[S.2]{myquote1,myquote2}
-jooooo \cite{presContainerDockerSec}
-
-\begin{figure}[h] % with [p], images is displayed on own page
-    \centering
-    \includegraphics[width=1.0\textwidth]{./images/image.jpg}
-    \caption{Awesome Image}
-    \label{fig:awesome_image}
-\end{figure}
-
-lkasjdflkj asldkjf lasjkdflkadsjf ladksjflkjslkdjf    dslfjklaks df a sdfjaldsfj  ladksjf lkjlakjsd f asdf aljsdflkjasldfjalsdfj l adskjflj d f dslkfjalksdjf sd fljsdfkjsld f
-
-\emph{dieser text ist kursiv}
-
-asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladskj a ldksfjll aldkfj lkj afsdlfkjl alsdkf jaldskfj la sdflaldsflas df sadfl sf
-
-\texttt{das hier ist monotype}
-
-% TODO: reformat chapter style with package titlesec
-%\titleformat{\section}
-%{\filcenter\normalfont\Large\bfseries}
-%{\chaptertitlename~\thechapter} {0.5em} {}
-
-
-
-% GLIEDERUNG
-\chapter{Überblick}
-\pagenumbering{arabic}
+\chapter{Einführung}
+\label{intro}
   % Container als leichtgewichtige Virtualisierung
   Virtualisierte Komponenten nutzen im Vergleich zu nativ (physisch) eingesetzten Komponenten eine zusätzliche Softwareschicht, die den virtualisierten Komponenten, üblicherweise als virtuelle Maschinen (VMs) bezeichnet, mehrere Abstraktionen anbietet, um Funktionen des Gastsystems zu nutzen \cite[S.2]{containerVirtPerformance}.
 
@@ -156,31 +13,32 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
 
 
   Virtualisierungstechnologien sind in den letzten Jahren sehr beliebt geworden. Einige Softwarelösungen wie Xen, VMware und KVM (QUELLEN) sowie Hardwaresupport von handelsüblichen Prozessoren (QUELLEN, siehe containerVirtPerformance) haben sich auf dem Markt etabliert.
-  Die Vorteile von Virtualisierung sind Hardwareunabhängigkeit, Verfügbarkeit, Isolierung und Sicherheit, welche die Erfolgsgrundlage der Virtualisierung in Cloud-Infrastrukturen bilden.
-  \cite[S.1]{containerVirtPerformance}
+  Die Vorteile von Virtualisierung sind Hardwareunabhängigkeit, Verfügbarkeit, Isolierung und Sicherheit, welche die Erfolgsgrundlage der Virtualisierung in Cloud-Infrastrukturen bilden \cite[S.1]{containerVirtPerformance}. Vor allem in Rechenzentren bieten sich Virtualisierungen an, um die Serverressourcen effizienter zu nutzen \cite[S.1]{dockerSec1}.
+
+  Letztendlich haben es Virtualisierungen ermöglicht, Serverressourcen in der Form von \glspl{Cloud} wie z.B. den \emph{Amazon Web Services} auf Basis eines Subskriptionsmodells nutzen zu können \cite{amazonWebServices}\cite[S.1]{dockerSec1}.
 
   Trotz ein paar intrinsischen Schwächen von Containerlösungen, werden Container bereits in einer Vielzahl von Szenarien eingesetzt \cite[S.6]{dockerBook}.
 
   Container sind in Infrastrukturen, in denen es auf Skalierbarkeit ankommt, trotz Sicherheitsbedenken beliebt. Vor allem "Multi-Tenant" Services werden gerne mit Docker eingesetzt.
 
-  \section{Struktur dieser Arbeit}
-    % Ist das die richtige Stelle für die Struktur? Oder besser als Punkt 1.1 direkt unter "Überblick"?
-
-	\section{Arten von Virtualisierungen}
+	\section{Virtualisierung}
     % AUCH: Vergleich von Virtualisierungsarten
     \subsection{Hypervisor-basierte Virtualisierung}
-      Bei Hypervisor-basierten Systemen laufen unabhängig voneinander eine oder mehrere Maschinen virtuell auf physischer Hardware (in der englischen Literatur auch "bare metal" genannt). Der Hypervisor, der auch \emph{Virtual Machine Monitor} (\emph{VMM}) genannt wird \cite[S.2]{containerVirtPerformance}, nimmt dabei die Rolle eines Vermittlers zwischen Host-OS und Gast-OS ein \cite[S.6]{dockerBook} und abstrahiert dem Gast, also einer VM, die Funktionen des Hosts.
+      Bei Hypervisor-basierten Systemen laufen unabhängig voneinander eine oder mehrere Maschinen virtuell auf physischer Hardware (in der englischen Literatur auch "bare metal" genannt). Der Hypervisor, der auch \emph{Virtual Machine Monitor} (\emph{VMM}) genannt wird \cite[S.2]{containerVirtPerformance}, nimmt dabei die Rolle eines Vermittlers zwischen Host-OS und Gast-OS ein \cite[S.6]{dockerBook} und abstrahiert dem Gast das komplette Funktionsset des Hosts. \cite[S.2]{dockerSec1}.
 
       Durch diese Technik läuft in jeder VM ein eigenes Betriebssystem, das von solchen anderer VMs komplett isoliert läuft. Durch die Abstraktion des zwischenliegenden Hypervisors ist es möglich, mehrere unterschiedliche Betriebssysteme auf einem physikalischen Host auszuführen \cite[S.2]{containerVirtPerformance}.
 
       Der größte Kritikpunkt dieser Art von Virtualisierung ist deren hoher Bedarf an Hostressourcen, da diese für jede gestartete VM komplett virtualisiert werden müssen, sodass innerhalb der VM ein Gast-OS ausgeführt werden kann \cite[S.1]{dockerIntroIEEE}\cite[S.3]{dockerLXCKub}.
+
+      Hypervisor werden unter sich in solche von Typ 1 und Typ 2 unterschieden. Vertreter von Typ 1 sind \emph{Xen} und \emph{VMware ESX}, die direkt auf der Hardware des Hosts operieren.
+      Typ 2 Hypervisor umfassen Technologien wie \emph{KVM}, \emph{VMware Workstation} und \emph{VirtualBox} und arbeiten nicht auf der Hardware, sondern auf einem Host-OS \cite[S.2]{dockerSec1} (MEHR QUELLEN).
 
       Bekannte Vertreter von Hypervisorn sind die kommerziellen \emph{ESXI} von VMware und \emph{Hyper-V} von Mircosoft, sowie die Open-Source Hypervisor \emph{Xen} und \emph{KVM} (QUELLEN, u.a. \cite[S.1]{dockerLXCKub}).
 
     \subsection{Container-basierte Virtualisierung}
       (Benötigt keine Emulations- oder Hypervisorschicht \cite[S.7]{dockerBook}.)
 
-      Container-basierte Virtualisierung ist eine leichtgewichtige Alternative zu Hypervisor-basierten Virtualisierungen \cite[S.2]{containerVirtPerformance}.
+      Container-basierte Virtualisierung ist eine leichtgewichtige Alternative zu Hypervisor-basierten Virtualisierungen \cite[S.2]{containerVirtPerformance}, die den Hostkernel nutzt, um virtuelle Umgebungen zu schaffen. Die virtuellen Umgebungen werden als Container bezeichnet \cite[S.1]{dockerSec1}.
 
       Container sind durch den Unix-Befehl \emph{chroot} inspriert, der schon seit 1979 im Linux-Kernel integriert ist. In \emph{FreeBSD} wurde eine erweiterte Variante von \emph{chroot} verwendet, um \emph{Jails} (FreeBSD-spezifischer Begriff) umzusetzen. In Solaris wurde dieser Mechanismus in Form von \emph{Zones} (Solaris-spezifischer Begriff) weiter verbessert und es etablierte sich der Name \emph{Container}, als weitere proprietäre Lösungen von HP und IBM zur selben Zeit auf dem Markt erschienen \cite[S.2]{dockerLXCKub}.
 
@@ -190,11 +48,11 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
 
       Sowohl Hypervisor-gestützte VMs als auch Container erwecken aus Sicht des Gasts den Eindruck, dass ein alleinstehendes Betriebssystem ausgeführt wird (QUELLE: “OpenVZ,” 2012. [Online]. Available: http://www.openvz.org). Um diese Illusion zu schaffen, wird jedoch wie beschrieben jeweils ein anderer Ansatz eingesetzt.
 
-      Das Containern zugrunde liegende Feature der Isolation wird in der Regel mit \emph{namespaces}, einem Feature des Kernels, realisiert. Die Verteilung und das Management der Hostressourcen wird mit \emph{control groups} umgesetzt (QUELLE?). Beide Techniken werden den Kapiteln \hyperref[secNamespaces]{\glqq{}Namespaces\grqq{}} und \hyperref[secCgroups]{\glqq{}Control Groups\grqq{}} genauer betrachtet.
+      Das Containern zugrunde liegende Feature der Isolation wird in der Regel mit \emph{namespaces}, einem Feature des Kernels, realisiert. Die Verteilung und das Management der Hostressourcen wird mit \emph{control groups} umgesetzt (QUELLE?). Beide Techniken werden den Kapiteln \hyperref[secIsolierung]{\glqq{}Namespaces\grqq{}} und \hyperref[secResLimit]{\glqq{}Control Groups\grqq{}} genauer betrachtet.
 
       % Grafik für Container-based und Hypervisor-based Virtualization und deren Schichten (einmal mit, einmal ohne Hypervisor)
 
-      Containerlösungen umfassen die Technologien \emph{OpenVZ}, \emph{Solaris Zones}, sowie Linux-Container wie \emph{Linux VServer}, \emph{LXC} \cite[S.7]{dockerBook}\cite[S.1]{containerVirtPerformance} und \emph{Docker}, welches im Fokus dieser Arbeit steht.
+      Containerlösungen umfassen die Technologien \emph{OpenVZ}, \emph{Solaris Zones}, sowie Linux-Container wie \emph{Linux VServer}, \emph{Linux Container} (\emph{LXC}) \cite[S.7]{dockerBook}\cite[S.1]{containerVirtPerformance} und \emph{Docker}, welches im Fokus dieser Arbeit steht.
 
       Moderne Container können als vollwertige Systeme betrachtet werden, nicht mehr als ursprünglich vorgesehen, reine Ausführungsumgebungen \cite[S.7]{dockerBook}.
 
@@ -217,6 +75,15 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
       Docker nutzt moderne Linux-Kernelfeatures, wie z.b. \emph{control groups} und \emph{namespaces}, um ein Resourcenmanagement zwischen Containern und eine effektive Isolierung der Container vom Hostsystem zu realisieren \cite[S.7]{dockerBook}.
 
       Docker ist wie in KAPITEL-ZUVOR angedeutet, nicht die erste containerbasierte Virtualisierungslösung. Einige ältere Containersysteme, wie z.B. \emph{Solaris Zones}, gibt es schon viel länger als Docker, aber wurden allerdings nie von der Industrie als Lösung akzeptiert. Worauf beruht also der Erfolg von Docker in den letzten Jahren? Dieser Frage werde ich im folgenden Kapitel nachgehen.
+  \section{Sicherheitsziele in der IT}
+    \subsection{Vertraulichkeit}
+    \subsection{Integrität}
+    \subsection{Verfügbarkeit}
+    \subsection{Authentizität}
+    \subsection{Authorisierung}
+      Ist das eigenes Sicherheitsziel? Quellen widersprechen sich.
+    \subsection{Privatheit, Anonymität}
+    \subsection{Verbindlichkeit}
   \section{Einführung in Docker}
   \label{dockerIntro}
     Docker ist eine unter der Apache 2.0 Lizenz veröffentlichte Open-Source Engine, die den Einsatz von Anwendungen in Containern automatisiert. Es ist überwiegend in der Programmiersprache \emph{Golang} von dem Unternehmen \emph{Docker, Inc.} (vormals \emph{dotCloud Inc.}), implementiert \cite{githubDocker}\cite[S.7]{dockerBook}.
@@ -329,7 +196,7 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
     \subsection{Registries}
       Eine Registry ist ein gehosteter Service, der Images in Repositories anbietet.
 
-      Docker stellt eine Vielzahl an Images öffentlich in einer eigenen Registry, dem Docker Hub \cite[S.11]{dockerBook}, zur Verfügung. Für dieses System kann jeder Nutzer einen Account anlegen und eigenständig Images hochladen. Das Docker-Hub bietet bereits mehr als 150.000 Repositories, die etwa 240.000 Nutzer zusammenstellten und hochluden, zur freien Verwendung an (Stand Juni 2015) \cite[S.16]{slideshareDockercon15}. Die Einträge im Hub können von Nutzern bewertet werden. Außerdem wird angezeigt, wie oft ein Image bereits über das Hub bezogen wurde.
+      Docker stellt eine Vielzahl an Images öffentlich in einer eigenen zentralen Registry, dem Docker Hub, zur Verfügung \cite[S.11]{dockerBook}\cite[S.3]{dockerSec1}. Für dieses System kann jeder Nutzer einen Account anlegen und eigenständig Images in öffentliche und private Repositories hochladen. Das Docker-Hub bietet bereits mehr als 150.000 Repositories, die etwa 240.000 Nutzer zusammenstellten und hochluden, zur freien Verwendung an (Stand Juni 2015) \cite[S.16]{slideshareDockercon15}. Die Einträge im Hub können von Nutzern bewertet werden. Außerdem wird angezeigt, wie oft ein Image bereits über das Hub bezogen wurde.
 
       Ein Repository besteht aus mindestens einem Image. Um Images in einem Repository voneinander zu unterscheiden, werden Images Tags zugewiesen, um beispielweise mehrere Versionen eines Images in einem Repository zu kennzeichnen. Die Images werden nach dem Schema \texttt{<repository>:<tag>} identifiziert. So gibt es z.B. im offiziellen Repository des Webservers \emph{Nginx} Images mit den Tags \texttt{latest}, \texttt{1}, \texttt{1.9} und \texttt{1.9.9} \cite{dockerhubNginx}. Wenn bei dem Download kein Tag angegeben ist, wie in Kapitel wird automatisch das aktuellste Image \texttt{latest} bezogen, wie es im \hyperref[dockerImages]{letzten Kapitel \glqq{}Images\grqq{}} praktiziert wurde.
 
@@ -351,14 +218,14 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
       % Bsp. Dockerfile (mit drin: envvar, export port, baseimage, maintainer, authoer, apt-get)
 
 
-    \subsection{Client und Server}
-      Docker selbst ist nach einem Client-Server-Modell aufgebaut: Ein Docker-Client kommuniziert mit einem Docker-Daemon, also ein Prozess der den Server abbildet. Beide Teile können auf einer Maschine oder einzeln auf unterschiedlichen Hosts laufen. Wie in \fig \ref{fig:intro_dockerArchitecture} zu sehen ist, sind auch mehrere Docker-Clients möglich.
+    \subsection{Docker Architektur}
+      Docker selbst ist nach einem Client-Server-Modell aufgebaut: Ein Docker-Client kommuniziert mit einem Docker-Daemon, also ein Prozess der den Server abbildet \cite{dockerUnderstandingDocker}. Beide Teile können auf einer Maschine oder einzeln auf unterschiedlichen Hosts laufen. Die Kommunikation zwischen Client und Daemon geschieht über eine RESTful API. Wie \fig \ref{fig:intro_dockerArchitecture} zeigt, ist es dadurch auch möglich Befehle eines oder mehrerer entfernter Clients über ein Netzwerk an den Daemon zu senden \cite{dockerSec1}.
       % in beiden Fällen wird eine RESTful API genutzt? Setzt das docker binary nur CLI-Kommandos in REST-API-Aufrufe um?
       % Docker-Binary \texttt{docker}
 
       \begin{figure}[h]
           \centering
-          \includegraphics[width=0.7\textwidth]{./images/intro_dockerArchitecture.jpg}
+          \includegraphics[width=0.7\textwidth]{./images/intro_dockerArchitecture1.jpg}
           \caption{Die Client-Server-Architektur von Docker \cite[S.10]{dockerBook}.}
           \label{fig:intro_dockerArchitecture}
       \end{figure}
@@ -366,152 +233,8 @@ asdfasdfasdfasdlkvalrkgjval  asdkfj  sldkfjlsdjfa adaher is kes ji lkaskdj ladsk
       % Kommunikation zwischen Client und Server via TCPIP oder Unix Sockets?
 
     \subsection{Containerformat \texttt{libcontainer}}
-      \texttt{libcontainer} ist ein natives Linux Containerformat, das sowohl Docker als auch die Containerplatform \emph{Linux Containers} (\emph{LXC}) verwendet.
+      \texttt{libcontainer} ist ein natives Linux Containerformat, das von dem Dockerteam entwickelt wurde und seit Version 0.9 das Format \emph{Linux Containers} (\emph{LXC}) ablöst \cite{dockerSec1}.
 
       % Seit XXX ist \texttt{libcontainer} das Standardformat für Docker.
-
-\chapter{Ziel der Arbeit/Forschungsfrage}
-  % Kommt man von Container auf Host-OS? Von Container auf anderen Container? ~etc.
-  % 5-6 Sicherheitsziele erwähnen. Mit Forschungsfrage in Bezug bringen --> später bei Isolierung und Ressourcenverwaltung wieder aufgreifen
-\chapter{Security aus Linux Kernel-Features}
-  % namespaces/etc (was es ist) in Einleitung mit rein? 1.) Erklaeren, 2.) Security/Docker untersuchen dazu im Security Hauptteil
-  % 2 Unterkapitel, inhatliche Überschneidung evtl., Grund nennen warum so gegliedert, ...
-  % \cite[S.3]{dockerIntroIEEE} --> umgangsprachlich erkleart wie mit namespaces und cgroups gearbeitet wird
-	\section{Isolierung}
-    % Isolierung erklären, erfüllt X Schutzziele, Bezug auf Forschungsfrage
-		\subsection{\texttt{namespaces}}
-    \label{secNamespaces}
-			\subsubsection{\texttt{user namespaces}}
-      % Future implementation, da sehr neu. Trotzdem Konzept erklären und wie Docker-Security davon profitiert.
-		\subsection{\texttt{capabilities}}
-			\subsubsection{Beispiele, \texttt{/proc}-Verzeichnis, (Un-)Mounten des Host-Filesystems}
-      % Gehört das unter 'capabilities'? Oder eigener Punkt bzw. woanders dazu?
-		\subsection{Mandatory Access Control (MAC)}
-      % Herausfinden, ob das wirklich Unterkapitel von "Isolierung" wird. Evtl. getrennt davon listen.
-			\subsubsection{Beispiel SELinux}
-      % Macht Sinn das erst am Ende zu machen, wenn noch Zeit ist. Weil SELinux im Detail mehr Exkurs wird.
-      \subsubsection{AppArmor}
-      % Optional, da auf MAC alzu sehr eingehen nicht zu sehr im Scope sein sollte.
-	\section{Ressourcenverwaltung}
-    % Sicherheitsziel: Availability, Bezug auf Forschungsfrage
-    % Ressourcenverteilung und -management
-    % Storage, CPU, HDD, RAM, IO, Network
-		\subsection{\texttt{cgroups}}
-    \label{secCgroups}
-
-    % network namespace:
-    % Standardmäßig werden für Container keine Ports geöffnet. Manche Applikationen machen jedoch nur Sinn, wenn sie Ports nutzen können, daher können diese manuell in dem Dockerfile (INTERNE REFERENZ) freigegeben werden.
-    % Container werden virtuelle Netzwerkinterfaces zur Verfügung gestellt. Dadurch können z.B. mehrere Container betrieben werden, die Webserver beinhalten, die alle auf Port 80 eingestellt sind. Außerhalb der Container können diese Containerports mithilfe von NAT (sicher NAT?) auf unterschiedliche Ports des Hosts abgebildet werden.
-    % ^ \cite[S.3]{dockerIntroIEEE}
-
-
-	\section{Docker im Vergleich zu anderen Containerlösungen}
-  % Optional?
-\chapter{Security im Docker-Ökosystem}
-  % ### Hier mit Patrick weitermachen ###
-  % Je nach Vorankommen, können hier ganze Sektions weggelassen werden imo.
-  % Tendenziell mehr die Themen zuerst, die direkt mit Security zu tun haben.
-  % Auch Fokus auf die neusten Entwicklungen (2015 und 2016) in Sachen Sicherheit und neue Docker-Features
-  \section{Docker Images und Registries}
-    % Siehe /cite{slideshareDockercon15}, slide 51
-		\subsection{neues Signierungs-Feature}
-	\section{Docker Daemon}
-		\subsection{REST-API}
-		\subsection{Support von Zertifikaten}
-  \section{Containerprozesse}
-    % offenbar gibts Probleme mit PID=0, da dieser Besonderheiten aufweist (siehe Hackernews Link)
-	\section{Docker Cache}
-	\section{\texttt{privileged} Container}
-	\section{Networking}
-		\subsection{\texttt{bridge} Netzwerk}
-		\subsection{\texttt{overlay} Netzwerk}
-		\subsection{DNS}
-		\subsection{Portmapping}
-	\section{Daten-Container}
-	\section{Docker mit VMs}
-  \section{Sicherheitskontrollen für Docker}
-    % Gibt auf Github Skripte, die einige Docker-Parameter/Einstellungen prüfen (Links iwo in den Bookmarks)
-	\section{Tools rund um Docker}
-    \subsection{Docker-Erweiterungen}
-      \subsubsection{Docker Swarm}
-      \subsubsection{Docker Compose}
-      \subsubsection{Nautilus Project}
-    \subsection{Third-Party Tools}
-  		\subsection{Vagrant}
-  		\subsection{Kubernetes}
-        % neueres Cluster-Management Tool von Google
-        % Hat Relevanz fuer Herr Fahner/Daimler
-
-        Ein Hauptfeature von Containern ist deren flexibler Einsatz in Anwendungsclustern, die eine Multi-Tier-Anwendung / Multi-Tenant-Architektur abbilden.
-        Im Juni 2014 hat Google das Open-Source Tool \emph{Kubernetes} angekündigt, das Cluster mit Docker-Containern verwalten soll. Laut Google ist Kubernetes die Entkopplung von Anwendungscontainern von Details des Hosts.
-        Soll in Datencentern die Arbeit mit Containern vereinfachen.
-        % Brint angeblich tolles Networking-Feature mit.
-
-        Neben einigen Startups, haben sich Google, Microsoft, VMware, IBM und Red Hat als \emph{Kubernetes}-Unterstützer geäußert.
-\chapter{Docker in Unternehmen/Clound-Infrastrukturen}
-  % Wichtiges Kapitel für Daimler, mein Chef, Management
-  % Kapitel, das erst angegangen wird, wenn min. Kapitel 1 steht (Januar 2016 oder später).
-
-  % ???: Transscript aus Besprechung mit Herr Fahner und Patrick:
-  % Welche Security-Features uebernimmt die Cloud, welche muss Docker gewaehrleisten. Was
-  % bieten MS Azure/Amazon's AWS/etc fuer Mechanismen an?
-  % Welche Möglichkeiten zur sicheren Docker-Integration bieten diese?
-  % Wortlaut Patrick: Wie funktionierts bei Azure, wie funktionierts wenn man es
-  % selbst implementiert.
-
-  % --> mir ist nich klar, was ich da untersuchen kann.
-
-  % Hypervisor-basierte Clouds:
-  % Amazon Web Services (AWS) nutzt XEN.
-  % Terremark, Savvis, Bluelock nutzen ESXi.
-  % AT&T, HP, Comcast, Orange nutzen KVM.
-  % Microsoft Azure und MS Private Cloud nutzen hauseigenen Hyper-V.
-  % Container-basierte CLouds:
-  % Google, IBM/Softlayer, Joyent (RECHERCHIEN: welche Containerplatform sie nutzen. Google glaube ich lmctfy)
-  % ^  \cite[S.2]{dockerLXCKub}
-
-  % formale Definitionen von "Cloud Computing" ...
-  % "bare metal cloud": Zuweisung von rein physikalischen Servern und Setups. Kein Overhead von Hypervisorn oder Containerization.
-  % ^  \cite[S.1]{dockerLXCKub}
-
-  % Containeranwedungen (Service Discovery Tools) wie HAProxy, Zookeeper, etcd und Consul können eingehende Verbindungen auf mehrere Webserver-Container verteilen --> flexibel und skalierbar. Komplizierte Anwendungen sind deswegen realisierbar.
-  % ^   \cite[S.4]{dockerIntroIEEE}
-
-  % Tools wie Docker Swarm und Kubernetes erlauben es, Docker-basierte Appliaktionsstacks auch auf mehreren physikalischen Hosts zu realisieren.
-  % Prototyp \emph{libswarm}, jetzt Docker Swarm.
-  % Auch für Skalierung, Autoskalierung und Redundanz sehr gut
-  % ^   \cite[S.4]{dockerIntroIEEE}
-
-  % Moegliche Kombinationen von VMs, OS, Container, Anwedungen sind in \cite[S.3]{dockerLXCKub}
-
-  % Evtl. mit in Ausblick mit rein:
-  % However, using containers for security isolation might not be a good idea. In an August 2013 blog, 4 one of Docker’s engineers expressed optimism that containers would eventually catch up to VMs from a security standpoint. But in a presentation given in January 2014, 5 the same engineer said that the only way to have real isolation with Docker is to either run one Docker per host, or one Docker per VM. If high security is needed, it might be worth sacrificing the performance of a pure-container deployment by introducing a VM to obtain more tried and true isolation. As with any other technology, you need to know the deployment’s security requirements, and make appropriate decisions.
-  % ^   \cite[S.3]{dockerLXCKub}
-
-
-
-\chapter{Fazit/Ausblick}
-  % Wenig Angriffsvektoren auf Docker/Container bekannt. "Sichergehen" kann man nur mit Konzepten wie "Docker in VMs" und "VMs in Docker".
-  % neuste Docker-Releases und deren Fokus (Enterprise,Production-Readiness,Security)
-  % seit Juli 2015 ist standardisiertes Containerformat der big player in Arbeit
-  % Ausblick im Kontext von Container VS. konventioneller Virtualisierung
-
-
-  Spekulation in der Industrie ist, dass sich Organisationen und Unternehmen zusammenschließen und sich auf eine neue, universale Lösung einigen, die die heutigen Fähigkeiten der sich ergänzenden Technologien Docker und Kubernetes, abdeckt \cite[S.4]{dockerLXCKub}.
-
-
-%\subsection{Subsektion blabla}
-%\subsubsection{Subsubsektion blablabla}
-%\paragraph{Paragraph soundso}
-%\subparagraph{SubParagraph soundso}
-
-% Anhang
-\appendix
-  % Falls benoetigt
-  % Evtl. beispielhafte Dockerfiles anzeigen
-
-% Bibliography
-\bibliographystyle{plain}
-\bibliography{\bibtexFilename} % specify name of bibfile
 
 \end{document}
