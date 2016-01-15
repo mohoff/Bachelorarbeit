@@ -1,6 +1,40 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
 
+% Allgemeines Kapitel "Sicherheitsuntersuchungen" mit Intro a la:
+
+% Lange Liste an Empfehlungen/best practices für Docker:
+%		- einige einfache, die automatisch von Docker erzwungen werden
+%		- einige nicht offensichtliche, die manuell aktiviert werden müssen
+%		- einige schwierige, die keine Kernel-Unterstützung haben
+%	^		\cite[S.10]{presContainerDockerSec}
+
+% Kleinere Angriffsoberfläche für Container durch minimal distros (alpine linux, buildroot, atomic?)
+%		- Und durch Tatsache, dass HW-Management komplett auf dem Host gemacht wird, nicht in den Containern
+%	^		\cite[S.16]{presContainerDockerSec}
+
+% Immutable Containers mit "docker run --read-only"
+%	^		\cite[S.17]{presContainerDockerSec}
+
+% Image Trusting: Imageersteller, Operator der Registry, Transport zwischen Client und Hub
+%	^		\cite[S.18]{presContainerDockerSec}
+
+% Security kommt oft mit Usability-Einbußen (was mit Ease of Use eine Stärke von Docker ist)
+%	^		\cite[S.26]{presContainerDockerSec}
+
+% Docker Security Zukunft>
+%	- noexec, nosuid für immutable containers
+%	- bessere GRSEC, PAX, LSM integration
+%	- user namespaces
+%	- bessere default seccomp profiles
+%	^		\cite[S.40]{presContainerDockerSec}
+
+% Zitat vllt mit in eine DockerSecurity Einleitung:
+% "A year ago, Docker and security was pretty horrible, six months ago it wasn't so bad, and now it's pretty usable."
+% von David Mortman at DEFCON (WELCHES JAHR IST NOCH WICHTIG)
+% a la.. "wir untersuchen was er meint, was sich verbessert hat etc."
+%	^		\cite[S.41]{presContainerDockerSec}
+
 \chapter{Security aus Linux Kernel-Features}
 \label{secLinux}
   % namespaces/etc (was es ist) in Einleitung mit rein? 1.) Erklaeren, 2.) Security/Docker untersuchen dazu im Security Hauptteil

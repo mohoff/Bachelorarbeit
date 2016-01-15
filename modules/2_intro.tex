@@ -23,17 +23,27 @@
 
 	\section{Virtualisierung}
     % AUCH: Vergleich von Virtualisierungsarten
-    \subsection{Hypervisor-basierte Virtualisierung}
-      Bei Hypervisor-basierten Systemen laufen unabhängig voneinander eine oder mehrere Maschinen virtuell auf physischer Hardware (in der englischen Literatur auch "bare metal" genannt). Der Hypervisor, der auch \emph{Virtual Machine Monitor} (\emph{VMM}) genannt wird \cite[S.2]{containerVirtPerformance}, nimmt dabei die Rolle eines Vermittlers zwischen Host-OS und Gast-OS ein \cite[S.6]{dockerBook} und abstrahiert dem Gast das komplette Funktionsset des Hosts. \cite[S.2]{dockerSec1}.
+    Bei der Virtualisierung werden ein oder mehrere virtuelle IT-Systeme auf einem physischen Computer betrieben. Mehrere solcher Computer können eine virtuelle Infrastruktur bilden, in der physische und virtuelle Maschinen gemeinsam verwaltet werden können.
 
-      Durch diese Technik läuft in jeder VM ein eigenes Betriebssystem, das von solchen anderer VMs komplett isoliert läuft. Durch die Abstraktion des zwischenliegenden Hypervisors ist es möglich, mehrere unterschiedliche Betriebssysteme auf einem physikalischen Host auszuführen \cite[S.2]{containerVirtPerformance}.
+    Der Einsatz von Virtualisierung bietet vielfältige Vorteile für IT-Unternehmen. Sie können Kosten für Hardwarebeschaffung, Strom und Klimatisierung einsparen, wenn die Computerressourcen effizienter genutzt werden. Durch die damit verbundene Zentralisierung und Konsolidierung können auch in der Administration Ausgaben reduziert werden  \cite[S.1]{bsiVirt}.
+
+    In diesem Kapitel wird nur die für diese Arbeit relevante Techniken der systembasierten Virtualisierung beschrieben, also solche, in denen Betriebssysteme ablaufen. Die Anwendungs-, Storage- oder Netzwerkvirtualisierung wird nicht behandelt.
+
+
+    \subsection{Hypervisor-basierte Virtualisierung}
+      Im Kontext von einer Hypervisor-basierten Virtualisierung, wird die virtuelle Umgebung eine virtuelle Maschine (VM) genannt. Die VMs enthalten jeweils eine Umgebung, die Abstraktionen eines sogenannten Hypervisors nutzt, um Hardwareressourcen des Hosts zu verwenden. Der Hypervisor, auch seltener \emph{Virtual Machine Monitor} (\emph{VMM}) genannt, ist Software, die zwischen einem Host und einem Gast (der VM) vermittelt \cite[S.6]{dockerBook}\cite[S.2]{containerVirtPerformance}\cite[S.2]{dockerSec1}.
+
+      % Auf dieser Art von Systemen laufen eine oder mehrere VMs unabhängig voneinander auf physischer Hardware (in der englischen Literatur auch "bare metal" genannt). Der Hypervisor, der auch \emph{Virtual Machine Monitor} (\emph{VMM}) genannt wird \cite[S.2]{containerVirtPerformance}, nimmt dabei die Rolle eines Vermittlers zwischen Host-OS und Gast-OS ein \cite[S.6]{dockerBook} und abstrahiert dem Gast das komplette Funktionsset des Hosts. \cite[S.2]{dockerSec1}.
+
+      Durch diese Technik läuft in jeder VM ein eigenes Betriebssystem, das von solchen anderer VMs komplett isoliert läuft. Durch die Abstraktion des zwischenliegenden Hypervisors ist es möglich, mehrere unterschiedliche Gastbetriebssysteme auf einem physikalischen Host auszuführen \cite[S.2]{containerVirtPerformance}.
 
       Der größte Kritikpunkt dieser Art von Virtualisierung ist deren hoher Bedarf an Hostressourcen, da diese für jede gestartete VM komplett virtualisiert werden müssen, sodass innerhalb der VM ein Gast-OS ausgeführt werden kann \cite[S.1]{dockerIntroIEEE}\cite[S.3]{dockerLXCKub}.
 
-      Hypervisor werden unter sich in solche von Typ 1 und Typ 2 unterschieden. Vertreter von Typ 1 sind \emph{Xen} und \emph{VMware ESX}, die direkt auf der Hardware des Hosts operieren.
-      Typ 2 Hypervisor umfassen Technologien wie \emph{KVM}, \emph{VMware Workstation} und \emph{VirtualBox} und arbeiten nicht auf der Hardware, sondern auf einem Host-OS \cite[S.2]{dockerSec1} (MEHR QUELLEN).
+      Hypervisortechnologien werden unter sich in solche von Typ 1 und Typ 2 unterschieden. Typ 1 Hypervisor operieren direkt auf der Hardware des Hosts, während Typ 2 auf einem Host-OS agiert, welches selbst direkt Hardware nutzt. Durch die Trennung von Hypervisor und Host-OS in der Architektur des Typs 2, ist dieser aus Sicht der Performance dem Typ 1 unterlegen \cite[S.2]{dockerSec1}.
+      %TODO: mehr Quellen
 
-      Bekannte Vertreter von Hypervisorn sind die kommerziellen \emph{ESXI} von VMware und \emph{Hyper-V} von Mircosoft, sowie die Open-Source Hypervisor \emph{Xen} und \emph{KVM} (QUELLEN, u.a. \cite[S.1]{dockerLXCKub}).
+      Bekannte Vertreter von Hypervisorn sind die kommerziellen \emph{ESXI} der Firma VMware und \emph{Hyper-V} von Mircosoft, sowie die Open-Source Hypervisor \emph{Xen} und \emph{KVM} \cite[S.1]{dockerLXCKub}.
+      %TODO: mehr Quellen
 
     \subsection{Container-basierte Virtualisierung}
       (Benötigt keine Emulations- oder Hypervisorschicht \cite[S.7]{dockerBook}.)

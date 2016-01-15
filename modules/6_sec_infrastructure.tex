@@ -42,4 +42,11 @@
   % However, using containers for security isolation might not be a good idea. In an August 2013 blog, 4 one of Docker’s engineers expressed optimism that containers would eventually catch up to VMs from a security standpoint. But in a presentation given in January 2014, 5 the same engineer said that the only way to have real isolation with Docker is to either run one Docker per host, or one Docker per VM. If high security is needed, it might be worth sacrificing the performance of a pure-container deployment by introducing a VM to obtain more tried and true isolation. As with any other technology, you need to know the deployment’s security requirements, and make appropriate decisions.
   % ^   \cite[S.3]{dockerLXCKub}
 
+  % Container + VM: wird "Defense in depth" genannt
+  % ^   \cite[S.14]{presContainerDockerSec}
+  % ^   \cite[S.33]{presContainerDockerSec} --> Details
+
+  % Geringes Organisationsrisiko, da zuverlässige Rollbacks immer gemacht werden können durch Dockerfiles, COW
+  % ^   \cite[S.35]{presContainerDockerSec}
+
 \end{document}
