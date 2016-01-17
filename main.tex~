@@ -7,7 +7,6 @@
 \usepackage{graphicx}
 %\usepackage{titlesec}
 \usepackage[parfill]{parskip}
-\usepackage{setspace}
 \usepackage{chngcntr} % Change counter (start numeric page numbering on first content page)
 \usepackage{glossaries} % Add parameter [toc] to include glossary in index page. Needs to be defined after package 'hyperref' so glossary occurances are linked.
 \makeglossaries % Generates (one or multiple) glossaries
