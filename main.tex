@@ -10,7 +10,14 @@
 \usepackage{setspace}
 \usepackage{chngcntr} % Change counter (start numeric page numbering on first content page)
 \usepackage{glossaries} % Add parameter [toc] to include glossary in index page. Needs to be defined after package 'hyperref' so glossary occurances are linked.
+
 \makeglossaries % Generates (one or multiple) glossaries
+
+% Add glossary entries
+\loadglsentries{./modules/glossary}
+%\input{./modules/glossary} % Adds wrong page references in glossary
+%\glsaddall                 % Adds wrong page references in glossary
+
 
 \onehalfspacing
 
@@ -54,12 +61,10 @@
     pdfkeywords={Docker, Sicherheit, Virtualisierung}
 }
 
-
-\subfile{./modules/glossary}
-
 % Content
 \begin{document}
-  \pagenumbering{gobble} % No page numbers on the first pages
+  % Seitennummerierung deaktivieren
+  \pagenumbering{gobble}
 
   % Deckblatt
   \subfile{./modules/cover}
@@ -79,11 +84,10 @@
   \listoftables
 
   % Struktur der Arbeit
-  \subfile{./modules/1_structure}
-  \pagenumbering{arabic}
+  \subfile{./modules/1_overview}    % Seitennummerierung startet hier (numerisch)
 
   % Einführung
-  \subfile{./modules/2_intro}
+  \subfile{./modules/2_basics}
 
   % Forschungsfrage
   \subfile{./modules/3_question}
@@ -101,7 +105,8 @@
   \subfile{./modules/7_result}
 
   % Glossar
-  \printglossary
+  %\printglossary
+  \printglossaries
 
   % Anhang (falls benötigt)
   \appendix
@@ -109,7 +114,7 @@
 
   % Quellenverzeichnis
   \bibliographystyle{plain}
-  \bibliography{\bibtexFile} % specify name of .bib file. Use of this is deprecated.
+  \bibliography{\bibtexFile} % Specify name of .bib file. Use of this is deprecated.
   % NOT DEPRACTED, BUT NOT WORKING :/
   %\addbibresource{\bibtexFilePath}
 \end{document}

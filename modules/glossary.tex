@@ -1,5 +1,5 @@
-\documentclass[../main.tex]{subfiles}
-\begin{document}
+%\documentclass[../main.tex]{subfiles}
+%\begin{document}
 % GLOSSARY ENTRIES %
 
 % Usage:
@@ -17,8 +17,22 @@
 \newglossaryentry{Cloud}
 {%
   name={Cloud},
-  description={blablabla}
+  description={Eine entfernte Rechnerinfrastruktur, die Dienste (Anwendungen, Plattformen, etc.) zur Nutzung bereitstellt.
+    \begin{itemize}
+      \item Private Cloud: Dienste werden aus Gründen der Sicherheit oder des Datenschutzes nur firmenintern für eigenen Mitarbeiter angeboten.
+      \item Public Cloud: Dienste sind öffentlich nutzbar.
+      \item Hybrid Cloud: Mischform aus einer privaten und öffentlichen Cloud. Manche Dienste werden nur firmenintern verwendet, andere auch von außerhalb des Firmennetzes.
+    \end{itemize}\cite{cloud}
+  }
+}
+
+\newglossaryentry{MultiTenantService}
+{%
+  name={Multi-Tenant-Service},
+  description={Eine Serveranwendungen, die mehrere Nutzer gleichzeitig verwenden. Jeder Nutzer kann nur auf seine eigenen Daten zugreifen und interferiert nicht mit anderen Nutzern. Auf dem Server kann die Anwendung, die dieses Prinzip umsetzt, in einer Instanz (ohne Redundanz) laufen \cite{multitenant}}
 }
 
 
-\end{document}
+
+
+%\end{document}

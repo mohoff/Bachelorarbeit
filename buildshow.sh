@@ -40,8 +40,9 @@ mv -f *.log *.aux *.bbl *.blg *.lof *.lot *.toc *.out *.glo *.glg *.gls *.glsdef
 # Show output of last build only.
 #{
   pdflatex "$filename"
-  bibtex "$filename"
   makeglossaries "$filename"
+  pdflatex "$filename"
+  bibtex "$filename"
   pdflatex "$filename"
 #} &> /dev/null
 pdflatex "$filename"

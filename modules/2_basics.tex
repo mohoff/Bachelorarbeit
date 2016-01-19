@@ -1,32 +1,16 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
 
-\chapter{Einführung}
-\label{intro}
-  % Container als leichtgewichtige Virtualisierung
-  Virtualisierte Komponenten nutzen im Vergleich zu nativ (physisch) eingesetzten Komponenten eine zusätzliche Softwareschicht, die den virtualisierten Komponenten, üblicherweise als virtuelle Maschinen (VMs) bezeichnet, mehrere Abstraktionen anbietet, um Funktionen des Gastsystems zu nutzen \cite[S.2]{containerVirtPerformance}.
-
-  Es existieren heutzutage mehrere Virtualisierungstechniken, wovon die Hypervisor-gestützen Methoden mit den Vertretern \emph{Xen}\cite{xen}, \emph{KVM}\cite{kvm}, \emph{VMware ESXi}\cite{vmwareESXi} und \emph{Hyper-V}\cite{hyperv} die meistverbreitesten sind \cite[S.2]{containerVirtPerformance}. Die zwei prominentesten Virtualisierungstechniken, Hypervisor-basierte (Sektion \ref{introVirtHypervisor}) und Container-basierte (Sektion \ref{introVirtContainer}) Virtualisierung, werden in diesem Kapitel gegenübergestellt.
-
-  % TODO: Beleg statista oder google trends
-  Virtualisierungstechnologien entwickelten sich in den letzten Jahren zu einem allgegenwärtigen Thema in der IT-Industrie.
-  % Einige Softwarelösungen wie Xen, VMware und KVM (QUELLEN) sowie Hardwaresupport von handelsüblichen Prozessoren (QUELLEN, siehe containerVirtPerformance) haben sich auf dem Markt etabliert.
-  Die Vorteile dieser Technologie umfassen Hardwareunabhängigkeit, Verfügbarkeit, Isolierung und Sicherheit, welche die Erfolgsgrundlage der Virtualisierung in heutigen Cloud-Infrastrukturen bilden \cite[S.1]{containerVirtPerformance}. Vor allem in Rechenzentren bieten sich Virtualisierungen an, um die Serverressourcen effizienter zu nutzen \cite[S.1]{dockerSec1}.
-  Letztendlich haben es Virtualisierungen ermöglicht, Serverressourcen in der Form von \glspl{Cloud} wie z.B. den \emph{Amazon Web Services}\cite{amazonWebServices} auf Basis eines Subskriptionsmodells nutzen zu können \cite[S.1]{dockerSec1}.
-
-  Mit dem Release von Docker im März 2013 \cite{githubDockerChangelog}, erlebte die containerbasierte Virtualisierung einen Aufschwung, obwohl sie schon einige Jahre zuvor in der Form von XXXX und XXXX existierte (QUELLEN,mehrere da mehrere Bsp). Wie Docker den bis 2013 vorherrschenden Ruf von Containertechnologien, dass Container noch nicht ausgereift seien \cite[S.8]{containerVirtPerformance}, nachhaltig verändern konnte, ist in der Einführung zu Docker in Kapitel \ref{dockerIntro} beschreiben.
-
-  Heute sind Container in vielen Szenarien, v.a. skalierbaren Infrastrukturen, trotz intrinsischer Sicherheitsschwächen gegenüber Hypervisor-gestützten Virtualisierungsarten beliebt \cite[S.6]{dockerBook}. Vor allem Multi-Tenant-Services werden gerne mit Docker umgesetzt (QUELLE?).
+\chapter{Grundlagen}
+\label{basics}
 
 	\section{Virtualisierung}
   \label{introVirt}
-    % AUCH: Vergleich von Virtualisierungsarten
     Bei der Virtualisierung werden ein oder mehrere virtuelle IT-Systeme auf einem physischen Computer betrieben. Mehrere solcher Computer können eine virtuelle Infrastruktur bilden, in der physische und virtuelle Maschinen gemeinsam verwaltet werden können.
 
+		Virtualisierte Komponenten nutzen im Vergleich zu nativen (physischen) Systemen eine zusätzliche Softwareschicht, die den virtualisierten Komponenten, üblicherweise als virtuelle Maschinen (VMs) oder Container bezeichnet, mehrere Abstraktionen anbietet, um Funktionen des Hosts zu nutzen \cite[S.2]{containerVirtPerformance}. Das Betriebssystem, das direkt auf der Hardware läuft, wird als Host bezeichnet. Solche, die virtualisiert auf dem Host laufen, werden als Gastsysteme bezeichnet.
+
     Der Einsatz von Virtualisierung bietet vielfältige Vorteile für IT-Unternehmen. Sie können Kosten für Hardwarebeschaffung, Strom und Klimatisierung einsparen, wenn die Computerressourcen effizienter genutzt werden. Durch die damit verbundene Zentralisierung und Konsolidierung können auch in der Administration Ausgaben reduziert werden  \cite[S.1]{bsiVirt}.
-
-    In diesem Kapitel wird nur die für diese Arbeit relevante Techniken der systembasierten Virtualisierung beschrieben, also solche, in denen Betriebssysteme ablaufen. Die Anwendungs-, Storage- oder Netzwerkvirtualisierung wird nicht behandelt.
-
 
     \subsection{Hypervisor-basierte Virtualisierung}
     \label{introVirtHypervisor}
@@ -48,7 +32,7 @@
     \label{introVirtContainer}
       (Benötigt keine Emulations- oder Hypervisorschicht \cite[S.7]{dockerBook}.)
 
-      Container-basierte Virtualisierung ist eine leichtgewichtige Alternative zu Hypervisor-basierten Virtualisierungen \cite[S.2]{containerVirtPerformance}, die den Hostkernel nutzt, um virtuelle Umgebungen zu schaffen. Die virtuellen Umgebungen werden als Container bezeichnet \cite[S.1]{dockerSec1}.
+      Container-basierte Virtualisierung wird vorrangig als leichtgewichtige Alternative zu Hypervisor-basierten Virtualisierungen gesehen\cite[S.2]{containerVirtPerformance}, die den Hostkernel nutzt, um virtuelle Umgebungen zu schaffen. Die virtuellen Umgebungen werden als Container bezeichnet \cite[S.1]{dockerSec1}.
 
       Container sind durch den Unix-Befehl \emph{chroot}\cite{chroot} inspriert, der schon seit 1979 im Linux-Kernel integriert ist. In \emph{FreeBSD} wurde eine erweiterte Variante von \emph{chroot} verwendet, um sogenannte \emph{Jails} (FreeBSD-spezifischer Begriff) umzusetzen \cite{jails}. In \emph{Solaris}, ein von der Firma \emph{Oracle} entwickeltes Betriebssystem für Servervirtualisierungen\cite{solaris}, wurde dieser Mechanismus in Form von \emph{Zones} (Solaris-spezifischer Begriff) \cite{zones} weiter verbessert und es etablierte sich der Name \emph{Container} als Überbegriff, als weitere proprietäre Lösungen von HP und IBM zur selben Zeit auf dem Markt erschienen \cite[S.2]{dockerLXCKub}.
 

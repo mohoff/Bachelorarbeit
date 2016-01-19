@@ -21,7 +21,7 @@
 *.mtc1
 *.out
 *.synctex.gz
-*.glsdefss
+*.glsdefs
 
 # Custom
 output/
