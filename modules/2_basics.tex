@@ -70,14 +70,31 @@
       %Der anhaltende Erfolg von Docker in den letzten Jahren muss also auf anderen Eigenschaften zurückzuführen sein.
   \section{Sicherheitsziele in der IT}
   \label{introSecGoals}
+		Folgende Sicherheitsziele können für \acrshort{IT}-Systeme definiert werden
+
+		% TODO: jeweils mit Quelle belegen. Es kommt auch noch Buch von Patrick
+		% https://tools.ietf.org/html/rfc1704
+		% https://tools.ietf.org/html/rfc3552
+		% S.26 patricks diplomarbeit
+		% https://tools.ietf.org/html/rfc2196
+
+		% Evtl. Unterschiedung in Kommunikationssicherheit und Systemsicherheit vornehmen
+
     \subsection{Vertraulichkeit}
+			Die Vertraulichkeit steht für das Konzept von Geheimhaltung. Durch verschiedene kryptographische Verschlüsslungsverfahren kann Klartext in eine unleserlichen Geheimtext transformiert werden, der keine Information über den ursprünglichen Klartext enthält und somit sicher gegenüber Abhöhrern ist.
     \subsection{Integrität}
+			Unter Integrität versteht man die Zusicherung, dass bestimmte Daten original sind und nachweisbar nicht manipuliert wurden. Integrität kann für Daten z.b. mit kryptographisch sicheren MACs hergestellt werden.
+		\subsection{Authentizität}
+			Authenzität beschreibt die Identifikation eines Objekts gegenüber einem System. Maßnahmen der Authenifikation sind z.B. Passwortabfragen, digitale Zertifikate oder biometrische Merkmale einer Person. Ist eine Authentifikation erfolgreich, ist die Echtheit des Objekts bestätigt.
     \subsection{Verfügbarkeit}
-    \subsection{Authentizität}
-    \subsection{Authorisierung}
-      Ist das eigenes Sicherheitsziel? Quellen widersprechen sich.
-    \subsection{Privatheit, Anonymität}
+			Die Verfügbarkeit bezeichnet die Eigenschaft eines Systems, Anfragen jederzeit zu verarbeiten und andere Systeme nicht negativ zu beeinflussen. Ein prominentes Beispiel eines Angriffs auf die Verfügbarkeit ist die \acrshort{DoS}-Attacke.
     \subsection{Verbindlichkeit}
+			Die Verbindlichkeit eines Systems sagt aus, dass jede Aktion eindeutig auf eine Ursache, also z.B. einen User, der die Aktion ausgeführt hat, zurückzuführen ist.
+		\subsection{Privatheit, Anonymität}
+			Die Anonymität als Schutzziel erfüllt i.d.R. Datenschutzbestimmungen, nach denen Nutzer nicht als Individuen identifiziert werden dürfen. Dieses Ziel hat keinen Bezug zur vorliegenden Arbeit, soll aber zur Vollständigkeit an dieser Stelle aufgeführt sein.
+    \subsection{Authorisierung}
+      \emph{Ist das eigenes Sicherheitsziel? Quellen widersprechen sich.}
+
   \section{Einführung in Docker}
   \label{dockerIntro}
     Docker ist eine unter der Apache 2.0 Lizenz veröffentlichte, quelloffene Engine, die den Einsatz von Anwendungen in Containern automatisiert. Sie ist überwiegend in der Programmiersprache \emph{Golang} implementiert und wurde seit ihrem ersten Release im März 2013 von dem von Solomon Hykes gegründeten Unternehmen \emph{Docker, Inc.}\cite{dockerHykes}, vormals \emph{dotCloud Inc.}, sowie mehr als 1.600 freiwillig mitwirkenden Entwicklern ständig weiterentwickelt. \cite{githubDocker}\cite[S.7]{dockerBook}\cite{githubDockerChangelog}\cite{dockerCompany}.
