@@ -6,10 +6,10 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 %\usepackage{titlesec}
-\usepackage[parfill]{parskip}
+\usepackage[parfill]{parskip} % Use an empty half line between two paragraphs (instead of line indent)
 \usepackage{setspace}
 \usepackage{chngcntr} % Change counter (start numeric page numbering on first content page)
-\usepackage{glossaries} % Add parameter [toc] to include glossary in index page. Needs to be defined after package 'hyperref' so glossary occurances are linked.
+\usepackage[acronym]{glossaries} % Add parameter [toc] to include glossary in index page. Needs to be defined after package 'hyperref' so glossary occurances are linked.
 
 \makeglossaries % Generates (one or multiple) glossaries
 
@@ -18,7 +18,10 @@
 %\input{./modules/glossary} % Adds wrong page references in glossary
 %\glsaddall                 % Adds wrong page references in glossary
 
+% Add acronym entries
+\include{./modules/acronyms}
 
+% Use 1.5x line spacing
 \onehalfspacing
 
 % Enables consecutive figure and table numbering, independent of chapter count
@@ -30,9 +33,10 @@
 % Maximum depth of numbered headlines
 \setcounter{secnumdepth}{3}
 
-% Rewrites name of abstract in German language to "Abstract"
+% Rewrites names of latex symbols
 \addto{\captionsngerman}{\renewcommand*{\abstractname}{Abstract}}
 %\renewcommand{\abstractname}{Abstract}
+\addto{\captionsngerman}{\renewcommand*{\acronymname}{Abkürzungsverzeichnis}}
 
 % Some global symbols and meta data
 \newcommand{\bibtexFile}{./modules/bibliography} % written without extension

@@ -4,7 +4,7 @@
 \chapter{Überblick}
 \label{overview}
 \pagenumbering{arabic}
-  Virtualisierung entwickelte sich in den letzten Jahren zu einem allgegenwärtigen Thema in der IT-Industrie. Unter ihr versteht man die Nachahmung und Abstraktion von physischen Resourcen, z.B. der CPU oder des Speichers, die in einem virtuellen Kontext von Softwareprogrammen genutzt wird.
+  Virtualisierung entwickelte sich in den letzten Jahren zu einem allgegenwärtigen Thema in der \acrshort{IT}-Industrie. Unter ihr versteht man die Nachahmung und Abstraktion von physischen Resourcen, z.B. der \acrshort{CPU} oder des Speichers, die in einem virtuellen Kontext von Softwareprogrammen genutzt wird.
 
   Die Vorteile von Virtualisierung umfassen Hardwareunabhängigkeit, Verfügbarkeit, Isolierung und Sicherheit, welche die Erfolgsgrundlage der Virtualisierung in heutigen \gls{Cloud}-Infrastrukturen bilden \cite[S.1]{containerVirtPerformance}. Vor allem in Rechenzentren bieten sich Virtualisierungen an, um die Serverressourcen effizienter zu nutzen \cite[S.1]{dockerSec1}. Letztendlich haben es Virtualisierungen ermöglicht, Serverressourcen in der Form von \glspl{Cloud} wie z.B. den \emph{Amazon Web Services}\cite{amazonWebServices} und auf Basis eines Subskriptionsmodells nutzen zu können \cite[S.1]{dockerSec1}.
 
@@ -25,7 +25,7 @@
   % https://www.airpair.com/docker/posts/8-proven-real-world-ways-to-use-docker#7-multi-tenancy
 
   \section{Struktur der Arbeit}
-    Zu Beginn wird im Grundlagenkapitel \ref{introVirt} die Virtualisierung beschrieben. Dabei werden die zwei prominentesten Virtualisierungstechniken, Hypervisor-basierte (Sektion \ref{introVirtHypervisor}) und Container-basierte (Sektion \ref{introVirtContainer}) Virtualisierung, gegenübergestellt. In diesem Kapitel werden nur die für diese Arbeit relevante Techniken der Systemvirtualisierung beschrieben, also solche, in denen Funktionen von kompletten Betriebssystemen abstrahiert werden. Die Anwendungs-, Storage- oder Netzwerkvirtualisierung wird nicht behandelt. Anschließend werden die allgemeinen Sicherheitsziele in der IT erklärt, auf die in der Untersuchung Bezug genommen wird. Abgeschlossen wird das Grundlagenkapitel mit einer Einführung in Docker, in der die Terminologie sowie Funktionsweise dieser Plattform erläutert wird.
+    Zu Beginn wird im Grundlagenkapitel \ref{introVirt} die Virtualisierung beschrieben. Dabei werden die zwei prominentesten Virtualisierungstechniken, Hypervisor-basierte (Sektion \ref{introVirtHypervisor}) und Container-basierte (Sektion \ref{introVirtContainer}) Virtualisierung, gegenübergestellt. In diesem Kapitel werden nur die für diese Arbeit relevante Techniken der Systemvirtualisierung beschrieben, also solche, in denen Funktionen von kompletten Betriebssystemen abstrahiert werden. Die Anwendungs-, Storage- oder Netzwerkvirtualisierung wird nicht behandelt. Anschließend werden die allgemeinen Sicherheitsziele in der \acrshort{IT} erklärt, auf die in der Untersuchung Bezug genommen wird. Abgeschlossen wird das Grundlagenkapitel mit einer Einführung in Docker, in der die Terminologie sowie Funktionsweise dieser Plattform erläutert wird.
 
     Die genannten Grundlagen sind sehr weitreichende Themengebiete. Um in den einleitenden Kapiteln nicht ausführlich zu werden, sind Eckdaten einiger am Rande auftretender Begriffe im angehängten Glossar zusammengefasst.
 
@@ -37,7 +37,7 @@
           \item Integrität von Images
           \item Absicherung der Kommunikation zwischen dem Docker-Client und dem Docker-Host
           \item \glspl{BestPractice} im Umgang mit Docker-Komponenten sowie Sicherheitsrichtlinien.
-          \item Verwendung von Third-Party Tools, wie \emph{Kubernetes}
+          \item Verwendung von Third-Party Tools, wie \emph{Kubernetes} % TODO: Glossareintrag Third-Party
         \end{itemize}
       \item \textbf{Sicherheit von Docker in Cloud-Infrastrukturen}
         % TODO: Etwas mehr Details dazu, wenn klar ist was hier reinkommt.
