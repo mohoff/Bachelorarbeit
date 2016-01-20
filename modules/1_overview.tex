@@ -6,13 +6,9 @@
 \pagenumbering{arabic}
   Virtualisierung entwickelte sich in den letzten Jahren zu einem allgegenwärtigen Thema in der IT-Industrie. Unter ihr versteht man die Nachahmung und Abstraktion von physischen Resourcen, z.B. der CPU oder des Speichers, die in einem virtuellen Kontext von Softwareprogrammen genutzt wird.
 
-  Die Vorteile von Virtualisierung umfassen Hardwareunabhängigkeit, Verfügbarkeit, Isolierung und Sicherheit, welche die Erfolgsgrundlage der Virtualisierung in heutigen Cloud-Infrastrukturen bilden \cite[S.1]{containerVirtPerformance}. Vor allem in Rechenzentren bieten sich Virtualisierungen an, um die Serverressourcen effizienter zu nutzen \cite[S.1]{dockerSec1}. Letztendlich haben es Virtualisierungen ermöglicht, Serverressourcen in der Form von \glspl{Cloud} wie z.B. den \emph{Amazon Web Services}\cite{amazonWebServices} und auf Basis eines Subskriptionsmodells nutzen zu können \cite[S.1]{dockerSec1}.
+  Die Vorteile von Virtualisierung umfassen Hardwareunabhängigkeit, Verfügbarkeit, Isolierung und Sicherheit, welche die Erfolgsgrundlage der Virtualisierung in heutigen \gls{Cloud}-Infrastrukturen bilden \cite[S.1]{containerVirtPerformance}. Vor allem in Rechenzentren bieten sich Virtualisierungen an, um die Serverressourcen effizienter zu nutzen \cite[S.1]{dockerSec1}. Letztendlich haben es Virtualisierungen ermöglicht, Serverressourcen in der Form von \glspl{Cloud} wie z.B. den \emph{Amazon Web Services}\cite{amazonWebServices} und auf Basis eines Subskriptionsmodells nutzen zu können \cite[S.1]{dockerSec1}.
 
-  Heutzutage existieren mehrere serverseitige Virtualisierungstechniken, wovon die Hypervisor-gestützen Methoden mit den etablierten Vertretern \emph{Xen}\cite{xen}, \emph{KVM}\cite{kvm}, \emph{VMware ESXi}\cite{vmwareESXi} und \emph{Hyper-V}\cite{hyperv} die meistverbreitesten sind \cite[S.2]{containerVirtPerformance}. Der alternativen containerbasierten Virtualisierung ist es erst mit Docker im Jahr 2013 zum Durchbruch gekommen
-
-  % TODO: WEITERMACHEN HIER
-
-  Mit dem Release von Docker im März 2013 \cite{githubDockerChangelog}, erlebte die Virtualisierung auf Containerbasis einen Aufschwung. Wie die Google Trends in \fig \ref{fig:overview_googleTrends} zeigen, stieg das Interesse an Docker seit dessen Release kontinuierlich an, während das Suchwort \glqq{}virtualization\grqq{} im Jahr 2010 seinen Höhepunkt hatte und seitdem an Popularität verlor. Auch das Interesse an der Containertechnologie \emph{LXC}, aus der Docker entstand, bleibt weit hinter der von Docker zurück \cite{googleTrends}.
+  Heutzutage existieren mehrere serverseitige Virtualisierungstechniken, wovon die Hypervisor-gestützen Methoden mit den etablierten Vertretern \emph{Xen}\cite{xen}, \emph{KVM}\cite{kvm}, \emph{VMware ESXi}\cite{vmwareESXi} und \emph{Hyper-V}\cite{hyperv} die meistverbreitesten sind \cite[S.2]{containerVirtPerformance}. Die alternative containerbasierte Virtualisierung erlebt mit dem Erfolg von Docker seit dessen Release im März 2013 einen Aufschwung \cite{githubDockerChangelog}. Wie die Google Trends in \fig \ref{fig:overview_googleTrends} zeigen, stieg das Interesse an Docker seit dessen Release kontinuierlich an, während das Suchwort \glqq{}virtualization\grqq{} im Jahr 2010 seinen Höhepunkt hatte und seitdem an Popularität verlor. Auch das Interesse an der Containertechnologie \emph{LXC}, aus der Docker entstand, bleibt weit hinter der von Docker zurück \cite{googleTrends}.
 
   \begin{figure}[h]
       \centering
@@ -28,14 +24,27 @@
   % https://www.airpair.com/firebase/posts/yatodo-guide
   % https://www.airpair.com/docker/posts/8-proven-real-world-ways-to-use-docker#7-multi-tenancy
 
-
   \section{Struktur der Arbeit}
-    Die zwei prominentesten Virtualisierungstechniken, Hypervisor-basierte (Sektion \ref{introVirtHypervisor}) und Container-basierte (Sektion \ref{introVirtContainer}) Virtualisierung, werden im Grundlagenkapitel \ref{introVirt} gegenübergestellt.
+    Zu Beginn wird im Grundlagenkapitel \ref{introVirt} die Virtualisierung beschrieben. Dabei werden die zwei prominentesten Virtualisierungstechniken, Hypervisor-basierte (Sektion \ref{introVirtHypervisor}) und Container-basierte (Sektion \ref{introVirtContainer}) Virtualisierung, gegenübergestellt. In diesem Kapitel werden nur die für diese Arbeit relevante Techniken der Systemvirtualisierung beschrieben, also solche, in denen Funktionen von kompletten Betriebssystemen abstrahiert werden. Die Anwendungs-, Storage- oder Netzwerkvirtualisierung wird nicht behandelt. Anschließend werden die allgemeinen Sicherheitsziele in der IT erklärt, auf die in der Untersuchung Bezug genommen wird. Abgeschlossen wird das Grundlagenkapitel mit einer Einführung in Docker, in der die Terminologie sowie Funktionsweise dieser Plattform erläutert wird.
 
-    In diesem Kapitel wird nur die für diese Arbeit relevante Techniken der systembasierten Virtualisierung beschrieben, also solche, in denen Betriebssysteme ablaufen. Die Anwendungs-, Storage- oder Netzwerkvirtualisierung wird nicht behandelt.
+    Die genannten Grundlagen sind sehr weitreichende Themengebiete. Um in den einleitenden Kapiteln nicht ausführlich zu werden, sind Eckdaten einiger am Rande auftretender Begriffe im angehängten Glossar zusammengefasst.
 
-    % folgende 2 Absätze in "Struktur der Arbeit"?
-    Die Themen Virtualisierung, Sicherheit in der IT sowie Docker sind sehr weitreichende Themengebiete. Um in den einleitenden Kapiteln nicht ausführlich zu werden, sind Eckdaten einiger Begriffe im angehängten Glossar zusammengefasst.
+    Der Hauptteil untergliedert sich in mehrere Sicherheitsgebiete, in die die Arbeit eingeteilt ist:
+    \begin{enumerate}
+      \item Sicherheitsfunktionen, die der Linux-Kernel anbietet und teils obligatorisch von Docker eingesetzt werden. Darunter fallen Techniken zur Isolierung, Ressourcen- und Rechteverwaltung von Containern sowie Methoden, um das Hostsystem mit zusätzlichen Linux Sicherheitsfeatures abzusichern.
+      \item Sicherheit im Docker-Ökosystem, also z.B.
+        \begin{itemize}
+          \item Integrität von Images
+          \item Absicherung der Kommunikation zwischen dem Docker-Client und dem Docker-Host
+          \item \glspl{BestPractice} im Umgang mit Docker-Komponenten sowie Sicherheitsrichtlinien.
+          \item Verwendung von Third-Party Tools, wie \emph{Kubernetes}
+        \end{itemize}
+      \item Sicherheit von Docker in Cloud-Infrastrukturen
+    \end{enumerate}
+
+    % TODO: Abgrenzung zu Netzwerkthemen, da das auf Netzebene passiert und Sicherheitsaspekte sind, die in jedem Netzwerk in Betracht gezogen werden müssen --> kein Bezug mehr zu Docker.
+
+    Abgeschlossen wird die Arbeit mit einer Zusammenfassung und einem Ausblick auf die Zukunft von Docker und der containerbasierter Virtualisierung.
 
     In der Arbeit vorkommende Produkt-, Technologie- oder Unternehmensnamen sind durchgehend \emph{kursiv} gedruckt. Eine Ausnahme bildet Docker, in der die reguläre Schreibweise für die Plattform Docker vorgesehen ist, während die kursive Variante das Unternehmen \emph{Docker} meint.
 
