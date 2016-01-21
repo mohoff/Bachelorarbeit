@@ -34,7 +34,7 @@ file="$1"
 filename="${file%%.*}"
 
 # Clear directory
-mv -f *.log *.aux *.bbl *.blg *.lof *.lot *.toc *.out *.glo *.glg *.gls *.glsdefs *.ist output/
+mv -f *.log *.aux *.bbl *.blg *.lof *.lot *.toc *.out *.glo *.glg *.gls *.glsdefs *.ist *.acn *.acr *.alg output/
 
 # Proper order for building latex sources with bibtex extra.
 # Show output of last build only.
