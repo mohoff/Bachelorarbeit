@@ -50,7 +50,7 @@ printf "\n"
 
 # Move all output files in an output directory. Keep copy of output pdf.
 mkdir -p output
-mv -f *.log *.aux *.bbl *.blg *.lof *.lot *.toc *.out *.glo *.glg *.gls *.glsdefs *.ist output/
+mv -f *.log *.aux *.bbl *.blg *.lof *.lot *.toc *.out *.glo *.glg *.gls *.glsdefs *.ist *.acn *.acr *.alg output/
 cp "$filename".pdf output/
 
 # Open output pdf with system's default pdf viewer.
