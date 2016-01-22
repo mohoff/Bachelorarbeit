@@ -8,10 +8,18 @@
 %\usepackage{titlesec}
 \usepackage[parfill]{parskip} % Use an empty half line between two paragraphs (instead of line indent)
 \usepackage{setspace}
+\usepackage{listings} % Enables code blocks
+\usepackage{enumerate}
 \usepackage{chngcntr} % Change counter (start numeric page numbering on first content page)
 \usepackage[acronym]{glossaries} % Add parameter [toc] to include glossary in index page. Needs to be defined after package 'hyperref' so glossary occurances are linked.
 
 \makeglossaries % Generates (one or multiple) glossaries
+
+\lstset{aboveskip=5mm,
+  belowskip=5mm,
+  basicstyle={\small\ttfamily},
+  tabsize=1
+}
 
 % Add glossary entries
 \loadglsentries{./modules/glossary}

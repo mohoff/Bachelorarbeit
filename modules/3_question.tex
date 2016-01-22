@@ -1,31 +1,58 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
 
-\chapter{Ziel der Arbeit}
+\chapter{Fragestellungen / Ziel der Arbeit}
 \label{question}
   % Kommt man von Container auf Host-OS? Von Container auf anderen Container? ~etc.
   % 5-6 Sicherheitsziele erwähnen. Mit Forschungsfrage in Bezug bringen --> später bei Isolierung und Ressourcenverwaltung wieder aufgreifen
 
   % Allgemeiner Überblick zu Docker Security in \cite[S.3]{dockerSeec1}
 
-  Die wichtigsten Sicherheitsfragen für Container-basierte Systeme sind in den folgenden Punkten formuliert. Sie beruhen auf der Annahme, dass ein Angreifer die Kontrolle über einen Container X übernommen hat und versucht, über diesen Schaden zu verursachen.
+  Auf einem System mit Host und einem oder mehreren Containern, stellt sich zunächst die Frage welche Art und Richtung von Kommunikation zwischen diesen beiden Komponenten erlaubt und nicht erlaubt sein soll. Dadurch, dass der Docker-Daemon auf dem Host läuft und es dessen Aufgabe ist u.a. den Container-Lifecycle zu kontrollieren, braucht dieser Zugriff auf die Container. Verallgemeinert ist also die Kommunikation von Host zu Container erforderlich und damit erlaubt.
 
-  \begin{enumerate}
-    \item Ist es dem Angreifer möglich, seine Rechte auf den Hosts zu erweitern, sodass er auf diesem Root-Rechte erwirken kann? (Vertraulichkeit, Authenzität, Integrität) (Isolation)
-    \item Ist es dem Angreifer möglich, auf einen anderen Container Y des gleichen Hosts zuzugreifen? (Vertraulichkeit, Authenzität, Integrität) (Isolation)
-    \item Ist es dem Angreifer möglich, den Host auf eine Art und Weise zu beeinflussen, die den Betrieb anderer Container auf diesem Host beeinträchtigt? (Verfügbarkeit, Integrität) (Ressourcenverwaltung)
+  Was in einem Container passiert, ist zweitrangig, da der Container bei Fehlfunkionen jederzeit seitens des Hosts neu gestartet werden kann. Wichtig ist aber, dass der Container selbst von der Außenwelt, also dem Host und anderen Container, isoliert ist und seine Aufrufe gegen den Hostkernel streng limitiert sind und diese den Host nicht beeinträchtigen können.
+
+  Mehrere Sicherheitsfragen für Container-basierte Systeme sind in den folgenden Punkten formuliert. Sie beruhen auf der Annahme, dass ein Angreifer die Kontrolle über einen Container X übernommen hat und versucht, über diesen Schaden zu verursachen.
+
+  Situationen, in denen ein Angreifer bereits zu Beginn die Kontrolle über den Host hat, werden nicht betrachtet, da der Angreifer in dieser Lage bereits gewonnen hat und Container nach belieben manipulieren kann.
+
+  \begin{enumerate}[(1)]
+    \item Ist es dem Angreifer möglich, seine in X erworbenen Rechte auf den Hosts zu erweitern, sodass er auf letzteren Root-Rechte erwirken kann? (Verletzte Sicherheitsziele: Vertraulichkeit, Authenzität, Integrität)
+    \item Ist es dem Angreifer möglich, auf einen anderen Container Y des gleichen Hosts zuzugreifen? (Verletzte Sicherheitsziele: Vertraulichkeit, Authenzität, Integrität)
+    \item Ist es dem Angreifer möglich, den Container oder Host auf eine Art und Weise zu beeinflussen, die den Betrieb anderer Container auf diesem oder entfernten Hosts beeinträchtigt? (Verletzte Schutzziele: Verfügbarkeit, Integrität) (Ressourcenverwaltung)
+    \item Ist es dem Angreifer möglich, den Container X negativ zu beeinflussen oder ihn zum Absturz zu bringen? (Lifecyclemanagement des Docker-Hosts)
+    \item Wie wird natürlichen Fehlfunktionen von Containern entgegengewirkt? (Lifecyclemanagement des Docker-Hosts)
+          % Also wenn plötzlich Exception auftritt und Containeranwendung abstürzt.
+    \item \emph{weitere Punkte?}
   \end{enumerate}
 
-  Wenn von der Netzwerkseite abgesehen wird, lässt sich das Szenario der Fragestellung (2.) auf das der Frage (1.) reduzieren, da der Zugriff auf andere Container nur über den Host möglich ist.
+  Frage (1.) und (2.) zielen auf technischer Ebene auf die Isolation der Container ab. Eine Umformulierung in \glqq{}Sind Container ausreichend isoliert, um den Host zu schützen?\grqq{} ist möglich.
+
+  Wenn von der Netzwerkseite abgesehen wird, lässt sich das Szenario der Fragestellung (2.) auf das der Frage (1.) reduzieren, da der Zugriff auf andere Container nur über den lokalen Host möglich ist. Genauer gesagt ist der Zugriff auf andere Prozesse nur dann möglich, wenn Root-Rechte auf dem Host vorhanden sind. Die bereits generalisierten Sicherheitsfrage ist in (A.) unter Berücksichtigung dieses Punkts, erweitert
+
+  Die Fragen (3.), (4.) und (5.) teilen sich den Aspekt der Verfügbarkeit, der in Formulierung (B.) aufgegriffen wird.
+
+  ----
+
+  Finale Umformulierungen und Generalisierungen:
+
+  \begin{enumerate}[(A)]
+    \item Sind Container ausreichend isoliert, sodass ausgehend von Containern keine Root-Rechte auf dem Hostsystem erwirkt werden können?
+    \item Kann der Betrieb von Containern negativ beeinflusst werden, sodass die Verfügbarkeit von Anwendungen darunter leidet?
+    \item \emph{weitere Punkte?}
+  \end{enumerate}
 
   %, ob aus Containern ausgebrochen werden kann (1) und ob von einem Container X Zugriff auf einen Container Y auf dem gleichen Host möglich ist (2). Ist es unter der Annahme, dass ein Angreifer Zugriff auf einen Container erlangt, möglich, seine Rechte zu eskalieren und Root-Rechte auf dem Host zu erlangen? Diese Herausforderung spielt auch bei Frage (2) die entscheidene Rolle, da ein Zugriff auf andere Container erst mit einer Kompromitierung des Hosts möglichst ist. Aus diesem Grund genügt es, Frage (1) zu beantworten, da durch eine Antwort der selben auch die erweiterte Fragestellung (2) zufriedenstellend beantwortet werden kann.
 
   % Von entscheidender Bedeutung ist diese Frage, weil ihre Beantwortung die Existenzgrundlage für Container und damit auch Docker bildet. Gäbe es keine Methodeberuht. Wäre die Frage im Produkt Docker nicht beantwortet,
 
-  Um Frage (1.) zu beantworten, wird im ersten Hauptkapitel die intrinsische Sicherheit von Docker untersucht. Damit ist eine Reihe von Sicherheitsfeatures des Linux Kernels gemeint, die u.a. Docker nutzt, um nach Aussage des Unternehmens Docker sichere Container zu ermöglichen. V.a. Mechanismen zur Isolation und Ressourcenverwaltung werden betrachtet, da sie direkt mit den erwünschten Sicherheitszielen aus Kapitel \ref{introSecGoals} in Bezug stehen.
+  \emph{ALT:}
+
+
+  Um Frage (1.) zu beantworten, wird im ersten Hauptkapitel die intrinsische Sicherheit von Docker untersucht. Damit ist eine Reihe von Sicherheitsfeatures des Linux Kernels gemeint, die u.a. Docker nutzt, um nach Aussage des Unternehmens \emph{Docker} sichere Container zu ermöglichen. V.a. Mechanismen zur Isolation und Ressourcenverwaltung werden betrachtet, da sie direkt mit den erwünschten Sicherheitszielen aus Kapitel \ref{introSecGoals} in Bezug stehen.
 
   Des Weiteren stellt sich die Frage, ob die Arbeit mit Docker und seinen Containern sicher ist. Wie in der \hyperref[dockerIntro]{Einführung zu Docker} beschrieben, stellt Docker zusammen mit anderen Anbietern einen Workflow und eine Palette an Tools zur Verfügung, die die Arbeit mit Containern erleichtern sollen. Wie diese Tools zur Sicherheit bzw. Angreifbarkeit von Docker-Systemen beitragen, wird im Kontext von den Sicherheitszielen betrachtet.
 
-  Nicht betrachtet werden die Sicherheitsrisiken, die sich durch den Betrieb eines Containernetzwerks ergeben. Sicherheit aus Sicht der Netzwerktechnik und den verschiedenen \acrshort{OSI}-Schichten ist nicht Gegenstand der Untersuchung.
+  Nicht betrachtet werden die Sicherheitsrisiken, die sich durch den Betrieb eines Rechnernetzwerks ergeben, in dem Docker-Knoten existieren. Sicherheit aus Sicht der Netzwerktechnik und den verschiedenen \acrshort{OSI}-Schichten ist nicht Gegenstand der Untersuchung.
 
 \end{document}
