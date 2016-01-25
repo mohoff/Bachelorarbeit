@@ -33,8 +33,7 @@
 
     \subsection{Container-basierte Virtualisierung}
     \label{introVirtContainer}
-      Container-basierte Virtualisierung wird vorrangig als leichtgewichtige Alternative zu der Hypervisor-basierten Virtualisierung gesehen\cite[S.2]{containerVirtPerformance}. Erstere nutzt direkt den Hostkernel, um mehrere parallele, virtuelle Umgebungen zu schaffen \cite[S.6]{dockerBook}. Ein Hypervisor wird in diesem Ansatz nicht benötigt \cite[S.7]{dockerBook}. Vielmehr wird das native System und dessen Ressourcen partitioniert, sodass mehrere virtuelle, voneinander isolierte Instanzen betrieben werden können, die als Container bezeichnet werden \cite[S.2]{containerVirtPerformance}\cite[S.1]{dockerSec1}. Die Isolation basiert auf dem Konzept von Namensräumen, die unter Linux \emph{namespaces} genannt werden. Diese, sowie \emph{cgroups}, die für das Ressourcenmanagement verantwortlich sind, werden in den Kapiteln \ref{secIsolierung} und \ref{secResLimit} genauer betrachtet.
-			% TODO: eine Quelle fuer namespaces und control groups und deren aufgaben.
+      Container-basierte Virtualisierung wird vorrangig als leichtgewichtige Alternative zu der Hypervisor-basierten Virtualisierung gesehen\cite[S.2]{containerVirtPerformance}. Erstere nutzt direkt den Hostkernel, um mehrere parallele, virtuelle Umgebungen zu schaffen. Ein Hypervisor wird in diesem Ansatz nicht benötigt \cite[S.6+7]{dockerBook}. Vielmehr wird das native System und dessen Ressourcen partitioniert, sodass mehrere virtuelle, voneinander isolierte Instanzen betrieben werden können, die als Container bezeichnet werden \cite[S.2]{containerVirtPerformance}\cite[S.3]{dockerSecIntro}. Die Isolation basiert auf dem Konzept von Kontexten, die unter Linux \emph{namespaces} genannt werden. Diese, sowie \emph{cgroups}, die für das Ressourcenmanagement verantwortlich sind, werden in den Kapiteln \ref{secIsolierung} und \ref{secResLimit} genauer betrachtet \cite[S.4]{dockerSecIntro}.
 
       Container sind durch den Unix-Befehl \emph{chroot}\cite{chroot} inspriert, der schon seit 1979 im Linux-Kernel integriert ist. In \emph{FreeBSD} wurde eine erweiterte Variante von \emph{chroot} verwendet, um sogenannte \emph{Jails} (FreeBSD-spezifischer Begriff) umzusetzen \cite{jails}. In \emph{Solaris}, ein von der Firma \emph{Oracle} entwickeltes Betriebssystem für Servervirtualisierungen\cite{solaris}, wurde dieser Mechanismus in Form von \emph{Zones} (Solaris-spezifischer Begriff) \cite{zones} weiter verbessert und es etablierte sich der Name \emph{Container} als Überbegriff, als weitere proprietäre Lösungen von \emph{HP} und \emph{IBM} zur selben Zeit auf dem Markt erschienen \cite[S.2]{dockerLXCKub}. Durch die kontinuierliche Weiterentwicklung von Containern in den letzten Jahren, können diese heutzutage als vollwertige Systeme betrachtet werden, nicht mehr als - wie ursprünglich vorgesehen - reine Ausführungsumgebungen \cite[S.7]{dockerBook}.
 
@@ -61,6 +60,10 @@
       % Unbedingt Quelle containerVirtPerformance anschauen, da werden mehrere Containerloesungen miteinander verglichen.
 
       Docker ist wie in Kapitel \ref{introVirtContainer} zuvor angedeutet, nicht die erste containerbasierte Virtualisierungslösung. Einige ältere Containersysteme, wie z.B. \emph{Solaris Zones}, existieren schon länger als Docker, etablierten sich allerdings nie in der Praxis. Der anhaltende Erfolg von Docker beruht überwiegend nicht auf der überlegenden technischen Eigenschaften, sondern vielmehr auf den Tools und dem Workflow, den \emph{Docker} seinen Kunden anbietet.
+
+			% Vergleich zu lmctfy von Google oder LXC oder OpenVZ?
+			% \cite[S.3]{virtVSContainer}
+
   \section{Sicherheitsziele in der IT}
   \label{introSecGoals}
 		Folgende Sicherheitsziele können für \acrshort{IT}-Systeme definiert werden.
@@ -125,7 +128,7 @@
 
 		\subsection{Docker Architektur}
 		\label{dockerArchitecture}
-      Docker selbst ist nach einem Client-Server-Modell aufgebaut: Ein Docker-Client kommuniziert mit einem Docker-Daemon, also ein Prozess der den Server abbildet \cite{dockerUnderstandingDocker}. Beide Teile können auf einer Maschine oder einzeln auf unterschiedlichen Hosts laufen. Die Kommunikation zwischen Client und Daemon geschieht über eine \acrshort{REST}ful \acrshort{API}. Wie \fig \ref{fig:intro_dockerArchitecture} zeigt, ist es dadurch auch möglich Befehle entfernter Clients über ein Netzwerk an den Daemon zu senden \cite{dockerSec1}.
+      Docker selbst ist nach einem Client-Server-Modell aufgebaut: Ein Docker-Client kommuniziert mit einem Docker-Daemon, also ein Prozess der den Server abbildet \cite{dockerUnderstandingDocker}. Beide Teile können auf einer Maschine oder einzeln auf unterschiedlichen Hosts laufen. Die Kommunikation zwischen Client und Daemon geschieht über eine \acrshort{REST}ful \acrshort{API}. Wie \fig \ref{fig:intro_dockerArchitecture} zeigt, ist es dadurch auch möglich Befehle entfernter Clients über ein Netzwerk an den Daemon zu senden \cite[S.3]{dockerSecIntro}.
       % in beiden Fällen wird eine RESTful API genutzt? Setzt das docker binary nur CLI-Kommandos in REST-API-Aufrufe um?
       % Docker-Binary \texttt{docker}
 
@@ -192,7 +195,7 @@
 
 		\subsection{Images}
     \label{dockerImages}
-			Images bilden als unveränderbare Files die Basis von Containern. Sie sind einfach portierbar und können geteilt, gespeichert und aktualisiert werden. Images sind durch ein \emph{Union}-Dateisystem in Schichten gegliedert, die überlagert ein Image ergeben, das als Container gestartet werden kann \cite[S.11]{dockerBook}. \emph{Union}-Dateisysteme wie \emph{AuFS} und \emph{Device Mapper} haben gemeinsam, dass sie alle auf dem \emph{Copy-on-write}-Modell basieren \cite[S.8]{dockerBook}\cite[S.3]{dockerIntroIEEE}.
+			Images bilden als unveränderbare Files die Basis von Containern. Sie sind einfach portierbar und können geteilt, gespeichert und aktualisiert werden. Images sind durch ein \emph{Union}-Dateisystem in Schichten gegliedert, die überlagert ein Image ergeben, das als Container gestartet werden kann \cite[S.11]{dockerBook}. \emph{Union}-Dateisysteme wie \emph{AuFS} und \emph{Device Mapper} haben gemeinsam, dass sie alle auf dem \emph{Copy-on-write}-Modell basieren \cite[S.8]{dockerBook}\cite[S.3]{dockerIntroIEEE}\cite[S.4]{dockerSecIntro}.
 			% TODO: Zusatz: "Die Docker alle unterstuetzt (mit Storage Drivern)"
 
 			Genauer gesagt besteht ein Image aus einem Manifest, das auf Datenebene ein oder mehrere Schichten (Layers) referenziert. Images und Schichten sind jeweils über Hashwerte eindeutig refernzierbar und liegen auf dem Docker-Host im Verzeichnis \texttt{/var/lib/docker/graph/}. Im Unterordner eines Images liegen mehrere Image-spezifische Dateien (vgl. \fig \ref{fig:intro_dockerImageVZ}), u.a. das Manifest in der Datei \texttt{json}, das in einer \acrshort{JSON}-Struktur vorliegt und neben Metainformationen auch Details des Dockerfiles, aus dem das Image generiert wurde, beinhaltet \cite{githubDockerGlossary}.

@@ -35,6 +35,9 @@
 % a la.. "wir untersuchen was er meint, was sich verbessert hat etc."
 %	^		\cite[S.41]{presContainerDockerSec}
 
+% Angreifer können ein paar Angriffe ausführen: Privilege escalation und Denial of Service.
+%  °	\cite[S.3]{dockerSec1}
+
 \chapter{Security aus Linux Kernel-Features}
 \label{secLinux}
   % namespaces/etc (was es ist) in Einleitung mit rein? 1.) Erklaeren, 2.) Security/Docker untersuchen dazu im Security Hauptteil
@@ -42,18 +45,126 @@
   % \cite[S.3]{dockerIntroIEEE} --> umgangsprachlich erkleart wie mit namespaces und cgroups gearbeitet wird
 	\section{Isolierung durch \texttt{namespaces}}
   \label{secIsolierung}
+		Wenn unter Linux ein neuer Prozess gestartet werden soll, wird über \emph{System Calls} dem Kernel mitgeteilt, einen neuen \emph{namespace} bereitzustellen. Je nach Anforderung gibt es verschiedene \emph{namespaces}, z.B. ein \emph{network namespace}, der dem neuen Prozess ein Netzwerkinterface zuweist. Um Container als isolierte Arbeitsbereiche auf einem Host zu erstellen, werden die \emph{namespaces} des Kernels verwendet. Da Container selbst eine eigene komplette Laufzeitumgebung darstellen sollen, müssen Bereiche des Hosts durch \emph{namespaces} abgedeckt sein, sodass neben dem Netzwerk auch Zugriff auf die Festplatte, den Arbeitsspeicher und die \acrshort{CPU} gewährleistet ist \cite[S.3]{dockerIntroIEEE}.
+
+		Nach ..(reshetova).. müssen Anforderungen an Prozessisolierung, Dateisystemisolierung, Geräteisolierung, Prozessisolierung und Netzwerklimitierung erfüllt sein.
     % Isolierung erklären, erfüllt X Schutzziele, Bezug auf Forschungsfrage
     % Es gibt 6 Namespaces, die im folgenden *anhand der verschiedenen Betriebssystemkomponenten?) untersucht werden.
-		\subsection{Prozessisolierung (process namepsace)}
-    \subsection{Dateisystemisolierung (filesystem namespace)}
-    \subsection{Geräteisolierung (device namespace)}
-    \subsection{IPC-Isolierung (ipc namespace)}
-    \subsection{UTS-Isolierung (uts namespace)}
-    \subsection{Netzwerkisolierung (network namespace)}
+		\subsection{Prozessisolierung durch den \texttt{\acrshort{PID} namespace}}
+		\label{secIsoProcesses}
+
+			Jeder Container entspricht auf dem Host einem Prozess. Da die Container untereinander isoliert sein sollen, dürfen auch die zugrundeliegenden Containerprozesse nicht miteinander interferieren.
+
+			Docker erreicht diese Isolierung auf Prozessebene durch die Nutzung des \emph{\acrshort{PID} namespace}, in denen Container eingebettet werden. Nach diesem hierarchischen Konzept ist es einem Prozess X nur möglich, selbsterzeugte Kindprozesse zu beobachten und mit ihnen zu interagieren. Elternprozesse, also Prozesse die in der Prozesshierarchie über X stehen, sind für X unsichtbar. Der Elternprozesse haben jedoch die volle Kontrolle über X und können diesen z.B. jederzeit beenden.
+
+			Auf die containerbasierte Virtualisierung übertragen, bewirkt dieses Konzept, dass der Host vollen Zugriff auf die laufenden Container hat, Containerprozesse jedoch weder Kenntnis von Hostprozessen noch von Prozessen anderer Container besitzen. Diese Eigenschaft macht es Angreifern schwieriger Schaden anzurichten, da sie ausgehend von kompromitierten Containern keine Informationen über Prozesse außerhalb des Containers beziehen können.
+
+			Ein weiterer Mechanismus des \emph{\acrshort{PID}-namespace} ist eine Besonderheit des Prozesses mit \texttt{PID=1}. Der initiale Containerprozess kann mit der \texttt{PID=1} gestartet werden, dem es als \emph{init}-ähnlicher Prozess möglich ist, alle Kindprozese zu terminieren sobald er selbst beendet wird. Somit können komplette Container durch einen Hostzugriff auf den Containerprozess mit \texttt{PID=1} umgehend vollständig heruntergefahren werden.
+
+			%Fast alles bisher:
+			\cite[S.4]{dockerSec1}
+
+			% PID namespaces sind hierarchisch http://lwn.net/Articles/259217/
+
+			% Einzelnen Containerlösungen unterscheiden sich nur geringfügig. Alle nutyen namespace, cgroups, chroot.
+			% Unterschiede im Contaier lifecycle jedoch (docker sehr gut aufgestellt --> teil von dockers erfolg beruht darauf)
+			%	^		\cite[S.4]{virtVSContainer}
+
+			% TODO: init-ähnlicher Prozess im Glossar erklären
+			% TODO: Grafik mit Prozess PIDs und Hierarchie einbinden
+
+    \subsection{Dateisystemisolierung durch den \texttt{mount namespace}}
+			Auch das Hostdateisystem muss von unrechtmäßigen Zugriffen aus Containern geschützt werden.
+
+			Dateisysteme sind allgemein wie Prozesse in Kapitel \ref{secIsoProcesses} hierarchisch aufgebaut. Diese können mithilfe von \emph{mount namespace} unterteilt werden, sodass unter Docker jeder Container eine andere Sicht auf die Verzeichnisstruktur des Hosts hat. Nur ein bestimmtes Unterverzeichnis ist für einen Container sichtbar, wenn er dieses als Mountpoint einbindet.
+
+			Eine Hostverzeichnisse werden jedoch nicht in den \emph{mount namespace} eingezogen, weil sie von den Docker-Containern benötigt werden, um zu operieren.
+
+			Dazu gehören die Verzeichnisse:
+
+			\begin{itemize}
+				\item \texttt{/sys}:
+				\item \texttt{/proc/sys}:
+				\item \texttt{/proc/sysrq - trigger}:
+				\item \texttt{/proc/irq}:
+				\item \texttt{/proc/bus}:
+			\end{itemize}
+
+			Als Konsequenz erben Container diese notwendigen Verzeichnisse direkt von ihrem Host, was ein Sicherheitsrisiko darstellt. Docker dämmt dieses ein, indem es nur einen reinen Lesezugriff ohne Schreibrechte auf diese Verzeichnisse erlaubt \cite[S.4]{dockerSecIntro}. Außerdem ist es Containern unter Docker nicht erlaubt, Hostverzeichnisse erneut einzubinden, um Schreibrechte sicher auszuschließen. Dieses Verbot wird durch die Verweigerung der \emph{capability} bla \texttt{CAP\_SYS\_ADMIN} für Container erreicht.
+			% TODO: Einbinden: Dateisysteme werden gemountet unter der Angabe der Berechtigung, also ob read oder write. EIn remount ist daher gefährlich.
+
+			Durch das von Docker genutzte und bereits in Kapitel \ref{dockerImages} beschriebene \emph{\acrshort{COW}}-basierte Dateisystem, ist es jedem Container möglich, Änderungen in seinem durch den \emph{mount namespace} zugewiesenen Verzeichnis zu speichern. Containerdaten interferieren dadurch nicht und sind containerübergreifend nicht sichtbar, auch beim Betrieb von Containern, die auf einem gleichen Basisimage beruhen \cite[S.4]{dockerSecIntro}.
+
+			% Dieser namespace basiert auf chroot()
+			%	^		\cite[S.3]{virtVSContainer}
+
+			%Fast alles bisher:
+			\cite[S.4]{dockerSec1}
+
+    \subsection{Geräteisolierung durch ....}
+			In Unix-basierenden Betriebssystemen wie Linux erfolgt der Zugriff auf Hardware über sogenannte \emph{Device Nodes}, die in dem Dateisystem von speziellen Dateien repräsentiert sind.
+			% TODO: Device Nodes ins Glossar aufnehmen. Dort dann sagen, dass es speyielle Files sind etc.
+
+			Ein paar wichtige \emph{Device Nodes} und deren Zuständigkeiten sind im Folgenden aufgeführt.
+
+			\begin{itemize}
+				\item \texttt{/dev/mem}: Arbeitsspeicher
+				\item \texttt{/dev/sd*}: Files für den Zugriff auf Speichermedien
+				\item \texttt{/dev/tty}: Terminal
+			\end{itemize}
+
+			Wie zu sehen ist, handelt sich dabei um teils äußerst kritische Komponenten einer Maschine, über die Container unter keinen Umständen verfügen dürfen. Deswegen ist es notwendig den Zugriff auf \emph{Device Nodes} stark einzuschränken, um den Host vor deren Missbrauch zu schützen.
+			% TODO: Starke Abhängigkeit zu cgroups (guten Übergang machen bzw. Abgrenzung)
+
+			% Standardmaessig haben Container keinen zugriff auf Devices. Kann aber explizit bei container launch anders festgelegt werden \cite[S.4]{dockerSecIntro}
+
+			%Fast alles bisher:
+			\cite[S.4]{dockerSec1}
+
+    \subsection{\acrshort{IPC}-Isolierung durch den \texttt{\acrshort{IPC}-namespace}}
+			Unter \acrshort{IPC} versteht man ein Sammlung an Tools, die für den Datenaustausch zwischen Prozessen genutzt werden. Dazu gehören z.B. \emph{Semaphoren}, \emph{Message Queues} und \emph{Shared Memory Segments}.
+
+			Ergänzend zu dem \emph{\acrshort{PID} namespace}, der die Sichtbarkeit sowie Kontrolle über Prozesse in der Prozesshierarchie einschränkt, kann auch die Kommunikation zwischen Prozessen limitiert werden.
+
+			Docker gewährleistet dies durch den Zuweisung eines \emph{\acrshort{IPC}-namespaces} pro Container, in dem ein Prozesse nur mit anderen Prozessen in Kontakt treten kann, wenn sich diese in einem gleichen \emph{\acrshort{IPC}-namespace} befinden. Eine versehentliche oder beabsichtige Interferenz mit Prozessen des Hosts oder anderer Container wird damit ausgeschlossen.
+
+			%Fast alles bisher:
+			\cite[S.4]{dockerSec1}
+
+    \subsection{\acrshort{UTS}-Isolierung durch den \texttt{\acrshort{UTS}-namespace}}
+			\emph{Nur der Vollständigkeit halber aufgelistet? Oder hat der Relevanz für Container?}
+			\emph{weniger sicherheitsrelevant oder...}
+			Mit einem \emph{\acrshort{UTS}-namespace} ist es möglich jedem Container einen eigenen Hostnamen zuzuweisen. Der Container kann diesen Namen abfragen und ändern \cite[S.3]{virtVSContainer}.
+    \subsection{Netzwerkisolierung durch den \texttt{network namespace}}
+			Um einen sicheren Betrieb von Docker zu gewährleisten, müssen Container so konfiguriert sein, dass sie weder den Netzwerkverkehr des Hosts noch anderer Container abhören oder manipulieren können.
+
+			Dazu stellt Docker jedem Container einen eigenen unabhängigen Netzwerk-Stack zur Verfügung, der durch \emph{network namespaces} realisiert wird. Jeder Namespace hat seine eigene private IP-Adresse, IP-Routingtabelle, Loopback-Interface und Netzwerkgeräte \cite[S.2+3]{virtVSContainer}. Eine Kommunikation zu anderen Containern auf dem gleichen oder entfernten Hosts geschieht dann über diese dafür vorgesehenen Schnittstellen.
+
+			Standardmäßig wird von Containern eine \emph{Virtual Ethernet Bridge} namens \texttt{docker0} genutzt, um mit dem Host oder anderen Containern zu kommunizieren. Neu gestartete Container werden dieser Bridge hinzugefügt, indem deren Netzwerkinterface \texttt{eth0} mit der Bridge verbunden wird. Aus Sicht des Hosts ist das Interface \texttt{eth0} ein virtuelles \texttt{veth}-Interface \cite[S.3]{virtVSContainer}.
+
+			Die Bridge leitet ohne Filter alle eingehenden Pakete weiter, welchen Umstand dieses Verbindungsdesign anfällig gegenüber \acrshort{ARP}-Spoofing und \acrshort{MAC2}-Flooding macht. Diesem Nachteil kann Abhilfe geschafft werden, indem manuelle Filtermethoden mittels beispielsweise \emph{ebtables} in die Bridge integriert werden, oder ein anderes Verbindungsdesign auf basis virtueller Netzwerke gewählt wird.
+			% TODO: Im Glossar die beiden Angriffe erklären?
+			% TODO: ebtables besser erklaeren falls noch relevant http://ebtables.netfilter.org/
+
+			% TODO: Bild zu Bridge-Layout (z.B. in dockerSec1, s.5, oben)
+
+			% TODO: INtegrieren: https://docs.docker.com/engine/userguide/networking/
+
+			%Fast alles bisher:
+			\cite[S.4]{dockerSec1}
+
     \subsection{Userisolierung (user namespace)}
       % \texttt{user namespaces} ist Future implementation, da neues Kernelfeature. Trotzdem Konzept erklären und wie Docker-Security davon profitiert.
 	\section{Ressourcenverwaltung / Limitierung von Ressourcen durch \texttt{control groups}}
   \label{secResLimit}
+		\emph{Denial of Service}-Attacken gehören in \gls{MultiTenantService}-Systemen zu einem gängigen Angriffsmuster \cite[S.5]{dockerSec1}.
+		% TODO: DoS-Attacke im Glossar erwähnen
+		% aus dockerSec1: where a process or a group of processes attempt to consume all of the resources of the system, thus disrupting normal operation of the other processes
+		\emph{control groups}, oder auch verkürzt \emph{cgroups} genannt, ist hierbei das Schlüsselfeature des Linuxkernels, um dieser Art von Angriff entgegenzuwirken. Sie stellen sicher, dass jeder Container nur begrenzt Hostressourcen beanspruchen darf. Mit Docker lassen sich Limits und Bedingungen individuell pro Container anpassen, z.B. an einen bestimmten Container gerichtetes Arbeitsspeicherlimit in Bytes, das ihm maximal im Betrieb zur Verfügung steht \cite[S.4]{dockerSecIntro}.
+		% TODO: Quelle aus docker docs findbar?
+		Kontrollierbare Ressourcen umfassen \acrshort{CPU}, Arbeitsspeicher und Disk I/O.
+
+
     % Sicherheitsziel: Availability, Bezug auf Forschungsfrage
     % Ressourcenverteilung und -management
     % Storage, CPU, HDD, RAM, IO, Network
@@ -61,16 +172,27 @@
     % network namespace:
     % Standardmäßig werden für Container keine Ports geöffnet. Manche Applikationen machen jedoch nur Sinn, wenn sie Ports nutzen können, daher können diese manuell in dem Dockerfile (INTERNE REFERENZ) freigegeben werden.
     % Container werden virtuelle Netzwerkinterfaces zur Verfügung gestellt. Dadurch können z.B. mehrere Container betrieben werden, die Webserver beinhalten, die alle auf Port 80 eingestellt sind. Außerhalb der Container können diese Containerports mithilfe von NAT (sicher NAT?) auf unterschiedliche Ports des Hosts abgebildet werden.
-    % ^ \cite[S.3]{dockerIntroIEEE}
+    %  ^ \cite[S.3]{dockerIntroIEEE}
+
+		% "Device Whitelist Controller" feature von cgroups limitiert Set an Devices, die Docker-Container nutzen dürfen.
+		%  ^ \cite[S.4, rechts oben]{dockerSec1}
 
   \section{Einschränkungen von Zugriffsrechten}
     \subsection{\texttt{capabilities}}
+			% Siehe \cite[S.4, links uten]{dockerSec1} --> CAP_SYS_ADMIN
+
+			% Siehe \cite[S.5]{dockerSecIntro} .. nur haelfte an capabilities genutzt...
+
       \subsubsection{Beispiele, \texttt{/proc}-Verzeichnis, (Un-)Mounten des Host-Filesystems}
       % Gehört das unter 'capabilities'? Oder eigener Punkt bzw. woanders dazu? --> Eher Mount namespace --> Isolierung
       % Einschränkung in libcontainer vorgennnomenn? --> check github libcontainer repo.
 
-    \subsection{Linux Security Module (\acrshort{LSM}) und Mandatory Access Control (\acrshort{MAC})}
+    \subsection{Linux Security Module (\acrshort{LSM}) und Mandatory Access Control (\acrshort{MAC1})}
       % Herausfinden, ob das wirklich Unterkapitel von "Isolierung" wird. Evtl. getrennt davon listen.
+
+			% Im englischen (linux kernel) "hardening solutions"
+
+			% Siehe \cite[S.5]{dockerSecIntro} rechts unten
   		\subsubsection{\acrshort{SELinux}}
       % Macht Sinn das erst am Ende zu machen, wenn noch Zeit ist. Weil SELinux im Detail mehr Exkurs wird.
       \subsubsection{AppArmor}

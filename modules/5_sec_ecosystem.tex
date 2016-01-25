@@ -12,18 +12,40 @@
   % Je nach Vorankommen, können hier ganze Sektions weggelassen werden imo.
   % Tendenziell mehr die Themen zuerst, die direkt mit Security zu tun haben.
   % Auch Fokus auf die neusten Entwicklungen (2015 und 2016) in Sachen Sicherheit und neue Docker-Features
+
+  % High level goals of docker project to improve security
+  % • Map root user of the container to non-root user of docker
+  % • Make docker daemon run as a non root user
+  % ^   \cite[S.3]{virtVSContainer}
+
+  \section{Security Policies}
+    % Siehe \cite[S.5]{dockerSecIntro} rechts oben
+
+
+  \section{Lifecycle- und State-Management von Containern}
+    % Container Lifecycle - Managed using a daemon and command line tool
+    % • Container State - Docker allows ability to store and retrieve container state
+    % Siehe \cite[S.3]{virtVSContainer} .. rechte Spalte
+
   \section{Docker Images und Registries}
     % \cite{slideshareDockercon15}, slide 51
     % \cite[S.27]{presContainerDockerSec} --> Registry v1 und v2, Notary
     % content trust (docker.com/engine/security/trust/content_trust/)
+
+    % Siehe \cite[S.5]{dockerSecIntro}, links
 		\subsection{neues Signierungs-Feature}
 	\section{Docker Daemon}
 		\subsection{\acrshort{REST}-\acrshort{API}}
 		\subsection{Support von Zertifikaten}
   \section{Containerprozesse}
+    % TODO: besser in PID namespace kapitel aufgehoben
     % offenbar gibts Probleme mit PID=0, da dieser Besonderheiten aufweist (siehe Hackernews Link)
 	\section{Docker Cache}
 	\section{\texttt{privileged} Container}
+    % However, if the operator executes a container as "privileged", Docker grants access to all devices to the container
+    %  ^  \cite[S.4]{dockerSec1}
+
+
 	\section{Networking}
 		\subsection{\texttt{bridge} Netzwerk}
 		\subsection{\texttt{overlay} Netzwerk}
