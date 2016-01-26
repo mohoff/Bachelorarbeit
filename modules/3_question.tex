@@ -8,6 +8,12 @@
 
   % Allgemeiner Überblick zu Docker Security in \cite[S.3]{dockerSeec1}
 
+  % TODO: System Model bauen
+  % TODO: Schreiben, dass Container-Verschatelung bzw. Container in Hierarchien  ins Systemmodell absichtlich nicht aufgenommen wurden (was aber in FreeBSD jails moelgich ist).
+  %   ^   (vgl. beide  \cite[S.4]{dockerSec2})
+
+  Das zentrale Konzept, auf dem alle Containertechnologien beruhen, ist das der Isolierung. Im Kontext von Containern kann die Isolierung definiert werden als Trennung zwischen Containern und einem Host, sowie die Trennung zwischen Containern \cite[S.1]{dockerSec2}.
+
   Auf einem System mit Host und einem oder mehreren Containern, stellt sich zunächst die Frage welche Art und Richtung von Kommunikation zwischen diesen beiden Komponenten erlaubt und nicht erlaubt sein soll. Dadurch, dass der Docker-Daemon auf dem Host läuft und es dessen Aufgabe ist u.a. den Container-Lifecycle zu kontrollieren, braucht dieser Zugriff auf die Container. Verallgemeinert ist also die Kommunikation von Host zu Container erforderlich und damit erlaubt.
 
   Was in einem Container passiert, ist zweitrangig, da der Container bei Fehlfunkionen jederzeit seitens des Hosts neu gestartet werden kann. Wichtig ist aber, dass der Container selbst von der Außenwelt, also dem Host und anderen Container, isoliert ist und seine Aufrufe gegen den Hostkernel streng limitiert sind und diese den Host nicht beeinträchtigen können.
