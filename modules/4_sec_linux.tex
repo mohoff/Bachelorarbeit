@@ -101,7 +101,15 @@
 			%Fast alles bisher:
 			\cite[S.4]{dockerSec1}
 
+			% Filesystem Isolation kann mit user namespaces verstaekrt werden, indem user und groups IDs auf wenige rpriveliigierte host uids und group ids gemappt werden. Zusammen mit dem mount namespace und einer pivot_root umgebung kann das den schutz fuer filesystembasierte Attacken erhoehen
+			%		^ 	\cite[S.11]{dockerSec2}
+
     \subsection{Geräteisolierung durch ....}
+			% Es gibt keinen richtigen Namespace dafuer, da linux device driver (die physischen devices kontrollieren), nicht namespace aware sind und damit nicht sicher in containern verwendet werden koennen
+			% Nur die Cells-Implementierung baut einen 'device namespace'
+			% Sonst nur ueber capabilities einschraenkbar (gennant im text: CAP_SYS_MKNOD)
+			%		^ 	\cite[S.12]{dockerSec2}
+
 			In Unix-basierenden Betriebssystemen wie Linux erfolgt der Zugriff auf Hardware über sogenannte \emph{Device Nodes}, die in dem Dateisystem von speziellen Dateien repräsentiert sind.
 			% TODO: Device Nodes ins Glossar aufnehmen. Dort dann sagen, dass es speyielle Files sind etc.
 
@@ -121,6 +129,12 @@
 			%Fast alles bisher:
 			\cite[S.4]{dockerSec1}
 
+			% Problem mit PseudoRandomNumberGenerator in /dev/random und /dev/urandom, da das blocking devices sind
+			%		^ 	\cite[S.18]{dockerSec2}
+
+			% Problem mit HotPlug Support unter Linux
+			%		^ 	\cite[S.19]{dockerSec2}
+
     \subsection{\acrshort{IPC}-Isolierung durch den \texttt{\acrshort{IPC}-namespace}}
 			Unter \acrshort{IPC} versteht man ein Sammlung an Tools, die für den Datenaustausch zwischen Prozessen genutzt werden. Dazu gehören z.B. \emph{Semaphoren}, \emph{Message Queues} und \emph{Shared Memory Segments}.
 
@@ -130,6 +144,9 @@
 
 			%Fast alles bisher:
 			\cite[S.4]{dockerSec1}
+
+			% Problem mit TIPC Extension, wo ipc namespace umgangen werden kann
+			%		^ 	\cite[S.18]{dockerSec2}
 
     \subsection{\acrshort{UTS}-Isolierung durch den \texttt{\acrshort{UTS}-namespace}}
 			\emph{Nur der Vollständigkeit halber aufgelistet? Oder hat der Relevanz für Container?}
@@ -155,12 +172,37 @@
 
     \subsection{Userisolierung (user namespace)}
       % \texttt{user namespaces} ist Future implementation, da neues Kernelfeature. Trotzdem Konzept erklären und wie Docker-Security davon profitiert.
-	\section{Ressourcenverwaltung / Limitierung von Ressourcen durch \texttt{control groups}}
+	\section{Ressourcenverwaltung / Limitierung von Ressourcen durch \texttt{\acrshort{cgroups}}}
   \label{secResLimit}
+		Das heutzutage genutzte Kernelfeature \emph{\acrlong{cgroups}} ist historisch aus dem Konzept von sogenannten \emph{\acrlong{rlimits}}, auch \texttt{\acrshort{rlimits}} genannt, gewachsen. Mit \emph{rlimits} werden weiche und harte Limits definiert, die pro Prozess angewandt werden.
+		% TODO: Ins Glossar (weiche und harte Limits) https://docs.oracle.com/cd/E19455-01/805-7229/sysresquotas-1/index.html
+
+		Dieses minimale Konzept auf Prozessebene ist für den Betrieb moderner Container jedoch unzureichend, da u.a. keine Beschränkungen auf Containerebene, als für Prozessgruppen, vorgenommen werden können. % z.B. keine Aktionen festgelegt werden können, die ausgeführt werden, wenn ein solches Limit erreicht ist. Außerdem können die \acrshort{CPU} und der Speicher nur begrenzt von \emph{\acrlong{rlimits}} kontrolliert werden.
+
+
+		Viele Containertechnologien erweiterten deswegen \texttt{\acrshort{rlimits}} mit eigenen Features. Z.b. fügten die Entwickler von \emph{FreeBSD} für den Betrieb von \emph{Jails} sogenannte \emph{Hierarchical Resource Limits} (RCTL) hinzu. \emph{Solaris} bietet die Nutzung von \emph{Resource Pools} an, die eine Partitionierung von Ressourcen implementiert. Auch \emph{OpenVZ} und \emph{Linux-VServer} erweitern \texttt{\acrshort{rlimits}}, sodass Ressourcenlimits pro Container definiert werden können \cite[S.15+16]{dockerSec2}.
+
+		Die Nachteile von \texttt{\acrshort{rlimits}} wurden mit der Implementierung von \texttt{\acrshort{cgroups}} für den Linux-Kernel behoben. Mit diesem relativ neuen Mechanismus werden Prozesse in hierarchischen Gruppen angeordnet, die individuell verwaltet werden und deren Attribute vererbt werden können. Neben vielseitiger Funktionen zum Management von \acrshort{CPU}- und Speicherressourcen, können unter \texttt{\acrshort{cgroups}} komplexe Verfahren implementiert werden, die zur Korrektur von limitüberschreitender Prozesse dienen.
+
+		Alle gängigen Linux-basierten Containerlösungen, darunter auch Docker, nutzen aktuell \texttt{\acrshort{cgroups}}, um Ressourcen für Container zu verwalten \cite[S.16]{dockerSec2}. Der Einsatz von \texttt{\acrshort{cgroups}} unter Docker umfasst, wie im Quellcode von \emph{runC} zu sehen ist, die Kontrolle von \acrshort{CPU}, Arbeitsspeicher, Geräte (\emph{Devices Nodes}, Netzwerkinterfaces und I/O-Operationen auf Speichermedien wie HDD, SSD und USB-Speicher \cite{cgroupsRedhat}\cite{githubRunCCgroups}.
+
+		% TODO: Bsp. Docker CLIÖ Wie weisst man docker container cpu shares zu
+		% https://www.cloudsigma.com/manage-docker-resources-with-cgroups/
+		% https://docs.docker.com/engine/articles/runmetrics/
+		% https://goldmann.pl/blog/2014/09/11/resource-management-in-docker/
+
+		% Was nur rlimits, aber nicht cgroups koennen: filesystem und number of threads verwalten.
+		% --> Hängt das zusammen mit "cgroups nocht nicht vollständig implementiert" ?
+		%		^		\cite[S.15]{dockerSec2}
+		% Mit einer Kombination von \texttt{\acrshort{cgroups}} und \texttt{\acrshort{rlimits}} können Ressourcen der CPU, dem Arbeitsspeicher und dem Dateisystem sowie Festplatten-I/O effektiv begrenzt werden
+		% in dem satz disk IO ins glossar machen? anstelle von festplattenzugriffs
+
+
+
 		\emph{Denial of Service}-Attacken gehören in \gls{MultiTenantService}-Systemen zu einem gängigen Angriffsmuster \cite[S.5]{dockerSec1}.
 		% TODO: DoS-Attacke im Glossar erwähnen
 		% aus dockerSec1: where a process or a group of processes attempt to consume all of the resources of the system, thus disrupting normal operation of the other processes
-		\emph{control groups}, oder auch verkürzt \emph{cgroups} genannt, ist hierbei das Schlüsselfeature des Linuxkernels, um dieser Art von Angriff entgegenzuwirken. Sie stellen sicher, dass jeder Container nur begrenzt Hostressourcen beanspruchen darf. Mit Docker lassen sich Limits und Bedingungen individuell pro Container anpassen, z.B. an einen bestimmten Container gerichtetes Arbeitsspeicherlimit in Bytes, das ihm maximal im Betrieb zur Verfügung steht \cite[S.4]{dockerSecIntro}.
+		\emph{control groups}, oder auch verkürzt \emph{cgroups} genannt, ist hierbei das Schlüsselfeature des Linuxkernels, um dieser Art von Angriff entgegenzuwirken. Sie stellen sicher, dass jeder Container nur begrenzt Hostressourcen beansprucht. Mit Docker lassen sich Limits und Bedingungen individuell pro Container anpassen, z.B. an einen bestimmten Container gerichtetes Arbeitsspeicherlimit in Bytes, das ihm maximal im Betrieb zur Verfügung steht \cite[S.4]{dockerSecIntro}.
 		% TODO: Quelle aus docker docs findbar?
 		Kontrollierbare Ressourcen umfassen \acrshort{CPU}, Arbeitsspeicher und Disk I/O.
 
@@ -176,6 +218,9 @@
 
 		% "Device Whitelist Controller" feature von cgroups limitiert Set an Devices, die Docker-Container nutzen dürfen.
 		%  ^ \cite[S.4, rechts oben]{dockerSec1}
+
+		% cgroups sind noch nicht vollstaendig implementiert (noch nicht alles features von vorgaenger rlimits in cgroups uebernommen)
+		%		^ 	\cite[S.19]{dockerSec2}
 
   \section{Einschränkungen von Zugriffsrechten}
     \subsection{\texttt{capabilities}}
@@ -193,6 +238,10 @@
 			% Im englischen (linux kernel) "hardening solutions"
 
 			% Siehe \cite[S.5]{dockerSecIntro} rechts unten
+
+			% Zukuenftiger "security namespace", in dnenen jeder Container seine eigenen LSM/MAC dinger definieren kann, je nach sicherheitsanforderung
+			%		^ 	\cite[S.17,18]{dockerSec2}
+
   		\subsubsection{\acrshort{SELinux}}
       % Macht Sinn das erst am Ende zu machen, wenn noch Zeit ist. Weil SELinux im Detail mehr Exkurs wird.
       \subsubsection{AppArmor}
