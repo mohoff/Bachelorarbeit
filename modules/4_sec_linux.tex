@@ -43,21 +43,27 @@
   % namespaces/etc (was es ist) in Einleitung mit rein? 1.) Erklaeren, 2.) Security/Docker untersuchen dazu im Security Hauptteil
   % 2 Unterkapitel, inhatliche Überschneidung evtl., Grund nennen warum so gegliedert, ...
   % \cite[S.3]{dockerIntroIEEE} --> umgangsprachlich erkleart wie mit namespaces und cgroups gearbeitet wird
+
+	% User namespaces are only one piece of the puzzle. AppArmor/SELinux, Notary, image security, and proper environment/network security all play a part in the overall Docker security picture
+	%  ^ 	\cite[S.7]{nsUserContainerCon}
+
 	\section{Isolierung durch \texttt{namespaces}}
   \label{secIsolierung}
-		Wenn unter Linux ein neuer Prozess gestartet werden soll, wird über \emph{System Calls} dem Kernel mitgeteilt, einen neuen \emph{namespace} bereitzustellen. Je nach Anforderung gibt es verschiedene \emph{namespaces}, z.B. ein \emph{network namespace}, der dem neuen Prozess ein Netzwerkinterface zuweist. Um Container als isolierte Arbeitsbereiche auf einem Host zu erstellen, werden die \emph{namespaces} des Kernels verwendet. Da Container selbst eine eigene komplette Laufzeitumgebung darstellen sollen, müssen Bereiche des Hosts durch \emph{namespaces} abgedeckt sein, sodass neben dem Netzwerk auch Zugriff auf die Festplatte, den Arbeitsspeicher und die \acrshort{CPU} gewährleistet ist \cite[S.3]{dockerIntroIEEE}.
+		Wenn unter Linux ein neuer Prozess gestartet werden soll, wird über \emph{System Calls} dem Kernel mitgeteilt, einen neuen \emph{namespace} bereitzustellen. Je nach Anforderung gibt es verschiedene \emph{namespaces}, z.B. ein \emph{network namespace}, der dem neuen Prozess ein Netzwerkinterface zuweist. Um Container als isolierte Arbeitsbereiche auf einem Host zu erstellen, werden die \emph{namespaces} des Kernels verwendet. Da Container selbst eine eigene komplette Laufzeitumgebung darstellen sollen, müssen Bereiche des Hosts durch \emph{namespaces} abgedeckt sein, sodass neben dem Netzwerk auch z.B. ein beschränkter Zugriff auf den Arbeitsspeicher und die \acrshort{CPU} gewährleistet ist \cite[S.3]{dockerIntroIEEE}.
 
-		Nach ..(reshetova).. müssen Anforderungen an Prozessisolierung, Dateisystemisolierung, Geräteisolierung, Prozessisolierung und Netzwerklimitierung erfüllt sein.
+		Technisch betrachtet beinhaltet ein \emph{namespace} eine Lookup-Tabelle, die global verfügbare Ressourcen abstrahiert und dem \emph{namespace} bereitstellt. Änderungen globaler Ressourcen sind sichtbar für Prozesse im relevanten \emph{namespace}, jedoch unsichtbar für solche außerhalb \cite[S.1+2]{IBMcheckpointRestart}\cite{namespaces}. Dadurch können \emph{namespaces} als Lösungsansatz des Sicherheitsziels Vertraulichkeit betrachtet werden. Sie sind damit der wesentliche Baustein, um eine Containerisolierung zu realisieren.
+		% Nach ..(reshetova).. müssen Anforderungen an Prozessisolierung, Dateisystemisolierung, Geräteisolierung, Prozessisolierung und Netzwerklimitierung erfüllt sein.
+
     % Isolierung erklären, erfüllt X Schutzziele, Bezug auf Forschungsfrage
     % Es gibt 6 Namespaces, die im folgenden *anhand der verschiedenen Betriebssystemkomponenten?) untersucht werden.
 		\subsection{Prozessisolierung durch den \texttt{\acrshort{PID} namespace}}
 		\label{secIsoProcesses}
 
-			Jeder Container entspricht auf dem Host einem Prozess. Da die Container untereinander isoliert sein sollen, dürfen auch die zugrundeliegenden Containerprozesse nicht miteinander interferieren.
+			Jeder Container entspricht auf dem Host zunächst einem Prozess. Da die Container untereinander isoliert sein sollen, dürfen auch die zugrundeliegenden Containerprozesse nicht miteinander interferieren.
 
-			Docker erreicht diese Isolierung auf Prozessebene durch die Nutzung des \emph{\acrshort{PID} namespace}, in denen Container eingebettet werden. Nach diesem hierarchischen Konzept ist es einem Prozess X nur möglich, selbsterzeugte Kindprozesse zu beobachten und mit ihnen zu interagieren. Elternprozesse, also Prozesse die in der Prozesshierarchie über X stehen, sind für X unsichtbar. Der Elternprozesse haben jedoch die volle Kontrolle über X und können diesen z.B. jederzeit beenden.
+			Docker erreicht diese Isolierung auf Prozessebene durch die Nutzung des \emph{\acrshort{PID} namespace}, in denen Container eingebettet werden. Nach diesem hierarchischen Konzept ist es einem Prozess X nur möglich, selbsterzeugte Kindprozesse zu beobachten und mit ihnen zu interagieren. Elternprozesse, also Prozesse die in der Prozesshierarchie über X stehen, sind für X unsichtbar. Der Elternprozesse haben jedoch die volle Kontrolle über X und können diesen z.B. jederzeit mit dem Befehl \texttt{kill} beenden. Darüber hinaus haben Elternprozesse die Möglichkeit mit z.B. einem Aufruf von \texttt{ps} alle Kindprozesse überwachen.
 
-			Auf die containerbasierte Virtualisierung übertragen, bewirkt dieses Konzept, dass der Host vollen Zugriff auf die laufenden Container hat, Containerprozesse jedoch weder Kenntnis von Hostprozessen noch von Prozessen anderer Container besitzen. Diese Eigenschaft macht es Angreifern schwieriger Schaden anzurichten, da sie ausgehend von kompromitierten Containern keine Informationen über Prozesse außerhalb des Containers beziehen können.
+			Übertragen auf die containerbasierte Virtualisierung beduetet das, dass der Host vollen Zugriff auf die laufenden Container hat, Containerprozesse jedoch weder Kenntnis von Hostprozessen noch von Prozessen anderer Container besitzen. Diese Eigenschaft macht es Angreifern schwieriger Schaden anzurichten, da sie ausgehend von kompromitierten Containern keine Informationen über Prozesse außerhalb des Containers beziehen können.
 
 			Ein weiterer Mechanismus des \emph{\acrshort{PID}-namespace} ist eine Besonderheit des Prozesses mit \texttt{PID=1}. Der initiale Containerprozess kann mit der \texttt{PID=1} gestartet werden, dem es als \emph{init}-ähnlicher Prozess möglich ist, alle Kindprozese zu terminieren sobald er selbst beendet wird. Somit können komplette Container durch einen Hostzugriff auf den Containerprozess mit \texttt{PID=1} umgehend vollständig heruntergefahren werden.
 
@@ -157,6 +163,8 @@
 
 			Dazu stellt Docker jedem Container einen eigenen unabhängigen Netzwerk-Stack zur Verfügung, der durch \emph{network namespaces} realisiert wird. Jeder Namespace hat seine eigene private IP-Adresse, IP-Routingtabelle, Loopback-Interface und Netzwerkgeräte \cite[S.2+3]{virtVSContainer}. Eine Kommunikation zu anderen Containern auf dem gleichen oder entfernten Hosts geschieht dann über diese dafür vorgesehenen Schnittstellen.
 
+			Um die oben genannten Netzwerkressourcen anzubieten, wird jedem \emph{network namespace} ein eigenes \texttt{/proc/net}-Verzeichnis zugewiesen. Die Nutzung von Befehlen wie \texttt{netstat} und \texttt{ifconfig} wird damit, aus einem \emph{network namespace} heraus, auch ermöglicht \cite[S.7]{IBMcheckpointRestart}.
+
 			Standardmäßig wird von Containern eine \emph{Virtual Ethernet Bridge} namens \texttt{docker0} genutzt, um mit dem Host oder anderen Containern zu kommunizieren. Neu gestartete Container werden dieser Bridge hinzugefügt, indem deren Netzwerkinterface \texttt{eth0} mit der Bridge verbunden wird. Aus Sicht des Hosts ist das Interface \texttt{eth0} ein virtuelles \texttt{veth}-Interface \cite[S.3]{virtVSContainer}.
 
 			Die Bridge leitet ohne Filter alle eingehenden Pakete weiter, welchen Umstand dieses Verbindungsdesign anfällig gegenüber \acrshort{ARP}-Spoofing und \acrshort{MAC2}-Flooding macht. Diesem Nachteil kann Abhilfe geschafft werden, indem manuelle Filtermethoden mittels beispielsweise \emph{ebtables} in die Bridge integriert werden, oder ein anderes Verbindungsdesign auf basis virtueller Netzwerke gewählt wird.
@@ -165,24 +173,54 @@
 
 			% TODO: Bild zu Bridge-Layout (z.B. in dockerSec1, s.5, oben)
 
-			% TODO: INtegrieren: https://docs.docker.com/engine/userguide/networking/
+			% TODO: Integrieren: https://docs.docker.com/engine/userguide/networking/
 
 			%Fast alles bisher:
 			\cite[S.4]{dockerSec1}
 
+			% network namespace:
+	    % Standardmäßig werden für Container keine Ports geöffnet. Manche Applikationen machen jedoch nur Sinn, wenn sie Ports nutzen können, daher können diese manuell in dem Dockerfile (INTERNE REFERENZ) freigegeben werden.
+	    % Container werden virtuelle Netzwerkinterfaces zur Verfügung gestellt. Dadurch können z.B. mehrere Container betrieben werden, die Webserver beinhalten, die alle auf Port 80 eingestellt sind. Außerhalb der Container können diese Containerports mithilfe von NAT (sicher NAT?) auf unterschiedliche Ports des Hosts abgebildet werden.
+	    %  ^ \cite[S.3]{dockerIntroIEEE}
+
     \subsection{Userisolierung (user namespace)}
+			Bislang werden Container unter Docker und anderen linuxbasierten Containerlösungen mit Root-Rechten gestartet. Falls es einem Angreifer in diesem Szenario gelingt, aus der Containerisolation auszubrechen, ist er automatisch Root-User auf dem Host, was ein hohes Sicherheitsrisiko ist. Durch die potentielle Gefahr dieser Vorgehensweise, wird die Einführung von \emph{user namespaces} als Meilenstein der Containersicherheit gewertet.
+			% TODO: Quelle hinzufuegen .. blog artiekl etc.
+			% schlechte Quelle...: http://rhelblog.redhat.com/2015/07/07/whats-next-for-containers-user-namespaces/
+			% Root-Rechte wurden bisher mit capabilities eingeschränkt.
+
+			Dieser Kernel-\emph{namespace} führt einen Mechanismus ein, unter dem Rootrechte in Containern nicht Rootrechten auf dem Host entsprechen, in anderen Worten ein Root-User im Container auf einen Nicht-Root-User auf dem Host aufgelöst wird. Durch das potentielle Sicherheitsrisiko der bisherigen Vorgehensweise,
+
+			Linux verwendet \emph{User IDs} (\texttt{uids}) und \emph{Group IDs} (\texttt{gids}), um Verzeichnisse und Dateien eines Dateisystems sowie Prozesse mit Eignerinformationen zu versehen. \emph{user namespaces} erlauben unterschiedliche \texttt{uids} und \texttt{gids} innerhalb und außerhalb des \emph{namespace}. Im Kontext des Hosts kann dadurch ein unpriveligierter User (ohne Root-Rechte) existieren, während der gleiche User innerhalb von Containern mit \emph{user namespace} priveligiert ist, also im Besitz von Root-Rechten ist \cite{nsUser}.
+
+			In der Praxis lasen sich mit diesem Konzept jeweils Root-User mit \texttt{uid=0} in Container X und Y auf nicht-priviligierte User mit \texttt{uid=1000} und \texttt{uid=2000} des Hosts abbilden.
+			% TODO: Grafik zur Unterstuetzung waere gut hier...
+
+
+			Das aktuelle Release von Docker unterstützt noch keine \emph{user namespaces}, obwohl dieses Feature schon seit Version 1.6 geplant war \cite{githubDockerChangelog}\cite{githubUserNamespaceProposal}. Verzögerungen entstanden durch einen Bug der Programmiersprache \emph{Golang} \cite{nsUserGolangBug}, und Integrationschwierigkeiten in die bestehende Docker-Codebasis \cite{githubUserNamespaceConflict}.
+			% Mehr (Bessere) Gruende: http://events.linuxfoundation.org/sites/events/files/slides/User%20Namespaces%20-%20ContainerCon%202015%20-%2016-9-final_0.pdf
+			% S.13ff.
+
+			Beide Probleme sind jedoch mittlerweise gelöst, wie die erfolgreiche Integration von \emph{user namespaces} in Docker im Oktober 2015 bestätigt \cite{githubUserNamespaceIntegration}. Dadurch, dass \emph{user namespaces} in der Docker-Roadmap als wichtiges Sicherheitsfeature gesehen werden, ist ein Release dessen bald zu erwarten \cite{githubDockerRoadmap}.
+
+			% A single-threaded process can join another user namespace with setns(2) if it has the CAP_SYS_ADMIN in that namespace; upon doing so, it gains a full set of capabilities in that namespace.
+			%		^ 	\cite{nsUser}
+
       % \texttt{user namespaces} ist Future implementation, da neues Kernelfeature. Trotzdem Konzept erklären und wie Docker-Security davon profitiert.
+
+			% User namespace is the only namespace which can be created without CAP_SYS_ADMIN capability
+			% aus: http://www.haifux.org/lectures/299/netLec7.pdf .... Seite 61
+
+			Auch für Cloudanbieter sind \emph{user namespaces} von Vorteil: Mit einer Auflösung der Container auf Userebene ist es einerseits möglich Servicenutzung auf Userbasis einzugrenzen und andererseits diese auf Userbasis abzurechnen. Wenn ohne \emph{user namespaces} jede gestartete Containerinstanz einem Hostuser mit \texttt{uid=0} zugehörig ist, gestaltet sich die Zuordnung schwieriger \cite[S.3]{nsUserContainerCon}.
 	\section{Ressourcenverwaltung / Limitierung von Ressourcen durch \texttt{\acrshort{cgroups}}}
   \label{secResLimit}
-		\emph{Denial of Service}-Attacken gehören in \gls{MultiTenantService}-Systemen zu einem gängigen Angriffsmuster \cite[S.5]{dockerSec1}. Damit das Sicheitsziel der Verfügbarkeit erfüllt ist, bietet der Linux-Kernel sogenannte \emph{\acrlong{cgroups}} (kurz \texttt{\acrshort{cgroups}}) an, die auch von Docker genutzte Möglichkeiten zum Ressourcenmanagement bereitstellen.
-		% TODO: DoS-Attacke im Glossar erwähnen
-		% aus dockerSec1: where a process or a group of processes attempt to consume all of the resources of the system, thus disrupting normal operation of the other processes
+		\acrshort{DoS}-Attacken mit der Absicht das Sicherheitsziel der Verfügbarkeit zu verletzen, gehören in \gls{MultiTenantService}-Systemen zu einem gängigen Angriffsmuster \cite[S.5]{dockerSec1}. Um die Verfügbarkeit von Containern sicherzustellen, bietet der Linux-Kernel sogenannte \emph{\acrlong{cgroups}} (kurz \texttt{\acrshort{cgroups}}) an, die auch von Docker genutzte Möglichkeiten zum Ressourcenmanagement bereitstellen.
+
 
 		% \emph{control groups}, oder auch verkürzt \emph{cgroups} genannt, ist hierbei das Schlüsselfeature des Linuxkernels, um dieser Art von Angriff entgegenzuwirken. Sie stellen sicher, dass jeder Container nur begrenzt Hostressourcen beansprucht. Mit Docker lassen sich Limits und Bedingungen individuell pro Container anpassen, z.B. an einen bestimmten Container gerichtetes Arbeitsspeicherlimit in Bytes, das ihm maximal im Betrieb zur Verfügung steht \cite[S.4]{dockerSecIntro}.
-		% TODO: Quelle aus docker docs findbar?
+		% --> Quelle aus docker docs findbar?
 
-		\texttt{\acrshort{cgroups}} sind historisch aus dem Konzept von sogenannten \emph{\acrlong{rlimits}}, auch \texttt{\acrshort{rlimits}} genannt, gewachsen. Mit \emph{rlimits} werden weiche und harte Limits definiert, die pro Prozess angewandt werden. Der Betrieb von Contaiern verlangen jedoch eine Ressourcenverteilung auf Containerbasis, sodass Limits pro Container, aus technischer Sicht einem Set an Prozessen, vergeben werden.
-		% TODO: Ins Glossar (weiche und harte Limits) https://docs.oracle.com/cd/E19455-01/805-7229/sysresquotas-1/index.html
+		\texttt{\acrshort{cgroups}} sind historisch aus dem Konzept von sogenannten \emph{\acrlong{rlimits}}, auch \texttt{\acrshort{rlimits}} genannt, gewachsen. Mit \emph{rlimits} werden \gls{weicheHarteLimits} definiert, die pro Prozess angewandt werden. Der Betrieb von Contaiern verlangen jedoch eine Ressourcenverteilung auf Containerbasis, sodass Limits pro Container, aus technischer Sicht einem Set an Prozessen, vergeben werden.
 
 		%Dieses minimale Konzept auf Prozessebene ist für den Betrieb moderner Container jedoch unzureichend, da u.a. keine Beschränkungen auf Containerebene, also für Prozessgruppen, vorgenommen werden können. % z.B. keine Aktionen festgelegt werden können, die ausgeführt werden, wenn ein solches Limit erreicht ist. Außerdem können die \acrshort{CPU} und der Speicher nur begrenzt von \emph{\acrlong{rlimits}} kontrolliert werden.
 
@@ -190,9 +228,18 @@
 
 		Die Nachteile von \texttt{\acrshort{rlimits}} wurden mit der Implementierung von \texttt{\acrshort{cgroups}} für den Linux-Kernel behoben. Mit diesem relativ neuen Mechanismus werden Prozesse in hierarchischen Gruppen angeordnet, die individuell verwaltet werden und deren Attribute vererbt werden können. Neben vielseitiger und feingranularer Funktionen zum Management von z.B. \acrshort{CPU}- und Speicherressourcen, können unter \texttt{\acrshort{cgroups}} komplexe Verfahren implementiert werden, die zur Korrektur von limitüberschreitender Prozesse dienen \cite{cgroupsRedhat}. Die Implementierung von \texttt{\acrshort{cgroups}} wurde ab 2012 weiter verbessert, sodass eine Update unter dem Namen \emph{Unified Control Group Hierarchy} seit 2014 in den Linux-Kernel integriert ist \cite{cgroupsFixing}\cite{cgroupsUniHierarchy}.
 
+		Wichtig zu erwähnen ist, dass die Implementierung von \texttt{\acrshort{cgroups}} verglichen mit der von \texttt{\acrshort{rlimits}} angeblich noch nicht vollständig ist. Das Feature Dateisysteme als Ressourcen mit \texttt{\acrshort{cgroups}} zu steuern, fehlt nach Angaben von \cite[S.19]{dockerSec2}. Auch im Quellcode von \emph{runC} ist eine Dateisystem-Interface als \glqq{}nicht unterstützt\grqq{} gekennzeichnet und wird demzufolge auch nicht von Docker genutzt. \cite{githubRunCCgroups}. Diskussionen im \emph{GitHub}-Repository von Docker verweisen in Bezug zu diesem Feature auf Abhängigkeiten zur Art des Dateisystems. Offenbar lassen sich sogenannte Dateisystem-Quotas nur mit \emph{Device Mapper} und \emph{Brtfs} softwaretechnisch lösen, \emph{AuFS} jedoch ermöglicht das nur indirekt über die Zuweisung von Festplattenpartitionen fester Größe. Diese Gegebenheit lässt vermuten, dass eine universelle Lösung aktuell an der Breite unterstützter Dateisysteme scheitert \cite{githubDockerIssueFsQuota}. Die neusten Entwicklungen sehen jedoch eine Quota-Implementierung vor \cite{githubDockerPullBrtfs}.
+
+		Dennoch ist diese Erweiterung im Sinne einer einheitlichen Verwaltung von Ressourcen mit \texttt{\acrshort{cgroups}} vorgesehen \cite[S.16+19]{dockerSec2}.
+
 		Alle gängigen Linux-basierten Containerlösungen, darunter auch Docker, nutzen aktuell \texttt{\acrshort{cgroups}}, um Ressourcen für Container zu verwalten \cite[S.16]{dockerSec2}. Der Einsatz von \texttt{\acrshort{cgroups}} unter Docker umfasst, wie im Quellcode von \emph{runC} zu sehen ist, die Kontrolle über \acrshort{CPU}, Arbeitsspeicher, Geräte (\emph{Devices Nodes}, Netzwerkinterfaces und \acrshort{I/O}-Operationen auf Speichermedien wie \acrshort{HDD}, \acrshort{SSD} und \acrshort{USB}-Speicher \cite{cgroupsRedhat}\cite{githubRunCCgroups}.
 
-		Über die Kommandozeile lässt sich der \texttt{run}-Befehl, der ausgeführt wird, um einen Container zu starten, mit Angaben zur Ressourcennutzung parametrisieren. Z.b. bewirkt die Hintereinanderausführung von \texttt{docker run <IMAGE> --cpu-shares=50} und \texttt{docker run <IMAGE> --cpu-shares=100}, dass dem zweiten Container doppelt so viel CPU-Leistung zur Verfügung gestellt wird, wie dem ersten Container \cite{dockerRun}.
+		Über die Kommandozeile lässt sich der \texttt{run}-Befehl, der ausgeführt wird, um einen Container zu starten, mit Angaben zur Ressourcennutzung parametrisieren. Z.b. bewirkt die Hintereinanderausführung folgender Befehle, dass dem zuletzt gestarteten Container doppelt so viel CPU-Leistung zur Verfügung gestellt wird, wie dem ersten Container \cite{dockerRun}.
+
+		\begin{lstlisting}
+			user@machine:$ docker run <IMAGE> --cpu-shares=50
+			user@machine:$ docker run <IMAGE> --cpu-shares=100
+		\end{lstlisting}
 
 		Neben dem Ressourcenmanagement bieten \texttt{\acrshort{cgroups}} auch Nutzungsstatistiken an. Diese können unter Docker mit dem Befehl \texttt{docker stats <CONTAINER> [<CONTAINER>]} abgerufen werden \cite{dockerMetrics}.
 
@@ -210,13 +257,8 @@
 
 
     % Sicherheitsziel: Availability, Bezug auf Forschungsfrage
-    % Ressourcenverteilung und -management
-    % Storage, CPU, HDD, RAM, IO, Network
 
-    % network namespace:
-    % Standardmäßig werden für Container keine Ports geöffnet. Manche Applikationen machen jedoch nur Sinn, wenn sie Ports nutzen können, daher können diese manuell in dem Dockerfile (INTERNE REFERENZ) freigegeben werden.
-    % Container werden virtuelle Netzwerkinterfaces zur Verfügung gestellt. Dadurch können z.B. mehrere Container betrieben werden, die Webserver beinhalten, die alle auf Port 80 eingestellt sind. Außerhalb der Container können diese Containerports mithilfe von NAT (sicher NAT?) auf unterschiedliche Ports des Hosts abgebildet werden.
-    %  ^ \cite[S.3]{dockerIntroIEEE}
+
 
 		% "Device Whitelist Controller" feature von cgroups limitiert Set an Devices, die Docker-Container nutzen dürfen.
 		%  ^ \cite[S.4, rechts oben]{dockerSec1}
@@ -243,6 +285,8 @@
 
 			% Zukuenftiger "security namespace", in dnenen jeder Container seine eigenen LSM/MAC dinger definieren kann, je nach sicherheitsanforderung
 			%		^ 	\cite[S.17,18]{dockerSec2}
+
+			% S.7 in
 
   		\subsubsection{\acrshort{SELinux}}
       % Macht Sinn das erst am Ende zu machen, wenn noch Zeit ist. Weil SELinux im Detail mehr Exkurs wird.

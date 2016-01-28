@@ -47,8 +47,8 @@
 \addto{\captionsngerman}{\renewcommand*{\acronymname}{Abkürzungsverzeichnis}}
 
 % Some global symbols and meta data
-\newcommand{\bibtexFile}{./modules/bibliography} % written without extension
-\newcommand{\bibtexFilePath}{./modules/bibliography.bib} % written without extension
+\newcommand{\bibtexFiles}{./bibliography/bookpapermanual,./bibliography/web_docker,./bibliography/web_github,./bibliography/web_homepages,./bibliography/web_misc} % written without extension
+%\newcommand{\bibtexFilePath}{./modules/bibliography.bib} % written without extension
 \newcommand{\Autor}{Moritz Hoffmann}
 \newcommand{\Email}{mh203@hdm-stuttgart.de}
 \newcommand{\Matrikelnummer}{26135}
@@ -126,7 +126,7 @@
 
   % Quellenverzeichnis
   \bibliographystyle{plain}
-  \bibliography{\bibtexFile} % Specify name of .bib file. Use of this is deprecated.
+  \bibliography{\bibtexFiles} % Specify name of .bib file. Use of this is deprecated.
   % NOT DEPRACTED, BUT NOT WORKING :/
   %\addbibresource{\bibtexFilePath}
 \end{document}
