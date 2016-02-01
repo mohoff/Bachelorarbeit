@@ -56,6 +56,10 @@
 
     % Isolierung erklären, erfüllt X Schutzziele, Bezug auf Forschungsfrage
     % Es gibt 6 Namespaces, die im folgenden *anhand der verschiedenen Betriebssystemkomponenten?) untersucht werden.
+
+		% Unfortunately, the namespace support code is complicated and in the past, various bugs have allowed applications to escape from this namespace isolation and interfere with other containers. The known bugs have been fixed.
+		%		^		\cite{ https://coreos.com/blog/container-security-selinux-coreos.html }
+
 		\subsection{Prozessisolierung durch den \texttt{\acrshort{PID} namespace}}
 		\label{secIsoProcesses}
 
@@ -267,17 +271,55 @@
 		%		^ 	\cite[S.19]{dockerSec2}
 
   \section{Einschränkungen von Zugriffsrechten}
+		\emph{Kapitel mit nächstem Unterkapitel verschmelzen. Oder eigenes LSM-capability Kapitel machen, was diese Unterteilung rechtfertigt.}
+
+		Dieses Kapitel stellt weitere Sicherheitsmechanismen vor, die Docker nutzt.
+
+		Oben behandelte Namespaces hatten schon einige Bugs. Alle zwar bisher behoben, trotzdem Beweis dafür, dass Namespace- und Cgroups-Sicherheit allein nicht aussreichen, um Container zu isolieren.
+
+		LSM bieten die Möglichkeit, Ressourcenzugriffe userunabhängig zu überprüfen. Damit ist weitere Sicherheitsschicht realisiert, die es z.b. Angreifern, die Root-Rechte auf dem Host erworben haben, verweigert, festgelegte Ressourcen zu verwenden.
     \subsection{\texttt{capabilities}}
 			% Siehe \cite[S.4, links uten]{dockerSec1} --> CAP_SYS_ADMIN
 
 			% Siehe \cite[S.5]{dockerSecIntro} .. nur haelfte an capabilities genutzt...
-
-      \subsubsection{Beispiele, \texttt{/proc}-Verzeichnis, (Un-)Mounten des Host-Filesystems}
+			\emph{Evtl. hieraus nur capability-Eintrag im Glossar machen. Oder in Grundlagen Kapitel.}
+      %\subsubsection{Beispiele, \texttt{/proc}-Verzeichnis, (Un-)Mounten des Host-Filesystems}
       % Gehört das unter 'capabilities'? Oder eigener Punkt bzw. woanders dazu? --> Eher Mount namespace --> Isolierung
       % Einschränkung in libcontainer vorgennnomenn? --> check github libcontainer repo.
 
-    \subsection{Linux Security Module (\acrshort{LSM}) und Mandatory Access Control (\acrshort{MAC1})}
-      % Herausfinden, ob das wirklich Unterkapitel von "Isolierung" wird. Evtl. getrennt davon listen.
+    \subsection{Linux Security Modules (\acrshort{LSM}s) und Mandatory Access Control (\acrshort{MAC1})}
+			% TODO: Glossary und Acronyms besser einpflegen hier
+
+			\emph{Linux Security Modules} (\acrshort{LSM}) ist ein Framework, das von Linux-Kerneln eingebunden werden kann, um Sicherheitsmodule zu verwenden. Das hauptsächlich implementierte Sicherheitsmodell ist das der \emph{Access Control List} (\acrshort{ACL}), das anhand definierter Parameter entscheidet, ob der Zugriff auf eine Resource genehmigt oder verweigert wird. %, die eine feingranulare Zugriffskontrolle für Ressourcen bereitstellen.
+			% Es implementiert einige Sicherheitsmodelle ohne sich auf ein Modell zu beschränken.
+			Die Zugriffskontrolle geschieht in Form eines LSM-Hooks. Unter einem Hook ist ein zwischengeschaltener Aufruf gemeint, der den normalen Programmfluss unterbricht und im Kontext von LSM in einem LSM-Modul weiterverarbeitet wird. Erst nach einer Antwort des LSM-Moduls über einen Callback-Mechanismus, wird die normale Ausführung des Aufrufs fortgesetzt bzw. für den Fall, dass die Entscheidung des Moduls restriktiver Natur war, kontrolliert abgebrochen.
+
+			Die native Zugriffskontrolle unter Linux, \emph{Discretionary Access Control} (\acrshort{DAC}), implementiert eine einfache Form von ACLs für das User-Management, bietet jedoch nicht ausreichend Schutz gegen Angriffe \cite[S.1]{LSMFramework}. DAC-Elemente umfassen den Besitzer (owner) einer Datei, die Gruppenzugehörigkeit des Besitzers (group) und sogenannte Permission-Flags aus der Menge \texttt{r,w,x}. Letztere legen fest, ob Lese- (r=read), Schreib- (w=write) und Ausführrechte (x=execute) gewährleistet werden.  %erfüllt jedoch nicht moderne Anforderungen an die Sicherheit.
+			% Kurz DAC erklaeren oder besser ins Glossar damit?
+			% DAC: unterscheidung nach root, user id und mode bit
+			% Permission flags r w x in glossar?
+			SELinux kennt das Konzept des Eigentums von Ownern und Groups nicht. Der komplette Funktionsumfang von SELinux beruht auf Labels \cite{SELinuxComic}.
+
+
+			Module, die vom offiziellen Kernel unterstützt werden sind \emph{AppArmor}, \emph{SELinux}, \emph{Smack}, \emph{TOMOYO Linux} und \emph{Seccomp}.
+
+			Da es sich bei LSMs um optinale Kernelmodule handelt, ist eine Abwärtskompatibilität mit den konventionellen DACs gewährleistet.
+			Aus diesem Grund überschreiben LSMs nicht DAC-Mechanismen, sondern ergänzen letztere, indem LSM-Checks erst durchgeführt werden, wenn die DAC den Zugriff gestattet hat. Durch diese Reihenfolge ist sichergestellt, dass die Nutzung einer LSM-Implementierung optional ist und unabhängig von der DAC funktioniert. Deswegen können auch Anwendungen, die das LSM-Framework nicht unterstützen, weiterhin funktionieren.
+
+			Genauer formuliert, implementieren LSM an sicherheitskritischen Punkten im Kernel sogenannte Hooks.
+
+			% FIGURE LSM architektur \cite[S.3]{LSMFramework}
+
+			Wie in \fig ... dargestellt, greift der LSM-Hook erst, wenn ein User einen sicherheitskritischen \emph{System Call} ausgeführt hat, die hierbei angefragte Ressource in Form einer \texttt{inode} aufgelöst wurde, Fehler-Checks abgeschlossen und der Zugriff über den klassischen DAC-Mechanismus genehmigt wurde. Erst wenn der Kernel versucht auf das interne Ressourcenobjekt zuzugreifen, wird der Hook ausgeführt, der den Zugriff in das zugehörige LSM-Modul weiterleitet. Das Modul genehmigt oder verweigert den Zugriff anhand den ihm vorliegenden Zugriffsparametern.
+
+			Der Grund für diese Reihenfolge ist, dass nur kurz vor dem Zugriff auf die \texttt{inode} der komplette Kontext der Zugriffsanfrage vorliegt und dieser daher nur an dieser Stelle vollständig von einem LSM-Modul ausgewertet werden kann \cite[S.2]{LSMFramework}. Zusätzlich wird dadurch Granularität der Zugriffskontrolle verbessert werden \cite{LSMDesign}.
+			% Damit Unterscheidet sich das Schema grundlegend von der normalen Implementierung von MACs, die normalerweise zuerst ausgefuerht werden (MANDATORY access control) \cite[S.3]{LSMFramework}.
+			% TODO: inode in Glossar
+
+
+			Verschiedene LSM-Module sollen kombinierbar sein, sodass mehrere Sicherheits-Policies umgesetzt werden können \cite[S.3]{LSMFramework}.
+
+			Hooks werden auch ausgeführt, wenn der User-Root versucht auf eine Ressource zuzugreifen. Biespielhaft kann ein LSM-Modul gebaut werden, dass es dem Root-User nur erlaubt ein Programm auszuführen, wenn ein physikalisches Gerät an das System angeschlossen ist \cite{LSMUsing}.
 
 			% Im englischen (linux kernel) "hardening solutions"
 
@@ -289,10 +331,47 @@
 			% S.7 in
 
   		\subsubsection{\acrshort{SELinux}}
-      % Macht Sinn das erst am Ende zu machen, wenn noch Zeit ist. Weil SELinux im Detail mehr Exkurs wird.
+      	% Macht Sinn das erst am Ende zu machen, wenn noch Zeit ist. Weil SELinux im Detail mehr Exkurs wird.
+				SELinux steht für \emph{Security Enhanced Linux} und wurde ursprünglich von der NSA entwickelt.
+
+				SELinux ist die Implementierung einer feingranularen und flexiblen MAC (in Form eines Labeling-Systems).
+				% cite { https://www.linux.com/learn/docs/727873-overview-of-linux-kernel-security-features/ }
+				% cite { https://www.nsa.gov/research/_files/selinux/papers/selsymp2006.pdf }
+
+				Unterstützt Type Enforcement (TE), Role-Based Access Control (RBAC) und optional Multi-Level Security (MLS) / Multi-Category Security (MCS).
+
+				Kann verwendet werden, um Prozesse auf "least privilege" einzuschränken. Schützt Integrität und Vertraulichkeit von Prozessen und Daten.
+
+				SELinux bietet strenge Ressourcenisolierung und -beschränkung für Prozesse. \cite{redhatSec}
+
+				Mit SELinux wird jedem Objekt im System ein Sicherheits-Label zugewiesen. Ein Objekt ist hierbei ein Sammelbegriff für alle Ressourcen, auf die sich der Zugriff beschränken lässt, also z.B. Prozesse, Dateien, Verzeichnisse und Netzwerkports. SELinux wertet diese Labels anhand einem definierten Regelwerk aus und entscheidet, ob die Operation fortgesetzt werden darf \cite{linuxSecOverview}. Die Regeln werden in der Summe auch als Policy bezeichnet.
+
+				SELinux selbst stellt keine \emph{namespaces} zur Verfügung. Deswegen kann pro Host nur eine SELinux-Policy aktiv sein, die für alle Hostcontainer angewandt wird.
+
+				% SELinux funktionert angeblich nicht mit storage driver BRTFS
+				%		^		\cite{ https://coreos.com/blog/container-security-selinux-coreos.html } --> "notes for deploying"
+
+				\paragraph{Type Enforcement (TE)}
+					% We label Apache processes as httpd_t and we label Apache content as httpd_sys_content_t and httpd_sys_content_rw_t. Imagine we have credit card data stored in a mySQL database which is labeled msyqld_data_t. If an Apache process is hacked, the hacker could get control of the httpd_t process and would be allowed to read httpd_sys_content_t files and write to httpd_sys_content_rw_t. But the hacker would not be allowed to read the credit card data (mysqld_data_t) even if the process was running as root. In this case SELinux has mitigated the break in.
+				\paragraph{Multi-Category Security (MCS)}
+
+				\paragraph{Type Enforcement}
+
       \subsubsection{AppArmor}
-      % Optional, da auf MAC alzu sehr eingehen nicht zu sehr im Scope sein sollte.
+      	% Optional, da auf MAC alzu sehr eingehen nicht zu sehr im Scope sein sollte.
+				AppArmor ist ein MAC-Schema, das gebaut wurde, um eine einfache Handhabung zu realisieren. Es ist in den Linuxdistributionen \emph{Ubuntu} und \emph{OpenSUSE} standardmäßig zum Einsatz.
+
+				Der fundamentale Unterschied zu SELinux ist, dass nicht Objekten keine Label zugeweisen werden, sondern allein Pfadnamen dazu dienen eine Sicherheits-Policy anzuwenden \cite{linuxSecOverview}.
+
+				AppArmor unterstützt einen Lernmodus, indem das Verhalten einer Anwendungen beobachtet wird und daraus automatisch ein Sicherheitsprofil erstellt wird \cite{linuxSecOverview}.
+
       \subsubsection{Seccomp}
+				\emph{Seccomp} steht für \emph{Secure Computing Mode} und implementiert einen Mechanismus, der den Zugriff von Prozessen auf \emph{System Calls} einschränkt. Die Idee von \emph{Seccomp} ist es, die Angriffsfläche des Kernels zu minimieren, indem bestimmte \emph{System Calls} für Useranwendungen gesperrt werden. Die Gefahr, dass fehlerbehaftete oder unsichere \emph{System Calls} genutzt werden, die die Anwendung zum fehlerfreien Betrieb nicht benötigt, wird dadurch reduziert \cite{linuxSecOverview}.
+				\cite{seccompGitDesc}
+
+				Das originale Seccomp, auch als \emph{mode 1} bekannt, stellt nur den Zugriff auf vier \emph{System Calls} zur Verfügung, \texttt{read}, \texttt{write}, \texttt{exit} und \texttt{sigreturn}. Diese vier Aufrufe repräsentieren ein minimales Set an Operationen, die eine nicht vertrauenswürdige Anwendung ausführen darf \cite{linuxSecOverview}.
+
+				Ein Update \emph{mode 2} macht das Set an erlaubten \emph{System Calls} mithilfe von Filtern frei konfigurierbar und führt ein \emph{Audit Logging} ein	\cite{linuxSecOverview}\cite{seccompGitDesc}.
 
 	\section{Docker im Vergleich zu anderen Containerlösungen}
   % Optional?
