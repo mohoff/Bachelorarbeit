@@ -304,7 +304,7 @@
 			Module, die vom offiziellen Kernel unterstützt werden sind \emph{AppArmor}, \emph{SELinux}, \emph{Smack}, \emph{TOMOYO Linux} und \emph{Seccomp}.
 
 			Da es sich bei LSMs um optinale Kernelmodule handelt, ist eine Abwärtskompatibilität mit den konventionellen DACs gewährleistet.
-			Aus diesem Grund überschreiben LSMs nicht DAC-Mechanismen, sondern ergänzen letztere, indem LSM-Checks erst durchgeführt werden, wenn die DAC den Zugriff gestattet hat. Durch diese Reihenfolge ist sichergestellt, dass die Nutzung einer LSM-Implementierung optional ist und unabhängig von der DAC funktioniert. Deswegen können auch Anwendungen, die das LSM-Framework nicht unterstützen, weiterhin funktionieren.
+			Aus diesem Grund überschreiben LSMs nicht DAC-Mechanismen, sondern ergänzen letztere, indem LSM-Checks erst durchgeführt werden, wenn die DAC den Zugriff gestattet hat. Durch diese Reihenfolge ist sichergestellt, dass die Nutzung einer LSM-Implementierung optional ist und unabhängig von der DAC funktioniert \cite{centOsMCS}. Deswegen können auch Anwendungen, die das LSM-Framework nicht unterstützen, weiterhin funktionieren.
 
 			Genauer formuliert, implementieren LSM an sicherheitskritischen Punkten im Kernel sogenannte Hooks.
 
@@ -332,30 +332,94 @@
 
   		\subsubsection{\acrshort{SELinux}}
       	% Macht Sinn das erst am Ende zu machen, wenn noch Zeit ist. Weil SELinux im Detail mehr Exkurs wird.
-				SELinux steht für \emph{Security Enhanced Linux} und wurde ursprünglich von der NSA entwickelt.
-
-				SELinux ist die Implementierung einer feingranularen und flexiblen MAC (in Form eines Labeling-Systems).
+				\emph{SELinux} steht für \emph{Security Enhanced Linux} und wurde ursprünglich von der NSA entwickelt. Es kann verwendet werden, um die Integrität und Vertraulichkeit von Prozessen und Daten zu schützen, indem mit einer strengen Ressourcenbeschränkung das Prinzip des "least privilege" umgesetzt wird  \cite{redhatSec}. %\cite[S.201]{learningDocker}.
+				Auf Konzeptebene basiert der Schutz auf der Implementierung einer feingranularen und flexiblen MAC.
 				% cite { https://www.linux.com/learn/docs/727873-overview-of-linux-kernel-security-features/ }
 				% cite { https://www.nsa.gov/research/_files/selinux/papers/selsymp2006.pdf }
 
-				Unterstützt Type Enforcement (TE), Role-Based Access Control (RBAC) und optional Multi-Level Security (MLS) / Multi-Category Security (MCS).
+				Die \emph{Red Hat}-basierten Linux-Distributionen \emph{Red Hat Enterprise Linux}, \emph{Fedora} und \emph{CentOS} sind in der Lage \emph{SELinux} als zusätzlichen Schutzmechanismus zu verwenden \cite { https://docs.docker.com/engine/articles/security/ }.
 
-				Kann verwendet werden, um Prozesse auf "least privilege" einzuschränken. Schützt Integrität und Vertraulichkeit von Prozessen und Daten.
 
-				SELinux bietet strenge Ressourcenisolierung und -beschränkung für Prozesse. \cite{redhatSec}
+				Genauer setzt \emph{SELinux} ein Labeling-System um, das Zugriffe individuell für Prozesse verwaltet:
 
-				Mit SELinux wird jedem Objekt im System ein Sicherheits-Label zugewiesen. Ein Objekt ist hierbei ein Sammelbegriff für alle Ressourcen, auf die sich der Zugriff beschränken lässt, also z.B. Prozesse, Dateien, Verzeichnisse und Netzwerkports. SELinux wertet diese Labels anhand einem definierten Regelwerk aus und entscheidet, ob die Operation fortgesetzt werden darf \cite{linuxSecOverview}. Die Regeln werden in der Summe auch als Policy bezeichnet.
+				Labels sind nach dem Schema \texttt{User:Role:Type:Level} in vier Komponenten aufgeteilt und werden jedem Objekt im System zugeweisen. Ein Objekt ist hierbei ein Sammelbegriff für alle Ressourcen, auf die sich der Zugriff beschränken lässt, also z.B. Prozesse, Dateien und Netzwerkports \cite{ http://www.projectatomic.io/docs/docker-and-selinux/ }. Labels dienen den Objekten als Sicherheitskontext und sind vom DAC-Mechanismus getrennt \emph{SELinux}. Der \texttt{User} eines Labels ist von einem Linux-Users, der mit DAC ausgewertet wird, unabhängig.
+
+				\emph{SELinux} wertet bei einem Zugriff das Label des zugreifenden Prozesses und das Label der betroffenen Ressource anhand einem definierten Regelwerk aus und entscheidet, ob die Operation fortgesetzt werden darf \cite{linuxSecOverview}. Die Regeln werden in ihrer Summe auch als Policy bezeichnet.
+
+				Unter Docker können die vier Label-Attribute pro Container als Parameter für den \texttt{run}-Befehl manuell spezifiziert werden \cite{dockerRun}.
+
+
+				% sehr flexibel fuer docker https://www.mankier.com/8/docker_selinux
+
+
 
 				SELinux selbst stellt keine \emph{namespaces} zur Verfügung. Deswegen kann pro Host nur eine SELinux-Policy aktiv sein, die für alle Hostcontainer angewandt wird.
+
+				Die \emph{SELinux}-Module, die im Betrieb von Docker eingesetzt werden, sind \emph{Type Enforcement} und \emph{Multi-Category Security} (MCS). Die Eigenheiten beider Mechanismen und deren Funktionsweise unter Docker werden im Folgenden erklört.
+				% Multi-Level Security (MLS) ist verwandt mit MCS. Aber kein Einsatz unter Docker. MLS beruht auf Konzept von "Domination".
 
 				% SELinux funktionert angeblich nicht mit storage driver BRTFS
 				%		^		\cite{ https://coreos.com/blog/container-security-selinux-coreos.html } --> "notes for deploying"
 
-				\paragraph{Type Enforcement (TE)}
-					% We label Apache processes as httpd_t and we label Apache content as httpd_sys_content_t and httpd_sys_content_rw_t. Imagine we have credit card data stored in a mySQL database which is labeled msyqld_data_t. If an Apache process is hacked, the hacker could get control of the httpd_t process and would be allowed to read httpd_sys_content_t files and write to httpd_sys_content_rw_t. But the hacker would not be allowed to read the credit card data (mysqld_data_t) even if the process was running as root. In this case SELinux has mitigated the break in.
-				\paragraph{Multi-Category Security (MCS)}
+				% Trennung von Zugriffsdomänen auf zwei Ebenen (TE und MCS)
+				%(		^		\cite{learning docker book, see https://books.google.de/books?id=jkkOCgAAQBAJ&pg=PA200&lpg=PA200&dq=mcs+docker&source=bl&ots=0mWUrsFsfO&sig=UXFaVbKKMMXcb_nFW-abQeR0bB0&hl=de&sa=X&ved=0ahUKEwiq5pnLltnKAhUGqA4KHY13AqsQ6AEIXjAI#v=onepage&q=mcs%20docker&f=false .... seite 201}
 
-				\paragraph{Type Enforcement}
+				\paragraph{Type Enforcement (TE)}
+					Die wichtigste Komponente von \emph{SELinux} ist das \emph{Type Enforcement}. Nach diesem Modell wird jedem Objekt ein Typ zugeweisen, das bei ein Zugriffsoperation ausgewertet wird. Der Typ eines Objekts ist im Label an dritter Stelle definiert.
+
+					Jeder Docker-Prozess hat z.B. im Label den Typ \texttt{docker_t} definiert. Im \emph{SELinux}-Regelwerk ist festgelegt, dass Prozesse eines Typs nur auf Verzeichnisse und Dateien vollen Zugriff hat, die mit bestimmten Labeltypen versehen sind. Im konkreten Fall von \texttt{docker_t} umfasst diese Konfiguration ein Set, das z.B. die Typen \texttt{cgroup_t}, \texttt{docker_config_t}, \texttt{docker_log_t} und \texttt{svirt_sandbox_file_t} enthält. Versucht ein Docker-Prozess auf Objekte anderer Typen zuzugreifen, wird die Operation verweigert.
+
+					Da in \emph{SELinux}-Umgebungen jedem Objekt im System ein Label zugewiesen ist, wird eine zuverlässige Kontrolle von Objektzugriffen über die Auswertung von Typen ermöglicht. Prozesse, die mit dem Typ \texttt{docker_t} aus der Docker-Domäne stammen, sind streng von Objekten anderer Domänen abgegrenzt und können nicht interagieren.
+					% We label Apache processes as httpd_t and we label Apache content as httpd_sys_content_t and httpd_sys_content_rw_t. Imagine we have credit card data stored in a mySQL database which is labeled msyqld_data_t. If an Apache process is hacked, the hacker could get control of the httpd_t process and would be allowed to read httpd_sys_content_t files and write to httpd_sys_content_rw_t. But the hacker would not be allowed to read the credit card data (mysqld_data_t) even if the process was running as root. In this case SELinux has mitigated the break in.
+					% Standardmäßig ist ein Zugriff verweigert. Erst wenn Labels uebereinstimmen, wird Zugriff erlaubt.
+					% 	^		\cite{SELinuxComic}
+
+					% Type enforcement is a kind of enforcement in which rules are based on process type. It works in the following way. The default type for a confined container process is svirt_lxc_net_t. This type is permitted to read and execute all files "types" under /usr and most types under /etc. svirt_lxc_net_t is permitted to use the network but is not permitted to read content under /var, /home, /root, /mnt … svirt_lxc_net_t is permitted to write only to files labeled svirt_sandbox_file_t and docker_var_lib_t. All files in a container are labeled by default as svirt_sandbox_file_t. Access to docker_var_lib_t is permitted in order to allow the use of docker volumes \cite{ http://www.projectatomic.io/docs/docker-and-selinux/ }.
+
+				\paragraph{Multi-Category Security (MCS)}
+					Durch das einheitliche Regelwerk für alle Docker-Prozesse, ist mit einem \emph{Type Enforcement} gewährleistet, dass Docker nicht unbefugt auf geschützte oder unrelevante Dateien des Hosts zugreifen darf.
+
+					\emph{SELinux} bietet mit dem MCS-Mechanismus jedoch auch eine Möglichkeit, Docker-Prozesse untereinander zu trennen, auch wenn sie den gleichen Typ, z.B. \texttt{docker_t} aufweisen. Dieses Sicherheitsfeature ist unter Docker auch mit \emph{Type Enforcements} realisierbar, wenn jeder Container mit einem eigenen Typ operiert. Diese feinere Typenunterteilung wirkt sich aber auf die Komplexität der Policy aus, weswegen in der Regel der MCS-Mechanismus für dieses Sicherheitsfeature eingesetzt wird.
+					% TODO: Quelle!
+					% ist aber sehr aufwendig...
+					% \cite{https://securityblog.redhat.com/tag/docker/}
+
+					Der MCS-Mechanismus arbeitet mit dem letzten Teil des Labels, dem \texttt{Level}. Das Level unterteilt sich mit der Schreibweise \texttt{sensitivity[:category-set]} in eine Sensitivität und optionalen Kategorien. Für die MCS sind die Kategorien von Bedeutung. Die Sensitivität wird ignoriert und hat deswegen einen konstanten Wert von \texttt{s0}.
+					% TODO: Quellen!
+					%\cite{ https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Security-Enhanced_Linux/chap-Security-Enhanced_Linux-SELinux_Contexts.html } \cite{ http://james-morris.livejournal.com/5583.html }
+
+					Beim Startvorgang eines Containers wird diesem eine zufällige Kategorie anhand einer Nummer zwischen 0 und 1023 zugeweisen. Diese Kategorie, z.B. \texttt{c623}, wird daraufhin auch vom Docker-Daemon auf den Inhalt containerspezifischer Verzeichnisse angewandt. Sobald während des Betriebs ein Container Zugriff auf ein Objekt fordert, wird seine Kategorie mit dem des angefragten Objekts verglichen. Stimmen diese überein, ist der MCS-Check erfolgreich und der Zugriff wird freigegeben.
+					% Quelle!
+					% \cite{learningDocker}.
+
+					Die Sicherheit von MCS unter Docker beruht auf der Annahme, dass der Docker-Daemon zuverlässig eindeutige Kategorien an die Container vergibt.
+					% Quelle!
+					% war glaub ich auch aus learningDocker....s201
+
+					Falls ein Angreifer einen Container unter Kontrolle hat, ist es ihm durch die MCS nicht möglich, außerhalb von dem komprmitiertem Container Schaden anzurichten.
+					% Verständnisproblem: Auch wenn Angreifer Root-Rechte erwirkt? Ist er dann noch "im Container"?
+
+
+					% n computer systems we often have lots of processes all with the same access, but we want them separated from each other. We sometimes call this a multi-tenant environment. The best example of this is virtual machines. If I have a server running lots of virtual machines, and one of them gets hacked, I want to prevent it from attacking the other virtual machines and virtual machine images. But in a type enforcement system the KVM virtual machine is labeled svirt_t and the image is labeled svirt_image_t. We have rules that say svirt_t can read/write/delete content labeled svirt_image_t. With libvirt we implemented not only type enforcement separation, but also MCS separation. When libvirt is about to launch a virtual machine it picks out a random MCS label like s0:c1,c2, it then assigns the svirt_image_t:s0:c1,c2 label to all of the content that the virtual machine is going to need to manage. Finally, it launches the virtual machine as svirt_t:s0:c1,c2. Then, the SELinux kernel controls that svirt_t:s0:c1,c2 can not write to svirt_image_t:s0:c3,c4, even if the virtual machine is controled by a hacker and takes it over. Even if it is running as root.
+
+					% We use similar separation in OpenShift. Each gear (user/app process)runs with the same SELinux type (openshift_t). Policy defines the rules controlling the access of the gear type and a unique MCS label to make sure one gear can not interact with other gears.
+
+				\paragraph{Multi-Level Security (MLS)}
+					\emph{DELETE -- MLS nicht unter Docker genutzt...}
+					% Arbeitet MLS nur auf s0...sX ebene und ignoriert c0..cX?
+
+					% MLS enforces the Bell-La Padula Mandatory Access Model
+					%		^		\cite{ https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Security-Enhanced_Linux/chap-Security-Enhanced_Linux-SELinux_Contexts.html }
+
+					% I could have two Apache servers: one running as httpd_t:TopSecret and another running as httpd_t:Secret. If the Apache process httpd_t:Secret were hacked, the hacker could read httpd_sys_content_t:Secret but would be prevented from reading httpd_sys_content_t:TopSecret.
+
+					% However, if the Apache server running httpd_t:TopSecret was hacked, it could read httpd_sys_content_t:Secret data as well as httpd_sys_content_t:TopSecret.
+
+					% We use the MLS in military environments where a user might only be allowed to see secret data, but another user on the same system could read top secret data.
+
+					%------
+
+					% The Multi-Level Security technology refers to a security scheme that enforces the Bell-La Padula Mandatory Access Model. Under MLS, users and processes are called subjects, and files, devices, and other passive components of the system are called objects. Both subjects and objects are labeled with a security level, which entails a subject's clearance or an object's classification. Each security level is composed of a sensitivity and a category, for example, an internal release schedule is filed under the internal documents category with a confidential sensitivity.
 
       \subsubsection{AppArmor}
       	% Optional, da auf MAC alzu sehr eingehen nicht zu sehr im Scope sein sollte.
