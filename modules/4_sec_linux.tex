@@ -316,6 +316,9 @@
 			% Damit Unterscheidet sich das Schema grundlegend von der normalen Implementierung von MACs, die normalerweise zuerst ausgefuerht werden (MANDATORY access control) \cite[S.3]{LSMFramework}.
 			% TODO: inode in Glossar
 
+			% AppArmor und SELinux schuetzen potentiell vor Zero-Day-Exploits.
+			%		^		\cite{http://askubuntu.com/questions/485547/contain-docker-engine-with-apparmor}
+			% Zero Day Exploit ins Glossar: noch nicht oeffentlich bekannte Sicherheitsluecken in Software
 
 			Verschiedene LSM-Module sollen kombinierbar sein, sodass mehrere Sicherheits-Policies umgesetzt werden können \cite[S.3]{LSMFramework}.
 
@@ -330,10 +333,12 @@
 
 			% S.7 in
 
+			% Wichtig ist, dass folgende MACs, die als LSMs in den Linux-Kernel integriert werden können, die herkömmliche DAC-Authentifizierung nicht überschreiben, sondern diese in einem angefügten Check ergänzen und erweitern.
+
   		\subsubsection{\acrshort{SELinux}}
       	% Macht Sinn das erst am Ende zu machen, wenn noch Zeit ist. Weil SELinux im Detail mehr Exkurs wird.
 				\emph{SELinux} steht für \emph{Security Enhanced Linux} und wurde ursprünglich von der NSA entwickelt. Es kann verwendet werden, um die Integrität und Vertraulichkeit von Prozessen und Daten zu schützen, indem mit einer strengen Ressourcenbeschränkung das Prinzip des "least privilege" umgesetzt wird  \cite{redhatSec}. %\cite[S.201]{learningDocker}.
-				Auf Konzeptebene basiert der Schutz auf der Implementierung einer feingranularen und flexiblen MAC.
+				Auf Konzeptebene basiert der Schutz auf der Implementierung einer feingranularen und flexiblen MAC, die als LSM vom Kernel genutzt werden kann.
 				% cite { https://www.linux.com/learn/docs/727873-overview-of-linux-kernel-security-features/ }
 				% cite { https://www.nsa.gov/research/_files/selinux/papers/selsymp2006.pdf }
 
@@ -346,7 +351,9 @@
 
 				\emph{SELinux} wertet bei einem Zugriff das Label des zugreifenden Prozesses und das Label der betroffenen Ressource anhand einem definierten Regelwerk aus und entscheidet, ob die Operation fortgesetzt werden darf \cite{linuxSecOverview}. Die Regeln werden in ihrer Summe auch als Policy bezeichnet.
 
-				Unter Docker können die vier Label-Attribute pro Container als Parameter für den \texttt{run}-Befehl manuell spezifiziert werden \cite{dockerRun}.
+				Seit November 2015 wird Docker mit dem Release 1.9.0 mit einer standardmäßigen \emph{SELinux}-Policy ausgestattet, die in dem \emph{rpm}-basierten Distributionen wie \emph{CentOS} und \emph{Fedora} verwendet wird \cite{githubDockerChangelog}\cite{githubSELinuxPolicyIssue}. Diese Standard-Policy kann über \cite{githubSELinuxProfile} aufgerufen werden.
+
+				Unter Docker können die vier Label-Attribute mit dem Parameter \texttt{--security-opt="label:LABEL:VALUE"} für den \texttt{run}-Befehl pro Container manuell spezifiziert werden \cite{dockerRun}.
 
 
 				% sehr flexibel fuer docker https://www.mankier.com/8/docker_selinux
@@ -423,11 +430,30 @@
 
       \subsubsection{AppArmor}
       	% Optional, da auf MAC alzu sehr eingehen nicht zu sehr im Scope sein sollte.
-				AppArmor ist ein MAC-Schema, das gebaut wurde, um eine einfache Handhabung zu realisieren. Es ist in den Linuxdistributionen \emph{Ubuntu} und \emph{OpenSUSE} standardmäßig zum Einsatz.
+				AppArmor implementiert als LSM auch eine MAC, wurde jedoch als leicht konfigurierbare Alternative zu \emph{SELinux} entwickelt. Es kommt in Linuxdistributionen wie \emph{Debian}, \emph{Ubuntu} und \emph{OpenSUSE} standardmäßig zum Einsatz \cite{https://wiki.ubuntuusers.de/AppArmor/}.
+				% Einfach zu lernen
+				% Basiert auf \emph{AppArmor}-Profilen.
+				% Es gibt von \emph{Docker} erstelltes Profil, das speziell für den Einsatz von Docker mit \emph{AppArmor} gebaut wurde. \cite{ https://docs.docker.com/engine/articles/security/ }
 
-				Der fundamentale Unterschied zu SELinux ist, dass nicht Objekten keine Label zugeweisen werden, sondern allein Pfadnamen dazu dienen eine Sicherheits-Policy anzuwenden \cite{linuxSecOverview}.
 
-				AppArmor unterstützt einen Lernmodus, indem das Verhalten einer Anwendungen beobachtet wird und daraus automatisch ein Sicherheitsprofil erstellt wird \cite{linuxSecOverview}.
+
+				Der fundamentale Unterschied zu \emph{SELinux} ist, dass Objekten keine Label zugeweisen werden, sondern grundsätzlich Pfadnamen und Berechtigungsstufen dazu dienen, ein Sicherheitsprofil zu definieren \cite{linuxSecOverview}.
+
+				% AppArmor profiles can be in one of two modes: enforcement and complain. Profiles loaded in enforcement mode will result in enforcement of the policy defined in the profile as well as reporting policy violation attempts (either via syslog or auditd). Profiles in complain mode will not enforce policy but instead report policy violation attempts.
+				% AppArmor differs from some other MAC systems on Linux: it is path-based, it allows mixing of enforcement and complain mode profiles, it uses include files to ease development, and it has a far lower barrier to entry than other popular MAC systems.
+				%		^		\cite{ https://wiki.ubuntu.com/AppArmor }
+
+				\emph{AppArmor} unterstützt einen Lernmodus, indem das Verhalten einer Anwendungen beobachtet wird und daraus automatisch ein Sicherheitsprofil erstellt wird \cite{linuxSecOverview}.
+
+				\emph{AppArmor}-Profile basieren auf einfach lesbaren Textdateien. Durch eine Einbindeanweisung lassen sich mehrere Profile modular kombinieren \cite{http://wiki.apparmor.net/index.php/QuickProfileLanguage}.
+				% Capabilities und Networking lassen sich beide kontrollieren mit AppArmor
+
+				% Profilsyntax bietet 7 verschiedene Berechtigungstypen an. \cite{http://wiki.apparmor.net/index.php/QuickProfileLanguage}
+
+				Das \emph{AppArmor}-Profil kann analog zu \emph{SELinux}-Labels über die Parametersyntax \texttt{--security-opt="apparmor:PROFILE"} manuell gesetzt werden \cite{dockerRun}.
+
+				Das Standardprofil, das unter \emph{.deb}-Releases von Docker eingebunden wird ist unter \cite{githubAppArmorProfile} zu sehen.
+
 
       \subsubsection{Seccomp}
 				\emph{Seccomp} steht für \emph{Secure Computing Mode} und implementiert einen Mechanismus, der den Zugriff von Prozessen auf \emph{System Calls} einschränkt. Die Idee von \emph{Seccomp} ist es, die Angriffsfläche des Kernels zu minimieren, indem bestimmte \emph{System Calls} für Useranwendungen gesperrt werden. Die Gefahr, dass fehlerbehaftete oder unsichere \emph{System Calls} genutzt werden, die die Anwendung zum fehlerfreien Betrieb nicht benötigt, wird dadurch reduziert \cite{linuxSecOverview}.
@@ -436,6 +462,12 @@
 				Das originale Seccomp, auch als \emph{mode 1} bekannt, stellt nur den Zugriff auf vier \emph{System Calls} zur Verfügung, \texttt{read}, \texttt{write}, \texttt{exit} und \texttt{sigreturn}. Diese vier Aufrufe repräsentieren ein minimales Set an Operationen, die eine nicht vertrauenswürdige Anwendung ausführen darf \cite{linuxSecOverview}.
 
 				Ein Update \emph{mode 2} macht das Set an erlaubten \emph{System Calls} mithilfe von Filtern frei konfigurierbar und führt ein \emph{Audit Logging} ein	\cite{linuxSecOverview}\cite{seccompGitDesc}.
+
+
+				% https://opensource.com/business/15/3/docker-security-future
+				% https://github.com/docker/docker/issues/17142
+				% https://github.com/docker/docker/blob/master/docs/security/seccomp.md
+				% https://github.com/docker/docker/blob/master/CHANGELOG.md
 
 	\section{Docker im Vergleich zu anderen Containerlösungen}
   % Optional?
