@@ -201,7 +201,10 @@
 			% TODO: Grafik zur Unterstuetzung waere gut hier...
 
 
-			Das aktuelle Release von Docker unterstützt noch keine \emph{user namespaces}, obwohl dieses Feature schon seit Version 1.6 geplant war \cite{githubDockerChangelog}\cite{githubUserNamespaceProposal}. Verzögerungen entstanden durch einen Bug der Programmiersprache \emph{Golang} \cite{nsUserGolangBug}, und Integrationschwierigkeiten in die bestehende Docker-Codebasis \cite{githubUserNamespaceConflict}.
+			Die Unterstützung von \emph{user namespaces} ist schon seit Version 1.6 geplant, wurde aber erst im Februar 2016 mit Version 1.10 in den Master-Branch von Docker integriert \cite{githubDockerChangelog}\cite{githubUserNamespaceProposal}. Verzögerungen entstanden durch einen Bug der Programmiersprache \emph{Golang} \cite{nsUserGolangBug}, und Integrationschwierigkeiten in die bestehende Docker-Codebasis \cite{githubUserNamespaceConflict}.
+
+			In der aktuell neusten Docker-Version 1.10 werden \emph{user namespaces} nicht automatisch verwendet. Sie müssen manuell, wie z.B. in \cite{nsUserEnable} erklärt, aktiviert werden.
+
 			% Mehr (Bessere) Gruende: http://events.linuxfoundation.org/sites/events/files/slides/User%20Namespaces%20-%20ContainerCon%202015%20-%2016-9-final_0.pdf
 			% S.13ff.
 
@@ -270,6 +273,14 @@
 		% cgroups sind noch nicht vollstaendig implementiert (noch nicht alles features von vorgaenger rlimits in cgroups uebernommen)
 		%		^ 	\cite[S.19]{dockerSec2}
 
+		% 2. 'docker update' command, although I would have preferred 'docker limit'.
+		% 	Ability to change container limits at runtime:
+		%		- CPUQuota - CpusetCpus - CpusetMems - Memory - MemorySwap - MemoryReservation - KernelMemory
+		%		With this feature in place, there is no reason to run containers without limits, at least memory limits.
+		%		^		\cite{https://news.ycombinator.com/item?id=11037543} und release notes von docker v.1.10 ... angeblich ein 'docker update', mit dem memshare,cpushares,etc. zur laufzeit von containern angepasst werden koennen.
+
+		% TODO: Neu geplant in V.1.11: PID cgroups http://blog.docker.com/2016/02/docker-engine-1-10-security/
+
   \section{Einschränkungen von Zugriffsrechten}
 		\emph{Kapitel mit nächstem Unterkapitel verschmelzen. Oder eigenes LSM-capability Kapitel machen, was diese Unterteilung rechtfertigt.}
 
@@ -287,42 +298,44 @@
       % Gehört das unter 'capabilities'? Oder eigener Punkt bzw. woanders dazu? --> Eher Mount namespace --> Isolierung
       % Einschränkung in libcontainer vorgennnomenn? --> check github libcontainer repo.
 
+			% CAP_ADMIN_SYS ist gefaehrlich, obwohl es zum funktionieren von systemd benoetigt wird
+			%		^ 		\cite{https://github.com/docker/docker/pull/5773} und \cite{https://github.com/docker/docker/issues/3629}
+
     \subsection{Linux Security Modules (\acrshort{LSM}s) und Mandatory Access Control (\acrshort{MAC1})}
 			% TODO: Glossary und Acronyms besser einpflegen hier
 
 			\emph{Linux Security Modules} (\acrshort{LSM}) ist ein Framework, das von Linux-Kerneln eingebunden werden kann, um Sicherheitsmodule zu verwenden. Das hauptsächlich implementierte Sicherheitsmodell ist das der \emph{Access Control List} (\acrshort{ACL}), das anhand definierter Parameter entscheidet, ob der Zugriff auf eine Resource genehmigt oder verweigert wird. %, die eine feingranulare Zugriffskontrolle für Ressourcen bereitstellen.
 			% Es implementiert einige Sicherheitsmodelle ohne sich auf ein Modell zu beschränken.
-			Die Zugriffskontrolle geschieht in Form eines LSM-Hooks. Unter einem Hook ist ein zwischengeschaltener Aufruf gemeint, der den normalen Programmfluss unterbricht und im Kontext von LSM in einem LSM-Modul weiterverarbeitet wird. Erst nach einer Antwort des LSM-Moduls über einen Callback-Mechanismus, wird die normale Ausführung des Aufrufs fortgesetzt bzw. für den Fall, dass die Entscheidung des Moduls restriktiver Natur war, kontrolliert abgebrochen.
+			Die Zugriffskontrolle geschieht in Form eines LSM-Hooks. Unter einem Hook ist ein zwischengeschaltener Aufruf gemeint, der den normalen Programmfluss unterbricht und im Kontext eines LSMs weiterverarbeitet wird. Erst nach einer Antwort eines oder mehrerer hintereinander geschaltener LSMs, wird die weitere normale Ausführung des \emph{System Calls} fortgesetzt bzw. für den Fall, dass die Entscheidung des Moduls restriktiver Natur war, verweigert.
 
-			Die native Zugriffskontrolle unter Linux, \emph{Discretionary Access Control} (\acrshort{DAC}), implementiert eine einfache Form von ACLs für das User-Management, bietet jedoch nicht ausreichend Schutz gegen Angriffe \cite[S.1]{LSMFramework}. DAC-Elemente umfassen den Besitzer (owner) einer Datei, die Gruppenzugehörigkeit des Besitzers (group) und sogenannte Permission-Flags aus der Menge \texttt{r,w,x}. Letztere legen fest, ob Lese- (r=read), Schreib- (w=write) und Ausführrechte (x=execute) gewährleistet werden.  %erfüllt jedoch nicht moderne Anforderungen an die Sicherheit.
+			Die native Zugriffskontrolle unter Linux, \emph{Discretionary Access Control} (\acrshort{DAC}), implementiert eine einfache Form von \acrshort{ACL}s für das User-Management, bietet jedoch nicht ausreichend Schutz gegen Angriffe \cite[S.1]{LSMFramework}. DAC-Elemente umfassen den Besitzer (owner) einer Datei, die Gruppenzugehörigkeit des Besitzers (group) und sogenannte Permission-Flags aus der Menge \texttt{r,w,x}. Letztere legen fest, ob Lese- (r=read), Schreib- (w=write) und Ausführrechte (x=execute) gewährt werden.
+
+			Der DAC-Mechanismus erfüllt nicht moderne Anforderungen an die Sicherheit in Containersystemen, da sie z.B. von Superuser-Tools wie \emph{sudo} umgangen werden kann. Aus diesem Grund bieten Containertechnologien Unterstützung für MACs wie \emph{AppArmor}, \emph{SELinux}, \emph{Smack}, \emph{TOMOYO Linux} und \emph{Seccomp} an. Unter Einbeziehung solcher Kontrollmodule kann nun auch der Ressourcenzugriff eines Root-Users eingegrenzt werden. Biespielweise kann ein LSM-Modul gebaut werden, dass es dem Root-User nur erlaubt ein Programm auszuführen, wenn ein physikalisches Gerät an das System angeschlossen ist \cite{LSMUsing}.
 			% Kurz DAC erklaeren oder besser ins Glossar damit?
-			% DAC: unterscheidung nach root, user id und mode bit
-			% Permission flags r w x in glossar?
-			SELinux kennt das Konzept des Eigentums von Ownern und Groups nicht. Der komplette Funktionsumfang von SELinux beruht auf Labels \cite{SELinuxComic}.
-
-
-			Module, die vom offiziellen Kernel unterstützt werden sind \emph{AppArmor}, \emph{SELinux}, \emph{Smack}, \emph{TOMOYO Linux} und \emph{Seccomp}.
 
 			Da es sich bei LSMs um optinale Kernelmodule handelt, ist eine Abwärtskompatibilität mit den konventionellen DACs gewährleistet.
-			Aus diesem Grund überschreiben LSMs nicht DAC-Mechanismen, sondern ergänzen letztere, indem LSM-Checks erst durchgeführt werden, wenn die DAC den Zugriff gestattet hat. Durch diese Reihenfolge ist sichergestellt, dass die Nutzung einer LSM-Implementierung optional ist und unabhängig von der DAC funktioniert \cite{centOsMCS}. Deswegen können auch Anwendungen, die das LSM-Framework nicht unterstützen, weiterhin funktionieren.
+			Aus diesem Grund überschreiben LSMs nicht DAC-Mechanismen, sondern ergänzen letztere, indem LSM-Checks erst durchgeführt werden, wenn die DAC den Zugriff gestattet hat (vgl. \fig \ref{fig:sec_LSMHook}). Damit unterscheidet sich das Vorgehensweise grundlegend von der regulären Implementierung einer MAC, da letztere durch ihre obligatorische Natur normalerweise zuerst ausgeführt werden \cite[S.3]{LSMFramework}
 
-			Genauer formuliert, implementieren LSM an sicherheitskritischen Punkten im Kernel sogenannte Hooks.
+			Durch die vorliegende Reihenfolge ist sichergestellt, dass die Nutzung einer LSM-Implementierung optional ist und unabhängig von der DAC funktioniert \cite{centOsMCS}. Deswegen können auch Anwendungen, die das LSM-Framework nicht unterstützen, weiterhin funktionieren.
 
-			% FIGURE LSM architektur \cite[S.3]{LSMFramework}
+			\begin{figure}[h]
+          \centering
+          \includegraphics[width=0.9\textwidth]{./images/sec_LSMHook.jpg}
+          \caption{Funktionsweise von \emph{System Call}-Hooks eines LSMs \cite[S.3]{LSMFramework}.}
+          \label{fig:sec_LSMHook}
+      \end{figure}
 
-			Wie in \fig ... dargestellt, greift der LSM-Hook erst, wenn ein User einen sicherheitskritischen \emph{System Call} ausgeführt hat, die hierbei angefragte Ressource in Form einer \texttt{inode} aufgelöst wurde, Fehler-Checks abgeschlossen und der Zugriff über den klassischen DAC-Mechanismus genehmigt wurde. Erst wenn der Kernel versucht auf das interne Ressourcenobjekt zuzugreifen, wird der Hook ausgeführt, der den Zugriff in das zugehörige LSM-Modul weiterleitet. Das Modul genehmigt oder verweigert den Zugriff anhand den ihm vorliegenden Zugriffsparametern.
+			Wie in \fig \ref{fig:sec_LSMHook} dargestellt, greift der LSM-Hook erst, wenn ein User einen sicherheitskritischen \emph{System Call} ausgeführt hat, die hierbei angefragte Ressource in Form eines \glslink{KernelObject}{internen Kernelbojekts} aufgelöst wurde, Fehler-Checks abgeschlossen und der Zugriff über den klassischen DAC-Mechanismus genehmigt wurde. Erst wenn der Kernel versucht auf das \glslink{KernelObject}{interne Objekt} zuzugreifen, wird der Hook ausgeführt, der den Zugriff in das zugehörige LSM-Modul weiterleitet. Das Modul genehmigt oder verweigert den Zugriff anhand den ihm vorliegenden Zugriffsparametern.
 
-			Der Grund für diese Reihenfolge ist, dass nur kurz vor dem Zugriff auf die \texttt{inode} der komplette Kontext der Zugriffsanfrage vorliegt und dieser daher nur an dieser Stelle vollständig von einem LSM-Modul ausgewertet werden kann \cite[S.2]{LSMFramework}. Zusätzlich wird dadurch Granularität der Zugriffskontrolle verbessert werden \cite{LSMDesign}.
-			% Damit Unterscheidet sich das Schema grundlegend von der normalen Implementierung von MACs, die normalerweise zuerst ausgefuerht werden (MANDATORY access control) \cite[S.3]{LSMFramework}.
-			% TODO: inode in Glossar
+			Der Grund für diese Reihenfolge ist, dass nur kurz vor dem Zugriff auf das \glslink{KernelObject}{Objekt} der komplette Kontext der Zugriffsanfrage vorliegt und dieser daher nur an dieser Stelle vollständig von einem LSM-Modul ausgewertet werden kann \cite[S.2]{LSMFramework}. Zusätzlich wird dadurch Granularität der Zugriffskontrolle verbessert werden \cite{LSMDesign}.
 
 			% AppArmor und SELinux schuetzen potentiell vor Zero-Day-Exploits.
 			%		^		\cite{http://askubuntu.com/questions/485547/contain-docker-engine-with-apparmor}
 			% Zero Day Exploit ins Glossar: noch nicht oeffentlich bekannte Sicherheitsluecken in Software
 
-			Verschiedene LSM-Module sollen kombinierbar sein, sodass mehrere Sicherheits-Policies umgesetzt werden können \cite[S.3]{LSMFramework}.
+			Verschiedene LSMs sollen kombinierbar sein, sodass mehrere Sicherheits-Policies konsektiv umgesetzt werden können \cite[S.3]{LSMFramework}.
 
-			Hooks werden auch ausgeführt, wenn der User-Root versucht auf eine Ressource zuzugreifen. Biespielhaft kann ein LSM-Modul gebaut werden, dass es dem Root-User nur erlaubt ein Programm auszuführen, wenn ein physikalisches Gerät an das System angeschlossen ist \cite{LSMUsing}.
+
 
 			% Im englischen (linux kernel) "hardening solutions"
 
@@ -333,21 +346,22 @@
 
 			% S.7 in
 
-			% Wichtig ist, dass folgende MACs, die als LSMs in den Linux-Kernel integriert werden können, die herkömmliche DAC-Authentifizierung nicht überschreiben, sondern diese in einem angefügten Check ergänzen und erweitern.
+			Docker unterstützt die MACs \emph{SELinux}, \emph{AppArmor} und \emph{Seccomp}. Die Docker-Entwickler haben in den letzten Monaten die Integrations- und Anpassungsmöglichkeiten dieser Module stark verbessert, da die Containersicherheit für \emph{Docker} höchste Priorität hat \cite{githubDockerRoadmap}\cite{githubDockerChangelog}. Auch die Tatsache, dass sich zur Zeit die Konkurrenz \emph{CoreOS} mit der Containerlösung \emph{rkt} als sicherheitsfokusierte Alternative zu Docker auf dem Virtualisierungsmarkt etablieren will \cite{coreosAnnouncementRkt10}, ist sicher auch \emph{Docker} nicht entgangen.
+			% Ist "sicher nicht entgangen" zu umgangssprachlich?
+			Die Veröffentlichung des großen Sicherheitsupdates für Docker mit der Version 1.10 am 04. Februar 2016 geschah in der Tat ca. drei Stunden nach der Ankündigung der Version 1.0 von \emph{rkt} seitens \emph{CoreOS} \cite{hnAnnouncementDocker110}\cite{hnAnnouncementRkt10}.
+
+			In den folgenden Unterkapiteln werden die sicherheitsrelevanten Module \emph{SELinux}, \emph{AppArmor} und \emph{Seccomp} und deren Einsatzzweck in Docker genauer betrachtet. Ein Ausblick in die Zukunft von MACs und Docker ist in Kapitel \ref{result} gegeben.
 
   		\subsubsection{\acrshort{SELinux}}
       	% Macht Sinn das erst am Ende zu machen, wenn noch Zeit ist. Weil SELinux im Detail mehr Exkurs wird.
-				\emph{SELinux} steht für \emph{Security Enhanced Linux} und wurde ursprünglich von der NSA entwickelt. Es kann verwendet werden, um die Integrität und Vertraulichkeit von Prozessen und Daten zu schützen, indem mit einer strengen Ressourcenbeschränkung das Prinzip des "least privilege" umgesetzt wird  \cite{redhatSec}. %\cite[S.201]{learningDocker}.
+				\emph{SELinux} steht für \emph{Security Enhanced Linux} und wurde ursprünglich von der NSA entwickelt. Es wird verwendet, um die Integrität und Vertraulichkeit von Prozessen und Daten zu schützen, indem mit einer strengen Ressourcenbeschränkung das Prinzip des "least privilege" umgesetzt wird  \cite{redhatSec}. %\cite[S.201]{learningDocker}.
 				Auf Konzeptebene basiert der Schutz auf der Implementierung einer feingranularen und flexiblen MAC, die als LSM vom Kernel genutzt werden kann.
 				% cite { https://www.linux.com/learn/docs/727873-overview-of-linux-kernel-security-features/ }
 				% cite { https://www.nsa.gov/research/_files/selinux/papers/selsymp2006.pdf }
 
-				Die \emph{Red Hat}-basierten Linux-Distributionen \emph{Red Hat Enterprise Linux}, \emph{Fedora} und \emph{CentOS} sind in der Lage \emph{SELinux} als zusätzlichen Schutzmechanismus zu verwenden \cite { https://docs.docker.com/engine/articles/security/ }.
+				Die \emph{Red Hat}-basierten Linux-Distributionen \emph{Red Hat Enterprise Linux}, \emph{Fedora} und \emph{CentOS} sind in der Lage \emph{SELinux} als zusätzlichen Schutzmechanismus zu verwenden \cite{dockerSecurity}.
 
-
-				Genauer setzt \emph{SELinux} ein Labeling-System um, das Zugriffe individuell für Prozesse verwaltet:
-
-				Labels sind nach dem Schema \texttt{User:Role:Type:Level} in vier Komponenten aufgeteilt und werden jedem Objekt im System zugeweisen. Ein Objekt ist hierbei ein Sammelbegriff für alle Ressourcen, auf die sich der Zugriff beschränken lässt, also z.B. Prozesse, Dateien und Netzwerkports \cite{ http://www.projectatomic.io/docs/docker-and-selinux/ }. Labels dienen den Objekten als Sicherheitskontext und sind vom DAC-Mechanismus getrennt \emph{SELinux}. Der \texttt{User} eines Labels ist von einem Linux-Users, der mit DAC ausgewertet wird, unabhängig.
+				\emph{SELinux} kennt das Konzept des Eigentums von Ownern und Groups nicht. Der komplette Funktionsumfang von SELinux beruht auf einem Labeling-System, das Zugriffe individuell für Prozesse verwaltet \cite{SELinuxComic}. Labels sind nach dem Schema \texttt{User:Role:Type:Level} in vier Komponenten aufgeteilt und werden jedem Objekt im System zugeweisen. Ein Objekt ist hierbei ein Sammelbegriff für alle Ressourcen, auf die sich der Zugriff beschränken lässt, also z.B. Prozesse, Dateien und Netzwerkports \cite{atomicDockerSELinux}. Labels dienen den Objekten als Sicherheitskontext und sind vom DAC-Mechanismus getrennt \emph{SELinux}. Der \texttt{User} eines Labels ist von einem Linux-Users, der mit DAC ausgewertet wird, unabhängig.
 
 				\emph{SELinux} wertet bei einem Zugriff das Label des zugreifenden Prozesses und das Label der betroffenen Ressource anhand einem definierten Regelwerk aus und entscheidet, ob die Operation fortgesetzt werden darf \cite{linuxSecOverview}. Die Regeln werden in ihrer Summe auch als Policy bezeichnet.
 
@@ -355,17 +369,14 @@
 
 				Unter Docker können die vier Label-Attribute mit dem Parameter \texttt{--security-opt="label:LABEL:VALUE"} für den \texttt{run}-Befehl pro Container manuell spezifiziert werden \cite{dockerRun}.
 
-
 				% sehr flexibel fuer docker https://www.mankier.com/8/docker_selinux
-
-
 
 				SELinux selbst stellt keine \emph{namespaces} zur Verfügung. Deswegen kann pro Host nur eine SELinux-Policy aktiv sein, die für alle Hostcontainer angewandt wird.
 
 				Die \emph{SELinux}-Module, die im Betrieb von Docker eingesetzt werden, sind \emph{Type Enforcement} und \emph{Multi-Category Security} (MCS). Die Eigenheiten beider Mechanismen und deren Funktionsweise unter Docker werden im Folgenden erklört.
 				% Multi-Level Security (MLS) ist verwandt mit MCS. Aber kein Einsatz unter Docker. MLS beruht auf Konzept von "Domination".
 
-				% SELinux funktionert angeblich nicht mit storage driver BRTFS
+				% SELinux funktionert angeblich nicht mit storage driver BRTFS		--> s. auch docker version 1.10 release notes unter security headline
 				%		^		\cite{ https://coreos.com/blog/container-security-selinux-coreos.html } --> "notes for deploying"
 
 				% Trennung von Zugriffsdomänen auf zwei Ebenen (TE und MCS)
@@ -374,9 +385,9 @@
 				\paragraph{Type Enforcement (TE)}
 					Die wichtigste Komponente von \emph{SELinux} ist das \emph{Type Enforcement}. Nach diesem Modell wird jedem Objekt ein Typ zugeweisen, das bei ein Zugriffsoperation ausgewertet wird. Der Typ eines Objekts ist im Label an dritter Stelle definiert.
 
-					Jeder Docker-Prozess hat z.B. im Label den Typ \texttt{docker_t} definiert. Im \emph{SELinux}-Regelwerk ist festgelegt, dass Prozesse eines Typs nur auf Verzeichnisse und Dateien vollen Zugriff hat, die mit bestimmten Labeltypen versehen sind. Im konkreten Fall von \texttt{docker_t} umfasst diese Konfiguration ein Set, das z.B. die Typen \texttt{cgroup_t}, \texttt{docker_config_t}, \texttt{docker_log_t} und \texttt{svirt_sandbox_file_t} enthält. Versucht ein Docker-Prozess auf Objekte anderer Typen zuzugreifen, wird die Operation verweigert.
+					Jeder Docker-Prozess hat z.B. im Label den Typ \texttt{docker\_t} definiert. Im \emph{SELinux}-Regelwerk ist festgelegt, dass Prozesse eines Typs nur auf Verzeichnisse und Dateien vollen Zugriff hat, die mit bestimmten Labeltypen versehen sind. Im konkreten Fall von \texttt{docker\_t} umfasst diese Konfiguration ein Set, das z.B. die Typen \texttt{cgroup\_t}, \texttt{docker\_config\_t}, \texttt{docker\_log\_t} und \texttt{svirt\_sandbox\_file\_t} enthält. Versucht ein Docker-Prozess auf Objekte anderer Typen zuzugreifen, wird die Operation verweigert.
 
-					Da in \emph{SELinux}-Umgebungen jedem Objekt im System ein Label zugewiesen ist, wird eine zuverlässige Kontrolle von Objektzugriffen über die Auswertung von Typen ermöglicht. Prozesse, die mit dem Typ \texttt{docker_t} aus der Docker-Domäne stammen, sind streng von Objekten anderer Domänen abgegrenzt und können nicht interagieren.
+					Da in \emph{SELinux}-Umgebungen jedem Objekt im System ein Label zugewiesen ist, wird eine zuverlässige Kontrolle von Objektzugriffen über die Auswertung von Typen ermöglicht. Prozesse, die mit dem Typ \texttt{docker\_t} aus der Docker-Domäne stammen, sind streng von Objekten anderer Domänen abgegrenzt und können nicht interagieren.
 					% We label Apache processes as httpd_t and we label Apache content as httpd_sys_content_t and httpd_sys_content_rw_t. Imagine we have credit card data stored in a mySQL database which is labeled msyqld_data_t. If an Apache process is hacked, the hacker could get control of the httpd_t process and would be allowed to read httpd_sys_content_t files and write to httpd_sys_content_rw_t. But the hacker would not be allowed to read the credit card data (mysqld_data_t) even if the process was running as root. In this case SELinux has mitigated the break in.
 					% Standardmäßig ist ein Zugriff verweigert. Erst wenn Labels uebereinstimmen, wird Zugriff erlaubt.
 					% 	^		\cite{SELinuxComic}
@@ -386,7 +397,7 @@
 				\paragraph{Multi-Category Security (MCS)}
 					Durch das einheitliche Regelwerk für alle Docker-Prozesse, ist mit einem \emph{Type Enforcement} gewährleistet, dass Docker nicht unbefugt auf geschützte oder unrelevante Dateien des Hosts zugreifen darf.
 
-					\emph{SELinux} bietet mit dem MCS-Mechanismus jedoch auch eine Möglichkeit, Docker-Prozesse untereinander zu trennen, auch wenn sie den gleichen Typ, z.B. \texttt{docker_t} aufweisen. Dieses Sicherheitsfeature ist unter Docker auch mit \emph{Type Enforcements} realisierbar, wenn jeder Container mit einem eigenen Typ operiert. Diese feinere Typenunterteilung wirkt sich aber auf die Komplexität der Policy aus, weswegen in der Regel der MCS-Mechanismus für dieses Sicherheitsfeature eingesetzt wird.
+					\emph{SELinux} bietet mit dem MCS-Mechanismus jedoch auch eine Möglichkeit, Docker-Prozesse untereinander zu trennen, auch wenn sie den gleichen Typ, z.B. \texttt{docker\_t} aufweisen. Dieses Sicherheitsfeature ist unter Docker auch mit \emph{Type Enforcements} realisierbar, wenn jeder Container mit einem eigenen Typ operiert. Diese feinere Typenunterteilung wirkt sich aber auf die Komplexität der Policy aus, weswegen in der Regel der MCS-Mechanismus für dieses Sicherheitsfeature eingesetzt wird.
 					% TODO: Quelle!
 					% ist aber sehr aufwendig...
 					% \cite{https://securityblog.redhat.com/tag/docker/}
@@ -430,46 +441,74 @@
 
       \subsubsection{AppArmor}
       	% Optional, da auf MAC alzu sehr eingehen nicht zu sehr im Scope sein sollte.
-				AppArmor implementiert als LSM auch eine MAC, wurde jedoch als leicht konfigurierbare Alternative zu \emph{SELinux} entwickelt. Es kommt in Linuxdistributionen wie \emph{Debian}, \emph{Ubuntu} und \emph{OpenSUSE} standardmäßig zum Einsatz \cite{https://wiki.ubuntuusers.de/AppArmor/}.
+				AppArmor implementiert als LSM auch eine MAC, wurde jedoch als leicht konfigurierbare Alternative zu \emph{SELinux} entwickelt. Es kommt in Linuxdistributionen wie \emph{Debian}, \emph{Ubuntu} und \emph{OpenSUSE} standardmäßig zum Einsatz \cite{apparmorUbuntu}.
 				% Einfach zu lernen
 				% Basiert auf \emph{AppArmor}-Profilen.
 				% Es gibt von \emph{Docker} erstelltes Profil, das speziell für den Einsatz von Docker mit \emph{AppArmor} gebaut wurde. \cite{ https://docs.docker.com/engine/articles/security/ }
 
 
 
-				Der fundamentale Unterschied zu \emph{SELinux} ist, dass Objekten keine Label zugeweisen werden, sondern grundsätzlich Pfadnamen und Berechtigungsstufen dazu dienen, ein Sicherheitsprofil zu definieren \cite{linuxSecOverview}.
+				Der fundamentale Unterschied zu \emph{SELinux} ist, dass Objekten keine Label zugeweisen werden, sondern grundsätzlich Pfadnamen und sieben Berechtigungstypen dazu dienen, ein Sicherheitsprofil zu definieren \cite{linuxSecOverview}\cite{apparmorQuickProfileLanguage}.
 
 				% AppArmor profiles can be in one of two modes: enforcement and complain. Profiles loaded in enforcement mode will result in enforcement of the policy defined in the profile as well as reporting policy violation attempts (either via syslog or auditd). Profiles in complain mode will not enforce policy but instead report policy violation attempts.
 				% AppArmor differs from some other MAC systems on Linux: it is path-based, it allows mixing of enforcement and complain mode profiles, it uses include files to ease development, and it has a far lower barrier to entry than other popular MAC systems.
 				%		^		\cite{ https://wiki.ubuntu.com/AppArmor }
 
 				\emph{AppArmor} unterstützt einen Lernmodus, indem das Verhalten einer Anwendungen beobachtet wird und daraus automatisch ein Sicherheitsprofil erstellt wird \cite{linuxSecOverview}.
+				% TODO: Complain mode, enforce mode etc. weiter ausfuehren.
 
-				\emph{AppArmor}-Profile basieren auf einfach lesbaren Textdateien. Durch eine Einbindeanweisung lassen sich mehrere Profile modular kombinieren \cite{http://wiki.apparmor.net/index.php/QuickProfileLanguage}.
+				\emph{AppArmor}-Profile basieren auf einfach lesbaren Textdateien. Durch eine Inkludieranweisung lassen sich mehrere Profile modular kombinieren \cite{apparmorQuickProfileLanguage}.
 				% Capabilities und Networking lassen sich beide kontrollieren mit AppArmor
-
-				% Profilsyntax bietet 7 verschiedene Berechtigungstypen an. \cite{http://wiki.apparmor.net/index.php/QuickProfileLanguage}
 
 				Das \emph{AppArmor}-Profil kann analog zu \emph{SELinux}-Labels über die Parametersyntax \texttt{--security-opt="apparmor:PROFILE"} manuell gesetzt werden \cite{dockerRun}.
 
-				Das Standardprofil, das unter \emph{.deb}-Releases von Docker eingebunden wird ist unter \cite{githubAppArmorProfile} zu sehen.
+				Das Standardprofil \texttt{docker-default}\cite{githubAppArmorProfileContainer}, das unter \emph{.deb}-Releases in nicht-priveligierten Containern zum Einsatz kommt \cite{docker110Security}, wird bei der Installation von Docker in die Datei \texttt{/etc/apparmor.d/docker} geschrieben. Dieses Standardprofil kann mit dem \texttt{run}-Parameter \texttt{--security-opt} wie oben dargestellt überschrieben werden, sofern dieses in \emph{AppArmor}, z.B. mit dem \acrshort{CLI}-Tool \texttt{apparmor\_parser} \cite{apparmorParser}, zuvor importiert wurde.
+				% TODO: Inhalt der Datei in den Anhang oder als Codeblock an diese Stelle? 1. cat /etc/apparmor.d/docker ..... 2. \cite{githubAppArmorDoc}
 
 
-      \subsubsection{Seccomp}
-				\emph{Seccomp} steht für \emph{Secure Computing Mode} und implementiert einen Mechanismus, der den Zugriff von Prozessen auf \emph{System Calls} einschränkt. Die Idee von \emph{Seccomp} ist es, die Angriffsfläche des Kernels zu minimieren, indem bestimmte \emph{System Calls} für Useranwendungen gesperrt werden. Die Gefahr, dass fehlerbehaftete oder unsichere \emph{System Calls} genutzt werden, die die Anwendung zum fehlerfreien Betrieb nicht benötigt, wird dadurch reduziert \cite{linuxSecOverview}.
-				\cite{seccompGitDesc}
+				Es existiert auch ein Profil für den Docker-Daemon \cite{githubAppArmorProfileDaemon}, allerdings muss dieses manuell aktiviert werden \cite{githubAppArmorDoc}.
 
-				Das originale Seccomp, auch als \emph{mode 1} bekannt, stellt nur den Zugriff auf vier \emph{System Calls} zur Verfügung, \texttt{read}, \texttt{write}, \texttt{exit} und \texttt{sigreturn}. Diese vier Aufrufe repräsentieren ein minimales Set an Operationen, die eine nicht vertrauenswürdige Anwendung ausführen darf \cite{linuxSecOverview}.
+				% TODO: default AppArmor Profil erklaeren?
 
-				Ein Update \emph{mode 2} macht das Set an erlaubten \emph{System Calls} mithilfe von Filtern frei konfigurierbar und führt ein \emph{Audit Logging} ein	\cite{linuxSecOverview}\cite{seccompGitDesc}.
+    \subsection{Seccomp}
+			% TODO: https://lwn.net/Articles/443099/ und https://lwn.net/Articles/441232/
+			% TODO: und vllt https://lwn.net/Articles/443110/
+
+			\emph{Seccomp} steht für \emph{Secure Computing Mode} und setzt einen von \emph{Google} implementierten Mechanismus um, der den Zugriff von Prozessen auf \emph{System Calls} einschränkt. Die Idee von \emph{Seccomp} ist es, die Angriffsfläche des Kernels zu minimieren, indem bestimmte \emph{System Calls} für Useranwendungen gesperrt werden. Die Gefahr, dass fehlerbehaftete oder unsichere \emph{System Calls} genutzt werden, die die Anwendung zum fehlerfreien Betrieb nicht benötigt, wird dadurch reduziert \cite{linuxSecOverview}\cite{seccompGitDesc}\cite{secInFuture}.
+
+			\emph{Seccomp} ist nicht wie \emph{SELinux} und \emph{AppArmor} als LSM implementiert, sondern arbeitet auf Applikationslevel.
+			% \emph{SO NICHT RICHTIG, siehe https://github.com/docker/docker/blob/master/docs/security/seccomp.md}.
+			%	Secure computing mode (Seccomp) is a Linux kernel feature. You can use it to restrict the actions available within the container. The seccomp() system call operates on the seccomp state of the calling process. You can use this feature to restrict your application's access.
+			% This feature is available only if the kernel is configured with CONFIG_SECCOMP enabled.
+
+			Das hat die positive Auswirkung, dass \emph{Seccomp}-Profile auch von nicht-priveligierten Nutzern geladen werden können. Mit LSMs ist dies nicht möglich.
+			% 	^		\cite{ https://lwn.net/Articles/443099/ }
+			Die Verwendung von \emph{Seccomp} für einen Prozess bewirkt, dass jener in einen \glqq{}sicheren\grqq{} Zustand übergeht, sodass er nur noch fest definierte \emph{System Calls} ausführen kann.
+			%		^		\cite{ wikipedia :( }
+
+			% x86_x64 hat mehr als 600 System Calls. bzw. mehrere hundert
+			%		^		\cite{ https://opensource.com/business/15/3/docker-security-future }
+
+			% This feature is available only if the kernel is configured with CONFIG_SECCOMP enabled.
+			%		^		\cite{ https://github.com/docker/docker/blob/master/docs/security/seccomp.md }
+
+			Das originale Seccomp, auch als \emph{mode 1} bekannt, stellt nur den Zugriff auf vier \emph{System Calls} zur Verfügung: \texttt{read}, \texttt{write}, \texttt{exit} und \texttt{sigreturn}. Diese vier Aufrufe repräsentieren ein minimales Set an Operationen, die eine nicht vertrauenswürdige Anwendung ausführen darf \cite{linuxSecOverview}.
+
+			Ein Update \emph{mode 2} macht das Set an erlaubten \emph{System Calls} mithilfe von Filtern frei konfigurierbar und führt ein \emph{Audit Logging} ein	\cite{linuxSecOverview}\cite{seccompGitDesc}.
+
+			Mithilfe der \emph{Seccompn}-Anweisungen \texttt{allow}, \texttt{deny}, \texttt{trap}, \texttt{kill} und \texttt{trace} sind neben der Sperrung noch weitere Aktionen, die zur Kontrolle von \emph{System Calls} dienen, möglich \cite{docker110Security}.
+
+			Seit Oktober 2015 ist eine \emph{Seccomp}-Unterstützung in Planung und Entwicklung \cite{githubGeneralSecProfiles}\cite{githubSeccompIntegration}. Diese wurde in Form eines \emph{Seccomp}-Standardprofils sowie der Option eigene Profile einzubinden, der zum Erstellungszeitpunkt dieser Arbeit neusten Docker-Version 1.10 am 04. Februar 2016 hinzugefügt \cite{githubDockerChangelog}\cite{githubSeccompDoc}
+			\cite{githubSeccompProfile}\cite{docker110Security}. Das Standardprofil basiert auf einer Whitelist, sprich es blockiert abgesehen von den in dieser Liste aufgeführten Operationen, alle \emph{System Calls} \cite{githubSeccompDoc}. Eine Aufzählung der resultierend geblockten Aufrufe ist in \cite{githubSeccompDoc} zu finden.
 
 
-				% https://opensource.com/business/15/3/docker-security-future
-				% https://github.com/docker/docker/issues/17142
-				% https://github.com/docker/docker/blob/master/docs/security/seccomp.md
-				% https://github.com/docker/docker/blob/master/CHANGELOG.md
+			Die offizielle Dokumentation des \texttt{run}-Befehls sieht noch keine Anpassungsmöglichkeit von \emph{Seccomp} vor \cite{dockerRun}. Jedoch ist an anderer Stelle im \emph{GitHub}-Repository vermerkt, dass sich das Standardprofil mit dem Parameter \texttt{--security-opt seccomp:PROFILEPATH} überschreiben lässt \cite{githubSeccompDoc}. Ist es nötig Container ohne \emph{Seccomp} zu starten, kann das mit der Option \texttt{--security-opt seccomp:unconfined} realisiert werden \cite{docker110Security}.
+
+			% TODO: Seccomp profil erklären?
 
 	\section{Docker im Vergleich zu anderen Containerlösungen}
-  % Optional?
+  	% Optional?
+
+		% Vergleich von CoreOs 1.0 und Docker 1.10?
 
 \end{document}

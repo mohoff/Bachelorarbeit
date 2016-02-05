@@ -18,9 +18,16 @@
   % • Make docker daemon run as a non root user
   % ^   \cite[S.3]{virtVSContainer}
 
+  % Support for TUF Delegations: Docker now has support for read/write TUF delegations, and as soon as notary 0.2 comes out, you will be able to use delegations to provide signing capabilities to a team of developers with no shared keys.
+  %   ^   \cite{https://news.ycombinator.com/item?id=11037543}
+
+  \section{Docker Plugins}
+    % Seit Version 1.10
+    % Authorization Plugins: you can now write plugins for allowing or denying API requests to the daemon. For example, you could block anyone from using --privileged.
+    %   ^   \cite{https://news.ycombinator.com/item?id=11037543} und http://blog.docker.com/2016/02/docker-engine-1-10-security/
+
   \section{Security Policies}
     % Siehe \cite[S.5]{dockerSecIntro} rechts oben
-
 
   \section{Lifecycle- und State-Management von Containern}
     % Container Lifecycle - Managed using a daemon and command line tool
@@ -33,6 +40,11 @@
     % content trust (docker.com/engine/security/trust/content_trust/)
 
     % Siehe \cite[S.5]{dockerSecIntro}, links
+
+    % Content Addressed Images: The new manifest format in Docker 1.10 is a full Merkle DAG, and all the downloaded content is finally content addressable.
+    % Seit Version 1.10
+    %   ^   \cite{https://news.ycombinator.com/item?id=11037543}
+
 		\subsection{neues Signierungs-Feature}
 	\section{Docker Daemon}
 		\subsection{\acrshort{REST}-\acrshort{API}}

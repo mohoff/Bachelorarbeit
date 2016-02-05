@@ -19,4 +19,28 @@
   % Deutung: Docker weiss, dass Container allein unsicher sind, un mit Unikernels Docker-Container direkt auf Hypervisorn betreiben will
   % --> Mix von Hypervisor und Containern. Damit ist Kernel nicht mehr shared, sondern jeder Container hat sein eigenen minimal kernel.
   % Siehe bookmarks und blog.docker january 2016
+
+  % "Security"-Battle zwischen Docker (viele security features am 04.02.201 mit version 1.10) und dem release von CoreOS 1.0 am selben tag (?), das sich als
+  % sichere Containerloesung mit rkt vermarktet.
+  %   ^   \cite{alles mit urls belegbar...} --> schon geschehen in kapitel LSM/MAC
+
+  % generelles security profile generator tool in diskussion
+  % Um sehr technische details von selinux,apparmor,seccomp,caps zu abstrahieren. Es soll schnittstelle entstehen, mit denen jeder entwickler moeglichst einfach eigenen containersicherheitsprofil festlegt
+  % das apparmor oder seccomp dynamisch anwendet, je nach support vom host.
+  %   ^   \cite{frazelli/bane tool .... v.1.10 blog post ..... https://github.com/docker/docker/issues/17142#issuecomment-148974642}
+	% TODO: Eigene AppArmor profile erstellen mit 'bane': https://github.com/jfrazelle/bane ... Tooling-Efforts von Docker in Sachen Security support
+	% Auch: proposal als neues profil generator sec blabla: http://blog.docker.com/2016/02/docker-engine-1-10-security/
+
+  % Kompatibilitaet zwischen den vielen MACS/LSMs/Seccomp/Caps/etc. ? Diese in Zukunft sichergestellt?
+
+  % LSM bald ersetzt durch Seccomp-style oder vereinheitliches, im kernel standardmaessig integriertes security-framework???
+  %   ^   \cite{https://lwn.net/Articles/443099/}
+
+  % EIGENE GEDANKEN:
+  % dockers monetarisierung schwaechelt, da shift zu einem level drueber --> kubernetes. Docker swarm/compose nicht sehr erfolgreich..
+  % Und container mit dem OCP/OCI/OCF standardisiert werden.
+  % Einigster core value von docker sind paar tools und die registries/docker hub. Docker als "next maven" fuer container images?
+
+
+
 \end{document}
