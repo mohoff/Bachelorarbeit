@@ -228,12 +228,13 @@
 		% --> Quelle aus docker docs findbar?
 
 		\texttt{\acrshort{cgroups}} sind historisch aus dem Konzept von sogenannten \emph{\acrlong{rlimits}}, auch \texttt{\acrshort{rlimits}} genannt, gewachsen. Mit \emph{rlimits} werden \gls{weicheHarteLimits} definiert, die pro Prozess angewandt werden. Der Betrieb von Contaiern verlangen jedoch eine Ressourcenverteilung auf Containerbasis, sodass Limits pro Container, aus technischer Sicht einem Set an Prozessen, vergeben werden.
+		% TODO: rlimits abgleichen mit \cite[fundamentalkapitel]{linuxInterface}
 
 		%Dieses minimale Konzept auf Prozessebene ist für den Betrieb moderner Container jedoch unzureichend, da u.a. keine Beschränkungen auf Containerebene, also für Prozessgruppen, vorgenommen werden können. % z.B. keine Aktionen festgelegt werden können, die ausgeführt werden, wenn ein solches Limit erreicht ist. Außerdem können die \acrshort{CPU} und der Speicher nur begrenzt von \emph{\acrlong{rlimits}} kontrolliert werden.
 
 		Viele Containertechnologien erweiterten deswegen \texttt{\acrshort{rlimits}} mit eigenen Features. Z.b. fügten die Entwickler von \emph{FreeBSD} für den Betrieb von \emph{Jails} sogenannte \emph{Hierarchical Resource Limits} hinzu \cite{freeBsdRCTL}. \emph{Solaris} bietet die Nutzung von \emph{Resource Pools} an, die eine Partitionierung von Ressourcen implementiert \cite{cgroupsUniHierarchyDoc}. Auch \emph{OpenVZ} und \emph{Linux-VServer} erweitern \texttt{\acrshort{rlimits}}, sodass Ressourcenlimits pro Container definiert werden können \cite[S.15+16]{dockerSec2}.
 
-		Die Nachteile von \texttt{\acrshort{rlimits}} wurden mit der Implementierung von \texttt{\acrshort{cgroups}} für den Linux-Kernel behoben. Mit diesem relativ neuen Mechanismus werden Prozesse in hierarchischen Gruppen angeordnet, die individuell verwaltet werden und deren Attribute vererbt werden können. Neben vielseitiger und feingranularer Funktionen zum Management von z.B. \acrshort{CPU}- und Speicherressourcen, können unter \texttt{\acrshort{cgroups}} komplexe Verfahren implementiert werden, die zur Korrektur von limitüberschreitender Prozesse dienen \cite{cgroupsRedhat}. Die Implementierung von \texttt{\acrshort{cgroups}} wurde ab 2012 weiter verbessert, sodass eine Update unter dem Namen \emph{Unified Control Group Hierarchy} seit 2014 in den Linux-Kernel integriert ist \cite{cgroupsFixing}\cite{cgroupsUniHierarchy}.
+		Die Nachteile von \texttt{\acrshort{rlimits}} wurden mit der Implementierung von \texttt{\acrshort{cgroups}} für den Linux-Kernel behoben. Mit diesem relativ neuen Mechanismus werden Prozesse in hierarchischen Gruppen angeordnet, die individuell verwaltet werden und deren Attribute vererbt werden können. Neben vielseitiger und feingranularer Funktionen zum Management von z.B. \acrshort{CPU}- und Speicherressourcen, können unter \texttt{\acrshort{cgroups}} komplexe Verfahren implementiert werden, die zur Korrektur von limitüberschreitender Prozesse dienen \cite{cgroupsRedhat}. Die Implementierung von \texttt{\acrshort{cgroups}} wurde ab 2012 weiter verbessert, sodass eine Update unter dem Namen \emph{Unified Control Group Hierarchy} seit 2014 in den Linux-Kernel integriert ist \cite{cgroupsFixing}\cite{cgroupsUniHierarchy}. Von Docker wird die neue \emph{Unified Hierarchy} noch nicht verwendet \cite{ https://github.com/docker/docker/issues/16238 }
 
 		Wichtig zu erwähnen ist, dass die Implementierung von \texttt{\acrshort{cgroups}} verglichen mit der von \texttt{\acrshort{rlimits}} angeblich noch nicht vollständig ist. Das Feature Dateisysteme als Ressourcen mit \texttt{\acrshort{cgroups}} zu steuern, fehlt nach Angaben von \cite[S.19]{dockerSec2}. Auch im Quellcode von \emph{runC} ist eine Dateisystem-Interface als \glqq{}nicht unterstützt\grqq{} gekennzeichnet und wird demzufolge auch nicht von Docker genutzt. \cite{githubRunCCgroups}. Diskussionen im \emph{GitHub}-Repository von Docker verweisen in Bezug zu diesem Feature auf Abhängigkeiten zur Art des Dateisystems. Offenbar lassen sich sogenannte Dateisystem-Quotas nur mit \emph{Device Mapper} und \emph{Brtfs} softwaretechnisch lösen, \emph{AuFS} jedoch ermöglicht das nur indirekt über die Zuweisung von Festplattenpartitionen fester Größe. Diese Gegebenheit lässt vermuten, dass eine universelle Lösung aktuell an der Breite unterstützter Dateisysteme scheitert \cite{githubDockerIssueFsQuota}. Die neusten Entwicklungen sehen jedoch eine Quota-Implementierung vor \cite{githubDockerPullBrtfs}.
 
@@ -288,8 +289,21 @@
 
 		Oben behandelte Namespaces hatten schon einige Bugs. Alle zwar bisher behoben, trotzdem Beweis dafür, dass Namespace- und Cgroups-Sicherheit allein nicht aussreichen, um Container zu isolieren.
 
-		LSM bieten die Möglichkeit, Ressourcenzugriffe userunabhängig zu überprüfen. Damit ist weitere Sicherheitsschicht realisiert, die es z.b. Angreifern, die Root-Rechte auf dem Host erworben haben, verweigert, festgelegte Ressourcen zu verwenden.
+		LSMs bieten die Möglichkeit, Ressourcenzugriffe userunabhängig zu überprüfen. Sie realisieren eine weitere Sicherheitsschicht, die Angreifern festgelegte Ressourcen verweigert, selbst wenn sie Root-Rechte in einem Container haben.
     \subsection{\texttt{capabilities}}
+			\texttt{Capabilities} ist ein Feature, dass seit Kernelversion 2.2 in Linux integriert ist, um die traditionellen UNIX-Privelegien zu verfeinern. Es erlaubt die dem Root-User mit \texttt{UID=0} zustehenden Rechte in individuelle, voneinander unabhängige Einheiten zu unterteilen, die \texttt{capabilities} genannt werden. Jede priveligierte Operation ist auf eine \texttt{capability} abgebildet.
+			Zum Einen ist es Prozessen nicht-priveligierter User damit möglich, Operationen auszuführen, die ohne Einsatz dieses Features nur Root-User ausführen dürfen (Rechteausweitung). Zum Anderen lassen sich Prozesse auch mit \texttt{capabilities} einschränken, sodass sie z.B. nur von einem stark reduzierten Rechteset Gebrauch machen können (Rechteeinschränkung)\cite[S.33]{linuxInterface}.
+
+			Der DAC-Mechanismus ist nur in der Lage Root-Rechte an Prozesse zu vergeben, die eine priveligierte Operation ausführen wollen. Mit Root-Rechten werden alle normalen Rechtekontrollen des DACs umgangen.	Aus sicherheitstechnischer Sicht ist das kritisch, da der anfragende Prozess mit Root-Rechten auf dem System jede denkbare Operation ausführen kann und nicht, wie ursprünglich vorgesehen, nur die ihm priveligierte Operation \cite[S.797]{linuxInterface}. Mithilfe von \texttt{capabilities} wird im Gegensatz zu dem \glqq{}Alles-oder-nichts\grqq{}-Ansatz des DACs eine feinere und sichere Rechtevergabe ermöglicht.
+			% Zusammenfassung von capabilities in \cite[S.816]{linuxInterface}
+
+
+
+			\texttt{Capability}-Namen beginnen mit dem Prefix \texttt{CAP_} \cite[S.33,S.797]{linuxInterface}.
+
+			% TODO: Table in Appendix mit Auflistung von Capabilities und englische Erklärung dazu in \cite[S.801f.]{linuxInterface}. ?
+
+
 			% Siehe \cite[S.4, links uten]{dockerSec1} --> CAP_SYS_ADMIN
 
 			% Siehe \cite[S.5]{dockerSecIntro} .. nur haelfte an capabilities genutzt...
@@ -382,6 +396,8 @@
 				% Trennung von Zugriffsdomänen auf zwei Ebenen (TE und MCS)
 				%(		^		\cite{learning docker book, see https://books.google.de/books?id=jkkOCgAAQBAJ&pg=PA200&lpg=PA200&dq=mcs+docker&source=bl&ots=0mWUrsFsfO&sig=UXFaVbKKMMXcb_nFW-abQeR0bB0&hl=de&sa=X&ved=0ahUKEwiq5pnLltnKAhUGqA4KHY13AqsQ6AEIXjAI#v=onepage&q=mcs%20docker&f=false .... seite 201}
 
+				% TODO: https://coreos.com/blog/container-security-selinux-coreos.html
+
 				\paragraph{Type Enforcement (TE)}
 					Die wichtigste Komponente von \emph{SELinux} ist das \emph{Type Enforcement}. Nach diesem Modell wird jedem Objekt ein Typ zugeweisen, das bei ein Zugriffsoperation ausgewertet wird. Der Typ eines Objekts ist im Label an dritter Stelle definiert.
 
@@ -455,20 +471,57 @@
 				%		^		\cite{ https://wiki.ubuntu.com/AppArmor }
 
 				\emph{AppArmor} unterstützt einen Lernmodus, indem das Verhalten einer Anwendungen beobachtet wird und daraus automatisch ein Sicherheitsprofil erstellt wird \cite{linuxSecOverview}.
-				% TODO: Complain mode, enforce mode etc. weiter ausfuehren.
+				% TODO: Complain mode, enforce mode etc. weiter ausfuehren. --> Liste der 3? verschiednen modi
+				% enforce modus:  actively block and audit in dmesg anything outside the bounds of the docker-default profile. \cite{githubAppArmorDoc}
+				% und "sudo aa-status" beweist, dass docker-default im enforce-mode laeuft.
 
 				\emph{AppArmor}-Profile basieren auf einfach lesbaren Textdateien. Durch eine Inkludieranweisung lassen sich mehrere Profile modular kombinieren \cite{apparmorQuickProfileLanguage}.
 				% Capabilities und Networking lassen sich beide kontrollieren mit AppArmor
 
-				Das \emph{AppArmor}-Profil kann analog zu \emph{SELinux}-Labels über die Parametersyntax \texttt{--security-opt="apparmor:PROFILE"} manuell gesetzt werden \cite{dockerRun}.
+				Das Standardprofil \texttt{docker-default}\cite{githubAppArmorProfileContainer}, das im \texttt{enforce}-Modus unter \emph{.deb}-Releases in nicht-priveligierten Containern zum Einsatz kommt \cite{docker110Security}, wird bei der Installation von Docker in die Datei \texttt{/etc/apparmor.d/docker} geschrieben. Dieses Standardprofil kann mit dem \texttt{run}-Parameter \texttt{--security-opt="apparmor:PROFILE"} manuell überschrieben werden, sofern dieses in \emph{AppArmor}, z.B. mit dem \acrshort{CLI}-Tool \texttt{apparmor\_parser} \cite{apparmorParser}, zuvor importiert wurde \cite{dockerRun}.
 
-				Das Standardprofil \texttt{docker-default}\cite{githubAppArmorProfileContainer}, das unter \emph{.deb}-Releases in nicht-priveligierten Containern zum Einsatz kommt \cite{docker110Security}, wird bei der Installation von Docker in die Datei \texttt{/etc/apparmor.d/docker} geschrieben. Dieses Standardprofil kann mit dem \texttt{run}-Parameter \texttt{--security-opt} wie oben dargestellt überschrieben werden, sofern dieses in \emph{AppArmor}, z.B. mit dem \acrshort{CLI}-Tool \texttt{apparmor\_parser} \cite{apparmorParser}, zuvor importiert wurde.
+				Das Profil \texttt{docker-default} wurde erst kürzlich während der Erstellung dieser Arbeit aktualisiert. Aus der Commit-Nachricht geht allerdings nicht hervor, ob damit eine Sicherheitslücke geschlossen wurde oder die Änderungen im Zuge einer Funktionsänderung von Containern entstanden sind \cite{githubAppArmorProfileContainerFix}. Die aktuelle Implementierung des Profils, die mit dem Konsolenbefehl \texttt{cat /etc/apparmor.d/docker} ausgegeben werden kann, sieht folgende \emph{AppArmor}-Regeln vor:
+
+				\begin{lstlisting}
+					#include <tunables/global>
+
+					profile docker-default flags=(attach_disconnected,mediate_deleted) {
+					  #include <abstractions/base>
+
+					  network,
+					  capability,
+					  file,
+					  umount,
+
+					  deny @{PROC}/{*,**^[0-9*],sys/kernel/shm*} wkx,
+
+						deny @{PROC}/* w,
+						deny @{PROC}/{[^1-9],[^1-9][^0-9],[^1-9s][^0-9y][^0-9s],[^1-9][^0-9][^0-9][^0-9]*}/** w,
+						deny @{PROC}/sys/[^k]** w,
+						deny @{PROC}/sys/kernel/{?,??,[^s][^h][^m]**} w,
+
+					  deny @{PROC}/sysrq-trigger rwklx,
+					  deny @{PROC}/mem rwklx,
+					  deny @{PROC}/kmem rwklx,
+					  deny @{PROC}/kcore rwklx,
+
+					  deny mount,
+
+					  deny /sys/[^f]*/** wklx,
+					  deny /sys/f[^s]*/** wklx,
+					  deny /sys/fs/[^c]*/** wklx,
+					  deny /sys/fs/c[^g]*/** wklx,
+					  deny /sys/fs/cg[^r]*/** wklx,
+					  deny /sys/firmware/efi/efivars/** rwklx,
+					  deny /sys/kernel/security/** rwklx,
+					}
+				\end{lstlisting}
+				\emph{Evtl. in Anhang damit}
+				% TODO: Erklaerungen teilweise in https://github.com/docker/docker/commit/2b4f64e59018c21aacbf311d5c774dd5521b5352
 				% TODO: Inhalt der Datei in den Anhang oder als Codeblock an diese Stelle? 1. cat /etc/apparmor.d/docker ..... 2. \cite{githubAppArmorDoc}
-
+				% TODO: abstractions sind erklaert in https://books.google.de/books?id=1hVmn4RnKH0C&pg=PA97&lpg=PA97&dq=apparmor+abstractions+base&source=bl&ots=O7scPJ76X8&sig=FNYnyDrkfj3T-uOL1CGZbpcc_5s&hl=de&sa=X&ved=0ahUKEwjU9NPn5OrKAhWEFSwKHZAsDOYQ6AEIYDAI#v=onepage&q=apparmor%20abstractions%20base&f=false
 
 				Es existiert auch ein Profil für den Docker-Daemon \cite{githubAppArmorProfileDaemon}, allerdings muss dieses manuell aktiviert werden \cite{githubAppArmorDoc}.
-
-				% TODO: default AppArmor Profil erklaeren?
 
     \subsection{Seccomp}
 			% TODO: https://lwn.net/Articles/443099/ und https://lwn.net/Articles/441232/
@@ -499,12 +552,14 @@
 			Mithilfe der \emph{Seccompn}-Anweisungen \texttt{allow}, \texttt{deny}, \texttt{trap}, \texttt{kill} und \texttt{trace} sind neben der Sperrung noch weitere Aktionen, die zur Kontrolle von \emph{System Calls} dienen, möglich \cite{docker110Security}.
 
 			Seit Oktober 2015 ist eine \emph{Seccomp}-Unterstützung in Planung und Entwicklung \cite{githubGeneralSecProfiles}\cite{githubSeccompIntegration}. Diese wurde in Form eines \emph{Seccomp}-Standardprofils sowie der Option eigene Profile einzubinden, der zum Erstellungszeitpunkt dieser Arbeit neusten Docker-Version 1.10 am 04. Februar 2016 hinzugefügt \cite{githubDockerChangelog}\cite{githubSeccompDoc}
-			\cite{githubSeccompProfile}\cite{docker110Security}. Das Standardprofil basiert auf einer Whitelist, sprich es blockiert abgesehen von den in dieser Liste aufgeführten Operationen, alle \emph{System Calls} \cite{githubSeccompDoc}. Eine Aufzählung der resultierend geblockten Aufrufe ist in \cite{githubSeccompDoc} zu finden.
+			\cite{githubSeccompProfile}\cite{docker110Security}. Das Standardprofil basiert seit Ende 2015 auf einer Whitelist (davor einer Blacklist), sprich es blockiert, abgesehen von den in dieser Liste aufgeführten Operationen, alle \emph{System Calls} \cite{githubSeccompDoc}.
 
+			Eine aktuelle Liste der explizit erlaubten und resultierend blockierten Aufrufe ist in \cite{githubSeccompProfile} und \cite{githubSeccompDoc} zu finden.
 
-			Die offizielle Dokumentation des \texttt{run}-Befehls sieht noch keine Anpassungsmöglichkeit von \emph{Seccomp} vor \cite{dockerRun}. Jedoch ist an anderer Stelle im \emph{GitHub}-Repository vermerkt, dass sich das Standardprofil mit dem Parameter \texttt{--security-opt seccomp:PROFILEPATH} überschreiben lässt \cite{githubSeccompDoc}. Ist es nötig Container ohne \emph{Seccomp} zu starten, kann das mit der Option \texttt{--security-opt seccomp:unconfined} realisiert werden \cite{docker110Security}.
+			Seit der Umstellung von Blacklisting auf Whitelisting wurde die \emph{System Call}-Auflistung in einem Zeitraum von ca. fünf Wochen 47 Änderungen unterzogen. Davon sind 40 Neueinträge und sieben Löschungen zu registrieren \cite{githubSeccompProfileHistory}. Während sich es bei den Neueinträgen um bewusste Funktionserweiterungen handeln kann, werfen sieben Löschungen den Verdacht auf, dass das \emph{Seccomp}-Standardprofil weder als vollständig noch ausreichend getestet betrachtet werden kann.
+			% TODO: CHECK AGAIN nach commit history aenderungen!
 
-			% TODO: Seccomp profil erklären?
+			Die offizielle Dokumentation des \texttt{run}-Befehls sieht noch keine Anpassungsmöglichkeit von \emph{Seccomp} vor \cite{dockerRun}. Jedoch ist an anderer Stelle im \emph{GitHub}-Repository vermerkt, dass sich das Standardprofil mit dem Parameter \texttt{--security-opt seccomp:PROFILEPATH} überschreiben lässt \cite{githubSeccompDoc}. Ist es nötig, Container ohne \emph{Seccomp} zu starten, kann das mit der Option \texttt{--security-opt seccomp:unconfined} realisiert werden \cite{docker110Security}.
 
 	\section{Docker im Vergleich zu anderen Containerlösungen}
   	% Optional?
@@ -512,7 +567,10 @@
 		% Vergleich von CoreOs 1.0 und Docker 1.10?
 
 		% Selbst steinaltes OpenBSD baut noch an tame() / neu:pledge() -Funktion rum, um soetwas wie Seccomp zu ermoeglichen
-		%	Tame() als Vorbild fuer general framework von docker (siehe RFC github post von frazelli)
+		%	Tame() als Vorbild fuer general framework von docker (siehe RFC github post von frazelli) --> Mehr in Fazit-Kapitel rein.
 		%		^		\cite{https://news.ycombinator.com/item?id=10537268}
+
+		% Von CoreOS-Website: Security-minded capabilities
+		% rkt is built from the ground up to be ready for security-focused environments. Many of these principles weren’t invented at CoreOS — instead, we applied common, everyday best practices that have been largely overlooked in the container industry so far.
 
 \end{document}
