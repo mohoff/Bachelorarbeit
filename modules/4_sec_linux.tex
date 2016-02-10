@@ -289,7 +289,13 @@
 
 		Oben behandelte Namespaces hatten schon einige Bugs. Alle zwar bisher behoben, trotzdem Beweis dafür, dass Namespace- und Cgroups-Sicherheit allein nicht aussreichen, um Container zu isolieren.
 
+		Im Normalfall kontrolliert Linux den Zugriff auf Ressourcen anhand der Identität des anfragenden Users. Diese sogenannte \emph{Discretionary Access Control}, kurz \acrshort{DAC}, implementiert eine einfache Form von \acrshort{ACL}. Identifikationsmerkmale dieser umfassen den Besitzer (owner) einer Datei, die Gruppenzugehörigkeit des Besitzers (group) und sogenannte Permission-Flags aus der Menge \texttt{r,w,x}. Letztere legen z.B. für Dateien fest, ob Lese- (r=read), Schreib- (w=write) und Ausführrechte (x=execute) gewährt werden.
+
 		LSMs bieten die Möglichkeit, Ressourcenzugriffe userunabhängig zu überprüfen. Sie realisieren eine weitere Sicherheitsschicht, die Angreifern festgelegte Ressourcen verweigert, selbst wenn sie Root-Rechte in einem Container haben.
+
+		Die Docker-Entwickler haben in den letzten Monaten die Integrations- und Anpassungsmöglichkeiten von zusätzlichen Sicherheitsmaßnahmen, v.a. MACs, stark verbessert, da die Containersicherheit für \emph{Docker} höchste Priorität hat \cite{githubDockerRoadmap}\cite{githubDockerChangelog}. Auch die Tatsache, dass sich zur Zeit die Konkurrenz \emph{CoreOS} mit der Containerlösung \emph{rkt} als sicherheitsfokusierte Alternative zu Docker auf dem Virtualisierungsmarkt etablieren will \cite{coreosAnnouncementRkt10}, ist für \emph{Docker} Anreiz die Sicherheit ihrer eigenen Entwicklung nicht zu vernachlässigen.
+		% Ist "sicher nicht entgangen" zu umgangssprachlich?
+		Die Veröffentlichung des großen Sicherheitsupdates für Docker mit der Version 1.10 am 04. Februar 2016 geschah in der Tat ca. drei Stunden nach der Ankündigung der Version 1.0 von \emph{rkt} seitens \emph{CoreOS} \cite{hnAnnouncementDocker110}\cite{hnAnnouncementRkt10}, was eine starke Konkurrenz zwischen den beiden Parteien erkenntlich macht.
     \subsection{\texttt{capabilities}}
 			\texttt{Capabilities} ist ein Feature, dass seit Kernelversion 2.2 in Linux integriert ist, um die traditionellen UNIX-Privelegien zu verfeinern. Es erlaubt die dem Root-User mit \texttt{UID=0} zustehenden Rechte in individuelle, voneinander unabhängige Einheiten zu unterteilen, die \texttt{capabilities} genannt werden. Jede priveligierte Operation ist auf eine \texttt{capability} abgebildet.
 			Zum Einen ist es Prozessen nicht-priveligierter User damit möglich, Operationen auszuführen, die ohne Einsatz dieses Features nur Root-User ausführen dürfen (Rechteausweitung). Zum Anderen lassen sich Prozesse auch mit \texttt{capabilities} einschränken, sodass sie z.B. nur von einem stark reduzierten Rechteset Gebrauch machen können (Rechteeinschränkung)\cite[S.33]{linuxInterface}.
@@ -297,12 +303,9 @@
 			Der DAC-Mechanismus ist nur in der Lage Root-Rechte an Prozesse zu vergeben, die eine priveligierte Operation ausführen wollen. Mit Root-Rechten werden alle normalen Rechtekontrollen des DACs umgangen.	Aus sicherheitstechnischer Sicht ist das kritisch, da der anfragende Prozess mit Root-Rechten auf dem System jede denkbare Operation ausführen kann und nicht, wie ursprünglich vorgesehen, nur die ihm priveligierte Operation \cite[S.797]{linuxInterface}. Mithilfe von \texttt{capabilities} wird im Gegensatz zu dem \glqq{}Alles-oder-nichts\grqq{}-Ansatz des DACs eine feinere und sichere Rechtevergabe ermöglicht.
 			% Zusammenfassung von capabilities in \cite[S.816]{linuxInterface}
 
-
-
-			\texttt{Capability}-Namen beginnen mit dem Prefix \texttt{CAP_} \cite[S.33,S.797]{linuxInterface}.
+			\texttt{Capability}-Namen beginnen mit dem Prefix \texttt{CAP\_} \cite[S.33,S.797]{linuxInterface}.
 
 			% TODO: Table in Appendix mit Auflistung von Capabilities und englische Erklärung dazu in \cite[S.801f.]{linuxInterface}. ?
-
 
 			% Siehe \cite[S.4, links uten]{dockerSec1} --> CAP_SYS_ADMIN
 
@@ -317,39 +320,37 @@
 
     \subsection{Linux Security Modules (\acrshort{LSM}s) und Mandatory Access Control (\acrshort{MAC1})}
 			% TODO: Glossary und Acronyms besser einpflegen hier
-
-			\emph{Linux Security Modules} (\acrshort{LSM}) ist ein Framework, das von Linux-Kerneln eingebunden werden kann, um Sicherheitsmodule zu verwenden. Das hauptsächlich implementierte Sicherheitsmodell ist das der \emph{Access Control List} (\acrshort{ACL}), das anhand definierter Parameter entscheidet, ob der Zugriff auf eine Resource genehmigt oder verweigert wird. %, die eine feingranulare Zugriffskontrolle für Ressourcen bereitstellen.
-			% Es implementiert einige Sicherheitsmodelle ohne sich auf ein Modell zu beschränken.
-			Die Zugriffskontrolle geschieht in Form eines LSM-Hooks. Unter einem Hook ist ein zwischengeschaltener Aufruf gemeint, der den normalen Programmfluss unterbricht und im Kontext eines LSMs weiterverarbeitet wird. Erst nach einer Antwort eines oder mehrerer hintereinander geschaltener LSMs, wird die weitere normale Ausführung des \emph{System Calls} fortgesetzt bzw. für den Fall, dass die Entscheidung des Moduls restriktiver Natur war, verweigert.
-
-			Die native Zugriffskontrolle unter Linux, \emph{Discretionary Access Control} (\acrshort{DAC}), implementiert eine einfache Form von \acrshort{ACL}s für das User-Management, bietet jedoch nicht ausreichend Schutz gegen Angriffe \cite[S.1]{LSMFramework}. DAC-Elemente umfassen den Besitzer (owner) einer Datei, die Gruppenzugehörigkeit des Besitzers (group) und sogenannte Permission-Flags aus der Menge \texttt{r,w,x}. Letztere legen fest, ob Lese- (r=read), Schreib- (w=write) und Ausführrechte (x=execute) gewährt werden.
-
-			Der DAC-Mechanismus erfüllt nicht moderne Anforderungen an die Sicherheit in Containersystemen, da sie z.B. von Superuser-Tools wie \emph{sudo} umgangen werden kann. Aus diesem Grund bieten Containertechnologien Unterstützung für MACs wie \emph{AppArmor}, \emph{SELinux}, \emph{Smack}, \emph{TOMOYO Linux} und \emph{Seccomp} an. Unter Einbeziehung solcher Kontrollmodule kann nun auch der Ressourcenzugriff eines Root-Users eingegrenzt werden. Biespielweise kann ein LSM-Modul gebaut werden, dass es dem Root-User nur erlaubt ein Programm auszuführen, wenn ein physikalisches Gerät an das System angeschlossen ist \cite{LSMUsing}.
+			Der DAC-Mechanismus erfüllt nicht moderne Anforderungen an die Sicherheit in Containersystemen, da sie z.B. von Superuser-Tools wie \emph{sudo} umgangen werden kann \cite[S.1]{LSMFramework}. Aus diesem Grund integriert Docker MACs wie \emph{SELinux} und \emph{AppArmor}, die anhand eines identitätsunabhängigen Regelwerks zusätzliche Sicherheit bieten. Unter Einbeziehung solcher Kontrollmodule kann nun z.B. auch der Ressourcenzugriff eines Angreifers eingegrenzt werden, selbst wenn dieser in den Besitz von Root-Rechten gelangen konnte.
+			% Biespielweise kann ein LSM-Modul gebaut werden, dass es dem Root-User nur erlaubt ein Programm auszuführen, wenn ein physikalisches Gerät an das System angeschlossen ist \cite{LSMUsing}.
 			% Kurz DAC erklaeren oder besser ins Glossar damit?
 
-			Da es sich bei LSMs um optinale Kernelmodule handelt, ist eine Abwärtskompatibilität mit den konventionellen DACs gewährleistet.
-			Aus diesem Grund überschreiben LSMs nicht DAC-Mechanismen, sondern ergänzen letztere, indem LSM-Checks erst durchgeführt werden, wenn die DAC den Zugriff gestattet hat (vgl. \fig \ref{fig:sec_LSMHook}). Damit unterscheidet sich das Vorgehensweise grundlegend von der regulären Implementierung einer MAC, da letztere durch ihre obligatorische Natur normalerweise zuerst ausgeführt werden \cite[S.3]{LSMFramework}
+			Eine Möglichkeit, Kontrollmodule in Linux zu integrieren bietet das \emph{Linux Security Modules}-Framework, auch kurz \acrshort{LSM} genannt, das inzwischen standardmäßig in den Kernel eingebaut ist.
+			% TODO: QUELLE
+			Module, die in das Framework eingebettet werden, sind kombinierbar, Sicherheitsmodelle konsekutiv umgesetzt werden können \cite[S.3]{LSMFramework}.
+			% Die in diesem Kapitel behandelten Module, die auch Docker verwendet, implementieren MACs.
+			Das überwiegend implementierte Sicherheitsmodell ist das der \emph{Access Control List} (\acrshort{ACL}), das anhand definierter Parameter entscheidet, ob der Zugriff auf eine Resource genehmigt oder verweigert wird. Ressourcen umfassen in diesem Kontext alle jene, die von einem Kernel in interne \glslink{KernelObject}{Kernelobjekte} aufgelöst werden können, also z.B. Dateien, Verzeichnisse, Sockets, Geräte, etc. Im folgenden werden die Begriffe Ressource und Objekt synonym verwendet.
+			%, die eine feingranulare Zugriffskontrolle für Ressourcen bereitstellen.
+			% Es implementiert einige Sicherheitsmodelle ohne sich auf ein Modell zu beschränken.
+			Die eigentliche Kontrolle geschieht, wie in \fig \ref{fig:sec_LSMHook} dargestellt, in Form eines LSM-Hooks. Unter einem Hook ist ein zwischengeschaltener Aufruf gemeint, der einen \emph{System Call} unterbricht und eine Weiterverarbeitung in ein Sicherheitsmodul anstößt. Erst nach einer Antwort eines oder mehrerer hintereinander geschaltener Module, wird die normale Weiterausführung des \emph{System Calls} fortgesetzt bzw. für den Fall, dass die Entscheidung des Moduls restriktiver Natur war, verweigert.
 
-			Durch die vorliegende Reihenfolge ist sichergestellt, dass die Nutzung einer LSM-Implementierung optional ist und unabhängig von der DAC funktioniert \cite{centOsMCS}. Deswegen können auch Anwendungen, die das LSM-Framework nicht unterstützen, weiterhin funktionieren.
+			An dieser Stelle ist wichtig zu erwähnen, dass Module des LSM-Frameworks den nativen DAC-Mechanismus nicht überschreiben, sondern ergänzen. LSM-Kontrollen geschehen erst, wenn die DAC den Zugriff gestattet hat (vgl. \fig \ref{fig:sec_LSMHook}). Durch diese Reihenfolge ist sichergestellt, dass die Nutzung einer LSM-Schnittstelle optional ist und unabhängig von der DAC funktioniert \cite{centOsMCS}. Deswegen können auch Anwendungen, die das LSM-Framework nicht unterstützen, weiterhin funktionieren.
+
+			Die Vorgehensweise unterscheidet sich damit grundlegend von der regulären Implementierung einer MAC, da letztere durch ihre obligatorische Natur normalerweise zu Beginn einer Zugriffskontrolle ausgeführt wird \cite[S.3]{LSMFramework}.
 
 			\begin{figure}[h]
-          \centering
-          \includegraphics[width=0.9\textwidth]{./images/sec_LSMHook.jpg}
-          \caption{Funktionsweise von \emph{System Call}-Hooks eines LSMs \cite[S.3]{LSMFramework}.}
-          \label{fig:sec_LSMHook}
-      \end{figure}
+					\centering
+					\includegraphics[width=0.9\textwidth]{./images/sec_LSMHook.jpg}
+					\caption{Funktionsweise von \emph{System Call}-Hooks eines LSMs \cite[S.3]{LSMFramework}.}
+					\label{fig:sec_LSMHook}
+			\end{figure}
 
-			Wie in \fig \ref{fig:sec_LSMHook} dargestellt, greift der LSM-Hook erst, wenn ein User einen sicherheitskritischen \emph{System Call} ausgeführt hat, die hierbei angefragte Ressource in Form eines \glslink{KernelObject}{internen Kernelbojekts} aufgelöst wurde, Fehler-Checks abgeschlossen und der Zugriff über den klassischen DAC-Mechanismus genehmigt wurde. Erst wenn der Kernel versucht auf das \glslink{KernelObject}{interne Objekt} zuzugreifen, wird der Hook ausgeführt, der den Zugriff in das zugehörige LSM-Modul weiterleitet. Das Modul genehmigt oder verweigert den Zugriff anhand den ihm vorliegenden Zugriffsparametern.
+			Wie in \fig \ref{fig:sec_LSMHook} dargestellt, greift der LSM-Hook erst, wenn ein User einen sicherheitskritischen \emph{System Call} ausführt, die hierbei angefragte Ressource aufgelöst werden, Fehler-Checks abgeschlossen und der Zugriff über den klassischen DAC-Mechanismus genehmigt wurde. Erst wenn der Kernel versucht auf das \glslink{KernelObject}{Kernelobjekt} zuzugreifen, wird der Hook ausgeführt, der den Zugriff in das zugehörige LSM-Modul weiterleitet. Das Modul genehmigt oder verweigert den Zugriff anhand den ihm vorliegenden Zugriffsparametern.
 
-			Der Grund für diese Reihenfolge ist, dass nur kurz vor dem Zugriff auf das \glslink{KernelObject}{Objekt} der komplette Kontext der Zugriffsanfrage vorliegt und dieser daher nur an dieser Stelle vollständig von einem LSM-Modul ausgewertet werden kann \cite[S.2]{LSMFramework}. Zusätzlich wird dadurch Granularität der Zugriffskontrolle verbessert werden \cite{LSMDesign}.
+			Der Ausführungszeitpunkt des Hooks bietet den Vorteil, dass der komplette Kontext der Zugriffsanfrage an dieser Stelle vorliegt und vollständig von einem LSM-Modul ausgewertet werden kann \cite[S.2]{LSMFramework}. Zusätzlich wird dadurch die Granularität der Zugriffskontrolle verbessert werden \cite{LSMDesign}.
 
 			% AppArmor und SELinux schuetzen potentiell vor Zero-Day-Exploits.
 			%		^		\cite{http://askubuntu.com/questions/485547/contain-docker-engine-with-apparmor}
 			% Zero Day Exploit ins Glossar: noch nicht oeffentlich bekannte Sicherheitsluecken in Software
-
-			Verschiedene LSMs sollen kombinierbar sein, sodass mehrere Sicherheits-Policies konsektiv umgesetzt werden können \cite[S.3]{LSMFramework}.
-
-
 
 			% Im englischen (linux kernel) "hardening solutions"
 
@@ -360,22 +361,22 @@
 
 			% S.7 in
 
-			Docker unterstützt die MACs \emph{SELinux}, \emph{AppArmor} und \emph{Seccomp}. Die Docker-Entwickler haben in den letzten Monaten die Integrations- und Anpassungsmöglichkeiten dieser Module stark verbessert, da die Containersicherheit für \emph{Docker} höchste Priorität hat \cite{githubDockerRoadmap}\cite{githubDockerChangelog}. Auch die Tatsache, dass sich zur Zeit die Konkurrenz \emph{CoreOS} mit der Containerlösung \emph{rkt} als sicherheitsfokusierte Alternative zu Docker auf dem Virtualisierungsmarkt etablieren will \cite{coreosAnnouncementRkt10}, ist sicher auch \emph{Docker} nicht entgangen.
-			% Ist "sicher nicht entgangen" zu umgangssprachlich?
-			Die Veröffentlichung des großen Sicherheitsupdates für Docker mit der Version 1.10 am 04. Februar 2016 geschah in der Tat ca. drei Stunden nach der Ankündigung der Version 1.0 von \emph{rkt} seitens \emph{CoreOS} \cite{hnAnnouncementDocker110}\cite{hnAnnouncementRkt10}.
-
-			In den folgenden Unterkapiteln werden die sicherheitsrelevanten Module \emph{SELinux}, \emph{AppArmor} und \emph{Seccomp} und deren Einsatzzweck in Docker genauer betrachtet. Ein Ausblick in die Zukunft von MACs und Docker ist in Kapitel \ref{result} gegeben.
+			In den folgenden Unterkapiteln werden die beiden MACs \emph{SELinux} und \emph{AppArmor}, sowie deren Einsatzzweck unter Docker vorgestellt. Ein Ausblick in die Zukunft von MACs und Docker ist in Kapitel \ref{result} gegeben.
+			% TODO: Checken, ob Referenz wirklich da ist, also Thema in Fazit aufgegriffen ist!
 
   		\subsubsection{\acrshort{SELinux}}
       	% Macht Sinn das erst am Ende zu machen, wenn noch Zeit ist. Weil SELinux im Detail mehr Exkurs wird.
-				\emph{SELinux} steht für \emph{Security Enhanced Linux} und wurde ursprünglich von der NSA entwickelt. Es wird verwendet, um die Integrität und Vertraulichkeit von Prozessen und Daten zu schützen, indem mit einer strengen Ressourcenbeschränkung das Prinzip des "least privilege" umgesetzt wird  \cite{redhatSec}. %\cite[S.201]{learningDocker}.
-				Auf Konzeptebene basiert der Schutz auf der Implementierung einer feingranularen und flexiblen MAC, die als LSM vom Kernel genutzt werden kann.
+				\emph{SELinux} steht für \emph{Security Enhanced Linux} und implementiert eine feingranulare MAC, die ursprünglich von der NSA entwickelt wurde. Es wird verwendet, um Anforderungen an die Integrität und Vertraulichkeit von Prozessen und Daten, sowie das \emph{Principle Of Least Privilege} zu realiseren \cite{redhatSec}. %\cite[S.201]{learningDocker}.
+
+				% TODO: Bild aus http://www.admin-magazin.de/Online-Artikel/Mandatory-Access-Control-MAC-mit-SE-Linux hier rein. Bzw. gleiches Bild in \cite[S.63]{linuxMagazineSec}
+
+				Die Beschränkungen beruhen auf einer Sicherheits-Policy, die alle Aktionen zwischen Usern und Ressourcen regelt. Die Policy besteht aus Anweisungen, die konkrete Sicherheitslabel, wie sie im nächsten Abschnitt beschrieben sind, abbilden. Durch die strikte Trennung der Regelwerk und dessen Durchsetzung lassen sich mit \emph{SELinux} hohe Sicherheitsanforderungen erfüllen. Durch detailreiche Anpassungsmöglichkeiten steht diese MAC unter dem Ruf besonders schwer konfigurierbar zu sein, obwohl GUI-Tools wie \emph{system-config-selinux} und die Bibliothek \emph{libsemanage} den Umgang mit \emph{SELinux}-Regelwerken in den letzten Jahren vereinfachten \cite[S.62,S.67]{linuxMagazineSec}.
 				% cite { https://www.linux.com/learn/docs/727873-overview-of-linux-kernel-security-features/ }
 				% cite { https://www.nsa.gov/research/_files/selinux/papers/selsymp2006.pdf }
 
 				Die \emph{Red Hat}-basierten Linux-Distributionen \emph{Red Hat Enterprise Linux}, \emph{Fedora} und \emph{CentOS} sind in der Lage \emph{SELinux} als zusätzlichen Schutzmechanismus zu verwenden \cite{dockerSecurity}.
 
-				\emph{SELinux} kennt das Konzept des Eigentums von Ownern und Groups nicht. Der komplette Funktionsumfang von SELinux beruht auf einem Labeling-System, das Zugriffe individuell für Prozesse verwaltet \cite{SELinuxComic}. Labels sind nach dem Schema \texttt{User:Role:Type:Level} in vier Komponenten aufgeteilt und werden jedem Objekt im System zugeweisen. Ein Objekt ist hierbei ein Sammelbegriff für alle Ressourcen, auf die sich der Zugriff beschränken lässt, also z.B. Prozesse, Dateien und Netzwerkports \cite{atomicDockerSELinux}. Labels dienen den Objekten als Sicherheitskontext und sind vom DAC-Mechanismus getrennt \emph{SELinux}. Der \texttt{User} eines Labels ist von einem Linux-Users, der mit DAC ausgewertet wird, unabhängig.
+				\emph{SELinux} kennt das Konzept des DACs von Ownern und Groups nicht. Der komplette Funktionsumfang von SELinux beruht auf einem Labeling-System, das Zugriffe individuell für Prozesse verwaltet \cite{SELinuxComic}. In Zuge dessen wird jedem Prozess zur Laufzeit und jedem Objekt im System ein Label nach dem Schema \texttt{User:Role:Type:Level} zugewiesen \cite{atomicDockerSELinux}. Für Objekte wird das Label in den erweiternden Attributen (\texttt{xattr}) geschrieben \cite[S.65]{linuxMagazineSec}. Die erste Komponente \texttt{User} eines Labels ist von einem Linux-Users, der mit DAC ausgewertet wird, unabhängig.
 
 				\emph{SELinux} wertet bei einem Zugriff das Label des zugreifenden Prozesses und das Label der betroffenen Ressource anhand einem definierten Regelwerk aus und entscheidet, ob die Operation fortgesetzt werden darf \cite{linuxSecOverview}. Die Regeln werden in ihrer Summe auch als Policy bezeichnet.
 
@@ -383,11 +384,13 @@
 
 				Unter Docker können die vier Label-Attribute mit dem Parameter \texttt{--security-opt="label:LABEL:VALUE"} für den \texttt{run}-Befehl pro Container manuell spezifiziert werden \cite{dockerRun}.
 
-				% sehr flexibel fuer docker https://www.mankier.com/8/docker_selinux
+				% TODO: SELinux loggt auch die Zugriffe
 
 				SELinux selbst stellt keine \emph{namespaces} zur Verfügung. Deswegen kann pro Host nur eine SELinux-Policy aktiv sein, die für alle Hostcontainer angewandt wird.
 
-				Die \emph{SELinux}-Module, die im Betrieb von Docker eingesetzt werden, sind \emph{Type Enforcement} und \emph{Multi-Category Security} (MCS). Die Eigenheiten beider Mechanismen und deren Funktionsweise unter Docker werden im Folgenden erklört.
+				Auf eine Anwendung abgestimmtes \emph{SELinux}-Regelwerk wird mit der sicherheitskritischen Anwendung zusammen verteilt. Bei der Installation wird dann auch die anwendungsspezifische Policy in das LSM geladen, sodass der Sicherheitsmechanismus nicht manuell eingepflegt werden muss. Außerdem ist die Policy sofort bei der ersten Verwendung der Anwendung aktiv.
+
+				Die \emph{SELinux}-Bausteine, die im Betrieb von Docker eingesetzt werden, sind \emph{Type Enforcement} und \emph{Multi-Category Security} (MCS). Die Eigenheiten beider Mechanismen und deren Funktionsweise unter Docker werden im Folgenden erklärt. Ein weiteres Element \emph{Multi-Level Security} (MLS) wird in dieser Arbeit nicht behandelt, da es unter Docker keine Verwendung findet.
 				% Multi-Level Security (MLS) ist verwandt mit MCS. Aber kein Einsatz unter Docker. MLS beruht auf Konzept von "Domination".
 
 				% SELinux funktionert angeblich nicht mit storage driver BRTFS		--> s. auch docker version 1.10 release notes unter security headline
@@ -401,7 +404,7 @@
 				\paragraph{Type Enforcement (TE)}
 					Die wichtigste Komponente von \emph{SELinux} ist das \emph{Type Enforcement}. Nach diesem Modell wird jedem Objekt ein Typ zugeweisen, das bei ein Zugriffsoperation ausgewertet wird. Der Typ eines Objekts ist im Label an dritter Stelle definiert.
 
-					Jeder Docker-Prozess hat z.B. im Label den Typ \texttt{docker\_t} definiert. Im \emph{SELinux}-Regelwerk ist festgelegt, dass Prozesse eines Typs nur auf Verzeichnisse und Dateien vollen Zugriff hat, die mit bestimmten Labeltypen versehen sind. Im konkreten Fall von \texttt{docker\_t} umfasst diese Konfiguration ein Set, das z.B. die Typen \texttt{cgroup\_t}, \texttt{docker\_config\_t}, \texttt{docker\_log\_t} und \texttt{svirt\_sandbox\_file\_t} enthält. Versucht ein Docker-Prozess auf Objekte anderer Typen zuzugreifen, wird die Operation verweigert.
+					Jeder Docker-Prozess hat z.B. im Label den Typ \texttt{docker\_t} definiert. Im \emph{SELinux}-Regelwerk ist festgelegt, dass Prozesse eines Typs nur auf Verzeichnisse und Dateien vollen Zugriff hat, die mit bestimmten Labeltypen versehen sind. Im konkreten Fall von \texttt{docker\_t} umfasst diese Konfiguration ein Set, das z.B. die Typen \texttt{cgroup\_t}, \texttt{docker\_config\_t}, \texttt{docker\_log\_t} und \texttt{svirt\_sandbox\_file\_t} enthält. Versucht ein Docker-Prozess auf Objekte anderer Typen zuzugreifen, wird die Operation unterbunden.
 
 					Da in \emph{SELinux}-Umgebungen jedem Objekt im System ein Label zugewiesen ist, wird eine zuverlässige Kontrolle von Objektzugriffen über die Auswertung von Typen ermöglicht. Prozesse, die mit dem Typ \texttt{docker\_t} aus der Docker-Domäne stammen, sind streng von Objekten anderer Domänen abgegrenzt und können nicht interagieren.
 					% We label Apache processes as httpd_t and we label Apache content as httpd_sys_content_t and httpd_sys_content_rw_t. Imagine we have credit card data stored in a mySQL database which is labeled msyqld_data_t. If an Apache process is hacked, the hacker could get control of the httpd_t process and would be allowed to read httpd_sys_content_t files and write to httpd_sys_content_rw_t. But the hacker would not be allowed to read the credit card data (mysqld_data_t) even if the process was running as root. In this case SELinux has mitigated the break in.
@@ -411,6 +414,8 @@
 					% Type enforcement is a kind of enforcement in which rules are based on process type. It works in the following way. The default type for a confined container process is svirt_lxc_net_t. This type is permitted to read and execute all files "types" under /usr and most types under /etc. svirt_lxc_net_t is permitted to use the network but is not permitted to read content under /var, /home, /root, /mnt … svirt_lxc_net_t is permitted to write only to files labeled svirt_sandbox_file_t and docker_var_lib_t. All files in a container are labeled by default as svirt_sandbox_file_t. Access to docker_var_lib_t is permitted in order to allow the use of docker volumes \cite{ http://www.projectatomic.io/docs/docker-and-selinux/ }.
 
 				\paragraph{Multi-Category Security (MCS)}
+					% TODO: Einarbeiten, dass mit Kateogiren die Vertraulichkeit erfüllt wird: Kategorisierung führt dazu, dass nur solche Prozesse auf Objekte haben, die derselben Kategorie angehören.
+					% TODO: Systemintegrität und Domänen mit Type Enforcement realisiert! Prozesse laufen innerhalb einer Domäne und Objekte haben einen Typ. Durch Regeln wird bestimmt, welche Domänen auf welche Typen zugreifen dürfen.
 					Durch das einheitliche Regelwerk für alle Docker-Prozesse, ist mit einem \emph{Type Enforcement} gewährleistet, dass Docker nicht unbefugt auf geschützte oder unrelevante Dateien des Hosts zugreifen darf.
 
 					\emph{SELinux} bietet mit dem MCS-Mechanismus jedoch auch eine Möglichkeit, Docker-Prozesse untereinander zu trennen, auch wenn sie den gleichen Typ, z.B. \texttt{docker\_t} aufweisen. Dieses Sicherheitsfeature ist unter Docker auch mit \emph{Type Enforcements} realisierbar, wenn jeder Container mit einem eigenen Typ operiert. Diese feinere Typenunterteilung wirkt sich aber auf die Komplexität der Policy aus, weswegen in der Regel der MCS-Mechanismus für dieses Sicherheitsfeature eingesetzt wird.
@@ -418,7 +423,7 @@
 					% ist aber sehr aufwendig...
 					% \cite{https://securityblog.redhat.com/tag/docker/}
 
-					Der MCS-Mechanismus arbeitet mit dem letzten Teil des Labels, dem \texttt{Level}. Das Level unterteilt sich mit der Schreibweise \texttt{sensitivity[:category-set]} in eine Sensitivität und optionalen Kategorien. Für die MCS sind die Kategorien von Bedeutung. Die Sensitivität wird ignoriert und hat deswegen einen konstanten Wert von \texttt{s0}.
+					Der MCS-Mechanismus arbeitet mit dem letzten Teil des Labels, dem \texttt{Level}. Das Level unterteilt sich mit der Schreibweise \texttt{sensitivity[:category-set]} in eine Sensitivität, oder auch Schutzstufe genannt, und optionalen Kategorien. Für die MCS sind die Kategorien von Bedeutung. Die Schutzstufe wird ignoriert, weil sie nur unter der nicht von Docker verwendeten \acrshort{MLS} Anwendung findet. Im Fall von Docker hat die Schutzstufe deswegen einen konstanten Wert von \texttt{s0}.
 					% TODO: Quellen!
 					%\cite{ https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Security-Enhanced_Linux/chap-Security-Enhanced_Linux-SELinux_Contexts.html } \cite{ http://james-morris.livejournal.com/5583.html }
 

@@ -6,11 +6,73 @@
 
 	\section{Virtualisierung}
   \label{introVirt}
-    Bei der Virtualisierung werden ein oder mehrere virtuelle \acrshort{IT}-Systeme auf einem physischen Computer betrieben. Mehrere solcher Computer können eine virtuelle Infrastruktur bilden, in der physische und virtuelle Maschinen gemeinsam verwaltet werden können.
+    Bei der Virtualisierung, die bereits über 40 Jahre alt ist, werden ein oder mehrere virtuelle \acrshort{IT}-Systeme auf einem physischen Computer betrieben. Mehrere solcher Computer können eine virtuelle Infrastruktur bilden, in der physische und virtuelle Maschinen gemeinsam verwaltet werden können \cite[S.661]{tanenbaumOS}.
 
-		Virtualisierte Komponenten nutzen im Vergleich zu nativen (physischen) Systemen eine zusätzliche Softwareschicht, die den virtualisierten Komponenten in der Ausprägung von virtuellen Maschinen (\acrshort{VM}s) und Containern, mehrere Abstraktionen anbietet, um Funktionen des Hosts zu nutzen \cite[S.2]{containerVirtPerformance}. Beide Ausprägungen erwecken aus Sicht des Gasts den Eindruck, dass ein alleinstehendes Betriebssystem ausgeführt wird. Das Betriebssystem, das direkt auf der Hardware läuft, wird als Host bezeichnet. Systeme, die virtualisiert auf einem Host laufen, werden als Gastsysteme bezeichnet.
+		Virtualisierte Komponenten nutzen im Vergleich zu rein nativen (physischen) Systemen eine zusätzliche Softwareschicht, die den virtualisierten IT-Systemen in der Ausprägung von virtuellen Maschinen, sogenannte (\acrshort{VM}s), und Containern, mehrere Abstraktionen anbietet, um Funktionen des Hosts abzubilden \cite[S.2]{containerVirtPerformance}. Beide Ausprägungen erwecken aus Sicht des Gasts den Eindruck, dass ein alleinstehendes Betriebssystem ausgeführt wird. Das Betriebssystem, das direkt auf der Hardware läuft, wird als Host bezeichnet. Systeme, die virtualisiert auf einem Host laufen, werden als Gäste oder Gastsysteme bezeichnet.
 
-    Der Einsatz von Virtualisierung bietet vielfältige Vorteile für \acrshort{IT}-Unternehmen. Sie können Kosten für Hardwarebeschaffung, Strom und Klimatisierung einsparen, wenn die Computerressourcen effizienter genutzt werden. Durch die damit verbundene Zentralisierung und Konsolidierung können auch in der Administration Ausgaben reduziert werden  \cite[S.1]{bsiVirt}.
+    Der Einsatz von Virtualisierung bietet vielfältige Vorteile für \acrshort{IT}-Unternehmen. In der folgenden Auflistung sind einige Problemfaktoren und Anforderungen an IT-Lösungen zusammengefasst, die alle durch Virtualisierungslösungen addressiert werden können \cite[S.1]{bsiVirt}\cite[S.662]{tanenbaumOS}.
+
+		% \multicolumn{1}{l|}{
+		\begin{table}[htp]
+			\begin{centering}
+		  %\begin{tabular}{ | l | l | }
+			\begin{tabularx}{\textwidth}{>{\hsize=1\hsize}X>{\hsize=1\hsize}X}
+				\hline
+				\textbf{Herausforderung} & \textbf{Lösungsansatz mithilfe von Virtualisierung} \\
+				\hline
+				Rechenzentren sollen möglichst effizient betrieben werden, da anfallende Energiekosten für den Betrieb und die Kühlung von Servern auch bei geringer Auslastung anfallen.
+				& Kosteneinsparungen bei der Anschaffung von Hardware sowie dem Energieverbrauch möglich, da virtuelle Instanzen die physischen Ressourcen effizienter ausnutzen können und demnach in Summe auch weniger physische Maschinen benötigt werden. \\
+				\hline
+				Softwarelösungen sollen skalierbar sein. Je nach Bedarf sollen zusätzliche Kapazitäten in der IT-Infrastruktur bereitgestellt werden können.
+				& loesung 2 \\
+				\hline
+				In einem Rechenzentrum wird Software unterschiedlicher Kunden ausgeführt (Multi-Tenancy-Umgebung). Eine Trennung dieser Kundeninstanzen muss gewährleistet sein, sodass diese nicht miteinander interferieren können.
+				& Virtuelle Lösungen bieten native Möglichkeiten zur Isolierung von Systemen. Eine Gefahr von Interferenz zwischen Kunden entsteht dadurch nicht. \\
+				\hline
+				Redundanz, um Ausfällen entgegenzuwirken, soll gewährleistet sein.
+				& VMs und Container sind flexibel zu starten und stoppen. Ausfallsicherheit wird in Form mehrerer redundanter virtueller Instanzen einfach ermöglicht. \\
+				\hline
+				Bestimmte Architekturen, wie z.B. 3-Tier-Architektur, sollen komfortabel umgesetzt werden.
+				& Einzelne Bausteine beliebiger Architekturen lassen sich mit virtuellen Instanzen unabhängig voneinander betreiben und vernetzen. \\
+				\hline
+				Über die Zeit hinweg entstehen unterschiedliche Softwareversionen, die ggf. von anderen Anwendungen und Bibliotheken abhängen. Die verschiedenen Versionen sollen zuverlässig und unabhängig voneinander betrieben werden. Nicht nur Anwendungen, sondern auch Betriebssysteme unterschiedlicher Art sollen ggf. möglichst hardwareunabhängig einsetzbar sein.
+				& Virtualisierungen bieten gute Migrationseigenschaften und können mit individuellen Betriebssystemen gestartet werden. Vor allem die containerbasierte Virtualisierung erlaubt einen hohen Grad an Modularisierung und Kompatibilität. Produkte werden können nicht nur als Programme vertrieben, sondern als plattformunabhängige \emph{Virtual Appliances}, also in virtuelle Instanzen \glqq{}eingeschweißte\grqq{}Anwendungen \cite[S.672f.]{tanenbaumOS}. \\
+				\hline
+				Neue Services und Kunden sollen einfach in bestehende Infrastrukturen integrierbar sein. Systeme sollen einfach kombinierbar und zwischen Rechenzentren portierbar sein.
+				& virtuelle Instanzen können als sogennante Snapshots \glqq{}eingefroren\grqq{} werden und in anderen Infrastrukturen wieder fortgefahren werden.\\
+			  \hline
+				Gute Administrationsmöglichkeiten und Wartbarkeit der Infrastruktur
+				& Virtualisierte Systeme lassen sich neben physischen Systemen zusammen, ggf. an zentralisierter Stelle, verwalten. Gleichzeitige Senkung der Administrationskosten möglich \cite[S.1]{bsiVirt}.
+		  \end{tabularx}
+			\caption{Mehrere Herausforderungen im Betrieb von IT-Infrastrukturen und deren Lösungsansatz mithilfe von Virtualisierung}
+			\end{centering}
+			\label{tab:virtAdvantages}
+		\end{table}
+		% TODO: Tabelle ist leider abgeschnitten
+
+		Wie zu sehen ist, bietet der Einsatz von serverseitiger Virtualisierung eine Reihe von Vorteilen, die ein physischer Betrieb nicht bieten kann.
+
+		% Probleme von Firmen:
+		% Internetriesen muessen skalieren. Dort gibt es tausende von Servern, wo sich Einsparungsvorteile,Kosteneinsparung und Skalierungseffekte sehr auszahlen.
+		% In Firmen generell: IT waechst, IT Portfolio waechst, auch historisch --> alte und neue Versionen, unterschiedliche Bibliotheken, legacy code, eine anwendung fuer windows server 2008, andere auf debian.
+		% Anbieterwechsel in Firmen, die IT in Datencentern outsourcen.
+		% Mehrere Kunden, die Serverressourcen brauchen, aber sich nicht beeinflussen duerfen.
+
+
+		% TODO: Besserer Ansatz:
+		% Probleme der IT erklaeren und wie Virtualisierung sie bekaemptf:
+		% ----------
+		% Vorteile: Isolation, weniger physische Maschinen noetig (spart geld (hw und energie, klimatisierung) und platz),
+		% Setzen von Kontrollpunkten (Snapshots, Recovery)
+		% Migrationsprozesse stark vereinfacht, z.b. wenn Anwendungen in neue Architektur gepresst werden mit LoadBalancing etc.
+		% betriebssystemunabhengigkeit --> virtual appliance \cite[S.672f.]{tanenbaumOS}
+		%			--> Anwendungen hängen in der Regel von zahlreichen Bibliotheken und anderen Anwendungen ab. Wenn Softwarelösungen verkauft werden, kommt es oft zu Inkompatiblitäten, da verschiedene Kernelversionen, Compilerversionen, Bibliotheksversionen interferieren. Virtual Appliances stellen eine Lösung dar, die die Anwedung in eine VM "eingeschweißt" wird und nicht mehr die einzelne Anwendung an den Kunden verkauft wird, sondern ein Gesamtpakekt in Form einer direkt ausführbaren Anwendungsumgebung, in der alle benötigten Komponenten kompatibel zueinander vorinstalliert sind.
+
+
+
+		% ^		einige gruende aus \cite[S.662]{tanenbaumOS}
+
+
 
 		%% TODO: folgendes integrieren im text von introVirt .... UPDATE: schon teils geschehen 2 abseatze drueber
 	  %Sowohl Hypervisor-gestützte VMs als auch Container erwecken aus Sicht des Gasts den Eindruck, dass ein alleinstehendes Betriebssystem ausgeführt wird (QUELLE: “OpenVZ,” 2012. [Online]. Available: http://www.openvz.org). Um diese Illusion zu schaffen, wird jedoch wie beschrieben jeweils ein anderer Ansatz eingesetzt.
@@ -21,16 +83,25 @@
 
     \subsection{Hypervisor-basierte Virtualisierung}
     \label{introVirtHypervisor}
-      Im Kontext von einer Hypervisor-basierten Virtualisierung, wird die virtuelle Umgebung eine \acrshort{VM} genannt. \acrshort{VM}s enthalten jeweils eine Umgebung, die Abstraktionen eines sogenannten Hypervisors nutzt, um Hardwareressourcen des Hosts zu verwenden. Der Hypervisor, auch seltener \emph{Virtual Machine Monitor} (\emph{VMM}) genannt, ist ein Stück Software, das zwischen einem Host und einem Gast (der \acrshort{VM}) vermittelt und Hardwareabstraktionen des ersteren bereitstellt \cite[S.6]{dockerBook}\cite[S.2]{containerVirtPerformance}\cite[S.2]{dockerSec1}.
+      Im Kontext von einer Hypervisor-basierten Virtualisierung, wird die virtuelle Umgebung eine \acrshort{VM} genannt. \acrshort{VM}s enthalten jeweils eine Umgebung, die Abstraktionen eines sogenannten Hypervisors nutzt, um Hardwareressourcen des Hosts zu verwenden. Der Hypervisor, auch seltener \emph{Virtual Machine Monitor} (\emph{VMM}) genannt, ist ein Stück Software, das zwischen einem Host- und einem Gast-Betriebssystem (der \acrshort{VM}) vermittelt und Hardwareabstraktionen des ersteren bereitstellt \cite[S.6]{dockerBook}\cite[S.2]{containerVirtPerformance}\cite[S.2]{dockerSec1}. Ein weitere wichtige Eingenschaft eines Hypervisors ist es, dem Gast jede für den Betrieb eines Betriebssystems nötige Funktion anzubieten \cite[S.106]{tanenbaumOS}
 
       % Auf dieser Art von Systemen laufen eine oder mehrere VMs unabhängig voneinander auf physischer Hardware (in der englischen Literatur auch "bare metal" genannt). Der Hypervisor, der auch \emph{Virtual Machine Monitor} (\emph{VMM}) genannt wird \cite[S.2]{containerVirtPerformance}, nimmt dabei die Rolle eines Vermittlers zwischen Host-OS und Gast-OS ein \cite[S.6]{dockerBook} und abstrahiert dem Gast das komplette Funktionsset des Hosts. \cite[S.2]{dockerSec1}.
 
-      Durch diese Technik läuft in jeder \acrshort{VM} ein eigenes Betriebssystem, das von solchen anderer \acrshort{VM}s komplett isoliert läuft. Durch die Abstraktion des zwischenliegenden Hypervisors ist es möglich, mehrere unterschiedliche Gastbetriebssysteme auf einem physikalischen Host auszuführen \cite[S.2]{containerVirtPerformance}.
+      Durch diese Technik läuft in jeder \acrshort{VM} ein eigenes (Gast-)Betriebssystem, das von solchen anderer \acrshort{VM}s komplett isoliert läuft. Durch die Abstraktion des zwischenliegenden Hypervisors ist es möglich, mehrere unterschiedliche Gastbetriebssysteme auf einem physikalischen Host auszuführen \cite[S.2]{containerVirtPerformance}\cite[S.106]{tanenbaumOS}.
 
       Der größte Kritikpunkt dieser Art von Virtualisierung ist deren hoher Bedarf an Hostressourcen, da diese für jede gestartete \acrshort{VM} komplett virtualisiert werden müssen, sodass innerhalb der \acrshort{VM} ein Gast-\acrshort{OS} ausgeführt werden kann \cite[S.1]{dockerIntroIEEE}\cite[S.3]{dockerLXCKub}.
 
-      Hypervisortechnologien werden unter sich in solche von Typ 1 und Typ 2 unterschieden. Typ 1 Hypervisor operieren direkt auf der Hardware des Hosts, während Typ 2 auf einem Host-\acrshort{OS} agiert, welches selbst direkt auf die Hardware zugreift. Durch die Trennung von Hypervisor und Host-\acrshort{OS} in der Architektur des Typs 2, ist dieser aus Sicht der Performance dem Typ 1 unterlegen \cite[S.2]{dockerSec1}.
-      %TODO: mehr Quellen
+      Hypervisortechnologien werden unter sich in solche von Typ 1 und Typ 2 unterschieden.
+
+			Typ 1 Hypervisor operieren direkt auf der Hardware des Hosts, stellen sozusagen ein minimales, speziell für den Betrieb von VMs ausgelegtes Betriebssystem dar. Dessen Aufgabe ist es, Kopien der realen Hardware bereitzustellen, die von Gastsystemen, den VMS, genutzt werden können. Wenn in der VM ein Befehl ausgeführt, wird dieser an den Hypervisor weitergeleitet, der den Befehl untersucht. Handelt es sich um einen Befehl des Gastbetriebssystems, wird dieser auf dem Host ausgeführt. Im Fall eines Aufrufs einer Anwendung innerhalb des Gasts, emuliert der Hypervisor für diesen Aufruf die Aktion der realen Hardware \cite[S.663ff.]{tanenbaumOS}.
+
+			Hypervisor des Typs 2 arbeiten nicht direkt auf der Hardware, sondern einem Host-Betriebssystem, das wiederum selbst direkt auf die Hardware zugreift. In dieser Variante ist der Hypervisor eine gewöhnliche Anwendung, die auf dem Hostbetriebssystem ausgeführt wird. Die Aufrufe eines in dieser Anwendung installiertem Betriebssystem, werden mithilfe einer sogenannten Binärübersetzung in Hypervisor-Prozeduren übersetzt, sofern der initiierte Befehl einen Hardwarezugriff verlangt. Hypervisor-Prozeduren dienen auch hier wieder zur Hardwareemulation, die auf dem Hostbetriebssystem ausgeführt werden. Erfordern Teile der Gastanwendung keinen Hardwarezugriff, werden diese im Gast selbst verarbeitet und verlassen diesen nicht.
+
+			Unter beiden Typen wird jedoch eine vollständige Abstraktion von Hostressourcen erzielt. VMs werden in beiden Fällen wie reale Systeme gestartet und unterliegen der Illusion als alleiniges, natives System zu operieren \cite[S.665f.]{tanenbaumOS}.
+
+			Im Durchschnitt führt die zusätzliche Softwareschicht des Typs 2 trotz verschiedener Optimierungsöglichkeiten, z.B. der sogenannten Paravirtualisierung, zu höheren Performanceeinbußen wie jenen unter Typ 1 \cite[S.666f.]{tanenbaumOS}\cite[S.2]{dockerSec1}.
+
+			%TODO: Bild dazu
 
       Bekannte Vertreter von Hypervisorn sind die kommerziellen \emph{ESXi} der Firma \emph{VMware} und \emph{Hyper-V} von \emph{Mircosoft}, sowie die ebenfalls namhaften Open-Source-Hypervisor \emph{Xen} und \emph{KVM} \cite[S.1]{dockerLXCKub}.
       %TODO: mehr Quellen
@@ -80,6 +151,10 @@
 		% https://tools.ietf.org/html/rfc2196
 
 		% Evtl. Unterschiedung in Kommunikationssicherheit und Systemsicherheit vornehmen
+
+		% klassische Sicherheitsanforderungen, die im Kontext von SELinux relevant sind:
+		%		Vertraulichkeit, Systemintegrität, "Principle of Least Privilege"
+
 
     \subsection{Vertraulichkeit}
 			Die Vertraulichkeit steht für das Konzept von Geheimhaltung. Durch verschiedene kryptographische Verschlüsslungsverfahren kann Klartext in eine unleserlichen Geheimtext transformiert werden, der keine Information über den ursprünglichen Klartext enthält und somit sicher gegenüber Abhöhrern ist.
