@@ -378,6 +378,16 @@
 
 				\emph{SELinux} kennt das Konzept des DACs von Ownern und Groups nicht. Der komplette Funktionsumfang von SELinux beruht auf einem Labeling-System, das Zugriffe individuell für Prozesse verwaltet \cite{SELinuxComic}. In Zuge dessen wird jedem Prozess zur Laufzeit und jedem Objekt im System ein Label nach dem Schema \texttt{User:Role:Type:Level} zugewiesen \cite{atomicDockerSELinux}. Für Objekte wird das Label in den erweiternden Attributen (\texttt{xattr}) geschrieben \cite[S.65]{linuxMagazineSec}. Die erste Komponente \texttt{User} eines Labels ist von einem Linux-Users, der mit DAC ausgewertet wird, unabhängig.
 
+				% TODO: Label von Prozessen mit Option -Z, also "ps -auxZ", sichtbar
+				% Bei Files und Dirs angeblich mit ls --context oder auch -Z moeglich.
+				% lstlisting bringen wo die von Docker-Prozessen und /proc /boot files gekennzeichnet sind
+
+				% TODO: SELinux profile unter https://github.com/docker/docker/tree/master/contrib/docker-engine-selinux
+				% (ist es wirklich das richtige? das ist in /contrib?) aber evtl auch kompiliert iwo im deb/rpm package mit drin..)
+				% |
+				% Such a policy is written using a .te file (type enforcement) and an optional .fc file (file contexts) and .if file (interfaces).
+				%		^		\cite{https://wiki.gentoo.org/wiki/SELinux/Tutorials/Creating_your_own_policy_module_file}
+
 				\emph{SELinux} wertet bei einem Zugriff das Label des zugreifenden Prozesses und das Label der betroffenen Ressource anhand einem definierten Regelwerk aus und entscheidet, ob die Operation fortgesetzt werden darf \cite{linuxSecOverview}. Die Regeln werden in ihrer Summe auch als Policy bezeichnet.
 
 				Seit November 2015 wird Docker mit dem Release 1.9.0 mit einer standardmäßigen \emph{SELinux}-Policy ausgestattet, die in dem \emph{rpm}-basierten Distributionen wie \emph{CentOS} und \emph{Fedora} verwendet wird \cite{githubDockerChangelog}\cite{githubSELinuxPolicyIssue}. Diese Standard-Policy kann über \cite{githubSELinuxProfile} aufgerufen werden.
