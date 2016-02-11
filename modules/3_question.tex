@@ -12,6 +12,9 @@
   % TODO: Schreiben, dass Container-Verschatelung bzw. Container in Hierarchien  ins Systemmodell absichtlich nicht aufgenommen wurden (was aber in FreeBSD jails moelgich ist).
   %   ^   (vgl. beide  \cite[S.4]{dockerSec2})
 
+  % TODO: virtuelle Maschinen sind nach CISSP-buch Sicherheitsmechanismen fuer sich allein. Mit Containern stimmt das so nicht mehr
+  % CISSP-Buch ist aber auch von 2009, bevor Container 2013 mit Docker bekannt waren.
+
   Das zentrale Konzept, auf dem alle Containertechnologien beruhen, ist das der Isolierung. Im Kontext von Containern kann die Isolierung definiert werden als Trennung zwischen Containern und einem Host, sowie die Trennung zwischen Containern \cite[S.1]{dockerSec2}.
 
   Auf einem System mit Host und einem oder mehreren Containern, stellt sich zunächst die Frage welche Art und Richtung von Kommunikation zwischen diesen beiden Komponenten erlaubt und nicht erlaubt sein soll. Dadurch, dass der Docker-Daemon auf dem Host läuft und es dessen Aufgabe ist u.a. den Container-Lifecycle zu kontrollieren, braucht dieser Zugriff auf die Container. Verallgemeinert ist also die Kommunikation von Host zu Container erforderlich und damit erlaubt.

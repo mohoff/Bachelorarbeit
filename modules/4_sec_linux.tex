@@ -370,6 +370,12 @@
 
 			Der Ausführungszeitpunkt des Hooks bietet den Vorteil, dass der komplette Kontext der Zugriffsanfrage an dieser Stelle vorliegt und vollständig von einem LSM-Modul ausgewertet werden kann \cite[S.2]{LSMFramework}. Zusätzlich wird dadurch die Granularität der Zugriffskontrolle verbessert werden \cite{LSMDesign}.
 
+			% TODO: Label von Prozessen mit Option -Z, also "ps -auxZ", sichtbar
+			% Bei Files und Dirs angeblich mit ls --context oder auch -Z moeglich.
+			% lstlisting bringen wo die von Docker-Prozessen und /proc /boot files gekennzeichnet sind
+
+			% TODO: Inhalte aus dem CISSP-Buch (generell MAC im Vgl zu DAC und RBAC). geschlossen, offen. Schwachstellen von DAC (auch schon woanders hier...)
+
 			% AppArmor und SELinux schuetzen potentiell vor Zero-Day-Exploits.
 			%		^		\cite{http://askubuntu.com/questions/485547/contain-docker-engine-with-apparmor}
 			% Zero Day Exploit ins Glossar: noch nicht oeffentlich bekannte Sicherheitsluecken in Software
@@ -408,10 +414,6 @@
 				\end{figure}
 
 				Das Label ist in die erweiternden Attribute (\texttt{xattr}) von Subjekten und Objekts geschrieben \cite[S.65]{linuxMagazineSec}. In \fig \ref{fig:sec_SELinux} ist das Label als \emph{SC} (Security-Context) illustriert.
-
-				% TODO: Label von Prozessen mit Option -Z, also "ps -auxZ", sichtbar
-				% Bei Files und Dirs angeblich mit ls --context oder auch -Z moeglich.
-				% lstlisting bringen wo die von Docker-Prozessen und /proc /boot files gekennzeichnet sind
 
 				% TODO: SELinux profile unter https://github.com/docker/docker/tree/master/contrib/docker-engine-selinux
 				% (ist es wirklich das richtige? das ist in /contrib?) aber evtl auch kompiliert iwo im deb/rpm package mit drin..)
