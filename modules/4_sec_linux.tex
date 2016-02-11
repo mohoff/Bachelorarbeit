@@ -67,12 +67,32 @@
 
 			Docker erreicht diese Isolierung auf Prozessebene durch die Nutzung des \emph{\acrshort{PID} namespace}, in denen Container eingebettet werden. Nach diesem hierarchischen Konzept ist es einem Prozess X nur möglich, selbsterzeugte Kindprozesse zu beobachten und mit ihnen zu interagieren. Elternprozesse, also Prozesse die in der Prozesshierarchie über X stehen, sind für X unsichtbar. Der Elternprozesse haben jedoch die volle Kontrolle über X und können diesen z.B. jederzeit mit dem Befehl \texttt{kill} beenden. Darüber hinaus haben Elternprozesse die Möglichkeit mit z.B. einem Aufruf von \texttt{ps} alle Kindprozesse überwachen.
 
-			Übertragen auf die containerbasierte Virtualisierung beduetet das, dass der Host vollen Zugriff auf die laufenden Container hat, Containerprozesse jedoch weder Kenntnis von Hostprozessen noch von Prozessen anderer Container besitzen. Diese Eigenschaft macht es Angreifern schwieriger Schaden anzurichten, da sie ausgehend von kompromitierten Containern keine Informationen über Prozesse außerhalb des Containers beziehen können.
+			Übertragen auf die containerbasierte Virtualisierung bedeutet das, dass der Host vollen Zugriff auf die laufenden Container hat, Containerprozesse jedoch weder Kenntnis von Hostprozessen noch von Prozessen anderer Container besitzen (vgl. \fig \ref{fig:sec_pidNsHost} und \fig \ref{fig:sec_pidNsContainer}). Diese Eigenschaft macht es Angreifern schwieriger Schaden anzurichten, da sie ausgehend von kompromitierten Containern keine Informationen über Prozesse außerhalb des Containers beziehen können.
 
 			Ein weiterer Mechanismus des \emph{\acrshort{PID}-namespace} ist eine Besonderheit des Prozesses mit \texttt{PID=1}. Der initiale Containerprozess kann mit der \texttt{PID=1} gestartet werden, dem es als \emph{init}-ähnlicher Prozess möglich ist, alle Kindprozese zu terminieren sobald er selbst beendet wird. Somit können komplette Container durch einen Hostzugriff auf den Containerprozess mit \texttt{PID=1} umgehend vollständig heruntergefahren werden.
 
+			Wie sich der \emph{\acrshort{PID}-namespace} auf einen gestarteten Docker-Container auswirkt, ist in \fig \ref{fig:sec_pidNsHost} und \fig \ref{fig:sec_pidNsContainer} zu sehen.
+
+			\begin{figure}[h]
+					\centering
+					\includegraphics[width=1.0\textwidth]{./images/sec_pidNsHost.jpg}
+					\caption{Ausschnitt der Ausgabe des Befehls \texttt{ps -eaxfZ} auf einem Docker-Host (eigene Abbildung).}
+					\label{fig:sec_pidNsHost}
+			\end{figure}
+
+			\fig \ref{fig:sec_pidNsHost} stellt einen Auschnitt der Ausgabe des Befehls \texttt{ps -eaxfZ} auf dem Host dar. Er enthält die laufenden Docker-Prozesse des Daemons mit \texttt{PID=627} (Zeile 1) und einem Container, in dem eine \emph{Bash} gestartet wurde (Zeile 2). Innerhalb der \emph{Bash} wurde der Befehl \texttt{sleep 1000} zweifach ausgeführt (Zeile 3 und 4), der laufende Hostprozesse zurückgibt. Wie zu erkennen ist, sind die Containerprozesse aus Sicht des Hosts mit einer eigenen \texttt{PID} vollkommen transparent.
+
+			\begin{figure}[h]
+					\centering
+					\includegraphics[width=1.0\textwidth]{./images/sec_pidNsContainer.jpg}
+					\caption{Ausgabe des Befehls \texttt{ps -eaxfZ} in einem Docker-Container (eigene Abbildung).}
+					\label{fig:sec_pidNsContainer}
+			\end{figure}
+
+			\fig \ref{fig:sec_pidNsContainer} zeigt die vollständige Ausgabe des gleichen Befehls innerhalb eines Containers. Prozesse außerhalb des Containers sind unsichtbar. Außerdem weisen die Containerprozesse im Vergleich zu \fig \ref{fig:sec_pidNsHost} nun eine andere \texttt{PID} auf. Da die \emph{Bash} der initiale Containerprozess ist, erhält sie die \texttt{PID=1}.
+
 			%Fast alles bisher:
-			\cite[S.4]{dockerSec1}
+
 
 			% PID namespaces sind hierarchisch http://lwn.net/Articles/259217/
 
@@ -289,9 +309,11 @@
 
 		Oben behandelte Namespaces hatten schon einige Bugs. Alle zwar bisher behoben, trotzdem Beweis dafür, dass Namespace- und Cgroups-Sicherheit allein nicht aussreichen, um Container zu isolieren.
 
-		Im Normalfall kontrolliert Linux den Zugriff auf Ressourcen anhand der Identität des anfragenden Users. Diese sogenannte \emph{Discretionary Access Control}, kurz \acrshort{DAC}, implementiert eine einfache Form von \acrshort{ACL}. Identifikationsmerkmale dieser umfassen den Besitzer (owner) einer Datei, die Gruppenzugehörigkeit des Besitzers (group) und sogenannte Permission-Flags aus der Menge \texttt{r,w,x}. Letztere legen z.B. für Dateien fest, ob Lese- (r=read), Schreib- (w=write) und Ausführrechte (x=execute) gewährt werden.
+		Im Normalfall kontrolliert Linux den Zugriff auf Ressourcen anhand der Identität des anfragenden Users. Diese sogenannte \emph{Discretionary Access Control}, kurz \acrshort{DAC}, implementiert eine einfache Form von \acrshort{ACL}. Identifikationsmerkmale dieser umfassen den Besitzer (owner) einer Datei, die Gruppenzugehörigkeit des Besitzers (group) und sogenannte Permission-Flags aus der Menge \texttt{r,w,x}. Letztere legen z.B. für Dateien fest, ob Lese- (r=read), Schreib- (w=write) und Ausführrechte (x=execute) gewährt werden. Unter der \acrshort{DAC} können User jedoch ihre eigenen Sicherheitskontrollen modifizieren bzw. diese über Superuser-Tools wie \texttt{sudo COMMAND} komplett umgehen. Diese Eigenschaft zeichnet sich unter der Annahme, dass Container von Angreifern kontrolliert werden können, als sicherheitskritisch ab.
 
-		LSMs bieten die Möglichkeit, Ressourcenzugriffe userunabhängig zu überprüfen. Sie realisieren eine weitere Sicherheitsschicht, die Angreifern festgelegte Ressourcen verweigert, selbst wenn sie Root-Rechte in einem Container haben.
+		LSMs bieten die Möglichkeit, Ressourcenzugriffe userunabhängig und unumgänglich zu überprüfen.
+		%		\cite[S.8]{http://namei.org/presentations/svirt-lca-2009.pdf}
+		Sie realisieren eine weitere Sicherheitsschicht, die Angreifern festgelegte Ressourcen verweigert, selbst wenn sie Root-Rechte in einem Container haben.
 
 		Die Docker-Entwickler haben in den letzten Monaten die Integrations- und Anpassungsmöglichkeiten von zusätzlichen Sicherheitsmaßnahmen, v.a. MACs, stark verbessert, da die Containersicherheit für \emph{Docker} höchste Priorität hat \cite{githubDockerRoadmap}\cite{githubDockerChangelog}. Auch die Tatsache, dass sich zur Zeit die Konkurrenz \emph{CoreOS} mit der Containerlösung \emph{rkt} als sicherheitsfokusierte Alternative zu Docker auf dem Virtualisierungsmarkt etablieren will \cite{coreosAnnouncementRkt10}, ist für \emph{Docker} Anreiz die Sicherheit ihrer eigenen Entwicklung nicht zu vernachlässigen.
 		% Ist "sicher nicht entgangen" zu umgangssprachlich?
@@ -370,13 +392,22 @@
 
 				% TODO: Bild aus http://www.admin-magazin.de/Online-Artikel/Mandatory-Access-Control-MAC-mit-SE-Linux hier rein. Bzw. gleiches Bild in \cite[S.63]{linuxMagazineSec}
 
-				Die Beschränkungen beruhen auf einer Sicherheits-Policy, die alle Aktionen zwischen Usern und Ressourcen regelt. Die Policy besteht aus Anweisungen, die konkrete Sicherheitslabel, wie sie im nächsten Abschnitt beschrieben sind, abbilden. Durch die strikte Trennung der Regelwerk und dessen Durchsetzung lassen sich mit \emph{SELinux} hohe Sicherheitsanforderungen erfüllen. Durch detailreiche Anpassungsmöglichkeiten steht diese MAC unter dem Ruf besonders schwer konfigurierbar zu sein, obwohl GUI-Tools wie \emph{system-config-selinux} und die Bibliothek \emph{libsemanage} den Umgang mit \emph{SELinux}-Regelwerken in den letzten Jahren vereinfachten \cite[S.62,S.67]{linuxMagazineSec}.
+				Die Beschränkungen beruhen auf einer Sicherheits-Policy, die alle Aktionen zwischen Usern (Subjekten) und Ressourcen (Objekten) regelt. Die Policy besteht aus Anweisungen, die konkrete Sicherheitslabel, wie sie im nächsten Abschnitt beschrieben sind, abbilden. Durch die in \fig \ref{fig:sec_SELinux} dargestellte strikte Trennung des Regelwerks und dessen Durchsetzung, lassen sich mit \emph{SELinux} hohe Sicherheitsanforderungen erfüllen. Durch detailreiche Anpassungsmöglichkeiten steht diese MAC unter dem Ruf besonders schwer konfigurierbar zu sein, obwohl GUI-Tools wie \emph{system-config-selinux} und die Bibliothek \emph{libsemanage} den Umgang mit \emph{SELinux}-Regelwerken in den letzten Jahren vereinfachten \cite[S.62,S.67]{linuxMagazineSec}.
 				% cite { https://www.linux.com/learn/docs/727873-overview-of-linux-kernel-security-features/ }
 				% cite { https://www.nsa.gov/research/_files/selinux/papers/selsymp2006.pdf }
 
 				Die \emph{Red Hat}-basierten Linux-Distributionen \emph{Red Hat Enterprise Linux}, \emph{Fedora} und \emph{CentOS} sind in der Lage \emph{SELinux} als zusätzlichen Schutzmechanismus zu verwenden \cite{dockerSecurity}.
 
-				\emph{SELinux} kennt das Konzept des DACs von Ownern und Groups nicht. Der komplette Funktionsumfang von SELinux beruht auf einem Labeling-System, das Zugriffe individuell für Prozesse verwaltet \cite{SELinuxComic}. In Zuge dessen wird jedem Prozess zur Laufzeit und jedem Objekt im System ein Label nach dem Schema \texttt{User:Role:Type:Level} zugewiesen \cite{atomicDockerSELinux}. Für Objekte wird das Label in den erweiternden Attributen (\texttt{xattr}) geschrieben \cite[S.65]{linuxMagazineSec}. Die erste Komponente \texttt{User} eines Labels ist von einem Linux-Users, der mit DAC ausgewertet wird, unabhängig.
+				\emph{SELinux} kennt das Konzept des DACs von Ownern und Groups nicht. Der komplette Funktionsumfang von \emph{SELinux} beruht auf einem Labeling-System, das Zugriffe individuell für Subjekte verwaltet \cite{SELinuxComic}. In Zuge dessen wird jedem Subjekt zur Laufzeit und jedem Objekt im System ein Label nach dem Schema \texttt{User:Role:Type:Level} zugewiesen \cite{atomicDockerSELinux}. Die erste Komponente \texttt{User} eines Labels ist von einem Linux-Users, der mit \acrshort{DAC} ausgewertet wird, unabhängig.
+
+				\begin{figure}[h]
+						\centering
+						\includegraphics[width=0.9\textwidth]{./images/sec_SELinux.jpg}
+						\caption{Trennung von Regelwerk und Enforcement-Modul. Zuweisung von Security-Contexts (SC) an Objekte und Subjekte \cite[S.63]{linuxMagazineSec}.}
+						\label{fig:sec_SELinux}
+				\end{figure}
+
+				Das Label ist in die erweiternden Attribute (\texttt{xattr}) von Subjekten und Objekts geschrieben \cite[S.65]{linuxMagazineSec}. In \fig \ref{fig:sec_SELinux} ist das Label als \emph{SC} (Security-Context) illustriert.
 
 				% TODO: Label von Prozessen mit Option -Z, also "ps -auxZ", sichtbar
 				% Bei Files und Dirs angeblich mit ls --context oder auch -Z moeglich.
@@ -493,7 +524,9 @@
 				\emph{AppArmor}-Profile basieren auf einfach lesbaren Textdateien. Durch eine Inkludieranweisung lassen sich mehrere Profile modular kombinieren \cite{apparmorQuickProfileLanguage}.
 				% Capabilities und Networking lassen sich beide kontrollieren mit AppArmor
 
-				Das Standardprofil \texttt{docker-default}\cite{githubAppArmorProfileContainer}, das im \texttt{enforce}-Modus unter \emph{.deb}-Releases in nicht-priveligierten Containern zum Einsatz kommt \cite{docker110Security}, wird bei der Installation von Docker in die Datei \texttt{/etc/apparmor.d/docker} geschrieben. Dieses Standardprofil kann mit dem \texttt{run}-Parameter \texttt{--security-opt="apparmor:PROFILE"} manuell überschrieben werden, sofern dieses in \emph{AppArmor}, z.B. mit dem \acrshort{CLI}-Tool \texttt{apparmor\_parser} \cite{apparmorParser}, zuvor importiert wurde \cite{dockerRun}.
+				Das Standardprofil \texttt{docker-default} \cite{githubAppArmorProfileContainer}, das im \texttt{enforce}-Modus unter \emph{.deb}-Releases in nicht-priveligierten Containern zum Einsatz kommt \cite{docker110Security}, wird bei der Installation von Docker in die Datei \texttt{/etc/apparmor.d/docker} geschrieben. Administratoren können sich mit dem Befehl \texttt{sudo aa-status} vergewissern, ob das Standardprofil aktuell aktiv ist. Auch die zurückgegebenen Sicherheitskontexte in der ersten Spalte von \fig ... und \fig ... belegen die standardmäßige Verwendung von \texttt{docker-default}.
+
+				Das \emph{AppArmor}-Profil kann mit dem \texttt{run}-Parameter \texttt{--security-opt="apparmor:PROFILE"} manuell überschrieben werden, sofern dieses in \emph{AppArmor}, z.B. mit dem \acrshort{CLI}-Tool \texttt{apparmor\_parser} \cite{apparmorParser}, zuvor importiert wurde \cite{dockerRun}.
 
 				Das Profil \texttt{docker-default} wurde erst kürzlich während der Erstellung dieser Arbeit aktualisiert. Aus der Commit-Nachricht geht allerdings nicht hervor, ob damit eine Sicherheitslücke geschlossen wurde oder die Änderungen im Zuge einer Funktionsänderung von Containern entstanden sind \cite{githubAppArmorProfileContainerFix}. Die aktuelle Implementierung des Profils, die mit dem Konsolenbefehl \texttt{cat /etc/apparmor.d/docker} ausgegeben werden kann, sieht folgende \emph{AppArmor}-Regeln vor:
 

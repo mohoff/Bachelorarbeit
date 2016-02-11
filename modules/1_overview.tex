@@ -23,6 +23,10 @@
 
   Heute sind Container in vielen Szenarien, v.a. skalierbaren Infrastrukturen, trotz intrinsischer Sicherheitsschwächen gegenüber Hypervisor-gestützten Virtualisierungsarten beliebt. Vor allem \glspl{MultiTenantService} werden gerne mit Docker umgesetzt \cite[S.6]{dockerBook}\cite{dockerUnderstandingDocker}.
 
+  % TODO: (eigene Worte --> Evtl als Einleitung fuer FORSCHUNGSFRAGE,PROBLEM)
+  % Vor der Virtualisierung waren Hosts physisch getrennt, sprich auf unterschiedlichen physischen Maschinen. Angriffe waren nur über das Netzwerk möglich, die einzigste Komponente, die Hosts verbindet.
+  % Mit der Virtualisierung exisitiert weiterhin die Gefahr über das Netzwerk, jedoch kommt eine weitere Komponente hinzu: die Systemsicherheit. Da sich, unabhängig von der eingesetzten Virtualisierungstechnik, mehrere Gastsysteme einen physischen Host teilen, können Angriffe auch innerhalb eines physischen Hosts ablaufen und diesen oder andere virtuelle Gastinstanzen zum Ziel haben. Angriffe nutzen bekannte und nicht behobene, oder unbekannte (sogenannte \emph{Zero-Day-Exploits}) Sicherheitslücken von Kernel- oder Anwendungsprogrammen, um ihr Ziel zu erreichen.
+
   % https://www.airpair.com/firebase/posts/yatodo-guide
   % https://www.airpair.com/docker/posts/8-proven-real-world-ways-to-use-docker#7-multi-tenancy
 
@@ -49,8 +53,8 @@
 
     Abgeschlossen wird die Arbeit mit einer Zusammenfassung und einem Ausblick auf die Zukunft von Docker und der containerbasierter Virtualisierung im letzten Kapitel \ref{result}.
 
-    In der Arbeit vorkommende Produkt-, Technologie-, Bibliotheken- und Unternehmensnamen sind durchgehend \emph{kursiv} gedruckt. Im Gegensatz dazu sind technische Identifikationsmerkmale und Variablennamen \texttt{mono-type} geschrieben.
+    In der Arbeit vorkommende Produkt-, Technologie-, Bibliotheken- und Unternehmensnamen sind durchgehend \emph{kursiv} gedruckt. Im Gegensatz dazu sind technische Identifikationsmerkmale, Befehle und Variablennamen \texttt{mono-type} geschrieben. In der Syntax von aufgeführten Befehlen sind Platzhalter für Parameter sind in Großbuchstaben abgedruckt. Ein Befehl \texttt{cmd}, der einen Parameter erwartet, ist dementsprechend z.B. als \texttt{cmd PARAMETER} generisch formuliert.
 
-    Eine Ausnahme bildet Docker, in der die reguläre Schreibweise für die Plattform Docker vorgesehen ist, während die kursive Variante das Unternehmen \emph{Docker} meint. 
+    Eine Ausnahme bildet Docker, in der die reguläre Schreibweise für die Plattform Docker vorgesehen ist, während die kursive Variante das Unternehmen \emph{Docker} meint.
 
 \end{document}
