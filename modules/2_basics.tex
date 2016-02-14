@@ -8,9 +8,9 @@
   \label{introVirt}
     Bei der Virtualisierung, die bereits über 40 Jahre alt ist, werden ein oder mehrere virtuelle \acrshort{IT}-Systeme auf einem physischen Computer betrieben. Mehrere solcher Computer können eine virtuelle Infrastruktur bilden, in der physische und virtuelle Maschinen gemeinsam verwaltet werden können \cite[S.661]{tanenbaumOS}.
 
-		Virtualisierte Komponenten nutzen im Vergleich zu rein nativen (physischen) Systemen eine zusätzliche Softwareschicht, die den virtualisierten IT-Systemen in der Ausprägung von virtuellen Maschinen, sogenannte (\acrshort{VM}s), und Containern, mehrere Abstraktionen anbietet, um Funktionen des Hosts abzubilden \cite[S.2]{containerVirtPerformance}. Beide Ausprägungen erwecken aus Sicht des Gasts den Eindruck, dass ein alleinstehendes Betriebssystem ausgeführt wird. Das Betriebssystem, das direkt auf der Hardware läuft, wird als Host bezeichnet. Systeme, die virtualisiert auf einem Host laufen, werden als Gäste oder Gastsysteme bezeichnet.
+		Virtualisierte Komponenten nutzen im Vergleich zu nativen (physischen) Systemen eine zusätzliche Softwareschicht, die den virtualisierten IT-Systemen in der Ausprägung von virtuellen Maschinen, sogenannte (\acrshort{VM}s), und Containern, mehrere Abstraktionen anbietet, um Funktionen des Hosts abzubilden \cite[S.2]{containerVirtPerformance}. Beide Ausprägungen erwecken aus Sicht des Gasts den Eindruck, dass ein alleinstehendes Betriebssystem ausgeführt wird. Das Betriebssystem, das direkt auf der Hardware läuft, wird als Host oder Hostsystem bezeichnet. Systeme, die einzeln oder parallel virtualisiert auf einem Host laufen, werden als Gäste oder Gastsysteme bezeichnet.
 
-    Der Einsatz von Virtualisierung bietet vielfältige Vorteile für \acrshort{IT}-Unternehmen. In der folgenden Auflistung sind einige Problemfaktoren und Anforderungen an IT-Lösungen zusammengefasst, die alle durch Virtualisierungslösungen addressiert werden können \cite[S.1]{bsiVirt}\cite[S.662]{tanenbaumOS}.
+    Der Einsatz von Virtualisierung bietet vielfältige Vorteile für \acrshort{IT}-Unternehmen. In der folgenden Auflistung sind einige Problemfaktoren und Anforderungen an Rechentzentren und darin laufender Software zusammengefasst, die alle durch Virtualisierungslösungen addressiert werden können \cite[S.1]{bsiVirt}\cite[S.662,672f.]{tanenbaumOS}\cite[S.299]{mandlOS}.
 
 		% \multicolumn{1}{l|}{
 		\begin{table}[htp]
@@ -21,13 +21,13 @@
 				\textbf{Herausforderung} & \textbf{Lösungsansatz mithilfe von Virtualisierung} \\
 				\hline
 				Rechenzentren sollen möglichst effizient betrieben werden, da anfallende Energiekosten für den Betrieb und die Kühlung von Servern auch bei geringer Auslastung anfallen.
-				& Kosteneinsparungen bei der Anschaffung von Hardware sowie dem Energieverbrauch möglich, da virtuelle Instanzen die physischen Ressourcen effizienter ausnutzen können und demnach in Summe auch weniger physische Maschinen benötigt werden. \\
+				& Kosteneinsparungen bei der Anschaffung von Hardware und Lizenzen sowie dem Energieverbrauch möglich, da virtuelle Instanzen die physischen Ressourcen effizienter ausnutzen können und demnach in Summe auch weniger physische Maschinen benötigt werden. \\
 				\hline
-				Softwarelösungen sollen skalierbar sein. Je nach Bedarf sollen zusätzliche Kapazitäten in der IT-Infrastruktur bereitgestellt werden können.
-				& loesung 2 \\
+				Softwarelösungen sollen skalierbar sein. Je nach Bedarf sollen Kapazitäten in der IT-Infrastruktur freigeschalten oder reduziert werden können.
+				& Die Virtualisierung ermöglicht es, hardwareunabhängige, portierbare und reproduzierbare Softwarekomponenten zu realisieren, die flexibel aktiviert und deaktiviert werden können. \\
 				\hline
 				In einem Rechenzentrum wird Software unterschiedlicher Kunden ausgeführt (Multi-Tenancy-Umgebung). Eine Trennung dieser Kundeninstanzen muss gewährleistet sein, sodass diese nicht miteinander interferieren können.
-				& Virtuelle Lösungen bieten native Möglichkeiten zur Isolierung von Systemen. Eine Gefahr von Interferenz zwischen Kunden entsteht dadurch nicht. \\
+				& Virtuelle Lösungen bieten verschiedene native Möglichkeiten zur Isolierung von Systemen. Eine Gefahr von Interferenz zwischen Kunden kann je nach eingesetzer Technologie auf unterschiedliche Art und Weise reduziert werden. \\
 				\hline
 				Redundanz, um Ausfällen entgegenzuwirken, soll gewährleistet sein.
 				& VMs und Container sind flexibel zu starten und stoppen. Ausfallsicherheit wird in Form mehrerer redundanter virtueller Instanzen einfach ermöglicht. \\
@@ -35,14 +35,14 @@
 				Bestimmte Architekturen, wie z.B. 3-Tier-Architektur, sollen komfortabel umgesetzt werden.
 				& Einzelne Bausteine beliebiger Architekturen lassen sich mit virtuellen Instanzen unabhängig voneinander betreiben und vernetzen. \\
 				\hline
-				Über die Zeit hinweg entstehen unterschiedliche Softwareversionen, die ggf. von anderen Anwendungen und Bibliotheken abhängen. Die verschiedenen Versionen sollen zuverlässig und unabhängig voneinander betrieben werden. Nicht nur Anwendungen, sondern auch Betriebssysteme unterschiedlicher Art sollen ggf. möglichst hardwareunabhängig einsetzbar sein.
-				& Virtualisierungen bieten gute Migrationseigenschaften und können mit individuellen Betriebssystemen gestartet werden. Vor allem die containerbasierte Virtualisierung erlaubt einen hohen Grad an Modularisierung und Kompatibilität. Produkte werden können nicht nur als Programme vertrieben, sondern als plattformunabhängige \emph{Virtual Appliances}, also in virtuelle Instanzen \glqq{}eingeschweißte\grqq{}Anwendungen \cite[S.672f.]{tanenbaumOS}. \\
+				Über die Zeit hinweg entstehen unterschiedliche Softwareversionen, die ggf. von teils alten Anwendungen und Bibliotheken abhängen. Die verschiedenen Versionen sollen zuverlässig und unabhängig voneinander betrieben werden. Nicht nur Anwendungen, sondern auch Betriebssysteme unterschiedlicher Art sollen ggf. möglichst hardwareunabhängig einsetzbar sein.
+				& Virtualisierungen bieten gute Migrationseigenschaften und sind mit einer Vielzahl von Betriebssystemen kompatibel. Vor allem die containerbasierte Virtualisierung erlaubt einen hohen Grad an Modularisierung und Kompatibilität. Produkte werden können nicht nur als Programme vertrieben, sondern als plattformunabhängige \emph{Virtual Appliances}, also in virtuelle Instanzen \glqq{}eingeschweißte\grqq{}Anwendungen \cite[S.672f.]{tanenbaumOS}. \\
 				\hline
 				Neue Services und Kunden sollen einfach in bestehende Infrastrukturen integrierbar sein. Systeme sollen einfach kombinierbar und zwischen Rechenzentren portierbar sein.
-				& virtuelle Instanzen können als sogennante Snapshots \glqq{}eingefroren\grqq{} werden und in anderen Infrastrukturen wieder fortgefahren werden.\\
+				& Virtuelle Instanzen können als sogennante Snapshots \glqq{}eingefroren\grqq{} werden und in anderen Infrastrukturen wieder fortgefahren werden.\\
 			  \hline
 				Gute Administrationsmöglichkeiten und Wartbarkeit der Infrastruktur
-				& Virtualisierte Systeme lassen sich neben physischen Systemen zusammen, ggf. an zentralisierter Stelle, verwalten. Gleichzeitige Senkung der Administrationskosten möglich \cite[S.1]{bsiVirt}.
+				& Virtualisierte Systeme lassen sich neben physischen Systemen zusammen, ggf. an zentralisierter Stelle, verwalten. Eine gleichzeitige Senkung der Administrationskosten ist möglich \cite[S.1]{bsiVirt}.
 		  \end{tabularx}
 			\caption{Mehrere Herausforderungen im Betrieb von IT-Infrastrukturen und deren Lösungsansatz mithilfe von Virtualisierung}
 			\end{centering}
@@ -50,29 +50,9 @@
 		\end{table}
 		% TODO: Tabelle ist leider abgeschnitten
 
-		Wie zu sehen ist, bietet der Einsatz von serverseitiger Virtualisierung eine Reihe von Vorteilen, die ein physischer Betrieb nicht bieten kann.
+		Wie zu sehen ist, bietet der Einsatz von serverseitiger Virtualisierung eine Reihe von Vorteilen, die ein rein physischer Betrieb von Servern nicht in dem Maß bieten kann. Auch die Etablierung der Virtualisierung bei allen großen Cloud-Anbietern wie \emph{Amazon}, \emph{Google} und \emph{Microsoft}, ist ein Beweis dafür, dass die genannten Gründe mehr Vorteile bieten als die einhergehenden Nachteile der Virtualisierung, wie z.B. Leistungsverluste und Sicherheitsgefahren.
 
-		% Probleme von Firmen:
-		% Internetriesen muessen skalieren. Dort gibt es tausende von Servern, wo sich Einsparungsvorteile,Kosteneinsparung und Skalierungseffekte sehr auszahlen.
-		% In Firmen generell: IT waechst, IT Portfolio waechst, auch historisch --> alte und neue Versionen, unterschiedliche Bibliotheken, legacy code, eine anwendung fuer windows server 2008, andere auf debian.
-		% Anbieterwechsel in Firmen, die IT in Datencentern outsourcen.
-		% Mehrere Kunden, die Serverressourcen brauchen, aber sich nicht beeinflussen duerfen.
-
-
-		% TODO: Besserer Ansatz:
-		% Probleme der IT erklaeren und wie Virtualisierung sie bekaemptf:
-		% ----------
-		% Vorteile: Isolation, weniger physische Maschinen noetig (spart geld (hw und energie, klimatisierung) und platz),
-		% Setzen von Kontrollpunkten (Snapshots, Recovery)
-		% Migrationsprozesse stark vereinfacht, z.b. wenn Anwendungen in neue Architektur gepresst werden mit LoadBalancing etc.
-		% betriebssystemunabhengigkeit --> virtual appliance \cite[S.672f.]{tanenbaumOS}
-		%			--> Anwendungen hängen in der Regel von zahlreichen Bibliotheken und anderen Anwendungen ab. Wenn Softwarelösungen verkauft werden, kommt es oft zu Inkompatiblitäten, da verschiedene Kernelversionen, Compilerversionen, Bibliotheksversionen interferieren. Virtual Appliances stellen eine Lösung dar, die die Anwedung in eine VM "eingeschweißt" wird und nicht mehr die einzelne Anwendung an den Kunden verkauft wird, sondern ein Gesamtpakekt in Form einer direkt ausführbaren Anwendungsumgebung, in der alle benötigten Komponenten kompatibel zueinander vorinstalliert sind.
-
-
-
-		% ^		einige gruende aus \cite[S.662]{tanenbaumOS}
-
-
+		Im Folgenden sind die Konzepte der Virtualisierung auf Basis von Hypervisorn und Containern erklärt.
 
 		%% TODO: folgendes integrieren im text von introVirt .... UPDATE: schon teils geschehen 2 abseatze drueber
 	  %Sowohl Hypervisor-gestützte VMs als auch Container erwecken aus Sicht des Gasts den Eindruck, dass ein alleinstehendes Betriebssystem ausgeführt wird (QUELLE: “OpenVZ,” 2012. [Online]. Available: http://www.openvz.org). Um diese Illusion zu schaffen, wird jedoch wie beschrieben jeweils ein anderer Ansatz eingesetzt.
@@ -87,9 +67,9 @@
 
       % Auf dieser Art von Systemen laufen eine oder mehrere VMs unabhängig voneinander auf physischer Hardware (in der englischen Literatur auch "bare metal" genannt). Der Hypervisor, der auch \emph{Virtual Machine Monitor} (\emph{VMM}) genannt wird \cite[S.2]{containerVirtPerformance}, nimmt dabei die Rolle eines Vermittlers zwischen Host-OS und Gast-OS ein \cite[S.6]{dockerBook} und abstrahiert dem Gast das komplette Funktionsset des Hosts. \cite[S.2]{dockerSec1}.
 
-      Durch diese Technik läuft in jeder \acrshort{VM} ein eigenes (Gast-)Betriebssystem, das von solchen anderer \acrshort{VM}s komplett isoliert läuft. Durch die Abstraktion des zwischenliegenden Hypervisors ist es möglich, mehrere unterschiedliche Gastbetriebssysteme auf einem physikalischen Host auszuführen \cite[S.2]{containerVirtPerformance}\cite[S.106]{tanenbaumOS}.
+      Durch diese Technik läuft in jeder \acrshort{VM} ein eigenes (Gast-)Betriebssystem, das von solchen anderer \acrshort{VM}s isoliert läuft. Durch die Abstraktion des zwischenliegenden Hypervisors ist es möglich, mehrere unterschiedliche Gastbetriebssysteme auf einem physikalischen Host auszuführen \cite[S.2]{containerVirtPerformance}\cite[S.106]{tanenbaumOS}.
 
-      Der größte Kritikpunkt dieser Art von Virtualisierung ist deren hoher Bedarf an Hostressourcen, da diese für jede gestartete \acrshort{VM} komplett virtualisiert werden müssen, sodass innerhalb der \acrshort{VM} ein Gast-\acrshort{OS} ausgeführt werden kann \cite[S.1]{dockerIntroIEEE}\cite[S.3]{dockerLXCKub}.
+      Der größte Kritikpunkt dieser Art von Virtualisierung ist deren hoher Bedarf an Hostressourcen, da diese für jede gestartete \acrshort{VM} komplett virtualisiert werden müssen, sodass innerhalb der \acrshort{VM} ein Gast-\acrshort{OS} ausgeführt werden kann \cite[S.1]{dockerIntroIEEE}\cite[S.3]{dockerLXCKub}. Diese Art der Abstraktion erzeugt Leistungseinbußen, wenn der Betrieb mit physischen Alternativen verglichen wird.
 
       Hypervisortechnologien werden unter sich in solche von Typ 1 und Typ 2 unterschieden.
 
@@ -106,9 +86,11 @@
       Bekannte Vertreter von Hypervisorn sind die kommerziellen \emph{ESXi} der Firma \emph{VMware} und \emph{Hyper-V} von \emph{Mircosoft}, sowie die ebenfalls namhaften Open-Source-Hypervisor \emph{Xen} und \emph{KVM} \cite[S.1]{dockerLXCKub}.
       %TODO: mehr Quellen
 
+			% TODO: Verstehen und erklären: Unterschied zwischen containerbasierter und typ2-hypervisor -virtualisierung.
+
     \subsection{Container-basierte Virtualisierung}
     \label{introVirtContainer}
-      Container-basierte Virtualisierung wird vorrangig als leichtgewichtige Alternative zu der Hypervisor-basierten Virtualisierung gesehen\cite[S.2]{containerVirtPerformance}. Erstere nutzt direkt den Hostkernel, um virtuelle Umgebungen zu schaffen. Ein Hypervisor wird in diesem Ansatz nicht benötigt \cite[S.6+7]{dockerBook}. Vielmehr wird das native System und dessen Ressourcen partitioniert, sodass mehrere virtuelle, voneinander isolierte Instanzen, sogenannte \emph{user space} Instanzen, betrieben werden können, die als Container bezeichnet werden \cite[S.2]{containerVirtPerformance}\cite[S.3]{dockerSecIntro}\cite[S.1]{dockerSec2}. Die Isolation basiert auf dem Konzept von Kontexten, die unter Linux \emph{namespaces} genannt werden. Diese, sowie \emph{cgroups}, die für das Ressourcenmanagement verantwortlich sind, werden in den Kapiteln \ref{secIsolierung} und \ref{secResLimit} genauer betrachtet \cite[S.4]{dockerSecIntro}.
+      Container-basierte Virtualisierung wird vorrangig als leichtgewichtige Alternative zu der Hypervisor-basierten Virtualisierung gesehen\cite[S.2]{containerVirtPerformance}. Erstere nutzt direkt den Hostkernel, um virtuelle Umgebungen zu schaffen. Ein Hypervisor wird in diesem Ansatz nicht benötigt \cite[S.6+7]{dockerBook}. Vielmehr wird das native System und dessen Ressourcen partitioniert, sodass mehrere virtuelle, voneinander isolierte Instanzen, sogenannte \emph{user space} Instanzen, betrieben werden können, die als Container bezeichnet werden \cite[S.2]{containerVirtPerformance}\cite[S.3]{dockerSecIntro}\cite[S.1]{dockerSec2}. Die Isolation basiert auf dem Konzept von Kontexten, die unter Linux \emph{Namespaces} genannt werden. Diese, sowie \emph{Control Groups}, die für das Ressourcenmanagement verantwortlich sind, werden in den Kapiteln \ref{secIsolierung} und \ref{secResLimit} genauer betrachtet \cite[S.4]{dockerSecIntro}.
 
       Container sind durch den Unix-Befehl \emph{chroot}\cite{chroot} inspriert, der schon seit 1979 im Linux-Kernel integriert ist. In \emph{FreeBSD} wurde eine erweiterte Variante von \emph{chroot} verwendet, um sogenannte \emph{Jails} (FreeBSD-spezifischer Begriff) umzusetzen \cite{jails}. In \emph{Solaris}, ein von der Firma \emph{Oracle} entwickeltes Betriebssystem für Servervirtualisierungen\cite{solaris}, wurde dieser Mechanismus in Form von \emph{Zones} (Solaris-spezifischer Begriff) \cite{zones} weiter verbessert und es etablierte sich der Name \emph{Container} als Überbegriff, als weitere proprietäre Lösungen von \emph{HP} und \emph{IBM} zur selben Zeit auf dem Markt erschienen \cite[S.2]{dockerLXCKub}. Durch die kontinuierliche Weiterentwicklung von Containern in den letzten Jahren, können diese heutzutage als vollwertige Systeme betrachtet werden, nicht mehr als - wie ursprünglich vorgesehen - reine Ausführungsumgebungen \cite[S.7]{dockerBook}.
 
@@ -141,7 +123,7 @@
 
   \section{Sicherheitsziele in der IT}
   \label{introSecGoals}
-		Folgende Sicherheitsziele können für \acrshort{IT}-Systeme definiert werden.
+		In der IT existieren mehrere Sicherheitsziele, die auf unterschiedliche Art und Weise erreicht werden können. Je nach Anwedungsgebiet und Anforderungen werden die einzelnen Ziele unterschiedlich stark priorisiert bzw. nicht angewandt. Auch im Zusammenhang mit der Virtualisierung lassen sich die Sicherheitsziele eingrenzen, sodass in dieser Arbeit nur die in den folgenden Abschnitten definierten Ziele Relevanz haben. Warum diese Einschränkung Sinn macht, ist im darauffolgenden Kapitel \ref{question} erklärt.
 		% TODO: Quelle
 
 		% TODO: jeweils mit Quelle belegen. Es kommt auch noch Buch von Patrick
@@ -168,8 +150,6 @@
 			Die Verbindlichkeit eines Systems sagt aus, dass jede Aktion eindeutig auf eine Ursache, also z.B. einen User, der die Aktion ausgeführt hat, zurückzuführen ist.
 		\subsection{Privatheit, Anonymität}
 			Die Anonymität als Schutzziel erfüllt i.d.R. Datenschutzbestimmungen, nach denen Nutzer nicht als Individuen identifiziert werden dürfen. Dieses Ziel hat keinen Bezug zur vorliegenden Arbeit, soll aber zur Vollständigkeit an dieser Stelle aufgeführt sein.
-    \subsection{Authorisierung}
-      \emph{Ist das eigenes Sicherheitsziel? Quellen widersprechen sich.}
 
   \section{Einführung in Docker}
   \label{dockerIntro}
