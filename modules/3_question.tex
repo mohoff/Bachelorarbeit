@@ -3,6 +3,43 @@
 
 \chapter{Fragestellungen / Ziel der Arbeit}
 \label{question}
+  Die Wertschöpfung moderner IT-Unternehmen beruht auf dem Angebot von Diensten, auch Services genannt, die über das Internet den Nutzern zur Verfügung gestellt werden. Die Services werden von Anwendungen angeboten, die selbst in Rechenzentren betrieben werden. Der überwiegende Vermögensgegenstand in diesem Modell ist die Software, die in den Rechenzentren produktiv läuft. Der Wert dieser ist direkt abhängig von der Funktionstüchtigkeit eines Rechenzentrums. Je nach Anwendungsfall kommt den Sicherheitszielen aus Kapitel \ref{secGoals} unterschiedliche Wichtigkeit zu.
+
+  Kunden, die ihr Produkt über Rechenzentren anbieten sind an Sicherheitsfeatures interessiert, die die drei Sicherheitsziele sicherstellen. Die Betreiber von Rechenzentren wiederum müssen diese Nachfrage befriedigen, wollen jedoch gleichzeitig auch selbst Gewinn machen. Durch den Betrieb von Containern in Rechenzentren kann im Vergleich zu Hypervisorlösungen theoretisch mehr Gewinn geschöpft werden, da sich mit ihnen - bei gleicher Hardware - mehr virtuelle Kapazität realisieren lässt. Die Sicherheit virtueller Instanzen darf im Betrieb von Containern jedoch nicht leiden, um weiterhin den Kundenanforderungen zu entsprechen.
+
+  Die erste zentrale Frage ist demnach, in wie weit Container sicher sind, um für Kundenservices in Rechenzentren eingesetzt zu werden. Diese stark verallgemeinerte Fragestellung kann anhand einer Risikoanalyse, wie sie z.B. nach Mandl in \cite[S.36]{CISSP} beschrieben ist, genauer formuliert werden:
+
+  \textbf{Identifikation der Vermögensgegenstände}: Für Betreiber von Rechenzentren der sichere und zuverlässige Betrieb von Kundensoftware. Gewährleistung von Vertraulichkeit, Integrität und Verfügbarkeit gegeünber allen Kunden.
+
+  \textbf{Identifikation der Bedrohungen}: Die verschiedenen Bedrohungsarten können auf Basis eines Systemmodells von containerbasierter Virtualisierung identifiziert werden.
+
+  \emph{Systemmodell}
+    Hat sich gewandelt: Bei Hypervisorn sieht es anders aus wie bei Containern. Während nach \cite[S.125]{CISSP} virtuelle Maschinen als eigener Sicherheitsmechanismus des Betriebssystems aufgelistet ist, stimmt das für die Containersysteme und deren Design nicht mehr. Andere Sicherheitsfeatures des Hosts, die ab Kapitel \ref{} vorgestllt werden, müssen aktiviert oder verstärkt werden, um die Containersicherheit zu erhöhen.
+
+  \emph{Identifikation der Bedrohungen}
+  - Unterteilung in Systemsicherheit und Netzwerksicherheit
+
+  - Container compromise: compromise C k ∈ C by means of illegitimate
+  data access, Man-in-the-Middle (MitM) attacks or by affecting the control
+  flow of instructions executed in C k ∈ C.
+  - Denial of Service: disturb normal operation of the host or C k ∈ C.
+  - Privilege escalation: obtain a privilege not originally granted to a C j ∈ C.
+
+
+  \textbf{Bestimmung der Auswirkungen potenzieller Risiken:}
+    Es muss generischer Ansatz gewählt werden, da jeder Kunde andere Sicherheitsanforderungen im Detail hat. Demnach können Schwachstellen, die die Vertraulichkeit, die Integrität oder Verfügbarkeit der Kundensoftware bedrohen, fatale Folgen für den Umsatz und die Reputation der Kunden und Betreiber von Rechenzentren ergeben.
+
+  \textbf{Gegenmaßnahmen:} % um Bedrohungspotential zu minimieren.
+    Welche Sicherheitsmodelle und -mechanismen können eingesetzt werden, um Bedrohungspotential von aufgeführten Gefahrenquellen zu minimieren.
+    % Ziel der Arbeit: Halten diese CIA-Triade ein? Wie effektiv/weitrechend sind die eingesetzten modelle/mechanismen. Untersuchung der -modelle und -mechanismen in Bezug auf CIA-Traide.
+    Einteilung der Kontrollmechanismen in administrative, technische und physische Kontrollen \cite[S.40]{CISSP}:
+    \begin{itemize}
+      \item \textbf{Administrative Kontrollen:} Enthält Management-Kontrollen, die z.B. durch die Entwicklung einer Sicherheitspolitik, auch Policy genannt, Best Practices oder Sicherheitsschulungen des Personals, umgesetzt werden.
+      \item \textbf{Technische Kontrollen:} Umfasst alle hardware- und softwarebasierten Mechanismen, z.B. ein Zugriffsschutz unter Verwendung einer DAC oder MAC. Docker verfolgt eine \emph{Defense in depth}, bei dem verschiedenartige Sicherheitsschichten realisiert werden, um einen bestmöglichsten Schutz zu ermöglichen. Eine Geheimhaltung von technischen Kontrollen, auch \emph{Security through obscurity} genannt, kann nicht praktiziert werden, da Docker und Linux selbst quelloffene Projekte sind.
+      \item \textbf{Physische Kontrollen:} Beinhalten Mechanismen wie Sicherheitsschleusen, Schlösser und Wachpersonal. Obwohl ein Bezug zum Betrieb von Rechenzentren hergestellt werden kann, haben physische Kontrollen keine spezifische Relevanz für die containerbasierte Virtualisierung und sind aus diesem Grund an dieser Stelle nur zum Zweck der Vollständigkeit aufgeführt.
+    \end{itemize}
+
+  Die vorliegende Arbeit konzentriert sich auf die technischen, softwarebasierten Kontrollen, die von Docker eingesetzt werden. Aber auch administrative Methoden werden in Kapitel \ref{secEcosystem} vorgestellt.
   % Kommt man von Container auf Host-OS? Von Container auf anderen Container? ~etc.
   % 5-6 Sicherheitsziele erwähnen. Mit Forschungsfrage in Bezug bringen --> später bei Isolierung und Ressourcenverwaltung wieder aufgreifen
 
@@ -60,9 +97,11 @@
   \emph{ALT:}
 
 
-  Um Frage (1.) zu beantworten, wird im ersten Hauptkapitel die intrinsische Sicherheit von Docker untersucht. Damit ist eine Reihe von Sicherheitsfeatures des Linux Kernels gemeint, die u.a. Docker nutzt, um nach Aussage des Unternehmens \emph{Docker} sichere Container zu ermöglichen. V.a. Mechanismen zur Isolation und Ressourcenverwaltung werden betrachtet, da sie direkt mit den erwünschten Sicherheitszielen aus Kapitel \ref{introSecGoals} in Bezug stehen.
+  % Technische Sicherheit
+  Um Frage (1.) zu beantworten, wird im ersten Hauptkapitel die intrinsische Sicherheit von Docker untersucht. Damit ist eine Reihe von Sicherheitsfeatures des Linux Kernels gemeint, die u.a. Docker nutzt, um nach Aussage von \emph{Docker} sichere Container zu ermöglichen. Genauer werden Mechanismen zur Isolation, Ressourcen- und Zugriffsverwaltung betrachtet, da sie direkt mit den erwünschten Sicherheitszielen aus Kapitel \ref{introSecGoals} in Bezug stehen.
 
   Des Weiteren stellt sich die Frage, ob die Arbeit mit Docker und seinen Containern sicher ist. Wie in der \hyperref[dockerIntro]{Einführung zu Docker} beschrieben, stellt Docker zusammen mit anderen Anbietern einen Workflow und eine Palette an Tools zur Verfügung, die die Arbeit mit Containern erleichtern sollen. Wie diese Tools zur Sicherheit bzw. Angreifbarkeit von Docker-Systemen beitragen, wird im Kontext von den Sicherheitszielen betrachtet.
+  % Technische und administrative Sicherheit
 
   Nicht betrachtet werden die Sicherheitsrisiken, die sich durch den Betrieb eines Rechnernetzwerks ergeben, in dem Docker-Knoten existieren. Sicherheit aus Sicht der Netzwerktechnik und den verschiedenen \acrshort{OSI}-Schichten ist nicht Gegenstand der Untersuchung.
 
