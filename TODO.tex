@@ -1,4 +1,47 @@
 
+%%%%% STRUKTUR und STIL %%%%%
+
+% TODO: Aktuell gibts ein Glossar und ein Abkürzungsverzeichnis. Glossar für "erweitertes Grundlagenkapitel", in dem Begriffe in 1-3 Sätzen erklärt werden
+
+% TODO: Kapitel "Struktur der Arbeit" und "Forschungsfrage" überschneiden sich, ist das Okay? In beiden Kapiteln wird z.b. abgegrenzt
+
+% TODO: Klären: Codeblocks (latex lstlisting) auch in ein "Codeblockverzeichnis" ?
+%       Bzw. iwo zentral auflisten? Bisher sinds 2 (Dockerfile + cgroups kapitel)
+
+% TODO: Auf Schreibweise einigen:
+%           containerbasiert oder Container-basiert
+%           hypervisorbasiert oder Hypervisor-basiert
+% Synonyme erlaubt? Gast, Gastinstanz, Gastsystem. Ist es okay, wenn die beim ersten Vorkommen als Synonyme gekennzeichnet sind?
+% ... noch viele andere Woerter, die konsistent geschrieben werden muessen!
+
+% TODO: Dockers SELinux-, AppArmor- und Seccomp-Profile in Appendix?
+%       --> Oder intext? Seccomp ist ellenlang, da viele Systemcall drin sind. AppArmor geht inline.
+%       --> SELinux profile? SELinux auch zu lang mit 2-3 Files unter 1000Zeilen+.
+%       --> Eigtl nur AppArmor vertretbar, da das auf 1-2 Seiten passt. Dann ists aber nicht konsistent zu SELinux und SEccomp...
+
+% TODO: Klaeren ob Sachen wie "IBM" und "HP" und "LXC" und "OpenVZ" als Abkürzungen gelistet werden sollen mit ausführlichem Namen
+% TODO: Klaeren ob Referenzen zu z.B. Golang, LXC bei erstem vorkommen gestzt werden oder bei JEDEM vorkommen des namen?
+
+% TODO: Kapitel "Fragestellung/Forschungsfrage" geht erst S.23 los... Problem?
+
+
+
+%%%%% LATEX %%%%%
+
+% TODO: Klaeren: MAC abkuerzung doppeltdeutig: Media/Mandatory Access Control
+%       --> wie wird das im Abkürzungsverzeichnis gemanaged?
+
+% TODO: texttt{}-Bloecke sauber zeilenbrechen. --> mit usepackage oder anderem workaround?
+
+% TODO: Tabelle in Einleitungskapitel "Virtualisierung" fixen. Da muss Seitenumbruch rein iwie.
+
+% TODO: Rework abstract syntax. Its shitty. Gibts da was gutes als Vorlage?
+
+
+%%%%% richtige TODOs %%%%%
+
+% TODO: Ins Glossar: chroot, Jails?, Zones?, System Calls (oder eigenen kapitel?), Apache 2.0 Lizenz, Golang, COW, High Performance Computing, embedded systems, Socket (s.1149,s.1162f.,s.1176,s.1235{linuxInterface}), Bash, 3-Tier-Architektur
+
 % TODO: reformat chapter style with package titlesec
 %\titleformat{\section}
 %{\filcenter\normalfont\Large\bfseries}
@@ -7,24 +50,10 @@
 % TODO: Bei erstem Vorkommen von Golang, REferenz auf deren Website setzen.
 
 % TODO: Als abkürzungen festlegen und verlinken: HP, IBM, LXC
-% TODO: Ins Glossar: chroot, Jails?, Zones?, System Calls (oder eigenen kapitel?), Apache 2.0 Lizenz, Golang, COW, High Performance Computing, embedded systems, Socket (s.1149,s.1162f.,s.1176,s.1235{linuxInterface}), Bash, 3-Tier-Architektur
-% TODO: Klaeren: MAC abkuerzung doppeltdeutig: Media/Mandatory Access Control
-%       --> wie wird das im Abkürzungsverzeichnis gemanaged?
-
-% TODO: texttt{}-Bloecke sauber zeilenbrechen. --> mit usepackage oder anderem workaround?
-
-% TODO: Klären: Codeblocks (latex lstlisting) auch in ein "Codeblockverzeichnis" ?
-%       Bzw. iwo zentral auflisten? Bisher sinds 2 (Dockerfile + cgroups kapitel)
 
 % TODO: ADD im Kapitel Dockerfile hinzufügen, da im Kapitel "Images" erwähnt.
 
-% TODO: Isolierung-Unterkapitel in eine sinnvolle Reihenfolge bringen und 6 raussuchen (sind 7 aktuell)
-
-% TODO: Auf Schreibweise einigen: containerbasiert oder Container-basiert ... noch viele andere Woerter wo konsistent geschrieben werden muessen!
-
-% TODO: Dockers AppArmor- und Seccomp-Profile in Appendix?
-%       --> Oder intext? Seccomp ist ellenlang, da viele Systemcall drin sind. AppArmor geht inline.
-%       --> SELinux profile?
+% TODO: Isolierung-Unterkapitel in eine sinnvolle Reihenfolge bringen
 
 % TODO: Eigenes Grundlagenkapitel? :
 %         /proc Filesystem (evtl Auflistung der Files im Appendix) .... auch in \cite[S.42,S.223-227,S.231]{linuxInterface} und
@@ -35,19 +64,13 @@
 
 % TODO: Local DoS: Fork-bomb (siehe \cite[S.793]{linuxInterface})
 
-% TODO: Klaeren ob Sachen wie "IBM" und "HP" und "LXC" und "OpenVZ" als Abkürzungen gelistet werden sollen mit ausführlichem Namen
-% TODO: Klaeren ob Referenzen zu z.B. Golang, LXC bei erstem vorkommen gestzt werden oder bei JEDEM vorkommen des namen?
-
-% TODO: Rework abstract syntax. Its shitty
-
 % TODO: Unterschiedung von Produkt Docker und Unternehmen Docker. Das Unternehmen evtl. kursiv schreiben oder mit (TM)-Zeichen am Ende
           % --> Klaeren ob das okay so ist, auch obs ok ist das in "struktur der arbeit" zu schreiben
 
 % TODO: Eigenes groses Kapitel "Docker im Vergleich zu anderen Containertechnologien"
 %       Hauptsaechlich Docker und CoreOS' rkt vergleichen (rkt bietet KVM support an: man hat die wahl zwischen hardwarevirtualisierung und containern)
 
-% TODO: im github repo von runc, dem neuen containerstandard werden technologien (namesapces,cgroups,selinux,apparmor) abstrahiert. es ist von "zusätzlichen isolatoren" die rede (siehe SPEC.md oder so in runC), damit ist selinux,seccomp,apparmor,caps gemeint
-%       Außerdem mehr die Rede von "pods", nicht "containern". Ein pod hat ein oder mherere container enthalten. --> Shift von Container zu Pods. Docker wird unwichtiger, Kubernetes wird wichtiger.
+
 
 % \linespread{1.3}            % 1.5x line spacing
 % \linespread{1.6}            % Double line spacing
