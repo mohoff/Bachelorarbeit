@@ -27,8 +27,14 @@
   % Vor der Virtualisierung waren Hosts physisch getrennt, sprich auf unterschiedlichen physischen Maschinen. Angriffe waren nur über das Netzwerk möglich, die einzigste Komponente, die Hosts verbindet.
   % Mit der Virtualisierung exisitiert weiterhin die Gefahr über das Netzwerk, jedoch kommt eine weitere Komponente hinzu: die Systemsicherheit. Da sich, unabhängig von der eingesetzten Virtualisierungstechnik, mehrere Gastsysteme einen physischen Host teilen, können Angriffe auch innerhalb eines physischen Hosts ablaufen und diesen oder andere virtuelle Gastinstanzen zum Ziel haben. Angriffe nutzen bekannte und nicht behobene, oder unbekannte (sogenannte \emph{Zero-Day-Exploits}) Sicherheitslücken von Kernel- oder Anwendungsprogrammen, um ihr Ziel zu erreichen.
 
+
   % https://www.airpair.com/firebase/posts/yatodo-guide
   % https://www.airpair.com/docker/posts/8-proven-real-world-ways-to-use-docker#7-multi-tenancy
+
+  \section{Ziel der Arbeit}
+    Ziel der Arbeit ist es, die von Containersystemen genutzten Sicherheitsmechanismen vorzustellen und zu untersuchen, inwiefern diese zu im Fall von Docker zu einer höheren Sicherheit des Systems beitragen.
+
+    Eine ausführliche Konstruktion der Fragestellung erfolgt mithilfe einiger Annahmen in Kapitel \ref{question}.
 
   \section{Struktur der Arbeit}
     Zu Beginn wird in den Grundlagen ab Kapitel \ref{introVirt} die Virtualisierung beschrieben. Dabei werden die zwei prominentesten Virtualisierungstechniken, Hypervisor-basierte (Sektion \ref{introVirtHypervisor}) und Container-basierte (Sektion \ref{introVirtContainer}) Virtualisierung, gegenübergestellt. In diesem Kapitel werden nur die für diese Arbeit relevante Techniken der Systemvirtualisierung beschrieben, also solche, in denen Funktionen von kompletten Betriebssystemen abstrahiert werden. Andere Arten, beispielsweise die Anwendungs-, Storage- oder Netzwerkvirtualisierung, werden nicht behandelt, da sie isoliert keinen Bezug zu Docker haben. Anschließend werden die allgemeinen Sicherheitsziele von \acrshort{IT}-Systemen in Kapitel \ref{introSecGoals} erklärt, auf die im Hauptteil Bezug genommen wird. Abgeschlossen wird das Grundlagenkapitel mit einer Einführung in Docker (Kapitel \ref{dockerIntro}), in dem Begriffe sowie Funktionsweisen innerhalb dieser Technologie erläutert werden.

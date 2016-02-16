@@ -123,10 +123,12 @@
 
   \section{Sicherheitsziele in der IT}
   \label{introSecGoals}
-		In der IT existieren mehrere Sicherheitsziele, die auf unterschiedliche Art und Weise erreicht werden können. Je nach Anwedungsgebiet und Anforderungen werden die einzelnen Ziele unterschiedlich stark priorisiert bzw. nicht angewandt. Auch im Zusammenhang mit der Virtualisierung lassen sich die Sicherheitsziele eingrenzen, sodass in dieser Arbeit nur die in den folgenden Abschnitten definierten Ziele Relevanz haben. Warum diese Einschränkung Sinn macht, ist im darauffolgenden Kapitel \ref{question} erklärt.
-		% TODO: Quelle
+		In der IT existieren mehrere Sicherheitsziele, die auf unterschiedliche Art und Weise erreicht werden. Je nach Anwedungsgebiet und Anforderungen werden die einzelnen Ziele unterschiedlich stark priorisiert bzw. nicht angewandt. Auch im Zusammenhang mit der Virtualisierung lassen sich die Sicherheitsziele eingrenzen, sodass in den folgenden Abschnitten nur die in dieser Arbeit relevanten Ziele aufgeführt sind.
+		%Warum diese Einschränkung Sinn macht, ist im darauffolgenden Kapitel \ref{question} erklärt.
+		% TODO: Warum diese Einschränkung Sinn macht, ist im darauffolgenden Kapitel \ref{question} erklärt --> SICHERGEHEN
+		Grundsätzlich wird zwischen der Sicherheit von Computersystemen und Netzwerken unterschieden. Die Form der Virtualisierung, die mit Docker realisiert wird, ist Element von Computersystemen und ist von den Netzwerken, an die physische Hosts angeschlossen sind, unabhängig. Aus diesem Grund sind in diesem Kapitel nur die vier in \cite[S.712f.]{tanenbaumOS} von Tanenbaum definierten Sicherheitsziele definiert.
 
-		% TODO: jeweils mit Quelle belegen. Es kommt auch noch Buch von Patrick
+		% TODO: jeweils mit Quelle belegen.
 		% https://tools.ietf.org/html/rfc1704
 		% https://tools.ietf.org/html/rfc3552
 		% S.26 patricks diplomarbeit
@@ -139,17 +141,14 @@
 
 
     \subsection{Vertraulichkeit}
-			Die Vertraulichkeit steht für das Konzept von Geheimhaltung. Durch verschiedene kryptographische Verschlüsslungsverfahren kann Klartext in eine unleserlichen Geheimtext transformiert werden, der keine Information über den ursprünglichen Klartext enthält und somit sicher gegenüber Abhöhrern ist.
+			Die Vertraulichkeit steht für das Konzept von Geheimhaltung. Durch verschiedene kryptographische Verschlüsslungsverfahren kann Klartext in eine unleserlichen Geheimtext transformiert werden, der keine Information über den ursprünglichen Klartext enthält und somit sicher gegenüber Abhöhrern ist. Unter Computersystemen können z.B. in Kapitel \ref{secLinux} beschriebene Mechanismen des Kernels aktiviert werden, um bestimmte Daten vor unautorisierten Zugriffen zu schützen. In einem Multi-Tenency-System ist es notwendig, Kundeninformationen von unberechtigten Nutzern geheimzuhalten.
     \subsection{Integrität}
-			Unter Integrität versteht man die Zusicherung, dass bestimmte Daten original sind und nachweisbar nicht manipuliert wurden. Integrität kann für Daten z.b. mit kryptographisch sicheren MACs hergestellt werden.
-		\subsection{Authentizität}
-			Authenzität beschreibt die Identifikation eines Objekts gegenüber einem System. Maßnahmen der Authenifikation sind z.B. Passwortabfragen, digitale Zertifikate oder biometrische Merkmale einer Person. Ist eine Authentifikation erfolgreich, ist die Echtheit des Objekts bestätigt.
+			Unter Integrität versteht man die Zusicherung, dass bestimmte Daten original vorliegen und nachweisbar nicht manipuliert wurden. Ein Sicherheitsmechanismus sieht vor, dass es dem Besitzer einer Datei erlaubt sein soll, eine bestimmte Datei zu modifizieren. In Multi-Tenancy-Systemen muss beispielsweise gewährleistet werden, dass die Daten der einzelnen Kunden geschützt werden und kein Kunde die Integrität von Daten eines anderen Kunden verletzen kann.
     \subsection{Verfügbarkeit}
-			Die Verfügbarkeit bezeichnet die Eigenschaft eines Systems, Anfragen jederzeit zu verarbeiten und andere Systeme nicht negativ zu beeinflussen. Ein prominentes Beispiel eines Angriffs auf die Verfügbarkeit ist die \gls{DenialOfService}-Attacke, kurz \acrshort{DoS}-Attacke.
-    \subsection{Verbindlichkeit}
-			Die Verbindlichkeit eines Systems sagt aus, dass jede Aktion eindeutig auf eine Ursache, also z.B. einen User, der die Aktion ausgeführt hat, zurückzuführen ist.
-		\subsection{Privatheit, Anonymität}
-			Die Anonymität als Schutzziel erfüllt i.d.R. Datenschutzbestimmungen, nach denen Nutzer nicht als Individuen identifiziert werden dürfen. Dieses Ziel hat keinen Bezug zur vorliegenden Arbeit, soll aber zur Vollständigkeit an dieser Stelle aufgeführt sein.
+			Die Verfügbarkeit bezeichnet die Eigenschaft eines Systems, Anfragen jederzeit zu verarbeiten und andere Systeme nicht negativ zu beeinflussen. Ein prominentes Beispiel eines Angriffs auf die Verfügbarkeit ist die \gls{DenialOfService}-Attacke, kurz \acrshort{DoS}-Attacke, die ein System mit einer Anfragenflut stört bis es unbenutzbar wird.
+    \subsection{Datenschutz}
+			Der Datenschutz stellt sicher, dass Personen vor dem Missbrauch ihrer persönlicher Daten geschützt sind. Aspekte des Datenschutzes haben keine Bedeutung für die Sicherheitsbetrachtung von Docker und sind deswegen nur aus Gründen der Vollständigkeit an dieser Stelle aufgeführt.
+			% TODO: Braucht es Grund hier?
 
   \section{Einführung in Docker}
   \label{dockerIntro}

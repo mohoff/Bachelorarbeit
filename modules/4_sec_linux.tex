@@ -47,6 +47,8 @@
 	% User namespaces are only one piece of the puzzle. AppArmor/SELinux, Notary, image security, and proper environment/network security all play a part in the overall Docker security picture
 	%  ^ 	\cite[S.7]{nsUserContainerCon}
 
+	% Alle vorgestellten Features realisieren Teile des Konzepts "Principle of Least Authority". System ist am sichersten, wenn jedes Subjekt nur minimalen Rechte besitzt, die es benötigt, um Aufgaben auszuführen. Je größer die Menge an eingeräumten Rechten ist, desto größer ist auch das Sicherheitsrisiko eines Missbrauchs \cite[S.722]{tanenbaumOS}.
+
 	\section{Isolierung durch \texttt{namespaces}}
   \label{secIsolierung}
 		Wenn unter Linux ein neuer Prozess gestartet werden soll, wird über \emph{System Calls} dem Kernel mitgeteilt, einen neuen \emph{namespace} bereitzustellen. Je nach Anforderung gibt es verschiedene \emph{namespaces}, z.B. ein \emph{network namespace}, der dem neuen Prozess ein Netzwerkinterface zuweist. Um Container als isolierte Arbeitsbereiche auf einem Host zu erstellen, werden die \emph{namespaces} des Kernels verwendet. Da Container selbst eine eigene komplette Laufzeitumgebung darstellen sollen, müssen Bereiche des Hosts durch \emph{namespaces} abgedeckt sein, sodass neben dem Netzwerk auch z.B. ein beschränkter Zugriff auf den Arbeitsspeicher und die \acrshort{CPU} gewährleistet ist \cite[S.3]{dockerIntroIEEE}.
