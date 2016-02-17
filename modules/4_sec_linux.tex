@@ -315,7 +315,7 @@
 
 		Sofern praktikabel macht es demnach Sinn, das Betriebssystem präventiv zu schützen, indem der potentielle Schaden von Angriffen auf Basis des \emph{Princliple Of Least Privilege} eingedämmt wird. Diese Prinzip basiert auf der Einschränkung von Zugriffsrechten, der auch für Root-Nutzer unterliegen. Neben diesem Prinzip, kann das Vorgehen von Docker auf ein zweites Modell, \emph{Defense In Depth}, zurückgeführt werden. Unter diesem Ansatz werden mehrere Mechanismen kombiniert. Das Ziel hierbei ist es, die Gesamtsicherheit eines Systems zu erhöhen, indem mehrere unabhängige Sicherheitsschichten implementiert werden. Der Funktionsumfang der Schichten überschneidet sich im Fall von Docker teilweise.
 
-		Linux bietet verschiedene Möglichkeiten Mechanismen auf Basis der beiden vorgestellten Modelle zu realisieren. Diejenigen Möglichkeiten, für die Docker eine individuelle Unterstützung bietet, werden in diesem Kapitel vorgestellt. Es existieren noch weitere Sicherheitsupdates für den Linux-Kernel, wie \emph{grsecurity} und \emph{PAX}, allerdings erfordern jene durch ihre anwendungsunabhängige Natur keine Unterstützung seitens Docker. Aus diesem Grund wird diese Art von Sicherheitserweiterung in dieser Arbeit nicht weiter betrachtet.
+		Linux bietet verschiedene Möglichkeiten Mechanismen auf Basis der beiden vorgestellten Modelle zu realisieren. Diejenigen Möglichkeiten, für die Docker eine individuelle Unterstützung bietet, werden in diesem Kapitel vorgestellt. Es existieren noch weitere Sicherheitsupdates für den Linux-Kernel, wie \emph{grsecurity} und \emph{PAX}, allerdings erfordern jene durch ihre anwendungsunabhängige Natur keine Unterstützung seitens Docker \cite{dockerSecurity}. Aus diesem Grund wird diese Art von Sicherheitserweiterung in dieser Arbeit nicht weiter betrachtet.
 		% TODO: Quellen für grsecurity und PAX.
 
 		Die Docker-Entwickler haben in den letzten Monaten die Integrations- und Anpassungsmöglichkeiten zusätzlicher Sicherheitsmaßnahmen, v.a. MACs, stark verbessert, da die Containersicherheit für \emph{Docker} nach eigenen Aussagen höchste Priorität hat \cite{githubDockerRoadmap}\cite{githubDockerChangelog}. Auch die Tatsache, dass sich zur Zeit die Konkurrenz \emph{CoreOS} mit der Containerlösung \emph{rkt} als sicherheitsfokusierte Alternative zu Docker auf dem Virtualisierungsmarkt etablieren will \cite{coreosAnnouncementRkt10}, ist für \emph{Docker} Anreiz die Sicherheit ihrer eigenen Entwicklung nicht zu vernachlässigen. Die Veröffentlichung des großen Sicherheitsupdates für Docker mit der Version 1.10 am vierten Februar 2016 geschah ca. drei Stunden nach der Ankündigung der Version 1.0 von \emph{rkt} seitens \emph{CoreOS} \cite{hnAnnouncementDocker110}\cite{hnAnnouncementRkt10}, was eine starke Konkurrenz zwischen den beiden Parteien vermuten lässt. % /erkenntlich macht..
@@ -326,20 +326,32 @@
 
 
     \subsection{\texttt{capabilities}}
-			\texttt{Capabilities} ist ein Feature, dass seit Kernelversion 2.2 in Linux integriert ist, um den traditionellen DAC-Mechanismus zu verfeinern. Es erlaubt die dem Root-User mit \texttt{UID=0} zustehenden Rechte in individuelle, voneinander unabhängige Einheiten zu unterteilen, die \texttt{capabilities} genannt werden. Jede priveligierte Operation ist auf eine \texttt{capability} abgebildet.
-			Zum Einen ist es Prozessen nicht-priveligierter User damit möglich, Operationen auszuführen, die ohne Einsatz dieses Features nur Root-User ausführen dürfen (Rechteausweitung). Zum Anderen lassen sich Prozesse auch mit \texttt{capabilities} einschränken, sodass sie z.B. nur von einem stark reduzierten Rechteset Gebrauch machen können (Rechteeinschränkung)\cite[S.33]{linuxInterface}.
+			\texttt{Capabilities} ist ein Feature, dass seit Kernelversion 2.2.11 in Linux integriert ist, um den traditionellen DAC-Mechanismus zu verfeinern \cite[S.42]{SELinuxApparmor}. Es existieren verschiedene Definitionen des Begriffs \glqq{}Capability\grqq{}. In dieser Arbeit sind unter diesem Begriff die POSIX-Capabilities gemeint, die seit Version 2.2 des Kernels in Linux fest integriert sind.
 
-			Der DAC-Mechanismus ist nur in der Lage Root-Rechte an Prozesse zu vergeben, die eine priveligierte Operation ausführen wollen. Mit Root-Rechten werden alle normalen Rechtekontrollen des DACs umgangen.	Aus sicherheitstechnischer Sicht ist das kritisch, da der anfragende Prozess mit Root-Rechten auf dem System jede denkbare Operation ausführen kann und nicht, wie ursprünglich vorgesehen, nur die ihm priveligierte Operation \cite[S.797]{linuxInterface}. Mithilfe von \texttt{capabilities} wird im Gegensatz zu dem \glqq{}Alles-oder-nichts\grqq{}-Ansatz des DACs eine feinere und sichere Rechtevergabe ermöglicht.
-			% Zusammenfassung von capabilities in \cite[S.816]{linuxInterface}
+			Als natives Feature werden Capabilities nicht nur von Docker-Prozessen direkt verwendet, sondern auch die beiden MACs \emph{AppArmor} und \emph{SELinux} machen indirekt Gebrauch von ihnen.
 
-			\texttt{Capability}-Namen beginnen mit dem Prefix \texttt{CAP\_} \cite[S.33,S.797]{linuxInterface}.
+			Capabilities haben die Absicht den traditionellen DAC-Mechanismus zu verfeinern, indem Rechte in kleine Einheiten aufgeteilt sind. Genauer ermöglicht das Feature, dass die dem Root-User mit \texttt{UID=0} zustehenden Rechte in individuelle, voneinander unabhängige Einheiten unterteilt werden. Jede priveligierte Aktion ist auf eine \texttt{capability} abgebildet. Nicht-priveligierten Subjekten ist es mithilfe von Capabilities möglich, priveligierte Operationen auszuführen, sofern sie die dafür notwendige Capability besitzen \cite[S.33]{linuxInterface}\cite[S.39]{SELinuxApparmor}.
+			% TODO: "priveligierte Aktion" -- zuvor definieren, dass priveligiert == "Root-Rechte benötigt" ist.
+
+			Insgesamt existieren aktuell 32 Capabilities, die außer ihrer Nummer - einer Zahl zwischen 0 und 31 - einen Namen tragen, der jeweils mit \texttt{CAP\_} beginnt. Um z.B. einem Subjekt die Modifikation des Kernels zu verbieten, muss diesem die Capability \texttt{CAP\_SYS\_MODULE} entzogen sein \cite[S.42]{SELinuxApparmor}.
+
+			Im Laufe der Jahre sind weitere unterschiedliche Privilegien entstanden, deren in Summe mehr als 32 Elemente umfasst. Aus diesem Grund wurden v.a. zwei Capabilities, \texttt{CAP\_NET\_ADMIN} und \texttt{CAP\_SYS\_ADMIN}, überladen, um den Privilegien nutzen zu können \cite[S.40f.]{SELinuxApparmor}. Bei diesen beiden Capabilities handelt es sich um die mächtigsten Vertreter, weswegen diese nur mit Bedacht zu gewähren sind.
+
+			Container sind unter Docker standardmäßig in der Lage 14 Capabilities zu verwenden \cite{githubCapabilities}. Mit den Parametern \texttt{--cap-add} und \texttt{--cap-drop} des Docker-Befehls \texttt{run} können Capabilities zusätzlich beim Startvorgang von Containern individuell genehmigt oder verweigert werden. In Version 1.10 und neuer ist jedoch zu beachten, dass das \emph{Seccomp}-Standardprofil manuelle Änderungen des verwendeten Capability-Sets überschreibt. Eigene Capabilities werden nur beachten, wenn das \emph{Seccomp}-Profil deaktiviert wurde \cite{dockerRun}. Die Rolle von \emph{Seccomp}, der erst kürzlich von Docker unterstützte Sicherheitsmechanismus, ist in Kapitel \ref{seccomp} erklärt.
+
 
 			% TODO: Table in Appendix mit Auflistung von Capabilities und englische Erklärung dazu in \cite[S.801f.]{linuxInterface}. ?
+			% --> Bzw. nur der C14 apabilities, die Docker standardmäßig verwendet
+
+			% Zum Einen ist es Prozessen nicht-priveligierter User damit möglich, Operationen auszuführen, die ohne Einsatz dieses Features nur Root-User ausführen dürfen (Rechteausweitung). Zum Anderen lassen sich Prozesse auch mit \texttt{capabilities} einschränken, sodass sie z.B. nur von einem stark reduzierten Rechteset Gebrauch machen können (Rechteeinschränkung)\cite[S.33]{linuxInterface}.
+
+			% Der DAC-Mechanismus ist nur in der Lage Root-Rechte an Prozesse zu vergeben, die eine priveligierte Operation ausführen wollen. Mit Root-Rechten werden alle normalen Rechtekontrollen des DACs umgangen.	Aus sicherheitstechnischer Sicht ist das kritisch, da der anfragende Prozess mit Root-Rechten auf dem System jede denkbare Operation ausführen kann und nicht, wie ursprünglich vorgesehen, nur die ihm priveligierte Operation \cite[S.797]{linuxInterface}. Mithilfe von \texttt{capabilities} wird im Gegensatz zu dem \glqq{}Alles-oder-nichts\grqq{}-Ansatz des DACs eine feinere und sichere Rechtevergabe ermöglicht.
+			% Zusammenfassung von capabilities in \cite[S.816]{linuxInterface}
 
 			% Siehe \cite[S.4, links uten]{dockerSec1} --> CAP_SYS_ADMIN
 
 			% Siehe \cite[S.5]{dockerSecIntro} .. nur haelfte an capabilities genutzt...
-			\emph{Evtl. hieraus nur capability-Eintrag im Glossar machen. Oder in Grundlagen Kapitel.}
+			% \emph{Evtl. hieraus nur capability-Eintrag im Glossar machen. Oder in Grundlagen Kapitel.}
       %\subsubsection{Beispiele, \texttt{/proc}-Verzeichnis, (Un-)Mounten des Host-Filesystems}
       % Gehört das unter 'capabilities'? Oder eigener Punkt bzw. woanders dazu? --> Eher Mount namespace --> Isolierung
       % Einschränkung in libcontainer vorgennnomenn? --> check github libcontainer repo.
@@ -370,6 +382,8 @@
 
 			Der Ausführungszeitpunkt des Hooks bietet den Vorteil, dass der komplette Kontext der Zugriffsanfrage an dieser Stelle vorliegt und vollständig von einem LSM-Modul ausgewertet werden kann \cite[S.2]{LSMFramework}. Neben der Kompatiblität zum DAC-Mechanismus, wird dadurch zusätzlich die Granularität der Zugriffskontrolle verbessert \cite{LSMDesign}.
 
+			Bei der Verwendung von MACs ist auf den Overhead zu achten, den die einzelnen Module verursachen. Nach den durchgeführten Benchmarks in \cite[S.51ff.]{SELinuxApparmor} kommt es unter \emph{AppArmor} und \emph{SELinux} bei der Ausführungsgeschwindigkeit hauptsächlich zu Verlusten zwischen 0\% und 11\%. Spezielle Aktionen, wie z.B. das Öffnen und Schließen einer Datei unter \emph{AppArmor}, können die Ausführungszeit verdoppeln.
+
 			Der Sicherheitskontext kann unter dem Betriebssystem Linux für Subjekte mit dem Befehl \texttt{ps} und für Objekte mit dem Befehl \texttt{ls}, jeweils mit dem Parameter \texttt{-Z} ausgegeben werden.
 
 			% lstlisting bringen wo die von Docker-Prozessen und /proc /boot files gekennzeichnet sind
@@ -383,7 +397,9 @@
 
 			% S.7 in
 
-			In den folgenden Unterkapiteln werden die beiden MACs \emph{SELinux} und \emph{AppArmor}, sowie deren Konfiguration in Docker, vorgestellt. Ein Ausblick in die Zukunft von MACs unter Docker ist in Kapitel \ref{result} gegeben.
+
+
+			In den folgenden Unterkapiteln sind die beiden MACs \emph{SELinux} und \emph{AppArmor}, sowie deren Konfiguration in Docker-Profilen, vorgestellt. Ein Ausblick in die Zukunft von MACs unter Docker ist in Kapitel \ref{result} gegeben.
 			% TODO: Checken, ob Referenz wirklich da ist, also Thema in Fazit aufgegriffen ist!
 
   		\subsubsection{\acrshort{SELinux}}
@@ -563,6 +579,7 @@
 				Es existiert auch ein Profil für den Docker-Daemon \cite{githubAppArmorProfileDaemon}, allerdings muss dieses manuell aktiviert werden \cite{githubAppArmorDoc}.
 
     \subsection{Seccomp}
+		\label{seccomp}
 			% TODO: https://lwn.net/Articles/443099/ und https://lwn.net/Articles/441232/
 			% TODO: und vllt https://lwn.net/Articles/443110/
 
