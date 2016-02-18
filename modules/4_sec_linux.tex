@@ -399,16 +399,109 @@
 
 
 
-			In den folgenden Unterkapiteln sind die beiden MACs \emph{SELinux} und \emph{AppArmor}, sowie deren Konfiguration in Docker-Profilen, vorgestellt. Ein Ausblick in die Zukunft von MACs unter Docker ist in Kapitel \ref{result} gegeben.
+			In den folgenden Unterkapiteln sind die beiden MACs \emph{AppArmor} und \emph{SELinux} vorgestellt. Exemplarisch wird das Standardprofil von \emph{AppArmor}, das Docker verwendet, im Detail analysiert. Ein Ausblick in die Zukunft von MACs unter Docker ist in Kapitel \ref{result} gegeben.
 			% TODO: Checken, ob Referenz wirklich da ist, also Thema in Fazit aufgegriffen ist!
+
+			\subsubsection{AppArmor}
+      	% Optional, da auf MAC alzu sehr eingehen nicht zu sehr im Scope sein sollte.
+				\emph{AppArmor} implementiert eine MAC und wurde als leicht konfigurierbare Alternative zu \emph{SELinux} entwickelt. Es kommt in Linuxdistributionen wie \emph{Debian}, \emph{Ubuntu} und \emph{OpenSUSE} standardmäßig zum Einsatz \cite{apparmorUbuntu}.
+				% Einfach zu lernen
+				% Basiert auf \emph{AppArmor}-Profilen.
+				% Es gibt von \emph{Docker} erstelltes Profil, das speziell für den Einsatz von Docker mit \emph{AppArmor} gebaut wurde. \cite{ https://docs.docker.com/engine/articles/security/ }
+
+				Auf Basis von textbasierten Profilen werden anwendungsspezifische Regeln definiert, die den Zugriff auf Objekten über Pfade im Dateisystem und sieben kombinierbare Berechtigungstypen festlegen \cite{linuxSecOverview}\cite{apparmorQuickProfileLanguage}. Durch eine Inkludieranweisung lassen sich mehrere Profile modular kombinieren \cite{apparmorQuickProfileLanguage}.
+
+				Im Wesentlichen werden die Schutzziele über die Berechtigungstypen realisiert. Die Integrität kann direkt mit der Verwehrung des Schreibrechts (\texttt{w}) hergestellt werden, während die Vertraulichkeit auf einem Leseverbot (\texttt{r}) basiert. Dadurch, dass sich z.B. mit einem Schreibvorgang in die Datei \texttt{/proc/sysrq-trigger} das Hostsystem neustarten lässt, haben die zugewiesenen Berechtigungen auch Einfluss auf die Verfügbarkeit.
+
+				% AppArmor profiles can be in one of two modes: enforcement and complain. Profiles loaded in enforcement mode will result in enforcement of the policy defined in the profile as well as reporting policy violation attempts (either via syslog or auditd). Profiles in complain mode will not enforce policy but instead report policy violation attempts.
+				% AppArmor differs from some other MAC systems on Linux: it is path-based, it allows mixing of enforcement and complain mode profiles, it uses include files to ease development, and it has a far lower barrier to entry than other popular MAC systems.
+				%		^		\cite{ https://wiki.ubuntu.com/AppArmor }
+
+				\emph{AppArmor} unterstützt drei Betriebsmodi, kombinierbar sind und folgende Zwecke erfüllen \cite[S.82]{SELinuxApparmor}:
+				\begin{itemize}
+					\item \emph{Audit-Modus}: Alle erlaubten Zugriffe werden protokolliert.
+					\item \emph{Complain-Modus}: Ein Lernmodus, bei dem das Verhalten einer Anwendungen beobachtet wird und aus diesem ein automatisch generiertes Sicherheitsprofil erstellt wird \cite{linuxSecOverview}. In diesem Modus werden Zugriffe, die gegen die Profilregeln verstoßen, nur aufgezeichnet und nicht unterbunden.
+					\item \emph{Audit-Modus}: Die Regeln eines Profils werden erzwungen. Verstöße werden protokolliert.
+				\end{itemize}
+
+				% und "sudo aa-status" beweist, dass docker-default im enforce-mode laeuft.
+				% TODO: Irgendwo war ein Bild hier von
+
+				Das Standardprofil \texttt{docker-default} \cite{githubAppArmorProfileContainer}, das im \texttt{Enforce-Modus} in nicht-priveligierten Containern zum Einsatz kommt \cite{docker110Security}, wird bei der Installation von Docker in die Datei \texttt{/etc/apparmor.d/docker} geschrieben. Administratoren können sich mit dem Befehl \texttt{sudo aa-status} vergewissern, ob das Standardprofil aktuell aktiv ist. Auch die zurückgegebenen Sicherheitskontexte in der ersten Spalte von \fig ... und \fig ... belegen die standardmäßige Verwendung von \texttt{docker-default}. Es existiert auch ein Profil für den Docker-Daemon \cite{githubAppArmorProfileDaemon}, allerdings muss dieses manuell aktiviert werden \cite{githubAppArmorDoc}.
+
+				Das \emph{AppArmor}-Profil für Container kann mit dem \texttt{run}-Parameter \texttt{--security-opt="apparmor:PROFILE"} manuell überschrieben werden, sofern dieses in \emph{AppArmor}, z.B. mit dem \acrshort{CLI}-Tool \texttt{apparmor\_parser} \cite{apparmorParser}, zuvor importiert wurde \cite{dockerRun}.
+
+				\texttt{docker-default} wurde erst kürzlich während der Erstellung dieser Arbeit aktualisiert. Aus der Commit-Nachricht geht allerdings nicht hervor, ob damit eine Sicherheitslücke geschlossen wurde oder die Änderungen im Zuge einer Funktionsänderung von Containern entstanden sind \cite{githubAppArmorProfileContainerFix}. Die aktuelle Implementierung des Profils, die lokal mit dem Konsolenbefehl \texttt{cat /etc/apparmor.d/docker} ausgegeben werden kann, sieht einige Einträge vor, die im Anhang \ref{apparmorProfile} zusammengefasst sind. Im Folgenden werden die einzelnen Einträge gruppiert in der Reihenfolge des Vorkommens analysiert.
+
+				\begin{lstlisting}
+					#include <tunables/global>
+				\end{lstlisting}
+				Diese Anweisung inkludiert einige Variablen für die weitere Verwendung. Darunter ist auch die Variable \texttt{@{PROC}} definiert, die in diesem Profil verwendet wird und das virtuelle Verzeichnis \texttt{/proc/} auflöst.
+
+				\begin{lstlisting}
+					profile docker-default flags=(attach_disconnected,mediate_deleted) {
+						...
+					}
+				\end{lstlisting}
+				Die erste Zeile markiert den Start des Profils \texttt{docker-default} mit zwei Flags. Das Flag \texttt{attach_disconnected} gibt an, dass Verzeichnisse außerhalb eines Namespace direkt in das Rootverzeichnis \texttt{/} eingefügt werden \cite{apparmorPolicyReference}. Die Angabe von \texttt{mediate_deleted} bewirkt eine versuchte Auflösung eines im Speicher gelöschten Objekts anhand dessen Pfad im Dateisystem \cite{apparmorFAQ}. Beide Flags wirken sich nicht direkt auf die Zugriffsverwaltung unter Docker aus und sind nur zur Vollständigkeit erwähnt.
+
+				\begin{lstlisting}
+					#include <abstractions/base>
+				\end{lstlisting}
+				Hiermit werden einige Zugriffsregeln eingebunden, die von fast allen Programm benötigt werden \cite[S.100]{SELinuxApparmor}.
+
+				\begin{lstlisting}
+					network,
+					capability,
+					file,
+					umount,
+				\end{lstlisting}
+				Diese Regeln erlauben die grundsätzliche Verwendung von Netzwerkfunktionen, Capabilities (siehe Kapitel \ref{capabilities}) und dem Dateisystem. Außerdem können Mountpoints mithilfe von \texttt{umount} ausgeworfen werden.
+
+				\begin{lstlisting}
+					deny @{PROC}/* w,
+				  deny @{PROC}/{[^1-9],[^1-9][^0-9],[^1-9s][^0-9y][^0-9s],[^1-9][^0-9][^0-9][^0-9]*}/** w,
+				  deny @{PROC}/sys/[^k]** w,
+				  deny @{PROC}/sys/kernel/{?,??,[^s][^h][^m]**} w,
+				\end{lstlisting}
+				Diese Anweisungen regeln den Schreibzugriff im Verzeichnis \texttt{/proc/}. Effektiv wird das Schreiberecht auf alle Dateien und Verzeichnisse untersagt, die nicht in \texttt{/proc/<number>/} und \texttt{/proc/sys/kernel/shm*} liegen. Erstere, numerischen Verzeichnisse geben Zugriff auf prozessspezifische Daten. Jede Nummer repräsentiert eine Process-ID der aktuell laufenden Prozesse. Dateien im Verzeichnis \texttt{/proc/sys/kernel/}, deren Name mit \texttt{shm} beginnt, beziehen sich auf geteilte Speicherbereiche, den \emph{Shared Memory} von Prozessen \cite{apparmorShm}.
+
+				\begin{lstlisting}
+					deny @{PROC}/sysrq-trigger rwklx,
+				  deny @{PROC}/mem rwklx,
+				  deny @{PROC}/kmem rwklx,
+				  deny @{PROC}/kcore rwklx,
+				\end{lstlisting}
+				Mittels dieser Direktiven wird Docker - in dieser Reihenfolge - das Lese-, Schreib-, Dateisperrungs-, Linkerzeugungs- und Ausführrecht für angegebene Dateien verwehrt. Mithilfe von \texttt{sysrq-trigger} können Aktionen programmatisch ausgeführt werden, die auch über die \emph{Magischen S-Abf-Tasten} bewirkt werden können. Darunter fallen u.a. kritische Befehle zur Terminierung von Prozessen oder dem Neustart des Betriebssystems \cite{apparmorMagicSysRQ}\cite{apparmorSysrqTrigger}.
+
+				Die Einträge \texttt{mem}, \texttt{kmem} und \texttt{kcore} beinhalten Speicherbereiche des Kernels.
+
+				\begin{lstlisting}
+					deny mount,
+				\end{lstlisting}
+				Diese Zeile verbietet das Einbinden jeglicher Mountpoints.
+
+				\begin{lstlisting}
+					deny /sys/[^f]*/** wklx,
+					deny /sys/f[^s]*/** wklx,
+					deny /sys/fs/[^c]*/** wklx,
+					deny /sys/fs/c[^g]*/** wklx,
+					deny /sys/fs/cg[^r]*/** wklx,
+					deny /sys/firmware/efi/efivars/** rwklx,
+					deny /sys/kernel/security/** rwklx,
+				\end{lstlisting}
+				Diese Liste untersagt, abgesehen von einem Lesezugriff, alle anderen Privilegien aus dem bereits geschildertem Rechteset für das Verzeichnis \texttt{/sys/}. Die Ausnahme bilden effektiv Dateien und Unterverzeichnisse in \texttt{/sys/fs/cgroups/}. Damit ist es Containern möglich \emph{Control Groups}-Informationen des Hostsystems zu beziehen.
+
+				Von Dateien und Unterordnern in \texttt{/sys/firmware/efi/efivars/} und \texttt{/sys/kernel/security} darf auch nicht gelesen werden. Erstes bietet Informationen über einige Bootvariablen, letzteres gewährt Einblick in die aktuelle Konfiguration von Sicherheitsmodulen wie \emph{AppArmor} und \emph{SELinux} \cite{apparmorEFI}\cite{apparmorSecurityFS}\cite{apparmorLWNSecurityFS}.
 
   		\subsubsection{\acrshort{SELinux}}
       	% Macht Sinn das erst am Ende zu machen, wenn noch Zeit ist. Weil SELinux im Detail mehr Exkurs wird.
 				\emph{SELinux} implementiert eine feingranulare MAC, die ursprünglich von der NSA entwickelt wurde. Es wird verwendet, um mithilfe von \emph{Type Enforcement} und \emph{Multi-Level Security} Anforderungen an die Integrität und Vertraulichkeit zu erfüllen \cite{redhatSec}. %\cite[S.201]{learningDocker}.
+				Der wesentliche Unterschied zu \emph{AppArmor} ist, dass die Zugriffsverwaltung über Label erfolgt, die Subjekten und Objekten in einem Sicherheitskontext angehängt sind.
 
 				% TODO: Bild aus http://www.admin-magazin.de/Online-Artikel/Mandatory-Access-Control-MAC-mit-SE-Linux hier rein. Bzw. gleiches Bild in \cite[S.63]{linuxMagazineSec}
 
-				Die Beschränkungen beruhen auf einer Sicherheits-Policy, die alle Aktionen zwischen Subjekten und Objekten regelt. Die Policy besteht aus Anweisungen, die konkrete Sicherheitslabel, wie sie im nächsten Abschnitt beschrieben sind, abbilden. Durch die in \fig \ref{fig:sec_SELinux} dargestellte strikte Trennung des Regelwerks und dessen Durchsetzung, lassen sich mit \emph{SELinux} hohe Sicherheitsanforderungen erfüllen. Durch detailreiche Anpassungsmöglichkeiten steht diese MAC unter dem Ruf besonders schwer konfigurierbar zu sein, obwohl GUI-Tools wie \emph{system-config-selinux} und die Bibliothek \emph{libsemanage} den Umgang mit \emph{SELinux}-Regelwerken in den letzten Jahren vereinfacht haben \cite[S.62,S.67]{linuxMagazineSec}.
+				Auch unter \emph{SELinux} beruhen die Regeln auf einem Profil, das in auch Policy genannt wird. Die Policy besteht aus Anweisungen, die konkrete Sicherheitslabel, wie sie im nächsten Abschnitt beschrieben sind, abbilden. Durch die in \fig \ref{fig:sec_SELinux} dargestellte strikte Trennung des Regelwerks und dessen Durchsetzung, lassen sich mit \emph{SELinux} hohe Sicherheitsanforderungen erfüllen. Durch detailreiche Anpassungsmöglichkeiten steht diese MAC unter dem Ruf besonders schwer konfigurierbar zu sein, obwohl GUI-Tools wie \emph{system-config-selinux} und die Bibliothek \emph{libsemanage} den Umgang mit \emph{SELinux}-Regelwerken in den letzten Jahren vereinfacht haben \cite[S.62,S.67]{linuxMagazineSec}.
 				% cite { https://www.linux.com/learn/docs/727873-overview-of-linux-kernel-security-features/ }
 				% cite { https://www.nsa.gov/research/_files/selinux/papers/selsymp2006.pdf }
 
@@ -508,75 +601,6 @@
 
 					% The Multi-Level Security technology refers to a security scheme that enforces the Bell-La Padula Mandatory Access Model. Under MLS, users and processes are called subjects, and files, devices, and other passive components of the system are called objects. Both subjects and objects are labeled with a security level, which entails a subject's clearance or an object's classification. Each security level is composed of a sensitivity and a category, for example, an internal release schedule is filed under the internal documents category with a confidential sensitivity.
 
-      \subsubsection{AppArmor}
-      	% Optional, da auf MAC alzu sehr eingehen nicht zu sehr im Scope sein sollte.
-				AppArmor implementiert als LSM auch eine MAC, wurde jedoch als leicht konfigurierbare Alternative zu \emph{SELinux} entwickelt. Es kommt in Linuxdistributionen wie \emph{Debian}, \emph{Ubuntu} und \emph{OpenSUSE} standardmäßig zum Einsatz \cite{apparmorUbuntu}.
-				% Einfach zu lernen
-				% Basiert auf \emph{AppArmor}-Profilen.
-				% Es gibt von \emph{Docker} erstelltes Profil, das speziell für den Einsatz von Docker mit \emph{AppArmor} gebaut wurde. \cite{ https://docs.docker.com/engine/articles/security/ }
-
-
-
-				Der fundamentale Unterschied zu \emph{SELinux} ist, dass Objekten keine Label zugeweisen werden, sondern grundsätzlich Pfadnamen und sieben Berechtigungstypen dazu dienen, ein Sicherheitsprofil zu definieren \cite{linuxSecOverview}\cite{apparmorQuickProfileLanguage}.
-
-				% AppArmor profiles can be in one of two modes: enforcement and complain. Profiles loaded in enforcement mode will result in enforcement of the policy defined in the profile as well as reporting policy violation attempts (either via syslog or auditd). Profiles in complain mode will not enforce policy but instead report policy violation attempts.
-				% AppArmor differs from some other MAC systems on Linux: it is path-based, it allows mixing of enforcement and complain mode profiles, it uses include files to ease development, and it has a far lower barrier to entry than other popular MAC systems.
-				%		^		\cite{ https://wiki.ubuntu.com/AppArmor }
-
-				\emph{AppArmor} unterstützt einen Lernmodus, indem das Verhalten einer Anwendungen beobachtet wird und daraus automatisch ein Sicherheitsprofil erstellt wird \cite{linuxSecOverview}.
-				% TODO: Complain mode, enforce mode etc. weiter ausfuehren. --> Liste der 3? verschiednen modi
-				% enforce modus:  actively block and audit in dmesg anything outside the bounds of the docker-default profile. \cite{githubAppArmorDoc}
-				% und "sudo aa-status" beweist, dass docker-default im enforce-mode laeuft.
-
-				\emph{AppArmor}-Profile basieren auf einfach lesbaren Textdateien. Durch eine Inkludieranweisung lassen sich mehrere Profile modular kombinieren \cite{apparmorQuickProfileLanguage}.
-				% Capabilities und Networking lassen sich beide kontrollieren mit AppArmor
-
-				Das Standardprofil \texttt{docker-default} \cite{githubAppArmorProfileContainer}, das im \texttt{enforce}-Modus unter \emph{.deb}-Releases in nicht-priveligierten Containern zum Einsatz kommt \cite{docker110Security}, wird bei der Installation von Docker in die Datei \texttt{/etc/apparmor.d/docker} geschrieben. Administratoren können sich mit dem Befehl \texttt{sudo aa-status} vergewissern, ob das Standardprofil aktuell aktiv ist. Auch die zurückgegebenen Sicherheitskontexte in der ersten Spalte von \fig ... und \fig ... belegen die standardmäßige Verwendung von \texttt{docker-default}.
-
-				Das \emph{AppArmor}-Profil kann mit dem \texttt{run}-Parameter \texttt{--security-opt="apparmor:PROFILE"} manuell überschrieben werden, sofern dieses in \emph{AppArmor}, z.B. mit dem \acrshort{CLI}-Tool \texttt{apparmor\_parser} \cite{apparmorParser}, zuvor importiert wurde \cite{dockerRun}.
-
-				Das Profil \texttt{docker-default} wurde erst kürzlich während der Erstellung dieser Arbeit aktualisiert. Aus der Commit-Nachricht geht allerdings nicht hervor, ob damit eine Sicherheitslücke geschlossen wurde oder die Änderungen im Zuge einer Funktionsänderung von Containern entstanden sind \cite{githubAppArmorProfileContainerFix}. Die aktuelle Implementierung des Profils, die mit dem Konsolenbefehl \texttt{cat /etc/apparmor.d/docker} ausgegeben werden kann, sieht folgende \emph{AppArmor}-Regeln vor:
-
-				\begin{lstlisting}
-					#include <tunables/global>
-
-					profile docker-default flags=(attach_disconnected,mediate_deleted) {
-					  #include <abstractions/base>
-
-					  network,
-					  capability,
-					  file,
-					  umount,
-
-					  deny @{PROC}/{*,**^[0-9*],sys/kernel/shm*} wkx,
-
-						deny @{PROC}/* w,
-						deny @{PROC}/{[^1-9],[^1-9][^0-9],[^1-9s][^0-9y][^0-9s],[^1-9][^0-9][^0-9][^0-9]*}/** w,
-						deny @{PROC}/sys/[^k]** w,
-						deny @{PROC}/sys/kernel/{?,??,[^s][^h][^m]**} w,
-
-					  deny @{PROC}/sysrq-trigger rwklx,
-					  deny @{PROC}/mem rwklx,
-					  deny @{PROC}/kmem rwklx,
-					  deny @{PROC}/kcore rwklx,
-
-					  deny mount,
-
-					  deny /sys/[^f]*/** wklx,
-					  deny /sys/f[^s]*/** wklx,
-					  deny /sys/fs/[^c]*/** wklx,
-					  deny /sys/fs/c[^g]*/** wklx,
-					  deny /sys/fs/cg[^r]*/** wklx,
-					  deny /sys/firmware/efi/efivars/** rwklx,
-					  deny /sys/kernel/security/** rwklx,
-					}
-				\end{lstlisting}
-				\emph{Evtl. in Anhang damit}
-				% TODO: Erklaerungen teilweise in https://github.com/docker/docker/commit/2b4f64e59018c21aacbf311d5c774dd5521b5352
-				% TODO: Inhalt der Datei in den Anhang oder als Codeblock an diese Stelle? 1. cat /etc/apparmor.d/docker ..... 2. \cite{githubAppArmorDoc}
-				% TODO: abstractions sind erklaert in https://books.google.de/books?id=1hVmn4RnKH0C&pg=PA97&lpg=PA97&dq=apparmor+abstractions+base&source=bl&ots=O7scPJ76X8&sig=FNYnyDrkfj3T-uOL1CGZbpcc_5s&hl=de&sa=X&ved=0ahUKEwjU9NPn5OrKAhWEFSwKHZAsDOYQ6AEIYDAI#v=onepage&q=apparmor%20abstractions%20base&f=false
-
-				Es existiert auch ein Profil für den Docker-Daemon \cite{githubAppArmorProfileDaemon}, allerdings muss dieses manuell aktiviert werden \cite{githubAppArmorDoc}.
 
     \subsection{Seccomp}
 		\label{seccomp}
