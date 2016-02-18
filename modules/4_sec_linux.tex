@@ -326,6 +326,7 @@
 
 
     \subsection{\texttt{capabilities}}
+		\label{capabilities}
 			\texttt{Capabilities} ist ein Feature, dass seit Kernelversion 2.2.11 in Linux integriert ist, um den traditionellen DAC-Mechanismus zu verfeinern \cite[S.42]{SELinuxApparmor}. Es existieren verschiedene Definitionen des Begriffs \glqq{}Capability\grqq{}. In dieser Arbeit sind unter diesem Begriff die POSIX-Capabilities gemeint, die seit Version 2.2 des Kernels in Linux fest integriert sind.
 
 			Als natives Feature werden Capabilities nicht nur von Docker-Prozessen direkt verwendet, sondern auch die beiden MACs \emph{AppArmor} und \emph{SELinux} machen indirekt Gebrauch von ihnen.
@@ -443,7 +444,7 @@
 						...
 					}
 				\end{lstlisting}
-				Die erste Zeile markiert den Start des Profils \texttt{docker-default} mit zwei Flags. Das Flag \texttt{attach_disconnected} gibt an, dass Verzeichnisse außerhalb eines Namespace direkt in das Rootverzeichnis \texttt{/} eingefügt werden \cite{apparmorPolicyReference}. Die Angabe von \texttt{mediate_deleted} bewirkt eine versuchte Auflösung eines im Speicher gelöschten Objekts anhand dessen Pfad im Dateisystem \cite{apparmorFAQ}. Beide Flags wirken sich nicht direkt auf die Zugriffsverwaltung unter Docker aus und sind nur zur Vollständigkeit erwähnt.
+				Die erste Zeile markiert den Start des Profils \texttt{docker-default} mit zwei Flags. Das Flag \texttt{attach\_disconnected} gibt an, dass Verzeichnisse außerhalb eines Namespace direkt in das Rootverzeichnis \texttt{/} eingefügt werden \cite{apparmorPolicyReference}. Die Angabe von \texttt{mediate\_deleted} bewirkt eine versuchte Auflösung eines im Speicher gelöschten Objekts anhand dessen Pfad im Dateisystem \cite{apparmorFAQ}. Beide Flags wirken sich nicht direkt auf die Zugriffsverwaltung unter Docker aus und sind nur zur Vollständigkeit erwähnt.
 
 				\begin{lstlisting}
 					#include <abstractions/base>
