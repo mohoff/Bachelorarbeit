@@ -51,6 +51,8 @@
 
 	\section{Isolierung durch \texttt{namespaces}}
   \label{secIsolierung}
+		Namespaces stellen den grundlegenden Mechanismus dar, um eine Isolation für Container zu ermöglichen.
+
 		Wenn unter Linux ein neuer Prozess gestartet werden soll, wird über \emph{System Calls} dem Kernel mitgeteilt, einen neuen \emph{namespace} bereitzustellen. Je nach Anforderung gibt es verschiedene \emph{namespaces}, z.B. ein \emph{network namespace}, der dem neuen Prozess ein Netzwerkinterface zuweist. Um Container als isolierte Arbeitsbereiche auf einem Host zu erstellen, werden die \emph{namespaces} des Kernels verwendet. Da Container selbst eine eigene komplette Laufzeitumgebung darstellen sollen, müssen Bereiche des Hosts durch \emph{namespaces} abgedeckt sein, sodass neben dem Netzwerk auch z.B. ein beschränkter Zugriff auf den Arbeitsspeicher und die \acrshort{CPU} gewährleistet ist \cite[S.3]{dockerIntroIEEE}.
 
 		Technisch betrachtet beinhaltet ein \emph{namespace} eine Lookup-Tabelle, die global verfügbare Ressourcen abstrahiert und dem \emph{namespace} bereitstellt. Änderungen globaler Ressourcen sind sichtbar für Prozesse im relevanten \emph{namespace}, jedoch unsichtbar für solche außerhalb \cite[S.1+2]{IBMcheckpointRestart}\cite{namespaces}. Dadurch können \emph{namespaces} als Lösungsansatz des Sicherheitsziels Vertraulichkeit betrachtet werden. Sie sind damit der wesentliche Baustein, um eine Containerisolierung zu realisieren.

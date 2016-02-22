@@ -18,6 +18,19 @@
 
 \chapter{Security im Docker-Ökosystem}
 \label{secEcosystem}
+  In diesem Kapitel werden einige Anwendungsaspekte von Docker unter einem Sicherheitskontext beleuchtet. Maßgeblich sollen weiterhin die drei definierten Sicherheitsziele zur Bewertung von Sicherheitseigenschaften dienen. Während Kapitel \ref{secLinux} native Sicherheitskomponenten von Docker und Linux untersucht hat, wird in den folgenden Abschnitten das Docker-Ökosystem in Betracht gezogen. Unter einem Ökosystem versteht sich hierbei die Gesamtheit aller Komponenten und Interaktionsmöglichkeiten, die im Zusammenhang mit Docker existieren. Der Fokus der Untersuchung liegt auf Anwendungsebene. Das bedeutet, dass hauptsächlich Methoden vorgestellt werden, die Docker Entwicklern und Administratoren zur Verfügung stellt, um die Arbeit mit den Docker-Komponenten aus Kapitel \ref{dockerIntro} sicher zu gestalten. Außerdem wird vorgestellt, wie sich die sicherheitsrelevanten Komponenten und Operationen in den letzten Monaten aus der Sicherheitsperspektive geändert haben.
+
+  Die Untersuchung sieht folgende Themen vor:
+
+  \begin{itemize}
+    \item Verbindung zwischen Docker-Client und Docker-Daemon
+    \item Verwaltung von Images
+    \item Betrieb von Containern
+    \item Verwendung von Plugins
+    \item Verwendung von 3rd-Party-Tools, wie z.B. Kubernetes
+  \end{itemize}
+
+
   % Je nach Vorankommen, können hier ganze Sektions weggelassen werden imo.
   % Tendenziell mehr die Themen zuerst, die direkt mit Security zu tun haben.
   % Auch Fokus auf die neusten Entwicklungen (2015 und 2016) in Sachen Sicherheit und neue Docker-Features
@@ -30,13 +43,38 @@
   % Support for TUF Delegations: Docker now has support for read/write TUF delegations, and as soon as notary 0.2 comes out, you will be able to use delegations to provide signing capabilities to a team of developers with no shared keys.
   %   ^   \cite{https://news.ycombinator.com/item?id=11037543}
 
+  \section{Image Verifikation}
+    Die Verifikation von Daten hat zum Ziel die Integrität dieser zu bestätigen. Die Integrität von Images spielt beim Herunterladen von Images von entfernten Registries eine wichtige Rolle.
+
+    Der Sicherheitsforscher Jonathan Rudenberg hat im Dezember 2014 drei Sicherheitsrisiken im Zusammenhang mit Dockers Image-Verifikation zu dieser Zeit aufgedeckt \cite{https://github.com/docker/docker/issues/9719}\cite{https://titanous.com/posts/docker-insecurity}. U.a. ist es durch Verwendung des \texttt{docker pull}-Befehls möglich manipulierte Images zu beziehen, die bereits beim Entpacken auf dem lokalen System beliebige Dateien im Hostsystem überschreiben können \cite{ https://securityblog.redhat.com/2014/12/18/before-you-initiate-a-docker-pull/ }. Sowohl die Integrität von Daten als auch die Verfügbarkeit der Hosts sind dadurch direkt gefährdet.
+
+    Im August 2015 wurde mit der Docker-Version 1.8 ein neues Paket- und Verteilungsmodell umgesetzt, das diese Schwächen behebt \cite{ https://blog.docker.com/2015/08/content-trust-docker-1-8/ }. Unter dem Featurenamen \emph{Docker Content Trust} integriert Docker das Model \emph{The Update Framework} (TUF) \cite{ https://theupdateframework.github.io/ }, welches Gefahrenquellen wie manipulierte Images, Wiederholungs- und MITM-Angriffe ausschließt. Die Sicherheit von TUF basiert auf der Signierung von Images, mit der anhand mehrerer Schlüsselpaare die Integrität sowie Aktualität von Images sichergestellt wird.
+
+    \emph{Docker Content Trust} wird in Docker als sogenannter Notary integriert.
+
+    https://lwn.net/Articles/628343/
+    https://github.com/docker/docker/issues/9719
+    https://securityblog.redhat.com/2014/12/18/before-you-initiate-a-docker-pull/
+    https://titanous.com/posts/docker-insecurity
+
+    https://github.com/docker/notary
+    https://blog.docker.com/2015/08/content-trust-docker-1-8/
+    https://blog.docker.com/2015/08/docker-1-8-content-trust-toolbox-registry-orchestration/
+
   \section{Docker Plugins}
     % Seit Version 1.10
     % Authorization Plugins: you can now write plugins for allowing or denying API requests to the daemon. For example, you could block anyone from using --privileged.
     %   ^   \cite{https://news.ycombinator.com/item?id=11037543} und http://blog.docker.com/2016/02/docker-engine-1-10-security/
 
-  \section{Security Policies}
+  \section{Security Policies und Open Source}
     % Siehe \cite[S.5]{dockerSecIntro} rechts oben
+
+    % Open-Source Charakter von Docker und Security-Disclose...
+    %   ^   \cite[S.5]{dockerSecIntro}
+
+    % https://benchmarks.cisecurity.org/tools2/docker/CIS_Docker_1.6_Benchmark_v1.0.0.pdf
+
+    % https://github.com/docker/docker-bench-security
 
   \section{Lifecycle- und State-Management von Containern}
     % Container Lifecycle - Managed using a daemon and command line tool
@@ -54,7 +92,17 @@
     % Seit Version 1.10
     %   ^   \cite{https://news.ycombinator.com/item?id=11037543}
 
-		\subsection{neues Signierungs-Feature}
+    % Docker is agnostic to which remote registry is in use, allowing companies to run any combination of homegrown registries, public cloud-based registries or Docker Hub.
+    %   ^   \cite[S.5]{dockerSecIntro}
+
+    % Secure communications is also vital to building and shipping applications, as container images are in constant change and need to be pushed and pulled through your infrastructure. All communications with the registries use TLS, to ensure both confidentiality and content integrity. By default, the use of certificates trusted by the public PKI infrastructure is mandatory, but Docker allows the addition of a company internal CA root certificate to the truststore.
+    %   ^   \cite[S.5]{dockerSecIntro}
+
+    % local registry mirror
+    %   ^   \cite{https://docs.docker.com/v1.6/articles/registry_mirror/}
+
+
+    \subsection{neues Signierungs-Feature}
 	\section{Docker Daemon}
 		\subsection{\acrshort{REST}-\acrshort{API}}
 		\subsection{Support von Zertifikaten}
