@@ -305,6 +305,17 @@
           \label{fig:intro_dockerImages}
       \end{figure}
 
+			% TODO: Ist Quelle https://docs.docker.com/engine/reference/commandline/images/ hier mit drin - eingearbeitet?
+
+			% Seit registry api version 2 sind images content addressable
+			%	Über kryptographisch sichere Hash ...sha256(bytes)
+			% einfach und unabhängig verifizierbar
+			% leverages merkle DAG ... damit naeher an git
+			% weitere Vorteile auf s.21
+			% unterschiede zu v1 auf s.23
+			% seit docker 1.6 ist registrz v2 im einsatz
+			%		^ 	\cite[S.15+16]{http://www.slideshare.net/Docker/docker-48351569}
+			%
 
     \subsection{Container}
 		\label{dockerContainer}
@@ -329,10 +340,12 @@
 
 		\subsection{Registries}
 		\label{dockerRegistries}
-      Eine Registry ist ein gehosteter Service, der als Speicher- und Verteilerplattform für Images dient. Mit Tags versehen werden die Images in Repositories gegliedert, die wiederum in der Registry liegen \cite{dockerRegistry}. Ein Repository besteht aus mindestens einem Image.
+      Eine Registry ist eine Webanwendung, der als Speicher- und Verteilerplattform für Images dient. Über eine wohldefinierte API, die Registry-API, sind Docker-Komponenten in der Lage mit Registries zu kommunizieren. Images sind mit Tags versehen in Repositories gegliedert, die wiederum in der Registry liegen \cite{dockerRegistry}. Ein Repository besteht aus mindestens einem Image.
 			% TODO: visit source, and extend registry info here
+			% TODO: was zu registry api version 1 und 2, 2.1, 2.2, 2.3 schreiben und bisschen vergleichen
+			%		^		\cite{http://www.slideshare.net/Docker/docker-48351569 ... slide 11}\cite{https://docs.docker.com/registry/spec/api/}
 
-      \emph{Docker} stellt eine Vielzahl an Images öffentlich und frei verwendbar in einer eigenen zentralen Registry, dem Docker Hub, zur Verfügung \cite[S.11]{dockerBook}\cite[S.3]{dockerSec1}\cite{dockerRegistry}. Für dieses System können Personen und Organisationen Accounts anlegen und eigenständig Images in öffentliche und private Repositories hochladen. Das Docker-Hub bietet bereits mehr als 150.000 Repositories, die etwa 240.000 Nutzer zusammenstellten und hochluden, zur freien Verwendung an (Stand Juni 2015) \cite[S.16]{slideshareDockercon15}. Wie in \fig \ref{fig:intro_registry} zu sehen ist, werden auch Nutzungsstatistiken pro Image gesammelt und angezeigt.
+      \emph{Docker} stellt eine Vielzahl an Images öffentlich und frei verwendbar in einem Service, dem Docker Hub, zur Verfügung \cite[S.11]{dockerBook}\cite[S.3]{dockerSec1}\cite{dockerRegistry}. Für dieses System können Personen und Organisationen Accounts anlegen und eigenständig Images in öffentliche und private Repositories hochladen. Das Docker-Hub bietet bereits mehr als 150.000 Repositories, die etwa 240.000 Nutzer zusammenstellten und hochluden, zur freien Verwendung an (Stand Juni 2015) \cite[S.16]{slideshareDockercon15}. Wie in \fig \ref{fig:intro_registry} zu sehen ist, werden auch Nutzungsstatistiken pro Image gesammelt und angezeigt. Durch diese erweiternden Features ist das Docker Hub per Definition keine Registry, sondern enthält eine Registry als Teil des Angebotspektrums. % \cite[S.8]{http://www.slideshare.net/Docker/docker-48351569}
 
       \begin{figure}[h]
           \centering
@@ -350,9 +363,5 @@
       % Weitere beispiele aus dockerBook: Nginx web server, MySQL Datenbank
 
       % Es gibt offizielle Images, die von trusted parties verwaltet werden
-
-      Docker bietet außerdem an, private Registries zu erstellen. Diese können dann, z.B. gesichert von einer unternehmenseigenen Firewall, betrieben werden. Neben der Vertraulichkeit, bieten private Registries den Vorteil, dass sich die Speicherung und Verteilung von Images an den internen Softwareentwicklungsprozess anpassen lassen. Registries selbst können als Container betrieben werden \cite{dockerRegistry}.
-
-      Der Zugriff auf eine Registry kann über \acrshort{TLS} und der Verwendung eines Zertifikats, sowie \emph{basic authentication} abgesichert werden \cite{dockerRegistry}.
 
 \end{document}

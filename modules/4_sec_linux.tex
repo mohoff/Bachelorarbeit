@@ -247,7 +247,6 @@
   \label{secResLimit}
 		\acrshort{DoS}-Attacken mit der Absicht das Sicherheitsziel der Verfügbarkeit zu verletzen, gehören in \gls{MultiTenantService}-Systemen zu einem gängigen Angriffsmuster \cite[S.5]{dockerSec1}. Um die Verfügbarkeit von Containern sicherzustellen, bietet der Linux-Kernel sogenannte \emph{\acrlong{cgroups}} (kurz \texttt{\acrshort{cgroups}}) an, die auch von Docker genutzte Möglichkeiten zum Ressourcenmanagement bereitstellen.
 
-
 		% \emph{control groups}, oder auch verkürzt \emph{cgroups} genannt, ist hierbei das Schlüsselfeature des Linuxkernels, um dieser Art von Angriff entgegenzuwirken. Sie stellen sicher, dass jeder Container nur begrenzt Hostressourcen beansprucht. Mit Docker lassen sich Limits und Bedingungen individuell pro Container anpassen, z.B. an einen bestimmten Container gerichtetes Arbeitsspeicherlimit in Bytes, das ihm maximal im Betrieb zur Verfügung steht \cite[S.4]{dockerSecIntro}.
 		% --> Quelle aus docker docs findbar?
 
@@ -260,11 +259,11 @@
 
 		Die Nachteile von \texttt{\acrshort{rlimits}} wurden mit der Implementierung von \texttt{\acrshort{cgroups}} für den Linux-Kernel behoben. Mit diesem relativ neuen Mechanismus werden Prozesse in hierarchischen Gruppen angeordnet, die individuell verwaltet werden und deren Attribute vererbt werden können. Neben vielseitiger und feingranularer Funktionen zum Management von z.B. \acrshort{CPU}- und Speicherressourcen, können unter \texttt{\acrshort{cgroups}} komplexe Verfahren implementiert werden, die zur Korrektur von limitüberschreitender Prozesse dienen \cite{cgroupsRedhat}. Die Implementierung von \texttt{\acrshort{cgroups}} wurde ab 2012 weiter verbessert, sodass eine Update unter dem Namen \emph{Unified Control Group Hierarchy} seit 2014 in den Linux-Kernel integriert ist \cite{cgroupsFixing}\cite{cgroupsUniHierarchy}. Von Docker wird die neue \emph{Unified Hierarchy} noch nicht verwendet \cite{ https://github.com/docker/docker/issues/16238 }
 
-		Wichtig zu erwähnen ist, dass die Implementierung von \texttt{\acrshort{cgroups}} verglichen mit der von \texttt{\acrshort{rlimits}} angeblich noch nicht vollständig ist. Das Feature Dateisysteme als Ressourcen mit \texttt{\acrshort{cgroups}} zu steuern, fehlt nach Angaben von \cite[S.19]{dockerSec2}. Auch im Quellcode von \emph{runC} ist eine Dateisystem-Interface als \glqq{}nicht unterstützt\grqq{} gekennzeichnet und wird demzufolge auch nicht von Docker genutzt. \cite{githubRunCCgroups}. Diskussionen im \emph{GitHub}-Repository von Docker verweisen in Bezug zu diesem Feature auf Abhängigkeiten zur Art des Dateisystems. Offenbar lassen sich sogenannte Dateisystem-Quotas nur mit \emph{Device Mapper} und \emph{Brtfs} softwaretechnisch lösen, \emph{AuFS} jedoch ermöglicht das nur indirekt über die Zuweisung von Festplattenpartitionen fester Größe. Diese Gegebenheit lässt vermuten, dass eine universelle Lösung aktuell an der Breite unterstützter Dateisysteme scheitert \cite{githubDockerIssueFsQuota}. Die neusten Entwicklungen sehen jedoch eine Quota-Implementierung vor \cite{githubDockerPullBrtfs}.
+		Wichtig zu erwähnen ist, dass die Implementierung von \texttt{\acrshort{cgroups}}, verglichen mit der von \texttt{\acrshort{rlimits}}, angeblich noch nicht vollständig ist. Das Feature Dateisysteme als Ressourcen mit \texttt{\acrshort{cgroups}} zu steuern, fehlt nach Angaben von \cite[S.19]{dockerSec2}. Auch im Quellcode von \emph{runC} ist eine Dateisystem-Interface als \glqq{}nicht unterstützt\grqq{} gekennzeichnet und wird demzufolge auch nicht von Docker genutzt. \cite{githubRunCCgroups}. Diskussionen im \emph{GitHub}-Repository von Docker verweisen in Bezug zu diesem Feature auf Abhängigkeiten zur Art des Dateisystems. Offenbar lassen sich sogenannte Dateisystem-Quotas nur mit \emph{Device Mapper} und \emph{Brtfs} softwaretechnisch lösen, \emph{AuFS} jedoch ermöglicht das nur indirekt über die Zuweisung von Festplattenpartitionen fester Größe. Diese Gegebenheit lässt vermuten, dass eine universelle Lösung aktuell an der Breite unterstützter Dateisysteme scheitert \cite{githubDockerIssueFsQuota}. Die neusten Entwicklungen sehen jedoch eine Quota-Implementierung vor \cite{githubDockerPullBrtfs}.
 
 		Dennoch ist diese Erweiterung im Sinne einer einheitlichen Verwaltung von Ressourcen mit \texttt{\acrshort{cgroups}} vorgesehen \cite[S.16+19]{dockerSec2}.
 
-		Alle gängigen Linux-basierten Containerlösungen, darunter auch Docker, nutzen aktuell \texttt{\acrshort{cgroups}}, um Ressourcen für Container zu verwalten \cite[S.16]{dockerSec2}. Der Einsatz von \texttt{\acrshort{cgroups}} unter Docker umfasst, wie im Quellcode von \emph{runC} zu sehen ist, die Kontrolle über \acrshort{CPU}, Arbeitsspeicher, Geräte (\emph{Devices Nodes}, Netzwerkinterfaces und \acrshort{I/O}-Operationen auf Speichermedien wie \acrshort{HDD}, \acrshort{SSD} und \acrshort{USB}-Speicher \cite{cgroupsRedhat}\cite{githubRunCCgroups}.
+		Alle gängigen Linux-basierten Containerlösungen, darunter auch Docker, nutzen aktuell \texttt{\acrshort{cgroups}}, um Ressourcen für Container zu verwalten \cite[S.16]{dockerSec2}. Der Einsatz von \texttt{\acrshort{cgroups}} unter Docker umfasst, wie im Quellcode von \emph{runC} zu sehen ist, die Kontrolle über \acrshort{CPU}, Arbeitsspeicher, Geräte (\emph{Devices Nodes}, Netzwerkinterfaces und \acrshort{I/O}-Operationen auf Speichermedien wie \acrshort{HDD}, \acrshort{SSD} und \acrshort{USB}-Speicher \cite{cgroupsRedhat}\cite{githubRunCCgroups}. Die Verwaltung von Letzteren wurden mit dem neusten Docker-Release, Version 1.10, erweitert \cite{https://blog.docker.com/2016/02/docker-1-10/}.
 
 		Über die Kommandozeile lässt sich der \texttt{run}-Befehl, der ausgeführt wird, um einen Container zu starten, mit Angaben zur Ressourcennutzung parametrisieren. Z.b. bewirkt die Hintereinanderausführung folgender Befehle, dass dem zuletzt gestarteten Container doppelt so viel CPU-Leistung zur Verfügung gestellt wird, wie dem ersten Container \cite{dockerRun}.
 
@@ -290,7 +289,9 @@
 
     % Sicherheitsziel: Availability, Bezug auf Forschungsfrage
 
-
+		% TODO: neu mit Version 1.11: PID cgroups
+		% https://blog.docker.com/2016/02/docker-online-meetup-33-security/	..... mit github issue link
+		% verhindert fork bombs
 
 		% "Device Whitelist Controller" feature von cgroups limitiert Set an Devices, die Docker-Container nutzen dürfen.
 		%  ^ \cite[S.4, rechts oben]{dockerSec1}
@@ -609,6 +610,9 @@
 		\label{seccomp}
 			% TODO: https://lwn.net/Articles/443099/ und https://lwn.net/Articles/441232/
 			% TODO: und vllt https://lwn.net/Articles/443110/
+
+			% TODO: https://blog.docker.com/2016/02/docker-online-meetup-33-security/ ... slide 12+13 (s.13 mit links) ... die acions aufzaehlen und welche von doker im standardprofil verwendet werden.
+			% da auch drin: CVE prevented
 
 			\emph{Seccomp} steht für \emph{Secure Computing Mode} und setzt einen von \emph{Google} implementierten Mechanismus um, der den Zugriff von Prozessen auf \emph{System Calls} einschränkt. Die Idee von \emph{Seccomp} ist es, die Angriffsfläche des Kernels zu minimieren, indem bestimmte \emph{System Calls} für Useranwendungen gesperrt werden. Die Gefahr, dass fehlerbehaftete oder unsichere \emph{System Calls} genutzt werden, die die Anwendung zum fehlerfreien Betrieb nicht benötigt, wird dadurch reduziert \cite{linuxSecOverview}\cite{seccompGitDesc}\cite{secInFuture}.
 
