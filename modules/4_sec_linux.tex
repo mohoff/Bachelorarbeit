@@ -195,7 +195,7 @@
 
 			Standardmäßig wird von Containern eine \emph{Virtual Ethernet Bridge} namens \texttt{docker0} genutzt, um mit dem Host oder anderen Containern zu kommunizieren. Neu gestartete Container werden dieser Bridge hinzugefügt, indem deren Netzwerkinterface \texttt{eth0} mit der Bridge verbunden wird. Aus Sicht des Hosts ist das Interface \texttt{eth0} ein virtuelles \texttt{veth}-Interface \cite[S.3]{virtVSContainer}.
 
-			Die Bridge leitet ohne Filter alle eingehenden Pakete weiter, welchen Umstand dieses Verbindungsdesign anfällig gegenüber \acrshort{ARP}-Spoofing und \acrshort{MAC2}-Flooding macht. Diesem Nachteil kann Abhilfe geschafft werden, indem manuelle Filtermethoden mittels beispielsweise \emph{ebtables} in die Bridge integriert werden, oder ein anderes Verbindungsdesign auf basis virtueller Netzwerke gewählt wird.
+			Die Bridge leitet ohne Filter alle eingehenden Pakete weiter, welchen Umstand dieses Verbindungsdesign anfällig gegenüber \acrshort{ARP}-Spoofing und \acrshort{MAC-NET}-Flooding macht. Diesem Nachteil kann Abhilfe geschafft werden, indem manuelle Filtermethoden mittels beispielsweise \emph{ebtables} in die Bridge integriert werden, oder ein anderes Verbindungsdesign auf basis virtueller Netzwerke gewählt wird.
 			% TODO: Im Glossar die beiden Angriffe erklären?
 			% TODO: ebtables besser erklaeren falls noch relevant http://ebtables.netfilter.org/
 
@@ -363,7 +363,7 @@
 			% CAP_ADMIN_SYS ist gefaehrlich, obwohl es zum funktionieren von systemd benoetigt wird
 			%		^ 		\cite{https://github.com/docker/docker/pull/5773} und \cite{https://github.com/docker/docker/issues/3629}
 
-    \subsection{Mandatory Access Control (\acrshort{MAC1}) und Linux Security Modules (\acrshort{LSM}s)}
+    \subsection{Mandatory Access Control (\acrshort{MAC-SEC}) und Linux Security Modules (\acrshort{LSM}s)}
 			Wie bereits erwähnt, erfüllt der DAC-Mechanismus nicht moderne Anforderungen an die Sicherheit in Containersystemen, da er z.B. von Superuser-Tools umgangen werden kann. Aus diesem Grund integriert Docker die beiden MAC-Mechanismen \emph{Security-Enhanced Linux} (\emph{SELinux}) und \emph{AppArmor}, die anhand eines identitätsunabhängigen Regelwerks zusätzliche Sicherheit bieten. Unter Einbeziehung solcher Kontrollmodule kann nun z.B. auch der Zugriff eines Angreifers eingeschränkt werden, selbst wenn dieser über Sicherheitslücken in den Besitz von Root-Rechten gelangt.
 
 			Die Integration der beiden MACs geschieht modular über das \emph{Linux Security Modules}-Framework, auch abgekürzt \acrshort{LSM} genannt, das inzwischen standardmäßig in den Kernel eingebaut ist. Module, die in das Framework eingebettet werden, sind kombinierbar. Sicherheitsmodelle können so konsekutiv umgesetzt werden, um die bereits angesprochene \emph{Defense In Depth} umzusetzen \cite[S.3]{LSMFramework}.
