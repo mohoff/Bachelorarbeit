@@ -43,23 +43,23 @@
   %   ^   \cite{https://news.ycombinator.com/item?id=11037543}
 
   \section{Private Registries}
-    Docker bietet neben der Nutzung des öffentlichen Docker Hubs an, private Registries zu erstellen. Diese können dann, z.B. von einer Firewall gesichert oder von einem Load-Balancer unterstützt, in der firmeneignen Infrastruktur oder in Rechenzentren externer Public-Cloud-Anbieter betrieben werden. Für Cloud-Anbieter stellt Docker einige Speichertreiber zur Verfügung, z.B. für Amazons S3 \cite{https://docs.docker.com/registry/storage-drivers/s3/}, Microsofts Azure \cite{https://docs.docker.com/registry/storage-drivers/azure/}, und OpenStacks Swift \cite{https://docs.docker.com/registry/storage-drivers/swift/}. Bei Bedarf können eigene Speichertreiber mit der \emph{Storage-API} implementiert werden \cite{https://docs.docker.com/registry/storagedrivers/}.
+    Docker bietet neben der Nutzung des öffentlichen Docker Hubs an, private Registries zu erstellen. Diese können dann, z.B. von einer Firewall gesichert oder von einem Load-Balancer unterstützt, in der firmeneignen Infrastruktur oder in Rechenzentren externer Public-Cloud-Anbieter betrieben werden. Für Cloud-Anbieter stellt Docker einige Speichertreiber zur Verfügung, z.B. für Amazons S3 \cite{dockerStorageDriverS3}, Microsofts Azure \cite{dockerStorageDriverAzure}, und OpenStacks Swift \cite{dockerStorageDriverSwift}. Bei Bedarf können eigene Speichertreiber mit der \emph{Storage-API} implementiert werden \cite{dockerStorageDriver}.
     % \cite[S.5]{dockerSecIntro}
-    Neben der Vertraulichkeit von Images, bieten private Registries den Vorteil, dass sich die Speicherung und Verteilung von Images an den internen Softwareentwicklungsprozess anpassen lassen. Registries selbst können als Container betrieben werden \cite{dockerRegistry}.
-    % TODO: Begriffe wie CI/CD erwaehnen anstelle von "Softwareentwicklungsprozess"? https://docs.docker.com/registry/introduction/
+    Neben der Vertraulichkeit von Images, bieten private Registries den Vorteil, dass sich die Speicherung und Verteilung von Images an den internen und häufig durch \emph{Continuous Integration} und \emph{Continuous Delivery} automatisierten Softwareentwicklungsprozess anpassen lassen. Registries selbst können als Container betrieben werden \cite{dockerRegistry}.
+    % TODO: CI/CD im Glossar definieren
 
-    Außerdem lässt sich das öffentliche Docker Hub in einer privaten Registry spiegeln. Bei dem Herunterladen von Images aus der öffentlichen Registry, kann somit auf eine externe Verbindung verzichtet werden, sofern die Spiegelung in Form einer privaten Registry im eigenen Netz existiert. Docker kann mit der Option \texttt{--registry-mirror=ADDRESS} angewiesen werden, anstelle des Docker Hubs eine Spiegelung zu verwenden \cite{https://docs.docker.com/registry/mirror/}.
+    Außerdem lässt sich das öffentliche Docker Hub in einer privaten Registry spiegeln. Bei dem Herunterladen von Images aus der öffentlichen Registry, kann somit auf eine externe Verbindung verzichtet werden, sofern die Spiegelung in Form einer privaten Registry im eigenen Netz existiert. Docker kann mit der Option \texttt{--registry-mirror=ADDRESS} angewiesen werden, anstelle des Docker Hubs eine Spiegelung zu verwenden \cite{dockerRegistryMirror}.
 
     Der Zugriff auf eine Registry kann z.B. über \acrshort{HTTPS} und der Verwendung von Zertifikaten abgesichert werden \cite{dockerRegistry} (vgl. Kapitel \ref{conClientServer}).
 
   \section{Image Verifikation}
     Die Verifikation von Daten hat zum Ziel die Integrität dieser zu bestätigen. Die Integrität von Images spielt beim Herunterladen von Images von entfernten Registries eine wichtige Rolle.
 
-    Der Sicherheitsforscher Jonathan Rudenberg hat im Dezember 2014 drei Sicherheitsrisiken im Zusammenhang mit Dockers Image-Verifikation zu dieser Zeit aufgedeckt \cite{https://github.com/docker/docker/issues/9719}\cite{https://titanous.com/posts/docker-insecurity}. U.a. ist es durch Verwendung des \texttt{docker pull}-Befehls möglich manipulierte Images zu beziehen, die bereits beim Entpacken auf dem lokalen System beliebige Dateien im Hostsystem überschreiben können \cite{ https://securityblog.redhat.com/2014/12/18/before-you-initiate-a-docker-pull/ }. Sowohl die Integrität von Daten als auch die Verfügbarkeit der Hosts sind dadurch direkt gefährdet.
+    Der Sicherheitsforscher Jonathan Rudenberg hat im Dezember 2014 drei Sicherheitsrisiken im Zusammenhang mit Dockers Image-Verifikation zu dieser Zeit aufgedeckt \cite{githubRegistryV1Issues}\cite{registryV1IssuesRudenberg}. U.a. ist es durch Verwendung des \texttt{docker pull}-Befehls möglich manipulierte Images zu beziehen, die bereits beim Entpacken auf dem lokalen System beliebige Dateien im Hostsystem überschreiben können \cite{registryV1IssuesRedHat}. Sowohl die Integrität von Daten als auch die Verfügbarkeit der Hosts sind dadurch direkt gefährdet.
 
-    Im August 2015 wurde mit der Docker-Version 1.8 ein Paket- und Verteilungsmodell umgesetzt, das diese Schwächen behebt \cite{ https://blog.docker.com/2015/08/content-trust-docker-1-8/ }. Unter dem Featurenamen \emph{Docker Content Trust} integriert Docker das Model \emph{The Update Framework} (TUF) \cite{ https://theupdateframework.github.io/ }, welches Gefahrenquellen wie manipulierte Images, Replay- und MITM-Angriffe ausschließt. Die Sicherheit von TUF basiert auf der Signierung von Images, mit der anhand mehrerer Schlüsselpaare die Integrität sowie Aktualität von Images sichergestellt wird. Die Verwendung dieses Features ist optional und kann mit der Umgebungsvariablen \texttt{DOCKER_CONTENT_TRUST} gesteuert werden.
+    Im August 2015 wurde mit der Docker-Version 1.8 ein Paket- und Verteilungsmodell umgesetzt, das diese Schwächen behebt \cite{dockerContentTrust}. Unter dem Featurenamen \emph{Docker Content Trust} integriert Docker das Model \emph{The Update Framework} (TUF) \cite{tufFramework}, welches Gefahrenquellen wie manipulierte Images, Replay- und MITM-Angriffe ausschließt. Die Sicherheit von TUF basiert auf der Signierung von Images, mit der anhand mehrerer Schlüsselpaare die Integrität sowie Aktualität von Images sichergestellt wird. Die Verwendung dieses Features ist optional und kann mit der Umgebungsvariable \texttt{DOCKER\_CONTENT\_TRUST} gesteuert werden.
 
-    \emph{Docker Content Trust} wird in Docker als Notary integriert. Der Notary implementiert das TUF in \emph{Golang} und bietet Erstellern von Inhalten die Möglichkeit ihre Daten zu signieren. Die signierten Daten können dann über einen Notary-Server zum Download angeboten werden \cite{https://github.com/docker/notary}.
+    \emph{Docker Content Trust} wird in Docker als Notary integriert. Der Notary implementiert das TUF in \emph{Golang} und bietet Erstellern von Inhalten die Möglichkeit ihre Daten zu signieren. Die signierten Daten können dann über einen Notary-Server zum Download angeboten werden \cite{githubNotary}\cite{dockerContentTrust}.
 
     % https://lwn.net/Articles/628343/
     % https://github.com/docker/docker/issues/9719
@@ -69,6 +69,11 @@
     % https://github.com/docker/notary
     % https://blog.docker.com/2015/08/content-trust-docker-1-8/
     % https://blog.docker.com/2015/08/docker-1-8-content-trust-toolbox-registry-orchestration/
+
+  \section{Weitere Verbesserungen der Registries und Images}
+    Seit Februar 2016 mit der Veröffentlichung von Docker-Version 1.10 sind Images über deren Inhalt addressierbar. Das bedeutet, dass die Layer-IDs nicht wie zuvor zufällige UUIDs repräsentieren, sondern als SHA256-Hash des Images auf Datenebene implementiert sind. Der SHA256-Hashalgorithmus wird derzeit als kryptographisch sicher gesehen, was zur Folge hat, das Layer-IDs einmalig und dadurch kollisionssicher sind.
+
+    % TODO: Exkurs, das UUID nicht sicher sind aber SHA256 schon
 
     % TODO: Content Addressed Images: The new manifest format in Docker 1.10 is a full Merkle DAG, and all the downloaded content is finally content addressable.
     % Seit Version 1.10
@@ -80,7 +85,7 @@
 
   \section{Verbindung zwischen Daemon und Clients}
   \label{conClientServer}
-    Wie in Kapitel \ref{dockerArchitecture} dargestellt, werden Anweisungen von Docker-Clients an einen Docker-Daemon übertragen, der diese über eine REST-API empfängt. Standardmäßig findet diese Kommunikation seit Version 0.5.2 über einen nicht netzwerkfähigen UNIX-Socket statt \cite{ https://docs.docker.com/engine/security/security/ }.
+    Wie in Kapitel \ref{dockerArchitecture} dargestellt, werden Anweisungen von Docker-Clients an einen Docker-Daemon übertragen, der diese über eine REST-API empfängt. Standardmäßig findet diese Kommunikation seit Version 0.5.2 über einen nicht netzwerkfähigen UNIX-Socket statt \cite{dockerSecurity}.
 
     Eine Umgebung, die vorsieht Client und Daemon voneinander getrennt über ein Netzwerk zu betreiben, benötigt jedoch einen HTTP-Socket, um die Konnektivität der beiden Komponenten über das Netzwerk zu gewährleisten.
 
@@ -88,9 +93,9 @@
 
     Mittels eigener Zertifikate können sich Daemon und Clients gegenseitig sicher über HTTPS authentifizieren. Unbefugte, fremde Daemons oder Clients können dadurch nicht mit einem vertrauenswürdigen Komplementär interagieren. Die Authentifizierung kann demnach uni- oder bidirektional erfolgen. Durch die sichere Kommunikation mittels HTTPS, das auf dem Protokoll TLS basiert, erfüllen die zu übermittelnden Daten die Sicherheitsziele Vertraulichkeit und Integrität.
 
-    Die entsprechende Konfiguration eines Daemons kann z.B. mit dem Befehl \texttt{docker daemon --tlsverify --tlscacert=CA.pem --tlscert=SERVER-CERT.pem --tlskey=SERVER-KEY.pem} vorgenommen werden. Analog dazu erfolgt die clientseitige Einstellung über \texttt{docker --tlsverify --tlscacert=CA.pem --tlscert=CERT.pem --tlskey=KEY.pem COMMAND}. Der Parameter \texttt{--tlsverify} gibt jeweils an, dass der Kommunikationspartner authentifiziert werden muss. Die Authenfikation geschieht über die Parameterwerte \texttt{--tlscert} und \texttt{--tlskey} des Kommunikationspartners, die zusammen die Identität dessen bekannt geben. Unter Angabe eines CA-Zertifikats mit Parameter \texttt{--tlscacert} hat die Authentifizierung nur dann Erfolg, wenn das Zertifikat des Kommunikationspartners von dieser CA ausgestellt wurde \cite{https://docs.docker.com/engine/security/https/}. In einer Unternehmensinfrastruktur kann so die Kommunikation durch eine unternehmenseigene CA weiter restriktiviert werden. Eine detailreichere Beschreibung der verschiedenen Betriebsmodi ist unter \cite{https://docs.docker.com/engine/security/https/} gegeben.
+    Die entsprechende Konfiguration eines Daemons kann z.B. mit dem Befehl \texttt{docker daemon --tlsverify --tlscacert=CA.pem --tlscert=SERVER-CERT.pem --tlskey=SERVER-KEY.pem} vorgenommen werden. Analog dazu erfolgt die clientseitige Einstellung über \texttt{docker --tlsverify --tlscacert=CA.pem --tlscert=CERT.pem --tlskey=KEY.pem COMMAND}. Der Parameter \texttt{--tlsverify} gibt jeweils an, dass der Kommunikationspartner authentifiziert werden muss. Die Authenfikation geschieht über die Parameterwerte \texttt{--tlscert} und \texttt{--tlskey} des Kommunikationspartners, die zusammen die Identität dessen bekannt geben. Unter Angabe eines CA-Zertifikats mit Parameter \texttt{--tlscacert} hat die Authentifizierung nur dann Erfolg, wenn das Zertifikat des Kommunikationspartners von dieser CA ausgestellt wurde \cite{dockerSecurityHTTPS}. In einer Unternehmensinfrastruktur kann so die Kommunikation durch eine unternehmenseigene CA weiter restriktiviert werden. Eine detailreichere Beschreibung der verschiedenen Betriebsmodi ist unter \cite{dockerSecurityHTTPS} gegeben.
 
-    Über die Umgebungsvariable \texttt{DOCKER\_TLS\_VERIFY} sowie der Speicherung der notwendigen Zertifikate und Schlüssel unter \texttt{.docker/} im Homeverzeichnis, kann die Konfiguration der Authentifizierung einmalig für die zukünftige Kommunikation vorgenommen werden \cite{https://docs.docker.com/engine/security/https/}.
+    Über die Umgebungsvariable \texttt{DOCKER\_TLS\_VERIFY} sowie der Speicherung der notwendigen Zertifikate und Schlüssel unter \texttt{.docker/} im Homeverzeichnis, kann die Konfiguration der Authentifizierung einmalig für die zukünftige Kommunikation vorgenommen werden \cite{dockerSecurityHTTPS}.
 
     % https://docs.docker.com/engine/security/security/
     % https://docs.docker.com/engine/security/https/
@@ -154,7 +159,10 @@
       \subsubsection{Docker Compose}
       \subsubsection{Nautilus Project}
     \subsection{Third-Party Tools}
-      \subsection{https://www.twistlock.com/}
+      \subsection{www.twistlock.com}
+        \emph{security focus}
+      \subsection{github.com/cloudimmunity/docker-slim}
+        \emph{security focus}
   		\subsection{Vagrant}
   		\subsection{Kubernetes}
         % neueres Cluster-Management Tool von Google
