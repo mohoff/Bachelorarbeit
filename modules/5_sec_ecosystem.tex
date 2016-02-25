@@ -20,6 +20,8 @@
 \label{secEcosystem}
   In diesem Kapitel werden einige Anwendungsaspekte von Docker unter einem Sicherheitskontext beleuchtet. Maßgeblich sollen weiterhin die drei definierten Sicherheitsziele zur Bewertung von Sicherheitseigenschaften dienen. Während Kapitel \ref{secLinux} native Sicherheitskomponenten von Docker und Linux untersucht hat, wird in den folgenden Abschnitten das Docker-Ökosystem in Betracht gezogen. Unter einem Ökosystem versteht sich hierbei die Gesamtheit aller Komponenten und Interaktionsmöglichkeiten, die im Zusammenhang mit Docker existieren. Der Fokus der Untersuchung liegt auf Anwendungsebene. Das bedeutet, dass hauptsächlich Methoden vorgestellt werden, die Docker Entwicklern und Administratoren zur Verfügung stellt, um die Arbeit mit den Docker-Komponenten aus Kapitel \ref{dockerIntro} sicher zu gestalten. Außerdem wird vorgestellt, wie sich die sicherheitsrelevanten Komponenten und Operationen in den letzten Monaten aus der Sicherheitsperspektive geändert haben.
 
+  % TODO: Erwaehnen, das Fokus auf erst neulich hinzugefuegten, aktuell entwickelten und zukünftig geplanten Features liegt.
+
   Die Untersuchung sieht folgende Themen vor:
 
   \begin{itemize}
@@ -52,36 +54,43 @@
 
     Der Zugriff auf eine Registry kann z.B. über \acrshort{HTTPS} und der Verwendung von Zertifikaten abgesichert werden \cite{dockerRegistry} (vgl. Kapitel \ref{conClientServer}).
 
-  \section{Image Verifikation}
-    Die Verifikation von Daten hat zum Ziel die Integrität dieser zu bestätigen. Die Integrität von Images spielt beim Herunterladen von Images von entfernten Registries eine wichtige Rolle.
+  \section{Verfikation und Verteilung von Images}
+    Der Sicherheitsforscher Jonathan Rudenberg hat im Dezember 2014 drei Sicherheitsrisiken im Zusammenhang mit Dockers damaliger Verifikation und Verteilungs von Images aufgedeckt \cite{githubRegistryV1Issues}\cite{registryV1IssuesRudenberg}. U.a. ist es durch Verwendung des \texttt{docker pull}-Befehls möglich manipulierte Images zu beziehen, die bereits beim Entpacken auf dem lokalen System beliebige Dateien im Hostsystem überschreiben können \cite{registryV1IssuesRedHat}. Sowohl die Integrität von Daten als auch die Verfügbarkeit der Hosts sind durch eine solche Gefahr direkt gefährdet. Auch die Aktualität von Images, sowie die Authenzität von Personen und Organisationen, die Images veröffentlichen, kann darunter leiden, wie in Kapitel \ref{tuf} zu sehen ist.
 
-    Der Sicherheitsforscher Jonathan Rudenberg hat im Dezember 2014 drei Sicherheitsrisiken im Zusammenhang mit Dockers Image-Verifikation zu dieser Zeit aufgedeckt \cite{githubRegistryV1Issues}\cite{registryV1IssuesRudenberg}. U.a. ist es durch Verwendung des \texttt{docker pull}-Befehls möglich manipulierte Images zu beziehen, die bereits beim Entpacken auf dem lokalen System beliebige Dateien im Hostsystem überschreiben können \cite{registryV1IssuesRedHat}. Sowohl die Integrität von Daten als auch die Verfügbarkeit der Hosts sind dadurch direkt gefährdet.
+    In Docker wurden seit Version 1.8 schrittweise Mechanismen implementiert, die die Verifikation einerseits und das Verteilungsmodell von Images verbessern sollen. Diese umgesetzten, teilweise sich überschneidenen Ansätze, sind im Folgenden in Aspekte der Verifikation und Aspekte der Verteilung aufgeteilt.
 
-    Im August 2015 wurde mit der Docker-Version 1.8 ein Paket- und Verteilungsmodell umgesetzt, das diese Schwächen behebt \cite{dockerContentTrust}. Unter dem Featurenamen \emph{Docker Content Trust} integriert Docker das Model \emph{The Update Framework} (TUF) \cite{tufFramework}, welches Gefahrenquellen wie manipulierte Images, Replay- und MITM-Angriffe ausschließt. Die Sicherheit von TUF basiert auf der Signierung von Images, mit der anhand mehrerer Schlüsselpaare die Integrität sowie Aktualität von Images sichergestellt wird. Die Verwendung dieses Features ist optional und kann mit der Umgebungsvariable \texttt{DOCKER\_CONTENT\_TRUST} gesteuert werden.
+    \subsection{Verifikation von Images}
+      Seit Februar 2016 mit der Veröffentlichung von Docker-Version 1.10 sind Images über deren Inhalt addressierbar. Auf Implementierungsebene bedeutet das, dass die Layer-IDs nicht wie zuvor zufällig generierte UUIDs repräsentieren, sondern als SHA256-Hashwerte, die über die Layerdaten gebildet werden, vorliegen \cite[S.16]{http://www.slideshare.net/Docker/docker-48351569}. Der SHA256-Hashalgorithmus wird derzeit als kryptographisch sicher gesehen, was zur Folge hat, dass die generierten Layer-IDs kollisionssicher sind und damit als einmalig gelten. Durch die deterministische Natur von Hashfunktionen wird gleichzeitig eine Methode implementiert, die die Integrität von Layern sicherstellt. In der Praxis kann die Korrektheit von Layerdaten validiert werden, indem ein frisch berechneter Hash eines Layers mit dem referenzierten Hasheintrag in den Image-Metadaten, dem Manifest, verglichen wird. Die referenzierten Hashwerte der Layer sind im Manifest in Form eines Hashbaums strukturiert. Seit der Version 2 des Manifests, kann die Manifestdatei signiert werden, um auch die Integrität der Metadaten zu gewährleisten \cite{https://github.com/docker/distribution/blob/master/docs/spec/manifest-v2-1.md}.
 
-    \emph{Docker Content Trust} wird in Docker als Notary integriert. Der Notary implementiert das TUF in \emph{Golang} und bietet Erstellern von Inhalten die Möglichkeit ihre Daten zu signieren. Die signierten Daten können dann über einen Notary-Server zum Download angeboten werden \cite{githubNotary}\cite{dockerContentTrust}.
+      Die zuvor verwendeten UUIDs erfüllen die deterministische Eigenschaft nicht, da sie unabhängig von den Daten bei jeder Generierung auf Basis der PRNG-Implementierung in \emph{Golang} entstehen \cite{https://github.com/docker/distribution/blob/master/uuid/uuid.go}\cite{https://golang.org/pkg/crypto/rand/}.
 
-    % https://lwn.net/Articles/628343/
-    % https://github.com/docker/docker/issues/9719
-    % https://securityblog.redhat.com/2014/12/18/before-you-initiate-a-docker-pull/
-    % https://titanous.com/posts/docker-insecurity
+      % Exkurs, das UUID nicht sicher sind aber SHA256 schon .... UUID sind eigtl auch sicher, nur eben immer nicht-deterministisch...
 
-    % https://github.com/docker/notary
-    % https://blog.docker.com/2015/08/content-trust-docker-1-8/
-    % https://blog.docker.com/2015/08/docker-1-8-content-trust-toolbox-registry-orchestration/
+      % Content Addressed Images: The new manifest format in Docker 1.10 is a full Merkle DAG, and all the downloaded content is finally content addressable.
+      % Seit Version 1.10
+      %   ^   \cite{https://news.ycombinator.com/item?id=11037543}
 
-  \section{Weitere Verbesserungen der Registries und Images}
-    Seit Februar 2016 mit der Veröffentlichung von Docker-Version 1.10 sind Images über deren Inhalt addressierbar. Das bedeutet, dass die Layer-IDs nicht wie zuvor zufällige UUIDs repräsentieren, sondern als SHA256-Hash des Images auf Datenebene implementiert sind. Der SHA256-Hashalgorithmus wird derzeit als kryptographisch sicher gesehen, was zur Folge hat, das Layer-IDs einmalig und dadurch kollisionssicher sind.
+      % registry v2: content based layer IDs und signed image manifests
+      % davor registry v1: abgesehen von https (nur kommunikation), kein integritaetscheck des inhalts von images. Ausserdem willkuerliche Image IDs
+      %   ^   \cite[S.27]{presContainerDockerSec}
 
-    % TODO: Exkurs, das UUID nicht sicher sind aber SHA256 schon
+    \subsection{Integration von \emph{The Update Framework}}
+    \label{tuf}
+      Die Integrität von Images spielt auch bei der Verteilung von Images über Docker-Registries eine große Rolle.
+      % Die Verifikation von Daten hat zum Ziel die Integrität dieser zu bestätigen. Die Integrität von Images spielt beim Herunterladen von Images von entfernten Registries eine wichtige Rolle.
 
-    % TODO: Content Addressed Images: The new manifest format in Docker 1.10 is a full Merkle DAG, and all the downloaded content is finally content addressable.
-    % Seit Version 1.10
-    %   ^   \cite{https://news.ycombinator.com/item?id=11037543}
+      Im August 2015 wurde mit der Docker-Version 1.8 ein Paket- und Verteilungsmodell umgesetzt, das die von Rudenberg entdeckten Schwächen in der Bereitstellung von Images beheben soll \cite{dockerContentTrust}. Unter dem Featurenamen \emph{Docker Content Trust} integriert Docker das Model \emph{The Update Framework} (TUF) \cite{tufFramework}, welches Gefahrenquellen wie manipulierte Images, Replay- und MITM-Angriffe ausschließt. Die Sicherheit von TUF basiert auf der Signierung von Images, mit der anhand mehrerer kryptographischer Schlüssel die Integrität, Authenzität sowie Aktualität von Images sichergestellt wird. Die Verwendung dieses Features ist optional und kann mit der Umgebungsvariable \texttt{DOCKER\_CONTENT\_TRUST} gesteuert werden.
 
-    % registry v2: content based layer IDs und signed image manifests
-    % davor registry v1: abgesehen von https (nur kommunikation), kein integritaetscheck des inhalts von images. Ausserdem willkuerliche Image IDs
-    %   ^   \cite[S.27]{presContainerDockerSec}
+      \emph{Docker Content Trust} wird in Docker als Notary integriert. Der Notary implementiert das TUF in \emph{Golang} und bietet Erstellern von Inhalten die Möglichkeit ihre Daten zu signieren. Die signierten Daten können dann über einen Notary-Server zum Download angeboten werden \cite{githubNotary}\cite{dockerContentTrust}.
+
+      % https://lwn.net/Articles/628343/
+      % https://github.com/docker/docker/issues/9719
+      % https://securityblog.redhat.com/2014/12/18/before-you-initiate-a-docker-pull/
+      % https://titanous.com/posts/docker-insecurity
+
+      % https://github.com/docker/notary
+      % https://blog.docker.com/2015/08/content-trust-docker-1-8/
+      % https://blog.docker.com/2015/08/docker-1-8-content-trust-toolbox-registry-orchestration/
 
   \section{Verbindung zwischen Daemon und Clients}
   \label{conClientServer}
@@ -106,6 +115,27 @@
     % TODO: An anderer Stelle im Überblick erwähnen, dass in diesem speziellen Unterkapitel kurz auf Netzwerksicherheit eingegangen wird. Halt nur docker-spezifische Netzwerksicherheit.
 
   \section{Docker Plugins}
+    Seit Juni 2015 unternehmen die Entwickler von Docker Anstrengungen, um optionale Komponenten von Docker in eine eigene Plugin-Infrastruktur zu integrieren, in der Plugins modular aktiviert und deaktiviert werden können \cite{changelog}\cite{https://blog.docker.com/2015/06/extending-docker-with-plugins/}. Plugins werden von einem Docker-Daemon genutzt und erweitern dessen Fähigkeiten. Neben den ersten Plugins für diverse Netzwerkfunktionen und der Einbindung von Datenträgern, fand im Frühjahr 2016 mit Docker-Version 1.10 auch ein Authentifizierungs-Plugin Einzug in Docker, das in diesem Kapitel zur Vereinfachung auch als Sicherheitsplugin/AuthZ/AuthNZ bezeichnet wird.
+    % vllt besser: Authentifizierungs- und Authorisierungsplugin
+    % TODO: Beispiel Volume: Flocker
+    % TODO: Beispiel Netzwerk: Weave
+
+    Es erlaubt die Umsetzung einer eigenen nutzer- und rollenbasierten Sicherheitspolitik.
+     .. RBAC?
+
+    Das Sicherheitsplugin hat zum Ziel ein Framework bereitzustellen, über das es Administratoren möglich ist eine nutzer- und rollenbasierte Sicherheitspolitik umzusetzen. Die Regeln, die diese Politik umfassen, beziehen sich auf die Benutzung des Docker-Daemons. Ohne ein solches Plugin ist jedem Nutzer, der den Docker-Daemon ausführen kann, die komplette Kontrolle über das Docker-System gegeben. V.a. in Unternehmen macht es jedoch Sinn, verschiedenen Nutzer im Rahmen eines RBAC-Sicherheitsmodells eine bestimmte Rolle zuzuweisen, die deren Rechte definiert. Ein einfacher Anwednungsfall könnte wie folgt aussehen:
+    % TODO: Einarbeiten: Abbildung administrativer Sicherheitsmodelle (durch technische Mechanismen?)
+
+    \begin{itemize}
+        \item User in der Gruppe X können Container starten
+        \item User in der Gruppe Y können Container auditen/profilen/inspizieren/Statiskten/Infos abrufen
+        \item User ADMIN kann jede Operation des Daemons ausführen
+    \end{itemize}
+    % TODO: Beispiel einbauen (Link iwo), wo es zwei UNIX-Gruppen gibt und ein WIldcard-ding
+
+    % Using an authorization plugin, a Docker administrator can configure granular access policies for managing access to Docker daemon. System administrators can use these plugins to configure user access policies for their infrastructure. The plugins act as interceptors that can and allow or deny the docker API request based off the rules created by you! These plugins are installed and configured will work the same as the current plugins for volumes and networking via the Docker plugin API.
+    %   ^   \cite{https://blog.docker.com/2016/02/docker-engine-1-10-security/}
+
     % Seit Version 1.10
     % Authorization Plugins: you can now write plugins for allowing or denying API requests to the daemon. For example, you could block anyone from using --privileged.
     %   ^   \cite{https://news.ycombinator.com/item?id=11037543} und http://blog.docker.com/2016/02/docker-engine-1-10-security/
@@ -129,51 +159,63 @@
     % Fokus auf Security, Reliability, Performance
     % ^   \cite[S.31]{http://www.slideshare.net/Docker/docker-48351569}
 
-  \section{Lifecycle- und State-Management von Containern}
-    % Container Lifecycle - Managed using a daemon and command line tool
-    % • Container State - Docker allows ability to store and retrieve container state
-    % Siehe \cite[S.3]{virtVSContainer} .. rechte Spalte
+    % Data container...
+    % run containers unpriviledged
 
-  \section{Containerprozesse}
-    % TODO: besser in PID namespace kapitel aufgehoben
-    % offenbar gibts Probleme mit PID=0, da dieser Besonderheiten aufweist (siehe Hackernews Link)
-	\section{Docker Cache}
-	\section{\texttt{privileged} Container}
-    % However, if the operator executes a container as "privileged", Docker grants access to all devices to the container
-    %  ^  \cite[S.4]{dockerSec1}
+    %\section{Sicherheitskontrollen für Docker}
+      % Gibt auf Github Skripte, die einige Docker-Parameter/Einstellungen prüfen (Links iwo in den Bookmarks)
 
-	\section{Networking}
-		\subsection{\texttt{bridge} Netzwerk}
-		\subsection{\texttt{overlay} Netzwerk}
-		\subsection{DNS}
-		\subsection{Portmapping}
-	\section{Daten-Container}
-	\section{Docker mit \acrshort{VM}s}
-  \section{Sicherheitskontrollen für Docker}
-    % Gibt auf Github Skripte, die einige Docker-Parameter/Einstellungen prüfen (Links iwo in den Bookmarks)
-	\section{Tools rund um Docker}
+  \section{Security Best-Practises}
+    \subsection{Datencontainer}
+      % DO
+
+      % "Zustand/State" ist getrennt
+      % Seperation of Concerns...
+      % bisschen MVC ...
+      % strukturierte Architekturen immer gut, begünstigen Sicherheit und Wartbarkeit ....
+      % Verfügbarkeit freut sich auch....
+    \subsection{\texttt{--priviledged} Container}
+      % DO NOT
+
+      % However, if the operator executes a container as "privileged", Docker grants access to all devices to the container
+      %  ^  \cite[S.4]{dockerSec1}
+  \section{Tools}
     % Oder Aufteilung in DevOops Tools (Puppet, Ansible, Vagrant) und Orchestrierungstools (Mesos, Shipyard, Kubernetes)
     % Diese Tools bieten eine weitere Abstraktionsschicht für den Betrieb von Docker-Containern.
-    \subsection{Docker-Erweiterungen}
-      \subsubsection{Docker Swarm}
-      \subsubsection{Docker Compose}
-      \subsubsection{Nautilus Project}
-    \subsection{Third-Party Tools}
-      \subsection{www.twistlock.com}
-        \emph{security focus}
-      \subsection{github.com/cloudimmunity/docker-slim}
-        \emph{security focus}
-  		\subsection{Vagrant}
-  		\subsection{Kubernetes}
-        % neueres Cluster-Management Tool von Google
-        % Hat Relevanz fuer Herr Fahner/Daimler
 
-        Ein Hauptfeature von Containern ist deren flexibler Einsatz in Anwendungsclustern, die eine Multi-Tier-Anwendung / Multi-Tenant-Architektur abbilden.
+    % TODO: Twistlock nicht mehr explizit aufgefuhert, da in Docker-Release seit V.1.10 integriert.
+    % siehe www.twistlock.com
 
-        Im Juni 2014 hat Google das Open-Source Tool \emph{Kubernetes} angekündigt, das Cluster mit Docker-Containern verwalten soll. Laut Google ist Kubernetes die Entkopplung von Anwendungscontainern von Details des Hosts.
-        Soll in Datencentern die Arbeit mit Containern vereinfachen.
-        % Brint angeblich tolles Networking-Feature mit.
+    % Viele Tools/Plugins parallel zu Docker entstanden, um in den Bereichen Volume,Networking,Security nachzulegen.
+    % siehe https://github.com/docker/docker/blob/master/docs/extend/plugins.md
+    % Vieles in Docker-main integriert oder pluggable gemacht mit plugin framework.
 
-        Neben einigen Startups, haben sich \emph{Google}, \emph{Microsoft}, \emph{VMware}, \emph{IBM} und \emph{Red Hat} als \emph{Kubernetes}-Unterstützer geäußert.
+    \subsection{Docker Swarm und Docker Compose}
+      \emph{orchestration, management fokus, sicherheitsrelevant?}
+    \subsection{Kubernetes}
+      \emph{orchestration, management fokus, sicherheitsrelevant?}
+      % neueres Cluster-Management Tool von Google
+      % Hat Relevanz fuer Herr Fahner/Daimler
 
+      Ein Hauptfeature von Containern ist deren flexibler Einsatz in Anwendungsclustern, die eine Multi-Tier-Anwendung / Multi-Tenant-Architektur abbilden.
+
+      Im Juni 2014 hat Google das Open-Source Tool \emph{Kubernetes} angekündigt, das Cluster mit Docker-Containern verwalten soll. Laut Google ist Kubernetes die Entkopplung von Anwendungscontainern von Details des Hosts.
+      Soll in Datencentern die Arbeit mit Containern vereinfachen.
+      % Brint angeblich tolles Networking-Feature mit.
+
+      Neben einigen Startups, haben sich \emph{Google}, \emph{Microsoft}, \emph{VMware}, \emph{IBM} und \emph{Red Hat} als \emph{Kubernetes}-Unterstützer geäußert.
+    \subsection{Vagrant, Puppet, Chef}
+      \emph{orchestration, management fokus, sicherheitsrelevant?, relevant?}
+    \subsection{Nautilus Project ?}
+    \subsection{github.com/cloudimmunity/docker-slim}
+      \emph{security focus. Noch relevant?}
+    \subsection{Vagrant}
+	\section{Networking}
+    Portmapping
+
+    \texttt{bridge}-Netzwerk
+
+    \texttt{overlay}-Netzwerk
+
+    (\subsection{DNS})
 \end{document}

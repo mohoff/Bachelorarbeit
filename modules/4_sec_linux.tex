@@ -38,8 +38,18 @@
 % Angreifer können ein paar Angriffe ausführen: Privilege escalation und Denial of Service.
 %  °	\cite[S.3]{dockerSec1}
 
-\chapter{Security aus Linux Kernel-Features}
+\chapter{Sicherheit durch Linux-Funktionen}
 \label{secLinux}
+	\emph{Text hier als Einleitung dazu.}
+	Dieses Kapitel stellt die von dem Betriebssystem Linux ermöglichten Sicherheitsmodelle und -mechanismen vor, von denen Docker Gebrauch macht bzw. die Docker unterstützt.
+
+	Wie In Kapitel \ref{introVirtContainer} geschildert, wird Docker zur Zeit nur für Linux angeboten. Aus diesem Grund ist eine Untersuchung von Sicherheitsfeatures anderer Betriebssysteme nicht nötig.
+
+	% TODO: Grober Überblick geben, sodass klar wird, dass Namespaces und Cgroups Kernbestandteil von Begriff/Sache "Container" sind, un ein Containerkonzept erst überhaupt realisierbar machen. Isolations- und Ressourcenverwaltungsmechansimen, die für Container obligatorisch sind.
+	% LSMs, MACs, Capabilities sind eher optional (werden für den reinen Containerbetreib nicht benötigt), ergaenzend zu nativer Linux-DAC, stellen aber für die Sicherheit wichtige Methoden bereit, um Container und Hosts auf verschiedene Arten, auch mehrschichtig, zu schützen.
+	% Evtl. Referenz auf "defense in depth", "principle of least privlege"
+	% --------------------------------------------------------------------------------------
+
   % namespaces/etc (was es ist) in Einleitung mit rein? 1.) Erklaeren, 2.) Security/Docker untersuchen dazu im Security Hauptteil
   % 2 Unterkapitel, inhatliche Überschneidung evtl., Grund nennen warum so gegliedert, ...
   % \cite[S.3]{dockerIntroIEEE} --> umgangsprachlich erkleart wie mit namespaces und cgroups gearbeitet wird
@@ -66,6 +76,7 @@
 
 		\subsection{Prozessisolierung durch den \texttt{\acrshort{PID} namespace}}
 		\label{secIsoProcesses}
+			% TODO: Offenbar gibts Probleme mit PID=0, da dieser Besonderheiten aufweist (siehe Hackernews Link)
 
 			Jeder Container entspricht auf dem Host zunächst einem Prozess. Da die Container untereinander isoliert sein sollen, dürfen auch die zugrundeliegenden Containerprozesse nicht miteinander interferieren.
 
