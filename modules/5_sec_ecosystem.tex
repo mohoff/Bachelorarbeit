@@ -115,52 +115,92 @@
     % TODO: An anderer Stelle im Überblick erwähnen, dass in diesem speziellen Unterkapitel kurz auf Netzwerksicherheit eingegangen wird. Halt nur docker-spezifische Netzwerksicherheit.
 
   \section{Docker Plugins}
-    Seit Juni 2015 unternehmen die Entwickler von Docker Anstrengungen, um optionale Komponenten von Docker in eine eigene Plugin-Infrastruktur zu integrieren, in der Plugins modular aktiviert und deaktiviert werden können \cite{changelog}\cite{https://blog.docker.com/2015/06/extending-docker-with-plugins/}. Plugins werden von einem Docker-Daemon genutzt und erweitern dessen Fähigkeiten. Neben den ersten Plugins für diverse Netzwerkfunktionen und der Einbindung von Datenträgern, fand im Frühjahr 2016 mit Docker-Version 1.10 auch ein Authentifizierungs-Plugin Einzug in Docker, das in diesem Kapitel zur Vereinfachung auch als Sicherheitsplugin/AuthZ/AuthNZ bezeichnet wird.
-    % vllt besser: Authentifizierungs- und Authorisierungsplugin
-    % TODO: Beispiel Volume: Flocker
-    % TODO: Beispiel Netzwerk: Weave
+    Seit Juni 2015 unternahmen die Entwickler von Docker Anstrengungen, um optionale Komponenten von Docker in eine eigene Plugin-Infrastruktur zu integrieren, in der Plugins modular aktiviert und deaktiviert werden können \cite{githubDockerChangelog}\cite{dockerPlugins}. Plugins werden von einem Docker-Daemon genutzt und erweitern dessen Fähigkeiten. Neben den ersten Plugins für diverse Netzwerkfunktionen, z.B. \emph{Weave}, und der Einbindung von Datenträgern, z.B. \emph{Flocker}, fand im Frühjahr 2016 mit Docker-Version 1.10 auch ein ursprünglich von \emph{Twistlock}\cite{twistlock} entwickeltes Authorisierungs-Plugin Einzug in Docker, das in diesem Kapitel zur Vereinfachung auch als \emph{AuthZ} bezeichnet wird \cite{githubPluginList}\cite{dockerPlugins}\cite{authzTwistlock}.
 
-    Es erlaubt die Umsetzung einer eigenen nutzer- und rollenbasierten Sicherheitspolitik.
-     .. RBAC?
+    Ergänzend dazu war auch ein Authentifizierungs-Plugin \emph{AuthN} geplant, das Nutzer vor deren Authorisierung durch \emph{AuthZ}, authentifiziert \cite{githubAuthZDockerAccessControl}. Am 23. Februar 2016 hat jedoch ein Docker-Mitarbeiter bekannt gegeben, dass die Integration von \emph{AuthN} eingestellt wird. Grund hierfür ist, dass die Authentifizierung - nach der Meinung einiger Docker-Entwickler - leicht außerhalb des Daemons stattfinden kann, z.B. mit dem Authentifizierungsdienst Kerberos\cite{kerberos} \cite{githubAuthZKerberosSupport}\cite{githubAuthNLaydown}.
 
-    Das Sicherheitsplugin hat zum Ziel ein Framework bereitzustellen, über das es Administratoren möglich ist eine nutzer- und rollenbasierte Sicherheitspolitik umzusetzen. Die Regeln, die diese Politik umfassen, beziehen sich auf die Benutzung des Docker-Daemons. Ohne ein solches Plugin ist jedem Nutzer, der den Docker-Daemon ausführen kann, die komplette Kontrolle über das Docker-System gegeben. V.a. in Unternehmen macht es jedoch Sinn, verschiedenen Nutzer im Rahmen eines RBAC-Sicherheitsmodells eine bestimmte Rolle zuzuweisen, die deren Rechte definiert. Ein einfacher Anwednungsfall könnte wie folgt aussehen:
+    Das Sicherheitsplugin \emph{AuthZ} hat zum Ziel ein Framework bereitzustellen, über das es Administratoren möglich ist, eine nutzer- und rollenbasierte Sicherheitspolitik umzusetzen. Diese umfasst Regeln, die die Benutzung des Docker-Daemons betreffen. Nach der ursprünglichen Implementierung von \emph{Twistlock} sind die Regeln in eine JSON-Struktur gefasst \cite{githubAuthZJSON}. Ohne ein solches Plugin ist jedem Nutzer, der den Docker-Daemon ausführen kann, die komplette Kontrolle über das Docker-System gegeben. V.a. in Unternehmen macht es aber Sinn, verschiedenen Nutzer im Rahmen eines RBAC-Sicherheitsmodells eine bestimmte Rolle zuzuweisen, die deren Rechte definiert. Ein einfacher Anwendungsfall könnte folgende Regeln beinhalten \cite{authzTwistlock}:
     % TODO: Einarbeiten: Abbildung administrativer Sicherheitsmodelle (durch technische Mechanismen?)
 
     \begin{itemize}
-        \item User in der Gruppe X können Container starten
-        \item User in der Gruppe Y können Container auditen/profilen/inspizieren/Statiskten/Infos abrufen
-        \item User ADMIN kann jede Operation des Daemons ausführen
+        \item User in der Gruppe \emph{Operations} dürfen nur Container starten und stoppen. Sie sollen nur \texttt{docker run CONTAINER} und \texttt{docker rm CONTAINER} ausführen können.
+        \item User in der Gruppe \emph{Audit} dürfen nur Informationen von Images und Containern abfragen. Sie sollen nur \texttt{docker inspect IMAGE|CONTAINER} ausführen können.
+        \item User \emph{Admin} darf jede Operation \texttt{docker ...} über den Daemon ausführen.
     \end{itemize}
-    % TODO: Beispiel einbauen (Link iwo), wo es zwei UNIX-Gruppen gibt und ein WIldcard-ding
 
-    % Using an authorization plugin, a Docker administrator can configure granular access policies for managing access to Docker daemon. System administrators can use these plugins to configure user access policies for their infrastructure. The plugins act as interceptors that can and allow or deny the docker API request based off the rules created by you! These plugins are installed and configured will work the same as the current plugins for volumes and networking via the Docker plugin API.
-    %   ^   \cite{https://blog.docker.com/2016/02/docker-engine-1-10-security/}
+    Aus Sicht der Architektur funktioniert die Authorisierung, wie sie in \fig \ref{fig:sec_authz} illustriert ist. Die Anfragen von lokalen oder entfernten Clients werden, wie in Kapitel \ref{dockerArchitecture} beschrieben, an einen Daemon geschickt. Dieser führt nun nicht die Befehle der Clients umgehend aus, sondern leitet die Anfrage an das \emph{AuthZ}-Framework weiter. Genauer erhält \emph{AuthZ} einen Nutzerkontext und einen Befehlskontext, die, z.B. anhand der zuvor definierten Regeln, ausgewertet werden. Anhand der dem Plugin vorliegenden Parameter entscheidet es, ob der Nutzer berechtigt ist, den angefragten Befehl auszuführen. Falls das nicht der Fall ist, wird eine Fehlernachricht über den Daemon an den Client gesendet (vgl. \fig \ref{fig:sec_authzDeny}). Falls die Anfrage genehmigt wurde, führt der Daemon den darin enthaltenen Befehl aus, und kontaktiert das Plugin ein zweites Mal mit dem Ergebnis des ausgeführten Befehls (vgl. \fig \ref{fig:sec_authzAllow}). \emph{AuthZ} hat hierbei die Gelegenheit, die Antwort, bevor sie zum Client gesendet wird, zu modifizieren \cite{githubAuthZDraft}\cite{authzTwistlock}.
 
-    % Seit Version 1.10
-    % Authorization Plugins: you can now write plugins for allowing or denying API requests to the daemon. For example, you could block anyone from using --privileged.
-    %   ^   \cite{https://news.ycombinator.com/item?id=11037543} und http://blog.docker.com/2016/02/docker-engine-1-10-security/
+    %\begin{figure}[h]
+        %\centering
+        %\includegraphics[width=0.9\textwidth]{./images/sec_authzAllow.png}
+        %\caption{Ablaufdiagramm einer Befehlsausführung mit \emph{AuthZ} im Fall einer erfolgreichen Authorisierung \cite{githubAuthZExtended}.}
+        %\label{fig:sec_authzAllow}
+    %\end{figure}
 
-    % TODO: AuthZ Plugins:
-    % https://blog.docker.com/2016/02/docker-online-meetup-33-security/ --> slideShare slide 11 (da ist auch ein github link dabei)
+    %\begin{figure}[h]
+        %\centering
+        %\includegraphics[width=0.9\textwidth]{./images/sec_authzAllow.png}
+        %\caption{Ablaufdiagramm einer Befehlsausführung mit \emph{AuthZ} im Fall einer fehlgeschlagenen Authorisierung \cite{githubAuthZExtended}.}
+        %\label{fig:sec_authzDeny}
+    %\end{figure}
+
+    \begin{figure}
+      \centering
+      \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{./images/sec_authzAllow.png}
+        \caption{Erfolgreiche Authorisierung}
+        \label{fig:sec_authzAllow}
+      \end{subfigure}%
+      \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{./images/sec_authzDeny.png}
+        \caption{Fehlgeschlagene Authorisierung}
+        \label{fig:sec_authzDeny}
+      \end{subfigure}
+      \caption{Ablaufdiagramm einer Befehlsausführung mit dem Authorisierungs-Plugins \emph{AuthZ} von Docker}
+      \label{fig:sec_authz}
+    \end{figure}
+    % TODO: Evtl. untereinander machen da zu wenig Platz. Oder Grafik neu machen mit weniger/groesserem Text
+
+    Die Formate von Anfragen und Antworten, die über das HTTP-Protokoll ausgetauscht werden, sind in \cite{githubAuthZExtended} spezifiziert.
+
+    Mehrere Sicherheitsmodule können konsekutiv ausgeführt werden, sodass jede clientseitige Interaktion mit dem Daemon, die Ausführung mehrerer \emph{AuthZ}-Implementierungen zur Folge hat.
+
+    Mit folgender Syntax können Authorisierungs-Plugins für den Daemon aktiviert werden \cite{githubAuthZExtended}:
+
+    \begin{lstlisting}
+      docker daemon --authorization-plugin=PLUGIN1 \
+                   [--authorization-plugin=PLUGIN2] [...]
+    \end{lstlisting}
+
+    Da es sich bei diesen sicherheitsrelevanten Plugins um ein sehr neues Feature von Docker handelt, war die offizielle Dokumentation zum Zeitpunkt der Erstellung dieser Arbeit nicht vollständig. V.a. die fehlende Spezifikation des Formats eines \emph{AuthZ}-Regelwerks im Docker-Repository lässt vermuten, dass eine vollständige Einführung von \emph{AuthZ} erst im Rahmen zukünftiger Docker-Releases stattfindet.
 
   \section{Security Policies und Open Source}
-    % Siehe \cite[S.5]{dockerSecIntro} rechts oben
+    % WArtung einer CVE-Datenbank (https://www.docker.com/docker-cve-database)
 
-    % Open-Source Charakter von Docker und Security-Disclose...
+    % Prinzip von \emph{Responsible Disclosure} wird umgesetzt als Bestandteil von Dockers Security Policy
+    %   ^   \cite{https://www.docker.com/docker-security}
+
+    % Probleme können jederzeit an zentrale Stelle (security@docker.com) gesendet werden
+
+    % Docker Engine is an open-source project within the Docker project, and can be obtained at https://github.com/docker/docker. As an open source project we work closely with the community for innovation and to solve issues as they arise. The published contribution guidelines are strict with regards to using code-reviews for ensuring an ongoing high-quality code-base. Docker Inc. also contracts with external security firms to engage in quarterly audits and/or penetration tests of both our code and infrastructure. Docker supports responsible disclosure of security vulnerabilities and allows security researchers to submit potential vulnerabilities for remediation online: https://www.docker.com/resources/security/
     %   ^   \cite[S.5]{dockerSecIntro}
 
     % https://benchmarks.cisecurity.org/tools2/docker/CIS_Docker_1.6_Benchmark_v1.0.0.pdf
 
     % https://github.com/docker/docker-bench-security
 
-    % \cite[S.37]{presContainerDockerSec}
+
+    % Docker und \emph{Docker} haben klare Sicherheitsrichtlinien
+    % Es gibt obligatorische Code-Reviews, die in CONTRIBUTING.md verankert sind, um Codequalität zu gewährleisten.
+    % Vierteljährliche Sicherheitsaudits und Penetration Tests der Infrastruktur
+    % Support von resonsible disclosure
+    %   ^   \cite[S.37]{presContainerDockerSec}
 
     % Aufspaltung in Docker Distribution, das Toolchain enthaelt
     % Fokus auf Security, Reliability, Performance
     % ^   \cite[S.31]{http://www.slideshare.net/Docker/docker-48351569}
-
-    % Data container...
-    % run containers unpriviledged
 
     %\section{Sicherheitskontrollen für Docker}
       % Gibt auf Github Skripte, die einige Docker-Parameter/Einstellungen prüfen (Links iwo in den Bookmarks)
