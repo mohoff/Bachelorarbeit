@@ -60,9 +60,9 @@
     In Docker wurden seit Version 1.8 schrittweise Mechanismen implementiert, die die Verifikation einerseits und das Verteilungsmodell von Images verbessern sollen. Diese umgesetzten, teilweise sich überschneidenen Ansätze, sind im Folgenden in Aspekte der Verifikation und Aspekte der Verteilung aufgeteilt.
 
     \subsection{Verifikation von Images}
-      Seit Februar 2016 mit der Veröffentlichung von Docker-Version 1.10 sind Images über deren Inhalt addressierbar. Auf Implementierungsebene bedeutet das, dass die Layer-IDs nicht wie zuvor zufällig generierte UUIDs repräsentieren, sondern als SHA256-Hashwerte, die über die Layerdaten gebildet werden, vorliegen \cite[S.16]{http://www.slideshare.net/Docker/docker-48351569}. Der SHA256-Hashalgorithmus wird derzeit als kryptographisch sicher gesehen, was zur Folge hat, dass die generierten Layer-IDs kollisionssicher sind und damit als einmalig gelten. Durch die deterministische Natur von Hashfunktionen wird gleichzeitig eine Methode implementiert, die die Integrität von Layern sicherstellt. In der Praxis kann die Korrektheit von Layerdaten validiert werden, indem ein frisch berechneter Hash eines Layers mit dem referenzierten Hasheintrag in den Image-Metadaten, dem Manifest, verglichen wird. Die referenzierten Hashwerte der Layer sind im Manifest in Form eines Hashbaums strukturiert. Seit der Version 2 des Manifests, kann die Manifestdatei signiert werden, um auch die Integrität der Metadaten zu gewährleisten \cite{https://github.com/docker/distribution/blob/master/docs/spec/manifest-v2-1.md}.
+      Seit Februar 2016 mit der Veröffentlichung von Docker-Version 1.10 sind Images über deren Inhalt addressierbar. Auf Implementierungsebene bedeutet das, dass die Layer-IDs nicht wie zuvor zufällig generierte UUIDs repräsentieren, sondern als SHA256-Hashwerte, die über die Layerdaten gebildet werden, vorliegen \cite[S.16]{slideshareImageDistribution}. Der SHA256-Hashalgorithmus wird derzeit als kryptographisch sicher gesehen, was zur Folge hat, dass die generierten Layer-IDs kollisionssicher sind und damit als einmalig gelten. Durch die deterministische Natur von Hashfunktionen wird gleichzeitig eine Methode implementiert, die die Integrität von Layern sicherstellt. In der Praxis kann die Korrektheit von Layerdaten validiert werden, indem ein frisch berechneter Hash eines Layers mit dem referenzierten Hasheintrag in den Image-Metadaten, dem Manifest, verglichen wird. Die referenzierten Hashwerte der Layer sind im Manifest in Form eines Hashbaums strukturiert. Seit der Version 2 des Manifests, kann die Manifestdatei signiert werden, um auch die Integrität der Metadaten zu gewährleisten \cite{githubImageManifest21}.
 
-      Die zuvor verwendeten UUIDs erfüllen die deterministische Eigenschaft nicht, da sie unabhängig von den Daten bei jeder Generierung auf Basis der PRNG-Implementierung in \emph{Golang} entstehen \cite{https://github.com/docker/distribution/blob/master/uuid/uuid.go}\cite{https://golang.org/pkg/crypto/rand/}.
+      Die zuvor verwendeten UUIDs erfüllen die deterministische Eigenschaft nicht, da sie unabhängig von den Daten bei jeder Generierung zufällig auf Basis der PRNG-Implementierung in \emph{Golang} entstehen \cite{githubImageUUID}.
 
       % Exkurs, das UUID nicht sicher sind aber SHA256 schon .... UUID sind eigtl auch sicher, nur eben immer nicht-deterministisch...
 
@@ -176,36 +176,36 @@
 
     Da es sich bei diesen sicherheitsrelevanten Plugins um ein sehr neues Feature von Docker handelt, war die offizielle Dokumentation zum Zeitpunkt der Erstellung dieser Arbeit nicht vollständig. V.a. die fehlende Spezifikation des Formats eines \emph{AuthZ}-Regelwerks im Docker-Repository lässt vermuten, dass eine vollständige Einführung von \emph{AuthZ} erst im Rahmen zukünftiger Docker-Releases stattfindet.
 
-  \section{Security Policies und Open Source}
-    % WArtung einer CVE-Datenbank (https://www.docker.com/docker-cve-database)
+  \section{Open-Source-Charakter und Sicherheitspolitik von Docker}
+    Docker ist ein Open-Source-Projekt, das nicht nur von Docker-Mitarbeitern entwickelt wird, sondern die Unterstützung vieler freiwilliger Entwickler und Sicherheitsexperten findet. Der Open-Source-Charakter von Docker und Software allgemein kann jedoch aus Sicherheitssicht kontrovers diskutiert werden:
 
-    % Prinzip von \emph{Responsible Disclosure} wird umgesetzt als Bestandteil von Dockers Security Policy
-    %   ^   \cite{https://www.docker.com/docker-security}
+    \paragraph{Vorteile:}
+    \begin{itemize}
+      \item Durch die Vielzahl an Involvierten können Sicherheitslücken schneller entdeckt und behoben werden. Über 1300 Individuen haben sich bislang für die Weiterentwicklung der Codebasis und der Aufdeckung von Fehlern und Sicherheitsrisiken an Docker beteiligt.
+      %Die Codequalität profitiert auch von Experten anderer Unternehmen und Organisationen, im Docker-Projekt z.B. von \emph{RedHat}-Mitarbeitern.
+      \item Eigene Sicherheitspraktiken können von Anwendern durch die Kenntnis über den Quellcode hinzugefügt werden.
+      \item Nach dem Kerkhoffs'schen Prinzip ist einer Anwendung von \emph{Security Through Obscurity} generell abzuraten \cite[S.15]{nist}.
+    \end{itemize}
 
-    % Probleme können jederzeit an zentrale Stelle (security@docker.com) gesendet werden
+    \paragraph{Nachteile:}
+    \begin{itemize}
+      \item Sicherheitslücken sind von Angreifern prinzipiell schneller zu finden, wenn diese im Besitz des Quellcodes sind.
+      \item Außerdem ist durch die lose Zusammenarbeit vieler Experten nicht gewährleistet, dass bestimmte Implementierungen nach dem Mehraugenprinzip kontrolliert werden. Die böswillige Absicht nur eines Entwicklers kann in einer Open-Source-Kultur weiterhin fatale Be\-ein\-träch\-ti\-gung\-en der Sicherheit mit sich ziehen.
+    \end{itemize}
 
-    % Docker Engine is an open-source project within the Docker project, and can be obtained at https://github.com/docker/docker. As an open source project we work closely with the community for innovation and to solve issues as they arise. The published contribution guidelines are strict with regards to using code-reviews for ensuring an ongoing high-quality code-base. Docker Inc. also contracts with external security firms to engage in quarterly audits and/or penetration tests of both our code and infrastructure. Docker supports responsible disclosure of security vulnerabilities and allows security researchers to submit potential vulnerabilities for remediation online: https://www.docker.com/resources/security/
-    %   ^   \cite[S.5]{dockerSecIntro}
+    Die Vor- und Nachteile zeigen auf, dass es keinen Gewinner nach Maßstäben der Sicherheit gibt. Sowohl Open-Source- als auch proprietäre Softwarelösungen können erfolgreich sein, wie die Vergangenheit bekannter Betriebssysteme und Anwendungen zeigt. Für \emph{Docker} hat sich der Open-Source-Ansatz bislang bewährt.
 
-    % https://benchmarks.cisecurity.org/tools2/docker/CIS_Docker_1.6_Benchmark_v1.0.0.pdf
+    Um die Zusammenarbeit im Docker-Projekt zu organisieren, wurden Regeln und Konventionen formuliert, die auch die Sicherheit betreffen \cite{githubDockerContribution}. Zusammen mit den Sicherheitsrichtlinien aus der offiziellen Docker-Homepage, ergeben sich folgende weitere, sicherheitsrelevante Eigenschaften von Docker.
 
-    % https://github.com/docker/docker-bench-security
-
-
-    % Docker und \emph{Docker} haben klare Sicherheitsrichtlinien
-    % Es gibt obligatorische Code-Reviews, die in CONTRIBUTING.md verankert sind, um Codequalität zu gewährleisten.
-    % Vierteljährliche Sicherheitsaudits und Penetration Tests der Infrastruktur
-    % Support von resonsible disclosure
-    %   ^   \cite[S.37]{presContainerDockerSec}
-
-    % Aufspaltung in Docker Distribution, das Toolchain enthaelt
-    % Fokus auf Security, Reliability, Performance
-    % ^   \cite[S.31]{http://www.slideshare.net/Docker/docker-48351569}
-
-    %\section{Sicherheitskontrollen für Docker}
-      % Gibt auf Github Skripte, die einige Docker-Parameter/Einstellungen prüfen (Links iwo in den Bookmarks)
+    \begin{itemize}
+      \item Prinzip von \emph{Responsible Disclosure} wird, als Hauptbestandteil der Sicherheitspolitik von Docker, umgesetzt. Konform dazu, können entdeckte Schwachstellen jederzeit an security@docker.com kommuniziert werden \cite{dockerSecurityPortal}.
+      \item Wartung einer zentralen \acrshort{CVE}-Datenbank, die bekannte Sicherheitsrisiken von Docker enthält. Die darin veröffentlichten Informationen erfüllen das Prinzip \emph{Responsible Disclosure} \cite{dockerCVEList}.
+      \item Externe Sicherheitsfirmen werden vierteljährlich beauftragt, Sicherheitsaudits und Penetrationstests zur Kontrolle der Codebasis und Infrastruktur durchzuführen \cite[S.5]{dockerSecIntro}.
+    \end{itemize}
 
   \section{Security Best-Practises}
+    % TODO: https://benchmarks.cisecurity.org/tools2/docker/CIS_Docker_1.6_Benchmark_v1.0.0.pdf
+    % TODO: https://github.com/docker/docker-bench-security
     \subsection{Datencontainer}
       % DO
 
