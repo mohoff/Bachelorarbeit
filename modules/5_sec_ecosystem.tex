@@ -92,7 +92,7 @@
       % https://blog.docker.com/2015/08/content-trust-docker-1-8/
       % https://blog.docker.com/2015/08/docker-1-8-content-trust-toolbox-registry-orchestration/
 
-  \section{Verbindung zwischen Daemon und Clients}
+  \section{Verbindung zwischen Daemon und Client}
   \label{conClientServer}
     Wie in Kapitel \ref{dockerArchitecture} dargestellt, werden Anweisungen von Docker-Clients an einen Docker-Daemon übertragen, der diese über eine REST-API empfängt. Standardmäßig findet diese Kommunikation seit Version 0.5.2 über einen nicht netzwerkfähigen UNIX-Socket statt \cite{dockerSecurity}.
 
@@ -204,21 +204,38 @@
     \end{itemize}
 
   \section{Security Best-Practises}
-    % TODO: https://benchmarks.cisecurity.org/tools2/docker/CIS_Docker_1.6_Benchmark_v1.0.0.pdf
-    % TODO: https://github.com/docker/docker-bench-security
+    Es existieren Skripte, die die Docker-Umgebung nach eingehaltenen und nicht erfüllten Best-Practices für die Sicherheit überprüfen.
+
+    Der bekannteste Vertreter ist \emph{Docker Bench}, welcher in das Docker-Projekt integriert ist und nach Aussagen der Entwickler auf Befunden des Sicherheitsberichts des unabhängigen \emph{Center for Internet Security} \cite{https://benchmarks.cisecurity.org/tools2/docker/CIS_Docker_1.6_Benchmark_v1.0.0.pdf} beruht \cite{https://github.com/docker/docker-bench-security}. Dieser Bericht ist im Mai 2015 entstanden und enthält sicherheitsrelevante Befunde zu Docker in der Version 1.6. Aktuellere Berichte zu moderneren Docker-Versionen existieren nicht.
+
+    Die darin enthaltenen Kontrollen sind in einem eigenen Image als Shellskripte definiert. Zur Ausführung der Tests muss dieses Image als Container gestartet werden. Im Rahmen dieser Tests werden direkt über Shellbefehle abrufbare Parameter untersucht. Darunter sind z.B.:
+
+    \begin{itemize}
+      \item Rechte, Besitzer- und Gruppenzugehörigkeiten von Dateien und Verzeichnissen
+      \item Docker- und Kernelversion
+      \item Log- und Netzwerkeinstellungen
+      \item TLS-Unterstützung
+      \item \texttt{--priviledged}-Status von Containern
+      \item Verwendung von Capabilities, \emph{AppArmor}- und \emph{SELinux}-Profilen
+    \end{itemize}
+
+    Die Tests sind unter \cite{https://github.com/docker/docker-bench-security/tree/master/tests} in ihrer aktuellsten Version im Detail veröffentlicht.
+
     \subsection{Datencontainer}
+      Die von Werkzeugen wie \emph{Docker Bench} ausführbare Tests beschränken sich auf explizit abrufbare Parameter des Hosts und von Docker. In Server-Infrastrukturen existieren jedoch auch Sicherheitskriterien, deren Kontrolle nicht über Abfragen von Host- oder Docker-Einstellungen abzudecken ist. Insbesondere wirken sich Merkmale der Infrastuktur auf die Verfügbarkeit von Services sowie Wartbarkeit der Infrastruktur aus.
+
+      Z.B. wird von \emph{Docker} empfohlen, eigene Datencontainer zu betreiben, die den Zustand von Anwendungen auf Datenebene speichern. Diese Art von Containern kann als deren Lifecycle unabhängig von Servicecontainern verwaltet werden kann.
       % DO
 
+      % TODO: HIER WEITERMACHEN
+
+      % mounts von normalen servicecontainern werden vermieden.
       % "Zustand/State" ist getrennt
       % Seperation of Concerns...
       % bisschen MVC ...
       % strukturierte Architekturen immer gut, begünstigen Sicherheit und Wartbarkeit ....
       % Verfügbarkeit freut sich auch....
-    \subsection{\texttt{--priviledged} Container}
-      % DO NOT
 
-      % However, if the operator executes a container as "privileged", Docker grants access to all devices to the container
-      %  ^  \cite[S.4]{dockerSec1}
   \section{Tools}
     % Oder Aufteilung in DevOops Tools (Puppet, Ansible, Vagrant) und Orchestrierungstools (Mesos, Shipyard, Kubernetes)
     % Diese Tools bieten eine weitere Abstraktionsschicht für den Betrieb von Docker-Containern.
