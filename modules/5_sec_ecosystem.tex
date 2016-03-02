@@ -207,7 +207,7 @@
   \section{Security Best-Practises}
     Es existieren Skripte, die die Docker-Umgebung nach eingehaltenen und nicht erfüllten Best-Practices für die Sicherheit überprüfen.
 
-    Der bekannteste Vertreter ist \emph{Docker Bench}, welcher in das Docker-Projekt integriert ist und nach Aussagen der Entwickler auf Befunden des Sicherheitsberichts des unabhängigen \emph{Center for Internet Security} \cite{https://benchmarks.cisecurity.org/tools2/docker/CIS_Docker_1.6_Benchmark_v1.0.0.pdf} beruht \cite{https://github.com/docker/docker-bench-security}. Dieser Bericht ist im Mai 2015 entstanden und enthält sicherheitsrelevante Befunde zu Docker in der Version 1.6. Aktuellere Berichte zu moderneren Docker-Versionen existieren nicht.
+    Der bekannteste Vertreter ist \emph{Docker Bench} \cite{githubDockerBench}, welcher in das Docker-Projekt integriert ist und nach Aussagen der Entwickler auf Befunden des Sicherheitsberichts des unabhängigen \emph{Center for Internet Security} \cite{dockerBenchmarkCIS} beruht. Dieser Bericht ist im Mai 2015 entstanden und enthält sicherheitsrelevante Befunde zu Docker in der Version 1.6. Aktuellere Berichte zu moderneren Docker-Versionen existieren nicht.
 
     Die darin enthaltenen Kontrollen sind in einem eigenen Image als Shellskripte definiert. Zur Ausführung der Tests muss dieses Image als Container gestartet werden. Im Rahmen dieser Tests werden direkt über Shellbefehle abrufbare Parameter untersucht. Darunter sind z.B.:
 
@@ -220,7 +220,7 @@
       \item Verwendung von Capabilities, \emph{AppArmor}- und \emph{SELinux}-Profilen
     \end{itemize}
 
-    Die Tests sind unter \cite{https://github.com/docker/docker-bench-security/tree/master/tests} in ihrer aktuellsten Version im Detail veröffentlicht.
+    Die Tests sind unter \cite{githubDockerBenchTests} in ihrer aktuellsten Version im Detail veröffentlicht.
 
     \subsection{Datencontainer}
       Die von Werkzeugen wie \emph{Docker Bench} ausführbare Tests beschränken sich auf explizit abrufbare Parameter des Hosts und von Docker. In Server-Infrastrukturen existieren jedoch auch Sicherheitskriterien, deren Kontrolle nicht über Abfragen von Host- oder Docker-Einstellungen abzudecken ist. Insbesondere wirken sich Merkmale der Infrastuktur auf die Verfügbarkeit von Services sowie Wartbarkeit der Infrastruktur aus.
@@ -232,7 +232,7 @@
       % "Zustand/State" ist getrennt
 
     \subsection{Verwaltung von Credentials}
-      Informationen zu Benutzernamen und Passwörtern sollten nicht statisch als Zeichenketten in ein Image integriert sein. Vielmehr sollen Credentials generell als Umgebungsvariablen mit der \texttt{ENV}-Direktive der Dockerfiles in Images verfügbar gemacht werden. Beispielsweise setzen die Entwickler von der Datenbank \emph{Postgres} diese Praxis in ihrem \emph{Postgres}-Image um, indem sie die Umgebungsvariablen \texttt{POSTGRES\_USER} und \texttt{POSTGRES\_PASSWORD} definieren, die beim Startvorgang des Containers abgefragt werden \cite{https://hub.docker.com/_/postgres/}\cite{https://github.com/docker-library/postgres/blob/443c7947d548b1c607e06f7a75ca475de7ff3284/9.5/docker-entrypoint.sh}
+      Informationen zu Benutzernamen und Passwörtern sollten nicht statisch als Zeichenketten in ein Image integriert sein. Vielmehr sollen Credentials generell als Umgebungsvariablen mit der \texttt{ENV}-Direktive der Dockerfiles in Images verfügbar gemacht werden. Beispielsweise setzen die Entwickler von der Datenbank \emph{Postgres} diese Praxis in ihrem \emph{Postgres}-Image um, indem sie die Umgebungsvariablen \texttt{POSTGRES\_USER} und \texttt{POSTGRES\_PASSWORD} definieren, die beim Startvorgang des Containers abgefragt werden \cite{dockerHubPostgres}\cite{githubPostgresCredentialCheck}
   \section{Tools}
     Im Docker-Ökosystem existieren zahlreiche Tools, die entweder den Funktionsumfang von Docker erweitern oder die zusätzliche Möglichkeiten bieten, Docker-Container zu verwalten. Neben Veröffentlichungen von \emph{Docker}, z.B. mit \emph{Docker Swarm}, \emph{Docker Compose} und \emph{Docker Datacenter}, können auch einige Entwicklungen von Drittanbietern verwendet werden. Diese umfassen beispielsweise \emph{Shipyard}, \emph{Kubernetes}, \emph{Vagrant} und \emph{docker-slim}. Die genannten Tools decken teilweise gleiche Features ab oder bauen im Fall von \emph{Docker Swarm} und \emph{Shipyard} aufeinander auf.
 
@@ -260,7 +260,7 @@
 
       Aus der Sicht von \emph{Kubernetes} stellen Docker-Container die kleinste zu verwaltende Einheit dar. Welche Anwendung in einem Container läuft und welche Sicherheitsmechanismen aus Kapitel \ref{secLinux} der Container nutzt, um das jeweilige Hostsystem zu schützen, ist für den Betrieb von \emph{Kubernetes} zunächst unerheblich.
 
-      \emph{Kubernetes} erfüllt hauptsächlich administrative Anforderungen an die Sicherheit, die auch hier wieder auf Basis des \emph{Principle of Least Privilege} umgesetzt werden. Damit ist die Implementierung einer rollenbasierten Nutzerkontrolle (\acrshort{RBAC}) gemeint, die Nutzer über alle von Kubernetes kontrollierten Container hinweg, authorisiert und authentifiziert \cite{https://github.com/kubernetes/kubernetes/blob/master/docs/design/security.md}. Im Vergleich dazu, ermöglicht die Verwendung des Authentifizierungs-Framework \emph{AuthZ} aus Kapitel \ref{plugins} nur die Authentifizierung auf einem Hostsystem.
+      \emph{Kubernetes} erfüllt hauptsächlich administrative Anforderungen an die Sicherheit, die auch hier wieder auf Basis des \emph{Principle of Least Privilege} umgesetzt werden. Damit ist die Implementierung einer rollenbasierten Nutzerkontrolle (\acrshort{RBAC}) gemeint, die Nutzer über alle von Kubernetes kontrollierten Container hinweg, authorisiert und authentifiziert \cite{githubKubernetesSecurity}. Im Vergleich dazu, ermöglicht die Verwendung des Authentifizierungs-Framework \emph{AuthZ} aus Kapitel \ref{plugins} nur die Authentifizierung auf einem Hostsystem.
 
       % TODO: Vieles was Kubernetes macht, passiert auf Netzwerkebene. Und das nicht in dieser Arbeit.
 
@@ -273,9 +273,9 @@
       \emph{docker-slim} ist ein Werkzeug, das u.a. automatisch Sicherheitsprofile erstellt. Es untersucht dabei Anwendungen, die in einem Container laufen und zeichnet Zugriffe dieser auf, z.B. die verwendeten \emph{System Calls}. Aus diesen Aufzeichnungen und einer Analyse der statischen Daten eines Images werden Profile für \emph{Seccomp} und \emph{AppArmor} erstellt, die anschließend verwendet werden können. Die Generierung eines \emph{AppArmor}-Profils ist aktuell in der Entwicklungsphase.
 
     \subsection{Bane}
-      Auch das von Docker-Mitarbeiterin Jessie Frazelle entwickelte Werkzeug \emph{Bane} hat zum Ziel, \emph{AppArmor}-Profile automatisch zu generieren. Im Gegensatz zu \emph{docker-slim} analysiert es nicht Images und Container, sondern übersetzt Anweisungen einer gut lesbaren Konfigurationsdatei in ein \emph{AppArmor}-Profil. Der Vorteil der Konfigurationsdatei gegenüber einer Datei, die ein \emph{AppArmor}-Profil enthält, ist, dass sich ausdruckstärkere, kategorisierbare Anweisungen formulieren lassen, sodass zum Erstellen der Datei keine speziellen \emph{AppArmor}-Kenntnisse erforderlich sind \cite{https://github.com/jfrazelle/bane/blob/bbc594c9dce4351b1175737cb3b4d9ee65803648/README.md}.
+      Auch das von Docker-Mitarbeiterin Jessie Frazelle entwickelte Werkzeug \emph{Bane} hat zum Ziel, \emph{AppArmor}-Profile automatisch zu generieren. Im Gegensatz zu \emph{docker-slim} analysiert es nicht Images und Container, sondern übersetzt Anweisungen einer gut lesbaren Konfigurationsdatei in ein \emph{AppArmor}-Profil. Der Vorteil der Konfigurationsdatei gegenüber einer Datei, die ein \emph{AppArmor}-Profil enthält, ist, dass sich ausdruckstärkere, kategorisierbare Anweisungen formulieren lassen, sodass zum Erstellen der Datei keine speziellen \emph{AppArmor}-Kenntnisse erforderlich sind \cite{githubBane}.
 
-      Ein beispielhafter Ausschnitt einer Konfigurationsdatei im \acrshort{TOML}-Format könnte folgendermaßen aussehen \cite{https://github.com/jfrazelle/bane/blob/0ceb725f531cfb95a82a3586f6318343f3f8d17c/sample.toml}:
+      Ein beispielhafter Ausschnitt einer Konfigurationsdatei im \acrshort{TOML}-Format könnte folgendermaßen aussehen \cite{githubBaneTOML}:
 
       \begin{lstlisting}
         ...
@@ -293,7 +293,7 @@
         ...
       \end{lstlisting}
 
-      Bei der Übersetzung in ein valides \emph{AppArmor}-Profil, entstehen daraus folgende Zeilen \cite{https://github.com/jfrazelle/bane/blob/master/docker-nginx-sample}:
+      Bei der Übersetzung in ein valides \emph{AppArmor}-Profil, entstehen daraus folgende Zeilen \cite{githubBaneAppArmorSample}:
 
       \begin{lstlisting}
         ...
@@ -307,7 +307,7 @@
       Wie bei einem Vergleich der beiden Fragmente zu sehen ist, ist die Konfigurationsdatei strukturierter und durch Verwendung von aussagekräftigen Bezeichnern wie \texttt{Filesystem}, \texttt{WritablePaths}, \texttt{AllowExec} und \texttt{DenyExec} besser lesbar als das daraus resultierende \emph{AppArmor}-Profil.
 
       Nach Aussage von Jessie Frazelle in
-      \cite{https://github.com/jfrazelle/bane/blob/bbc594c9dce4351b1175737cb3b4d9ee65803648/README.md}, %\cite{https://github.com/docker/docker/issues/17142#issuecomment-148974642}
-      und \cite{https://blog.docker.com/2016/02/docker-engine-1-10-security/} stellt \emph{Bane} den Grundbaustein eines universalen, nativen Sicherheitmoduls mit Profilen für Capabilities, \emph{AppArmor} und \emph{Seccomp} dar. Dieses wird voraussichtlich in einen zukünftigen Release von Docker einfließen.
+      \cite{githubBane}, \cite{githubGeneralSecProfiles}
+      und \cite{docker110Security} stellt \emph{Bane} den Grundbaustein eines universalen, nativen Sicherheitmoduls mit Profilen für Capabilities, \emph{AppArmor} und \emph{Seccomp} dar. Dieses wird voraussichtlich in einen zukünftigen Release von Docker einfließen.
 
 \end{document}
