@@ -1,102 +1,120 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
 
-\chapter{Docker in Unternehmen/Clound-Infrastrukturen}
+\chapter{Docker in Cloud-Infrastrukturen}
 \label{secInfrastructure}
-  Docker wird von den meisten Cloud-Anbietern unterstützt.
+  Wie in der Einleitung gezeigt, bietet der Einsatz von Virtualisierungslösungen, insbesondere Container, in Rechenzentren einige Vorteile.
+  % Neben der technischen Überlegenheit, hat es Docker durch ein sehr erfolgreiches Marketing geschafft, als Heilmittel vieler Probleme in IT-Abteilungen in Unternehmen geschätzt zu werden.
 
-  Google: Google Container Engine mit Docker Containern. Mit Kubernetes-Schicht dabei. --> komplette FOSS infrastruktur bei google
-  Amazon: Elastic Bean Stack (fuer web applications) und auch EC2-Container als EC2-Container-Service (ECS)
+  Durch den hohen Bekanntheitsgrad und der Popularität von Docker in Entwickler- und Managementkreisen sind Anbieter von Public-Clouds gezwungen, eine Unterstützung von Docker in ihr eigenes Portfolio aufzunehmen. Tatsächlich reagieren die großen Anbieter wie \emph{Amazon}, \emph{Microsoft}, \emph{IBM} und \emph{Google} mit vielseitigen, häufig Docker-basierten Containerangeboten. Die etablierten Cloud-Ausprägungen SaaS, PaaS und IaaS werden durch explizite Containerangebote ergänzt, sodass zur Zeit der Begriff CaaS (Container as a Service) als weitere Angebotsform von Cloud-Angeboten Gestalt annimmt. Die Auswirkungen von Docker auf genannte Anbieter sind in Kapitel \ref{publicCloud} beschrieben.
 
-  \section{Microsoft Azure}
-    % https://docs.docker.com/v1.9/engine/installation/azure/
+  Auch in Private Clouds ist Docker ein Thema. Die in Kapitel \ref{secLinux} und \ref{secEcosystem} aufgeführten Eigenschaften von Docker eignen sich für eine unternehmensinterne Anwendung der Technologie, wie in Kapitel \ref{privateCloud} näher erläutert wird.
 
-    % Ansatz ist generell unschoen, da Azure mit Windows Servern betreiben wird und Docker nur auf Linux laeuft.
-    % Deswegen ist jede Azure-Docker-Sache eine Docker-Installation in einer Linux-VM (ubuntu), die auf windows server laeuft
+  %Google: Google Container Engine mit Docker Containern. Mit Kubernetes-Schicht dabei. --> komplette FOSS infrastruktur bei google
+  %Amazon: Elastic Bean Stack (fuer web applications) und auch EC2-Container als EC2-Container-Service (ECS)
 
-    You can use the portal to add the Docker VM Extension to any compatible Linux VM (currently, the only image that supports it is the Ubuntu 14.04 LTS image more recent than July). Using the Azure CLI command line, however, you can install the Docker VM Extension and create and upload your Docker communication certificates all at the same time when you create the VM instance.
-    % Also angeblich nur Ubuntu 14.04 LTS und neuer unterstützt
-    \cite{https://azure.microsoft.com/de-de/documentation/articles/virtual-machines-docker-vm-extension/}
+  \section{Public Cloud}
+  \label{publicCloud}
+    Während der Begriff CaaS von Unternehmen hauptsächlich für Marketingzwecke genutzt wird, sind sich die großen Vertreter auf dem Virtualisierungsmarkt selbst nicht über die Bedeutung des Begriffs einig. \emph{Google} z.B. versteht darunter eine Mischform aus PaaS und IaaS, die von ihrer eigenen Entwicklung \emph{Kubernetes} ermöglicht wird \cite[S.12]{http://www.slideshare.net/brendandburns/defrag-2014-41815642?ref=http://thenewstack.io/google-offers-container-as-a-service-to-define-kubernetes-place-in-the-cloud-economy/}.
+    % TODO: Kann man hier sagen "nach Aussage von Google"? Weil die Aussage eigtl. von Vortrag von Brendan Burns kommt, also einem Google-Mitarbeiter.
+    \emph{Docker} hingegen umschreibt bei der eigenen Definition von CaaS das Konzept von DevOps, das einen von Docker ermöglichten, flexiblen Workflow der Zukunft realisiert. \glqq{}Der Weg zu CaaS ist mit Docker gepflastert \grqq{} ist eine Aussage eines Artikels des offiziellen Docker-Blogs \cite{https://blog.docker.com/2016/02/containers-as-a-service-caas/}.
 
+    So versuchen Unternehmen dem Begriff CaaS nach eigenen Vorstellungen Gestalt zu verleihen und ihn zum eigenen Vorteil zu nutzen.
 
-    Azure bietet einige VM-Extensions an, darunter Docker Extension, die Docker-Daemon in einer VM installiert.
-    Darunter auch viele Extensions für die Sicherheit. Diese umfassen Datenverschlüsselung, Intrusion Detection, Anti-Virus und -Malware, Firewall, Log-Inspection
-    \cite{https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-extensions-features/}
+    Fest steht, dass Docker als disruptive Technologie von allen Anbieter von Public Clouds akzeptiert und unterstützt werden muss. Diese Tatsache beruht weniger auf der technischen Überlegenheit von Docker gegenüber anderen Containerlösungen oder der Hypervisor-basierten Virtualisierung, sondern auf einem einfachen, automatisierbaren Workflow, der im Modell von Continuous Integration und Continuous Delivery von Docker ermöglicht wird. Die Innovation, mit der sich IT-Unternehmen aktuell konfrontiert sehen, geschieht dadurch vorrangig auf Prozess- und Geschäftsebene.
 
-    Azure macht Docker auf Basis von Ubuntu-VMs.
-    \cite{http://www.infoworld.com/article/2887579/hybrid-cloud/ibm-embraces-docker-openstack-in-bluemix-hybrid-cloud-plans.html}
+    Wie große Public Cloud-Anbieter Docker in ihr bestehendes Produktportfolio integrieren und welche Sicherheitsfeatures diese anbieten, ist am Beispiel von \emph{Azure} und \emph{SoftLayer} in den nächsten Abschnitten aufgezeigt.
 
-    Supported Distributions:
-      CoreOS
-      Ubuntu 13 and higher
-      CentOS 7.1 and higher
-      Red Hat Enterprise Linux (RHEL) 7.1 and higher
-    \cite{https://github.com/Azure/azure-docker-extension}
+    \subsection{Beispiel: Microsoft Azure}
+      % https://docs.docker.com/v1.9/engine/installation/azure/
 
-    % Nonetheless, the competition lacks a genuine hybrid cloud methodology that involves containers, barring whatever someone might create on their own with OpenStack (vendor support not necessarily included). Microsoft is the only one that comes close, with a hybrid strategy that encompasses tight pre-existing integration between Windows locally and Microsoft Azure remotely, though it's limited by the lack of native support for Docker on Windows. Once Microsoft works out how container technologies can be implemented natively in Windows, the picture is bound to change.
-    % \cite{http://www.infoworld.com/article/2887579/hybrid-cloud/ibm-embraces-docker-openstack-in-bluemix-hybrid-cloud-plans.html} ... ganz unten
+      % Ansatz ist generell unschoen, da Azure mit Windows Servern betreiben wird und Docker nur auf Linux laeuft.
+      % Deswegen ist jede Azure-Docker-Sache eine Docker-Installation in einer Linux-VM (ubuntu), die auf windows server laeuft
 
-
-    % https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-docker-with-xplat-cli/
+      You can use the portal to add the Docker VM Extension to any compatible Linux VM (currently, the only image that supports it is the Ubuntu 14.04 LTS image more recent than July). Using the Azure CLI command line, however, you can install the Docker VM Extension and create and upload your Docker communication certificates all at the same time when you create the VM instance.
+      % Also angeblich nur Ubuntu 14.04 LTS und neuer unterstützt
+      \cite{https://azure.microsoft.com/de-de/documentation/articles/virtual-machines-docker-vm-extension/}
 
 
-  \section{IBM SoftLayer}
-    % https://www.docker.com/IBM
-    % https://docs.docker.com/v1.9/engine/installation/softlayer/
-    % Treiber: https://docs.docker.com/machine/drivers/soft-layer/
-    % http://blog.softlayer.com/tag/docker
+      Azure bietet einige VM-Extensions an, darunter Docker Extension, die Docker-Daemon in einer VM installiert.
+      Darunter auch viele Extensions für die Sicherheit. Diese umfassen Datenverschlüsselung, Intrusion Detection, Anti-Virus und -Malware, Firewall, Log-Inspection
+      \cite{https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-extensions-features/}
 
-    % Wird von moovel für car2Go Carsharing Service verwendet (siehe startseite softlayer)
-    % manches auf Basis von OpenStack (http://www.ibm.com/cloud-computing/de/de/infrastructure/)
+      Azure macht Docker auf Basis von Ubuntu-VMs.
+      \cite{http://www.infoworld.com/article/2887579/hybrid-cloud/ibm-embraces-docker-openstack-in-bluemix-hybrid-cloud-plans.html}
 
-    % DockerHub ist von SoftLayer gehostet
-    % u.a. \cite{http://www.businesscloudnews.com/2014/06/11/ibm-links-up-with-docker-takes-it-to-softlayer/}
-    % aber da gibts bestimmt bessere Quellen
+      Supported Distributions:
+        CoreOS
+        Ubuntu 13 and higher
+        CentOS 7.1 and higher
+        Red Hat Enterprise Linux (RHEL) 7.1 and higher
+      \cite{https://github.com/Azure/azure-docker-extension}
 
-    % While many people share images on the public Docker registry, security-minded organizations will want to create a private registry by leveraging SoftLayer object storage. You can create Docker images for a private registry that will store all its information with object storage. Registries are then easy to create and move to new hosts or between data centers.
-    \cite{http://blog.softlayer.com/2015/docker-containerization-software}
-
-    With this in mind, Docker partnered with IBM to launch their first commercial offering – Docker Trusted Registry with commercially supported Docker Engines – in June of this year with availability in North America only. This offering is now available in Europe for businesses looking for a commercially supported Docker solution.
-
-    What makes it production ready? In addition to formal support from IBM and Docker, Docker Trusted Registry provides clients with a private registry behind the firewall, security and compliance capabilities to manage access control, and integration with existing directories such as LDAP and Active Directory. It also comes with a user interface for administrators to monitor the health of the registry.
-
-    \cite{https://developer.ibm.com/bluemix/2015/10/23/ibm-and-docker-bring-production-ready-containers-to-europe/}
+      % Nonetheless, the competition lacks a genuine hybrid cloud methodology that involves containers, barring whatever someone might create on their own with OpenStack (vendor support not necessarily included). Microsoft is the only one that comes close, with a hybrid strategy that encompasses tight pre-existing integration between Windows locally and Microsoft Azure remotely, though it's limited by the lack of native support for Docker on Windows. Once Microsoft works out how container technologies can be implemented natively in Windows, the picture is bound to change.
+      % \cite{http://www.infoworld.com/article/2887579/hybrid-cloud/ibm-embraces-docker-openstack-in-bluemix-hybrid-cloud-plans.html} ... ganz unten
 
 
-    % (http://www-03.ibm.com/press/us/en/pressrelease/47165.wss)
-    % (http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/1/877/ENUSZP15-0561/index.html&lang=en&request_locale=en)
-    % --> SoftLayer Bezug?
+      % https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-docker-with-xplat-cli/
 
-    Docker wird in Bluemix eingesetzt und wird unter dem Namen \emph{IBM Containers} vermarktet, also Bluemix-Service.
-    % https://developer.ibm.com/bluemix/2015/09/30/ibm-containers-launch-london/
-    % https://developer.ibm.com/bluemix/2015/06/22/ibm-containers-on-bluemix/
-    % Setpember 2015
+    \subsection{Beispiel: IBM SoftLayer}
 
-    % Delivered as part of Bluemix, IBM’s open cloud platform for application development, the IBM Containers service will enable enterprises to launch Docker containers directly onto the IBM Cloud on bare metal servers from SoftLayer, an IBM company. By leveraging Docker container technology, this will provide companies an environment that is simpler to manage and offers increased utilization and performance in a more flexible execution model, expanding the types of applications that can be supported on the IBM Cloud.
-    % \cite{https://www-03.ibm.com/press/us/en/pressrelease/45597.wss}
+      % https://www.docker.com/IBM
+      % https://docs.docker.com/v1.9/engine/installation/softlayer/
+      % Treiber: https://docs.docker.com/machine/drivers/soft-layer/
+      % http://blog.softlayer.com/tag/docker
 
-    SoftLayer vermarketet Multi Tier Security
-    \cite{http://www.softlayer.com/security}
-    mehrere aus: Intrustion Detection System (IDS), Intrusion Prevention System (IPS), beides kombiniert (IDPS)
-    mehrere aus: Firewalls
-    Anti-Virus
-    Security-Benchmark
-    Two-Factor-Authentication
-    \cite{http://www.softlayer.com/SECURITY-SOFTWARE}
+      % Wird von moovel für car2Go Carsharing Service verwendet (siehe startseite softlayer)
+      % manches auf Basis von OpenStack (http://www.ibm.com/cloud-computing/de/de/infrastructure/)
 
-    Schutz vor DOS, wird von einem NOC-Team aufgezeichnet und "migriert" ... was auch immer das heissen soll, s.u.
-    -- A SoftLayer Network Operations Center (NOC) team monitors network performance and security 24x7. Automated DDoS mitigation controls are in place should a DDoS attack occur.
-    -- SoftLayer can’t stop a customer from being attacked, but it can shield the customer (and any other customers in the same network) from the effects of the attack. If necessary, SoftLayer will remove the target from the public network for periods of time and null-routes incoming connections. Because of SoftLayer’s three-tiered network architecture, a customer would still have access to the targeted system via the private network.
-    -- audit and tracking seitens softlayer fuer alle kunden
-    \cite{http://blog.softlayer.com/2014/softlayer-security-questions-and-answers}
+      % DockerHub ist von SoftLayer gehostet
+      % u.a. \cite{http://www.businesscloudnews.com/2014/06/11/ibm-links-up-with-docker-takes-it-to-softlayer/}
+      % aber da gibts bestimmt bessere Quellen
 
-    -- Delivered as part of Bluemix, IBM’s open cloud platform for application development, the IBM Containers service will enable enterprises to launch Docker containers directly onto the IBM Cloud on bare metal servers from SoftLayer.
+      % While many people share images on the public Docker registry, security-minded organizations will want to create a private registry by leveraging SoftLayer object storage. You can create Docker images for a private registry that will store all its information with object storage. Registries are then easy to create and move to new hosts or between data centers.
+      \cite{http://blog.softlayer.com/2015/docker-containerization-software}
 
-    -- mehr flexibilitaet bei softlayer als bei azure, da sowohl bare metal (gut fuer  such as databases and calculation-intensive applications) als auch virtual server angebote.
-    -- "without the overhead of a hypervisor." (http://www.softlayer.com/press/softlayer%E2%84%A2-introduces-bare-metal-cloud%E2%84%A2)
-    \cite{http://www.softlayer.com/BARE-METAL-SERVERS ... und ein tab weiter}
+      With this in mind, Docker partnered with IBM to launch their first commercial offering – Docker Trusted Registry with commercially supported Docker Engines – in June of this year with availability in North America only. This offering is now available in Europe for businesses looking for a commercially supported Docker solution.
 
-  % -------
+      What makes it production ready? In addition to formal support from IBM and Docker, Docker Trusted Registry provides clients with a private registry behind the firewall, security and compliance capabilities to manage access control, and integration with existing directories such as LDAP and Active Directory. It also comes with a user interface for administrators to monitor the health of the registry.
+
+      \cite{https://developer.ibm.com/bluemix/2015/10/23/ibm-and-docker-bring-production-ready-containers-to-europe/}
+
+
+      % (http://www-03.ibm.com/press/us/en/pressrelease/47165.wss)
+      % (http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/1/877/ENUSZP15-0561/index.html&lang=en&request_locale=en)
+      % --> SoftLayer Bezug?
+
+      Docker wird in Bluemix eingesetzt und wird unter dem Namen \emph{IBM Containers} vermarktet, also Bluemix-Service.
+      % https://developer.ibm.com/bluemix/2015/09/30/ibm-containers-launch-london/
+      % https://developer.ibm.com/bluemix/2015/06/22/ibm-containers-on-bluemix/
+      % Setpember 2015
+
+      % Delivered as part of Bluemix, IBM’s open cloud platform for application development, the IBM Containers service will enable enterprises to launch Docker containers directly onto the IBM Cloud on bare metal servers from SoftLayer, an IBM company. By leveraging Docker container technology, this will provide companies an environment that is simpler to manage and offers increased utilization and performance in a more flexible execution model, expanding the types of applications that can be supported on the IBM Cloud.
+      % \cite{https://www-03.ibm.com/press/us/en/pressrelease/45597.wss}
+
+      SoftLayer vermarketet Multi Tier Security
+      \cite{http://www.softlayer.com/security}
+      mehrere aus: Intrustion Detection System (IDS), Intrusion Prevention System (IPS), beides kombiniert (IDPS)
+      mehrere aus: Firewalls
+      Anti-Virus
+      Security-Benchmark
+      Two-Factor-Authentication
+      \cite{http://www.softlayer.com/SECURITY-SOFTWARE}
+
+      Schutz vor DOS, wird von einem NOC-Team aufgezeichnet und "migriert" ... was auch immer das heissen soll, s.u.
+      -- A SoftLayer Network Operations Center (NOC) team monitors network performance and security 24x7. Automated DDoS mitigation controls are in place should a DDoS attack occur.
+      -- SoftLayer can’t stop a customer from being attacked, but it can shield the customer (and any other customers in the same network) from the effects of the attack. If necessary, SoftLayer will remove the target from the public network for periods of time and null-routes incoming connections. Because of SoftLayer’s three-tiered network architecture, a customer would still have access to the targeted system via the private network.
+      -- audit and tracking seitens softlayer fuer alle kunden
+      \cite{http://blog.softlayer.com/2014/softlayer-security-questions-and-answers}
+
+      -- Delivered as part of Bluemix, IBM’s open cloud platform for application development, the IBM Containers service will enable enterprises to launch Docker containers directly onto the IBM Cloud on bare metal servers from SoftLayer.
+
+      -- mehr flexibilitaet bei softlayer als bei azure, da sowohl bare metal (gut fuer  such as databases and calculation-intensive applications) als auch virtual server angebote.
+      -- "without the overhead of a hypervisor." (http://www.softlayer.com/press/softlayer%E2%84%A2-introduces-bare-metal-cloud%E2%84%A2)
+      \cite{http://www.softlayer.com/BARE-METAL-SERVERS ... und ein tab weiter}
+
+  \section{Private Cloud}
+  \label{privateCloud}
 
   % TODO: Docker in/mit VMs
 
@@ -147,13 +165,42 @@
   % ^   \cite[S.35]{presContainerDockerSec}
 
   % Deploying Docker on your infrastructure:
+  % --------------------------------------------------
+  % Both containers and VMs provide isolated environments for running applications on a shared host but from different technical perspectives and can be successfully used separately or together depending on the needs of the application environment.
+  % Virtual machines have a full OS, including its own memory management and virtual device drivers. Isolation is provided at the virtual machine level with resources being emulated for the guest OS, allowing for one or more parallel (and, eventually, different) OS to run on a single host. VMs provide a barrier between application processes and bare-metal systems. The hypervisor denies a VM from executing instructions which could compromise the integrity of the host platform. Protecting the host relies upon providing a safe virtual hardware environment for which to run an OS. This architecture has different implications for host resource utilization, but allows for applications with different OS’s to run on a single host.
+  % Docker containers share a single host OS across all of the application containers running on that same host. Isolation is provided on a per application level by the Docker engine. Using containers reduces the overhead used per application because the multiple OS instances are avoided. This makes containers lighter weight, faster and easier to scale up or down and can gain higher density levels than full VMs. This approach is only possible for applications that share a common OS, like Linux is used for distributed applications.
+  % Regular VMs function in a way that does not allow them to be efficiently scaled down to the level of running a single application service. A VM can support a relatively rich set of applications but running multiple microservices in a single VM without containers creates conflict issues while running one microservice per VM may not be financially feasible for some organizations. Deploying Docker containers in conjunction with VMs allows an entire group of services to be isolated from each other and then grouped inside of a virtual machine. This approach increases security by introducing two layers, containers and VMs, to the distributed application. Additionally this method employs a more efficient use of resources and can increase the density of containers while decrease the number of VMs required for the defined isolation and security goals.
+  % Therefore stronger application isolation can be achieved by combining virtualization and containerization than is cost and resource efficient with virtualization alone. Docker containers pair well with virtualization technologies, by protecting the virtual machine itself, and providing defense-in-depth for the host.
+
+  % Running Containers on BareßMetalÖ
+  % Containers provide a layer of protection between the host and its applications, isolating between application and the host. This makes it safer to deploy applications on bare-metal when compared to not using any virtualization or container technology. With containers, many application services can be deployed on a single host enabling organizations to gain higher levels of resource utilization out of their infrastructure.
+  % However, bare metal deployment does not provide ring-1 hardware isolation, given that it cannot take full advantage of Intel’s VT-d and VT-x technologies. In this scenario containerization is not a complete replacement of virtualization for host isolation levels.
+  % Containerization does provide isolation for running applications on bare-metal, which protects the machine from a large array of threats and is sufficient for a wide range of use cases. Users in the following scenarios may not be good candidates to use VMs and can instead use containers; performance-critical applications running on a single-tenant private cloud, where cross-tenant or cross-application attacks are not as much of a concern; or they are using specialized hardware which cannot be passed through to a VM, or which hardware that offers direct-memory-access, thus nullifying the isolation benefits of virtualization. Many users of GPU computing are in this position.
+  % Docker containers running on bare-metal have the same high-level restrictions applied to them as they would if running on virtual machines. In neither case, would a container normally be allowed to modify devices or hardware, either physical or virtual
+
+  % Aus CONCLUSION:
+  % Containers and Virtual Machines (VMs) can be deployed together to provide additional layers of isolation and security for selected services.
+
   % ^   \cite[S.6+7]{dockerSecIntro}
 
-  % Ganz gutes Bild des Aufbaus in virtVSContainer_2014.... s.2 .
-  % Auch text in linker spalte
+  % PaaS Use Case
+  % Platform as a Service focuses on providing Language Runtime and Services to developers leaving Infrastructure Provisioning and Management to the underlying Layer. PaaS could use Host OS, VM or Container as hosting Environment for applications. PaaS can be implemented using one of the three scenarios.
+  % • Option 1 : Each App runs in an Application level container directly on Host OS where PaaS layer runs
+  % • Option 2 : Each App runs in a VM on PaaS : Each App runs in its own VM
+  % • Option 3 : Each App runs in a container which shares a common VM or VMs for hosting Apps
+  % Option 3 is one of the common implementation choice for most of the PaaS vendors as a combination of the VM and container meets some of the requirements of Isolation, Lifecycle management, fair share of CPU time.
 
-  % Gutes Intro von Docker mit public cloud orechestration:
-  % ^   \cite[S.4+5]{virtVSContainer}
+  % Using VMs in PaaS:
+  % Paas has an important use for VMs to abstract out the Runtime OS from the underlying hardware. Need for each application to have its own VM is the point of contention. Since containers tend to be much lighter in memory footprint, they are preferred architecture as compared to a VM for each application. VM is are used to host the containers. Other Services in Paas like Authentication, Routing, Cloud Controller, Persistent Storage is still run directly on Virtual Machines.
+
+  % From CONCLUSION:
+  % Only few PaaS implementations notably the ones which are open source or are new are using containers as opposed to older ones like GAE, Azure which do not use this concept. Containers have a bright future specially in the PaaS use case provided there is more standardization and abstraction from the underlying kernel and Host OS.
+
+  % mittelmaessiges Bild auf S.2
+
+  %     ^   \cite[S.2+5]{virtVSContainer}
+
+
 
   % Die Frage muss nicht sein: VMs oder Container. Man kann auch VM UND Container zusammen betreiben
   % ^   \cite[S.33]{presContainerDockerSec}

@@ -33,7 +33,7 @@ printf "\n"
 file="$1"
 filename="${file%%.*}"
 
-# Clear directory
+# Clear directory. Move tmp files to a subdir
 mv -f *.log *.aux *.bbl *.blg *.lof *.lot *.toc *.out *.glo *.glg *.gls *.glsdefs *.ist *.acn *.acr *.alg output/
 
 # Proper order for building latex sources with bibtex extra.
