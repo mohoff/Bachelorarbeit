@@ -6,12 +6,23 @@
   Wie in der Einleitung gezeigt, bietet der Einsatz von Virtualisierungslösungen, insbesondere Container, in Rechenzentren einige Vorteile.
   % Neben der technischen Überlegenheit, hat es Docker durch ein sehr erfolgreiches Marketing geschafft, als Heilmittel vieler Probleme in IT-Abteilungen in Unternehmen geschätzt zu werden.
 
-  Durch den hohen Bekanntheitsgrad und der Popularität von Docker in Entwickler- und Managementkreisen sind Anbieter von Public-Clouds gezwungen, eine Unterstützung von Docker in ihr eigenes Portfolio aufzunehmen. Tatsächlich reagieren die großen Anbieter wie \emph{Amazon}, \emph{Microsoft}, \emph{IBM} und \emph{Google} mit vielseitigen, häufig Docker-basierten Containerangeboten. Die etablierten Cloud-Ausprägungen SaaS, PaaS und IaaS werden durch explizite Containerangebote ergänzt, sodass zur Zeit der Begriff CaaS (Container as a Service) als weitere Angebotsform von Cloud-Angeboten Gestalt annimmt. Die Auswirkungen von Docker auf genannte Anbieter sind in Kapitel \ref{publicCloud} beschrieben.
+  % TODO: Was noch Sinn macht, auch in Anspielung auf FRAGESTELLUNG:
+  % Grafik (SET 1): "Man hat die Wahl zwischen on premise (private cloud), dedicated hosted in der cloud, und public cloud und mischungen daraus (hybrid cloud)"
+  % --> 3-4 Vergleiche bildlich
+  % Grafik drunter (SET 2): "Ausserdem hat man die Wahl zwischen VM, Containern, nativ und containern in VM" --> Eine Form von Containern immer gut eigtl wegen Workflow etc.
+  % --> 4 Bilder dazu.
+  % Aus den Sicherheitsanforderungen der betriebenen Anwendungen/Services kann man aus beiden Sets 2 wählen. Wichtig ist zu checken, ob Auswahl aus Set 2 auch von etwaigen Drittanbietern, die Set1 u.U. beinhaltet, angeboten werden.
+
+  Mit dem CLI-Werkzeug \emph{Docker Machine} stellt \emph{Docker} die Option zur Verfügung, von Linux-, Mac- und Windows-Clients aus lokale und entfernte Docker-Hosts zu verwalten. Mit frei konfigurierbaren, sowie auf Cloud-Anbietern angepassten Treibern, eignet sich das Werkzeug auch zur Administration von Docker-Installationen in Private und Public Clouds \cite{https://docs.docker.com/machine/overview/}\cite{https://docs.docker.com/machine/drivers/generic/}\cite{https://docs.docker.com/machine/get-started-cloud/}.
+
+  Durch den hohen Bekanntheitsgrad und der Popularität von Docker in Entwickler- und Managementkreisen sind Anbieter von Public-Clouds gezwungen, eine Unterstützung von Docker in ihr eigenes Portfolio aufzunehmen. Tatsächlich reagieren die großen Anbieter wie \emph{Amazon}, \emph{Microsoft}, \emph{IBM} und \emph{Google} mit vielseitigen, häufig Docker-basierten Containerangeboten. Die etablierten Cloud-Ausprägungen SaaS, PaaS und IaaS werden durch explizite Containerangebote ergänzt, sodass zur Zeit der Begriff CaaS (Container as a Service) als weitere Form von Cloud-Angeboten Gestalt annimmt. Die Auswirkungen von Docker auf genannte Anbieter sind in Kapitel \ref{publicCloud} beschrieben.
 
   Auch in Private Clouds ist Docker ein Thema. Die in Kapitel \ref{secLinux} und \ref{secEcosystem} aufgeführten Eigenschaften von Docker eignen sich für eine unternehmensinterne Anwendung der Technologie, wie in Kapitel \ref{privateCloud} näher erläutert wird.
 
   %Google: Google Container Engine mit Docker Containern. Mit Kubernetes-Schicht dabei. --> komplette FOSS infrastruktur bei google
   %Amazon: Elastic Bean Stack (fuer web applications) und auch EC2-Container als EC2-Container-Service (ECS)
+
+
 
   \section{Public Cloud}
   \label{publicCloud}
@@ -23,40 +34,47 @@
 
     Fest steht, dass Docker als disruptive Technologie von allen Anbieter von Public Clouds akzeptiert und unterstützt werden muss. Diese Tatsache beruht weniger auf der technischen Überlegenheit von Docker gegenüber anderen Containerlösungen oder der Hypervisor-basierten Virtualisierung, sondern auf einem einfachen, automatisierbaren Workflow, der im Modell von Continuous Integration und Continuous Delivery von Docker ermöglicht wird. Die Innovation, mit der sich IT-Unternehmen aktuell konfrontiert sehen, geschieht dadurch vorrangig auf Prozess- und Geschäftsebene.
 
-    Wie große Public Cloud-Anbieter Docker in ihr bestehendes Produktportfolio integrieren und welche Sicherheitsfeatures diese anbieten, ist am Beispiel von \emph{Azure} und \emph{SoftLayer} in den nächsten Abschnitten aufgezeigt.
+    Wie große Public Cloud-Anbieter Docker in ihr bestehendes Produktportfolio integrieren und welche Sicherheitsfeatures diese anbieten, ist am Beispiel von \emph{Azure} von \emph{Microsoft} und \emph{SoftLayer} von \emph{IBM} in den nächsten Abschnitten aufgezeigt. Beide Parteien werben mit einer engen \emph{Docker}-Partnerschaft und guten Integrationsmöglichkeiten von Docker in die eigene Infrastruktur \cite{https://www.docker.com/microsoft}\cite{https://www.docker.com/IBM}. Für beide Produkte stellt \emph{Docker} eigene Treiber zur Verfügung, die von der \emph{Docker Machine} eingebunden werden können
+    \cite{https://docs.docker.com/machine/drivers/}. Die Treiber enthalten Daten wie z.B. eine Kundennummer, Anmeldeinformationen und andere plattformspezifische Einstellungen.
 
     \subsection{Beispiel: Microsoft Azure}
-      % https://docs.docker.com/v1.9/engine/installation/azure/
+      Die Public Cloud-Plattform \emph{Azure} bietet eine Integration von Docker auf Basis von VM-Erweiterungen an. Eine Erweiterung mit dem Namen \emph{Docker Extension} installiert bei der Erstellung einer neuen VM in dieser einen Docker-Daemon. Das Gastbetriebssystem in der VM wird dadurch zu einem Docker-Host. Angeblich unterstützt \emph{Azure} aktuell nur die Linux-Distribution \emph{Ubuntu} in der Version 14.04 \acrshort{LTS}. Laut neueren Informationen aus dem Repository der Docker-Erweiterung, wird neben Ubuntu auch \emph{CoreOS}, \emph{CentOS} 7.1 und höher, sowie \emph{\acrshort{RHEL}} 7.1 und höher unterstützt \cite{https://github.com/Azure/azure-docker-extension/blob/032b0086397155d22f27639aca3b6016b0dfbef4/README.md}.
 
-      % Ansatz ist generell unschoen, da Azure mit Windows Servern betreiben wird und Docker nur auf Linux laeuft.
-      % Deswegen ist jede Azure-Docker-Sache eine Docker-Installation in einer Linux-VM (ubuntu), die auf windows server laeuft
+      % TODO: Referenz zu Grafik mit 3 Anzaetzen (nativ, container in VM, nur vm)
 
-      You can use the portal to add the Docker VM Extension to any compatible Linux VM (currently, the only image that supports it is the Ubuntu 14.04 LTS image more recent than July). Using the Azure CLI command line, however, you can install the Docker VM Extension and create and upload your Docker communication certificates all at the same time when you create the VM instance.
-      % Also angeblich nur Ubuntu 14.04 LTS und neuer unterstützt
-      \cite{https://azure.microsoft.com/de-de/documentation/articles/virtual-machines-docker-vm-extension/}
+      Die Docker-Erweiterung lässt sich sowohl über eine Webanwendung als auch über ein Kommandozeilen-Tool installieren. Auch Zertifikate zur Sicherung der Kommunikation (vgl. Kapitel \ref{conClientServer}) können bei der Einrichtung ausgewählt werden \cite{https://azure.microsoft.com/de-de/documentation/articles/virtual-machines-docker-vm-extension/}\cite{https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-docker-with-xplat-cli/}.
 
+      Unter \emph{Azure} kann Docker ausschließlich innerhalb einer VM betrieben werden. Grund hierfür ist, dass \emph{Mircosoft} seine eigenes Betriebssystem \emph{Windows Server} sowie seine eigenen Hypervisor \emph{Hyper-V} nutzt, um VMs zu realisieren. Eine direkte Installation von Docker auf diesem Betriebssystem ist ausgeschlosen, da Docker aktuell nur in Kombination mit einem Linux-Betriebssystem läuft. Diese Einschränkung soll mit der nächsten Version des Serverbetriebssystems von \emph{Microsoft}, \emph{Windows Server 2016}, aufgehoben werden. \emph{Windows Server 2016}, das aktuell als Technical Preview 4 vorliegt, verspricht Docker nativ, ohne die Hilfe eines Hypervisors, zu unterstützen. Der Betrieb von Containern auf der Plattform \emph{Azure} wird bereits in den Ausprägungen \emph{Windows Server Containers} und \emph{Hyper-V Containers} diversifiziert. Ersteres sieht die zukünftige Möglichkeit vor, Docker direkt auf \emph{Windows Server 2016} auszuführen. Letztere meint den Betrieb von Containern innerhalb einer VM, wie er aktuell von \emph{Azure} angeboten wird \cite{https://www.docker.com/microsoft}\cite{https://msdn.microsoft.com/en-us/virtualization/windowscontainers/about/about_overview}.
 
-      Azure bietet einige VM-Extensions an, darunter Docker Extension, die Docker-Daemon in einer VM installiert.
-      Darunter auch viele Extensions für die Sicherheit. Diese umfassen Datenverschlüsselung, Intrusion Detection, Anti-Virus und -Malware, Firewall, Log-Inspection
-      \cite{https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-extensions-features/}
+      Im Vergleich zur Konkurrenz werden \emph{Azure} gute Integrationsmöglichkeiten von Public und Private Clouds auf Basis von \emph{Windows Server} nachgesagt, was \emph{Microsoft} zu einem beliebten Anbieter von Hybrid Clouds macht \cite{http://www.infoworld.com/article/2887579/hybrid-cloud/ibm-embraces-docker-openstack-in-bluemix-hybrid-cloud-plans.html}.
+      % "vielversprchend" anstatt "beliebten"? Oder ist das zu umgangssprachlich?
+      % TODO: Kann man das als Quelle ueberhaupt nehmen? Seeehr gewagte These, aber in wissenschaftlichen Papern steht sowas auch nicht....
 
-      Azure macht Docker auf Basis von Ubuntu-VMs.
-      \cite{http://www.infoworld.com/article/2887579/hybrid-cloud/ibm-embraces-docker-openstack-in-bluemix-hybrid-cloud-plans.html}
-
-      Supported Distributions:
-        CoreOS
-        Ubuntu 13 and higher
-        CentOS 7.1 and higher
-        Red Hat Enterprise Linux (RHEL) 7.1 and higher
-      \cite{https://github.com/Azure/azure-docker-extension}
-
-      % Nonetheless, the competition lacks a genuine hybrid cloud methodology that involves containers, barring whatever someone might create on their own with OpenStack (vendor support not necessarily included). Microsoft is the only one that comes close, with a hybrid strategy that encompasses tight pre-existing integration between Windows locally and Microsoft Azure remotely, though it's limited by the lack of native support for Docker on Windows. Once Microsoft works out how container technologies can be implemented natively in Windows, the picture is bound to change.
-      % \cite{http://www.infoworld.com/article/2887579/hybrid-cloud/ibm-embraces-docker-openstack-in-bluemix-hybrid-cloud-plans.html} ... ganz unten
-
-
-      % https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-docker-with-xplat-cli/
+      Sicherheitsfeatures von \emph{Azure} können wie Docker als Erweiterungen in VMs integriert werden. Diese beinhalten u.a. Datenverschlüsselung, Firewalls, Intrusion Detection und Anti-Malware Tools. Diese Module können unabhängig von Docker für jede VM aktiviert werden. Da diese Module dadurch keinen Bezug zur Art der Virtualisierung haben und für jede VM unabhängig von Docker aktiviert werden können, sind diese Sicherheitsfeatures an dieser Stelle nur kurz erwähnt.
 
     \subsection{Beispiel: IBM SoftLayer}
+      Zwischen \emph{Docker} und \emph{IBM} existiert eine Partnerschaft, die eine enge Integration von Docker in das Portfolio von \emph{IBM Cloud} zur Folge hat. Während \emph{IBM Cloud} überwiegend PaaS-Angebote, insbesondere \emph{Bluemix}, umfasst, ist \emph{SoftLayer} ein von \emph{IBM} erworbenes Unternehmen, deren Geschäftsmodell auf IaaS beruht \cite{https://developer.ibm.com/bluemix/2015/06/22/ibm-containers-on-bluemix/}. Nach der Definition von Brendan Burns, die CaaS als Mischform aus PaaS und IaaS beschreibt (siehe Kapitel \ref{....}), deckt \emph{Bluemix} seit der Einführung von Docker-basierten \emph{IBM Containers} im September 2015 auch CaaS-Angebote ab %\cite{https://developer.ibm.com/bluemix/2015/09/30/ibm-containers-launch-london/}.
+      Das Portfolio von \emph{IBM Cloud} wird wiederum auf der Infrastruktur von \emph{SoftLayer} betrieben \cite{https://www-03.ibm.com/press/us/en/pressrelease/45597.wss}.
+
+      % TODO:Hieraus bessere Textstruktur mit \paragraph{} machen?
+      \emph{SoftLayer} klassifiziert seine IaaS-Angebote in \glqq{}Bare Metal\grqq{}- und virtuelle Server \cite{http://www.softlayer.com/info/container-hosting}. Erstere beziehen sich auf dedizierte physische Hosts, die Kunden in den Rechenzentren von \emph{SoftLayer} mieten können. Auch wenn dieses Modell als Lösung unter dem Namen \glqq{}Private Cloud\grqq{} verkauft wird \cite{http://www.softlayer.com/PRIVATE-CLOUDS}, ist es - nach der gewählten Definition des Begriffs im Glossar - kein Angebot der Cloud, sondern klassisches Hosting von physischen Servern.
+      % TODO: Sicherstellen, dass die Definition im Glossar das bestaetigt. Cloud: geteilt zwischen mehreren Kunden/Abteilungen und virtualisiert.
+
+      Mit dem zweitgenannten Angebot sind virtuelle Instanzen gemeint, die unter Verwendung von vier verschiedenen Hypervisorn und neun unterschiedlichen Gastbetriebssystemen erzeugt werden können \cite{http://www.softlayer.com/software}. Durch die Natur von IaaS sowie den freien Konfigurationsmöglichkeiten, ist der Betrieb von Docker-Containern unter beiden Varianten realisierbar.
+
+      Wie unter \emph{Azure} werden Sicherheitskomponenten zusätzlich angeboten. Auch \emph{SoftLayer} bietet seinen Kunden die Wahl zwischen einigen, bereits in Kapitel \ref{....} aufgelisteten Mechanismen unterschiedlicher Hersteller an \cite{http://www.softlayer.com/SECURITY-SOFTWARE}.
+
+      % Containers give developers flexibility to build once and move applications without the need to rewrite or redeploy their code. IBM Containers, based on Docker and built on Bluemix, IBM’s platform-as-a-service, provide a more efficient environment that enables faster integration and access to analytics, big data and security services. Enterprises will now be able to use the combination of IBM, Docker, Cloud Foundry and OpenStack to create a new generation of portable distributed applications.
+      %   ^   \cite{https://developer.ibm.com/bluemix/2015/06/22/ibm-containers-on-bluemix/}
+
+      % Bluemix basiert auf Cloud-Fountry
+
+      % ganz gutes Bild und ganz gute Infos
+      % https://developer.ibm.com/bluemix/2015/06/19/ibm-containers-a-bluemix-runtime-leveraging-docker-technology/
+
+      % Softlayer setzt innerhalb seiner Infrastruktur auf ein hybrides Modell. Neben virtuellen Servern können Kunden sogenannte Bare Metal Server (dedizierte physikalische Hosts) anmieten. Eine Variante die IBM während der Pulse 2014 mit vielen Vorträgen prominent vermarktet hat und mit Performance Tests gegen Rivalen wie die Amazon Web Services schießt, die bekanntlich nur eine virtuelle Infrastruktur anbieten. Nach Angaben von Softlayer werden die Bare Metal und die virtuellen Server mittels derselben API (1.600 Stück), demselben Portal und eigenem internen Managementsystem provisioniert. Zudem sei Softlayer in der Lage, Bare Metal Server zu 100 Prozent automatisiert innerhalb von zwei bis vier Stunden bereitzustellen. Softlayer selbst unterstützt OpenStack derzeit nur als Installation auf den Bare Metal Servern. Das bedeutet, dass die technologische Infrastruktur unterhalb von Softlayer bisher nicht durch OpenStack ausgetauscht wurde.
+      % . ... auch sonst ganz gute Infos
+      % http://www.computerwoche.de/a/ibm-setzt-konsequent-auf-die-open-cloud,2555573
 
       % https://www.docker.com/IBM
       % https://docs.docker.com/v1.9/engine/installation/softlayer/
@@ -71,51 +89,47 @@
       % aber da gibts bestimmt bessere Quellen
 
       % While many people share images on the public Docker registry, security-minded organizations will want to create a private registry by leveraging SoftLayer object storage. You can create Docker images for a private registry that will store all its information with object storage. Registries are then easy to create and move to new hosts or between data centers.
-      \cite{http://blog.softlayer.com/2015/docker-containerization-software}
+      % \cite{http://blog.softlayer.com/2015/docker-containerization-software}
 
-      With this in mind, Docker partnered with IBM to launch their first commercial offering – Docker Trusted Registry with commercially supported Docker Engines – in June of this year with availability in North America only. This offering is now available in Europe for businesses looking for a commercially supported Docker solution.
+      % With this in mind, Docker partnered with IBM to launch their first commercial offering – Docker Trusted Registry with commercially supported Docker Engines – in June of this year with availability in North America only. This offering is now available in Europe for businesses looking for a commercially supported Docker solution.
+      % What makes it production ready? In addition to formal support from IBM and Docker, Docker Trusted Registry provides clients with a private registry behind the firewall, security and compliance capabilities to manage access control, and integration with existing directories such as LDAP and Active Directory. It also comes with a user interface for administrators to monitor the health of the registry.
+      %\cite{https://developer.ibm.com/bluemix/2015/10/23/ibm-and-docker-bring-production-ready-containers-to-europe/}
 
-      What makes it production ready? In addition to formal support from IBM and Docker, Docker Trusted Registry provides clients with a private registry behind the firewall, security and compliance capabilities to manage access control, and integration with existing directories such as LDAP and Active Directory. It also comes with a user interface for administrators to monitor the health of the registry.
-
-      \cite{https://developer.ibm.com/bluemix/2015/10/23/ibm-and-docker-bring-production-ready-containers-to-europe/}
-
-
-      % (http://www-03.ibm.com/press/us/en/pressrelease/47165.wss)
       % (http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/1/877/ENUSZP15-0561/index.html&lang=en&request_locale=en)
       % --> SoftLayer Bezug?
 
-      Docker wird in Bluemix eingesetzt und wird unter dem Namen \emph{IBM Containers} vermarktet, also Bluemix-Service.
+      % Docker wird in Bluemix eingesetzt und wird unter dem Namen \emph{IBM Containers} vermarktet, also Bluemix-Service.
       % https://developer.ibm.com/bluemix/2015/09/30/ibm-containers-launch-london/
       % https://developer.ibm.com/bluemix/2015/06/22/ibm-containers-on-bluemix/
       % Setpember 2015
 
       % Delivered as part of Bluemix, IBM’s open cloud platform for application development, the IBM Containers service will enable enterprises to launch Docker containers directly onto the IBM Cloud on bare metal servers from SoftLayer, an IBM company. By leveraging Docker container technology, this will provide companies an environment that is simpler to manage and offers increased utilization and performance in a more flexible execution model, expanding the types of applications that can be supported on the IBM Cloud.
-      % \cite{https://www-03.ibm.com/press/us/en/pressrelease/45597.wss}
+      %
 
-      SoftLayer vermarketet Multi Tier Security
-      \cite{http://www.softlayer.com/security}
-      mehrere aus: Intrustion Detection System (IDS), Intrusion Prevention System (IPS), beides kombiniert (IDPS)
-      mehrere aus: Firewalls
-      Anti-Virus
-      Security-Benchmark
-      Two-Factor-Authentication
-      \cite{http://www.softlayer.com/SECURITY-SOFTWARE}
+      %SoftLayer vermarketet Multi Tier Security
+      %\cite{http://www.softlayer.com/security}
+      %mehrere aus: Intrustion Detection System (IDS), Intrusion Prevention System (IPS), beides kombiniert (IDPS)
+      %mehrere aus: Firewalls
+      %Anti-Virus
+      %Security-Benchmark
+      %Two-Factor-Authentication
+      %\cite{http://www.softlayer.com/SECURITY-SOFTWARE}
 
-      Schutz vor DOS, wird von einem NOC-Team aufgezeichnet und "migriert" ... was auch immer das heissen soll, s.u.
-      -- A SoftLayer Network Operations Center (NOC) team monitors network performance and security 24x7. Automated DDoS mitigation controls are in place should a DDoS attack occur.
-      -- SoftLayer can’t stop a customer from being attacked, but it can shield the customer (and any other customers in the same network) from the effects of the attack. If necessary, SoftLayer will remove the target from the public network for periods of time and null-routes incoming connections. Because of SoftLayer’s three-tiered network architecture, a customer would still have access to the targeted system via the private network.
-      -- audit and tracking seitens softlayer fuer alle kunden
-      \cite{http://blog.softlayer.com/2014/softlayer-security-questions-and-answers}
+      %Schutz vor DOS, wird von einem NOC-Team aufgezeichnet und "migriert" ... was auch immer das heissen soll, s.u.
+      %-- A SoftLayer Network Operations Center (NOC) team monitors network performance and security 24x7. Automated DDoS mitigation controls are in place should a DDoS attack occur.
+      %-- SoftLayer can’t stop a customer from being attacked, but it can shield the customer (and any other customers in the same network) from the effects of the attack. If necessary, SoftLayer will remove the target from the public network for periods of time and null-routes incoming connections. Because of SoftLayer’s three-tiered network architecture, a customer would still have access to the targeted system via the private network.
+      %-- audit and tracking seitens softlayer fuer alle kunden
+      %\cite{http://blog.softlayer.com/2014/softlayer-security-questions-and-answers}
 
-      -- Delivered as part of Bluemix, IBM’s open cloud platform for application development, the IBM Containers service will enable enterprises to launch Docker containers directly onto the IBM Cloud on bare metal servers from SoftLayer.
+      %-- Delivered as part of Bluemix, IBM’s open cloud platform for application development, the IBM Containers service will enable enterprises to launch Docker containers directly onto the IBM Cloud on bare metal servers from SoftLayer.
 
-      -- mehr flexibilitaet bei softlayer als bei azure, da sowohl bare metal (gut fuer  such as databases and calculation-intensive applications) als auch virtual server angebote.
-      -- "without the overhead of a hypervisor." (http://www.softlayer.com/press/softlayer%E2%84%A2-introduces-bare-metal-cloud%E2%84%A2)
-      \cite{http://www.softlayer.com/BARE-METAL-SERVERS ... und ein tab weiter}
+      %-- mehr flexibilitaet bei softlayer als bei azure, da sowohl bare metal (gut fuer  such as databases and calculation-intensive applications) als auch virtual server angebote.
+      %-- "without the overhead of a hypervisor." (http://www.softlayer.com/press/softlayer%E2%84%A2-introduces-bare-metal-cloud%E2%84%A2)
+      %\cite{http://www.softlayer.com/BARE-METAL-SERVERS ... und ein tab weiter}
 
   \section{Private Cloud}
   \label{privateCloud}
-
+    bla
   % TODO: Docker in/mit VMs
 
   % Wichtiges Kapitel für Daimler, mein Chef, Management
