@@ -129,43 +129,50 @@
 
   \section{Private Cloud}
   \label{privateCloud}
-    Private Clouds werden häufig mit der Softwareplattform \emph{OpenStack} in Verbindung gebracht. \emph{OpenStack} ist eine Open-Source-Software, die es erlaubt, Cloud-Angebote nach dem IaaS-Modell zu realisieren. Grundlegende Komponenten, die in einem Rechenzentrum existieren, werden über einige Module angeboten. Z.B. wird Rechenkapazität mit Nova, Netzwerkfunktionen mit Neutron und Speicherkapazität mit Swift und Cinder abgebildet. Die einzelnen Komponenten können über eine Vielzahl an APIs miteinander kommunizieren und erfüllen meist in Kombination die jeweiligen Vorstellungen von IaaS.
+    Private Clouds definieren sich dadurch, dass sie von einem Unternehmen in einem eigenen Rechenzentrum betrieben werden.
 
-    Durch die Vielseitigkeit und Komplexität von \emph{OpenStack}, wird der Technologie nachgesagt, ... % schwierig zu isntallieren/betreiben zu sein.
-    Trotzdem integrieren viele Anbieter auf dem Cloud-Markt vermehrt \emph{OpenStack} in ihr Portfolio.
+    Durch die volle Kontrolle über die Hardware des eigenen Rechenzentrums, ist die Bereitstellung von Cloud-Diensten in beliebiger Granularität möglich. IaaS, PaaS und SaaS können in einer Private Cloud betrieben werden.
 
-    Auch die Entwicklung von \emph{OpenStack} ist sehr aktiv. Anfang 2015 wurde mit \emph{Projekt Magnum} ein weiteres Modul angekündigt, das Docker und \emph{Kubernetes} in \emph{OpenStack} verfügbar macht \cite{https://wiki.openstack.org/wiki/Magnum}. Magnum nutzt dabei die bestehenden Funktionen von Nova und Heat, die virtuelle Instanzen verwalten und fügt Schnittstellen hinzu, um mit Docker- und Kubernetes-Installationen in diesen virtuellen Instanzen zu kommunizieren \cite{https://wiki.openstack.org/wiki/Magnum}.
+    In einer solchen Cloud, wird die Multi-Tenant-Umgebung von Public Clouds zu einer Single-Tenant-Umgebung, da nur der Betreiber selbst die Cloud-Dienste nutzt. Diese wichtige Eigenschaft hat direkte Folgen für die Sicherheit:
+    % Evtl. Bullets draus machen. 1. keine Trennung nach Kunden 2. Verfügbarkeit weiterhin wichtig 3. Vertraulichkeit und Integrität weniger 4. Vertraute Anwendungen/Umgebung 5. Keine böswilligen Absichten anderer Instanzen.
+    Mehrere Kunden müssen nicht mehr wie es in Public Clouds der Fall ist, voneinander isoliert werden. Eine Trennung innerhalb der Private Cloud gibt es nur noch nach Anwendungen, die nicht miteinander interferieren sollen. Während Sicherheitsmechanismen, um die Verfügbarkeit dieser Anwendungen sicherzustellen, weiterhin wichtig sind, kommt solchen, die die Vertrauchlichkeit und Integrität gewährleisten sollen, weniger Bedeutung in Private Clouds als in Public Clouds zu. Diese Schlussfolgerung beruht auf der Annahme, dass Anwendungen der Private Cloud von Natur aus vertrauenswürdiger sind, da sie vollständig beobachtet und kontrolliert werden können, sowie oftmals von eigenen Unternehmensmitarbeitern entwickelt wurden.
+    % TODO: Wichtig ist hierbei, dass Private Cloud per Definition im Glossar wirklich unternehmenseigenen Rechenzentren meint, also on-premise, nicht off-premise gehosted bei Drittanbietern.
+    Diese Sicherheitsvorteile existieren in diesem Ausmaß nicht in einer Private Cloud, die in fremden Rechenzentren betrieben wird. Dieses Szenario, was der Definition von Private Cloud in dieser Arbeit widerspricht, sieht nach Aussagen von Anbietern solcher Lösungen vor, die Private Cloud in Rechenzentren physisch von anderen Kundeninstanzen zu trennen.
+    % TODO: Quelle dazu (war das in einem Docker-doc?)
 
-    % ) How is Magnum is different from Nova?
-    % Magnum provides a purpose built API to manage application containers, which have a distinctly different life cycle and operations than Nova (machine) Instances. We actually use Nova instances to run our application containers.
-    % 2) How is Magnum different than Docker or Kubernetes?
-    % Magnum offers an asynchronous API that's compatible with Keystone, and a complete multi-tenancy implementation. It does not perform orchestration internally, and instead relies on OpenStack Orchestration. Magnum does leverage both Kubernetes and Docker as components.
-    % 3) Is this the same thing as Nova-Docker?
-    % No, Nova-Docker is a virt driver for Nova that allows containers to be created as Nova instances. This is suitable for use cases when you want to treat a container like a lightweight machine. Magnum provides container specific features that are beyond the scope of Nova's API, and implements its own API to surface these features in a way that is consistent with other OpenStack services. Containers started by Magnum are run on top of Nova instances that are created using Heat.
+    % Trend zu hybrid Cloud erwähnen, und Sicherheitsfolgen. Aber Begriff noch sehr schwammig... fehlt es an konkreten teschnischen Lösungen, oder? Sagt ja eigentlich nur aus, dass public und private Cloud nahtlos ineinander integriert werden... was das aus anwendungssicher auch immer zu bedeuten hat.
 
-    % Von openSuSe genutzt bzw. Angebot von enterprise loesungen auf der basis von open stack. .... suse cloud
-    % https://www.suse.com/products/suse-openstack-cloud/
-
-    % http://platform9.com/why-platform9/
-    % ( http://www.wavemaker.com/cloud/ )
-
-    % https://wiki.openstack.org/wiki/Magnum
-    % http://www.heise.de/newsticker/meldung/OpenStack-goes-Container-2660052.html
-
-    % http://getcloudify.org/2015/12/26/openstack-docker-kubernetes-hybrid-cloud-nfv-orchestration-mano-etsi-cloudify.html
-
-    % Das ist gut. auch für Einleitungskapitel, da 1. phzsischer 2. virtual 3. software defined everything chronologisch erklärt wird
-    % http://www.golem.de/news/openstack-viele-brauchen-es-keiner-versteht-es-wir-erklaeren-es-1503-112814-2.html
-
-    % OpenStack: besteht aus sehr vielen Komponenten. Komplexe Software, deren Einarbeitung sich lohnen kann
-    % http://www.openstack.org/software/
-
-    % Bisher Docker-Support als Treiber/Erweiterung des Moduls Nova
-    % https://wiki.openstack.org/wiki/Docker
+    Private Clouds werden u.a. als kommerziellen Produkte angeboten. Z.B. verkauft \emph{Microsoft} die Lösung \emph{Windows Azure Pack}, welche auf proprietärer Software von \emph{Microsoft} basiert und in Rechenzentren von Kunden installiert wird. Im Open-Source-Bereich dominiert \emph{OpenStack} als Implementierung, das im folgenden Kapitel vorgestellt wird.
 
 
-    % OpenStack Magnum
-    % Magnum is an OpenStack API service developed by the OpenStack Containers Team making container orchestration engines such as Docker and Kubernetes available as first class resources in OpenStack. Magnum uses Heat to orchestrate an OS image which contains Docker and Kubernetes and runs that image in either virtual machines or bare metal in a cluster configuration.
+
+    \subsection{Beispiel: OpenStack}
+      %Private Clouds werden häufig mit der Softwareplattform \emph{OpenStack} in Verbindung gebracht.
+      \emph{OpenStack} ist eine Open-Source-Software mit Apache-2-Lizenz, die es erlaubt, Cloud-Angebote nach dem IaaS-Modell zu realisieren. Grundlegende Komponenten, die in einem Rechenzentrum existieren, werden über einige Module angeboten. Z.B. wird Rechenkapazität mit Nova, Netzwerkfunktionen mit Neutron und Speicherkapazität mit Swift und Cinder abgebildet. Die einzelnen Komponenten können über eine Vielzahl an APIs miteinander kommunizieren und erfüllen meist in Kombination die jeweiligen Vorstellungen von IaaS.
+
+      Durch die Vielseitigkeit und Größe von \emph{OpenStack}, wird der Technologie eine hohe Komplexität und eine lange Einarbeitungszeit nachgesagt. \emph{SUSE} und andere Linux-Anbieter profitieren von dieser Eigenschaft, indem sie z.B. mit \emph{SUSE OpenStack Cloud} eigene \emph{OpenStack}-Lösungen anbieten, die Kunden eine einfach realisierbare Private Cloud ermöglicht
+      \cite{https://www.suse.com/promo/cloud/}
+      \cite{http://www.golem.de/news/openstack-viele-brauchen-es-keiner-versteht-es-wir-erklaeren-es-1503-112814-2.html}
+      \cite{http://www.golem.de/news/openstack-viele-brauchen-es-keiner-versteht-es-wir-erklaeren-es-1503-112814-4.html}.
+      Das Startup \emph{Platform 9} verspricht \emph{OpenStack}-as-a-Service, ein Angebot, das die Komplexität von \emph{OpenStack} für Kunden verbergen soll \cite{http://platform9.com/why-platform9/}.
+
+      Trotz der Komplexität integrieren viele Anbieter auf dem Cloud-Markt vermehrt \emph{OpenStack} in ihr Portfolio. Unterstützer von \emph{OpenStack} sind \emph{SUSE}, \emph{Red Hat}, \emph{IBM}, \emph{Oracle}, \emph{Intel}
+      \cite{http://www.heise.de/developer/meldung/OpenStack-Liberty-Cloud-Framework-macht-das-Dutzend-voll-2849083.html}
+      \cite{https://opensource.com/resources/what-is-openstack}.
+      % Wird als Zukunft von Cloud-Computing gehandelt.
+
+      Auch die Entwicklung von \emph{OpenStack} ist sehr aktiv. Anfang 2015 wurde mit \emph{Projekt Magnum} ein weiteres Modul angekündigt, das Docker und \emph{Kubernetes} in \emph{OpenStack} verfügbar macht \cite{https://wiki.openstack.org/wiki/Magnum}. Davor war ein Betrieb von Containern nur über den Treiber \emph{Nova-Docker} für das Modul Nova möglich, dessen Funktionsumfang sehr begrenzt ist
+      \cite{http://www.heise.de/newsticker/meldung/OpenStack-goes-Container-2660052.html}
+      \cite{https://wiki.openstack.org/wiki/Docker}.
+      Magnum nutzt die bestehenden Funktionen von Nova und Heat, die virtuelle Instanzen verwalten und fügt Schnittstellen hinzu, um mit Docker- und Kubernetes-Installationen innerhalb der virtuellen Instanzen zu kommunizieren \cite{https://wiki.openstack.org/wiki/Magnum}.
+
+      Neben der neuen Integration von Magnum, unterstützt \emph{OpenStack} auch viele Hypervisor-Technologien wie KVM, XEN, Hyper-V von \emph{Microsoft} und vSphere von \emph{VMware}.
+
+      % http://getcloudify.org/2015/12/26/openstack-docker-kubernetes-hybrid-cloud-nfv-orchestration-mano-etsi-cloudify.html
+      % http://natishalom.typepad.com/nati_shaloms_blog/2014/11/do-i-need-paas-if-i-use-docker.html
+
+      % Das ist gut. auch für Einleitungskapitel, da 1. phzsischer 2. virtual 3. software defined everything chronologisch erklärt wird
+      % http://www.golem.de/news/openstack-viele-brauchen-es-keiner-versteht-es-wir-erklaeren-es-1503-112814-2.html
 
 
 
