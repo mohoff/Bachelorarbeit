@@ -129,46 +129,49 @@
   \label{privateCloud}
     Private Clouds definieren sich dadurch, dass sie von einem Unternehmen in einem eigenen Rechenzentrum betrieben werden.
 
-    Durch die volle Kontrolle über die Hardware des eigenen Rechenzentrums, ist die Bereitstellung von Cloud-Diensten in beliebiger Granularität möglich. IaaS, PaaS und SaaS können in einer Private Cloud betrieben werden.
-
-    In einer solchen Cloud, wird die Multi-Tenant-Umgebung von Public Clouds zu einer Single-Tenant-Umgebung, da nur der Betreiber selbst die Cloud-Dienste nutzt. Diese wichtige Eigenschaft hat direkte Folgen für die Sicherheit:
-    % Evtl. Bullets draus machen. 1. keine Trennung nach Kunden 2. Verfügbarkeit weiterhin wichtig 3. Vertraulichkeit und Integrität weniger 4. Vertraute Anwendungen/Umgebung 5. Keine böswilligen Absichten anderer Instanzen.
+    Durch die volle Kontrolle über die Hardware des eigenen Rechenzentrums, ist die Bereitstellung von Cloud-Diensten in beliebiger Granularität möglich. IaaS, PaaS und SaaS können einzeln oder in Kombination in einer Private Cloud betrieben werden. In einer solchen Cloud, wird die Multi-Tenant-Umgebung von Public Clouds zu einer Single-Tenant-Umgebung, da per Definition nur Cloud-Dienste des Betreibers selbst existieren. Diese wichtige Eigenschaft hat direkte Folgen für die Sicherheit:
+    % Evtl. Bullets draus machen. 1. keine Trennung nach Kunden 2. Verfügbarkeit weiterhin wichtig 3. Vertraulichkeit und Integrität weniger 4. Vertraute Anwendungen/Umgebung 5. Keine böswilligen Absichten anderer Instanzen bzw. geringere Gefahr anderer Instanzen
     Mehrere Kunden müssen nicht mehr wie es in Public Clouds der Fall ist, voneinander isoliert werden. Eine Trennung innerhalb der Private Cloud gibt es nur noch nach Anwendungen, die nicht miteinander interferieren sollen. Während Sicherheitsmechanismen, um die Verfügbarkeit dieser Anwendungen sicherzustellen, weiterhin wichtig sind, kommt solchen, die die Vertrauchlichkeit und Integrität gewährleisten sollen, weniger Bedeutung in Private Clouds als in Public Clouds zu. Diese Schlussfolgerung beruht auf der Annahme, dass Anwendungen der Private Cloud von Natur aus vertrauenswürdiger sind, da sie vollständig beobachtet und kontrolliert werden können, sowie oftmals von eigenen Unternehmensmitarbeitern entwickelt wurden.
     % TODO: Wichtig ist hierbei, dass Private Cloud per Definition im Glossar wirklich unternehmenseigenen Rechenzentren meint, also on-premise, nicht off-premise gehosted bei Drittanbietern.
-    Diese Sicherheitsvorteile existieren in diesem Ausmaß nicht in einer Private Cloud, die in fremden Rechenzentren betrieben wird. Dieses Szenario, was der Definition von Private Cloud in dieser Arbeit widerspricht, sieht nach Aussagen von Anbietern solcher Lösungen vor, die Private Cloud in Rechenzentren physisch von anderen Kundeninstanzen zu trennen.
-    % TODO: Quelle dazu (war das in einem Docker-doc?)
+    Diese Sicherheitsvorteile existieren in diesem Ausmaß nicht in Private Clouds, die in Rechenzentren Dritter betrieben werden. Diese Konstellation wird auch als Managed Private Cloud bezeichnet und widerspricht der in dieser Arbeit gewählten Definition von Private Clouds. Wie die Bezeichnung aussagt, werden Managed Private Clouds von externen Anbietern verwaltet. Jedoch bezieht der Kunde hierbei keine mit anderen Kunden geteilte Instanz, sondern erhält eine im Rechenzentrum physisch getrennte, dedizierte Infrastruktur \cite{softlayerPrivateCloud}.
 
-    % TODO:Trend zu hybrid Cloud erwähnen, und Sicherheitsfolgen. Aber Begriff noch sehr schwammig... fehlt es an konkreten teschnischen Lösungen, oder? Sagt ja eigentlich nur aus, dass public und private Cloud nahtlos ineinander integriert werden... was das aus anwendungssicher auch immer zu bedeuten hat.
-    % TODO: Docker sehr gut geeignet fuer Private Clouds... mehr Bezug zu Docker noch hier rein
+    Das potentiell geringere Sicherheitsrisiko in Private Clouds kann sich auch auf die Art der gewählten Virtualisierungsarchitektur auswirken. Der reine Betrieb von Containern auf einem Docker-Hostsystem ist ohne die Unterstützung von Hypervisor-Technologien, je nach Sicherheitsanforderungen, möglich.
 
-    Private Clouds werden u.a. als kommerziellen Produkte angeboten. Z.B. verkauft \emph{Microsoft} die Lösung \emph{Windows Azure Pack}, welche auf proprietärer Software von \emph{Microsoft} basiert und in Rechenzentren von Kunden installiert wird. Im Open-Source-Bereich dominiert \emph{OpenStack} als Implementierung, das im folgenden Kapitel vorgestellt wird.
-
-
+    Private Clouds werden u.a. als kommerziellen Produkte angeboten. Z.B. verkauft \emph{Microsoft} die Lösung \emph{Windows Azure Pack}, welche auf proprietärer Software von \emph{Microsoft} basiert und in Rechenzentren von Kunden installiert wird. Im Open-Source-Bereich dominiert \emph{OpenStack} als Implementierung für Private und Hybrid Clouds (siehe Kapitel \ref{hybridCloud}), das im folgenden Kapitel vorgestellt wird.
 
     \subsection{Beispiel: OpenStack}
       %Private Clouds werden häufig mit der Softwareplattform \emph{OpenStack} in Verbindung gebracht.
-      \emph{OpenStack} ist eine Open-Source-Software mit Apache-2-Lizenz, die es erlaubt, Cloud-Angebote nach dem IaaS-Modell zu realisieren. Grundlegende Komponenten, die in einem Rechenzentrum existieren, werden über einige Module angeboten. Z.B. wird Rechenkapazität mit Nova, Netzwerkfunktionen mit Neutron und Speicherkapazität mit Swift und Cinder abgebildet. Die einzelnen Komponenten können über eine Vielzahl an APIs miteinander kommunizieren und erfüllen meist in Kombination die jeweiligen Vorstellungen von IaaS.
+      \emph{OpenStack} ist eine Open-Source-Software mit Apache-2-Lizenz, die es erlaubt, Cloud-Angebote nach dem IaaS-Modell zu realisieren. Grundlegende Komponenten, die in einem Rechenzentrum existieren, werden über einige Module angeboten. Z.B. wird Rechenkapazität mit Nova, Orchestrierung mit Heat und Speicherkapazität mit Swift und Cinder abgebildet. Die einzelnen Komponenten können über eine Vielzahl an APIs miteinander kommunizieren und erfüllen, meist in Kombination, die jeweiligen Anforderungen an eine IaaS-Lösung.
 
       Durch die Vielseitigkeit und Größe von \emph{OpenStack}, wird der Technologie eine hohe Komplexität und eine lange Einarbeitungszeit nachgesagt. \emph{SUSE} und andere Linux-Anbieter profitieren von dieser Eigenschaft, indem sie z.B. mit \emph{SUSE OpenStack Cloud} eigene \emph{OpenStack}-Lösungen anbieten, die Kunden nach eigenen Aussagen eine einfach realisierbare Private Cloud ermöglicht \cite{SusePrivateCloud}\cite[S.2+4]{golemOpenStack}.
-      Das Startup \emph{Platform 9} verspricht \emph{OpenStack}-as-a-Service, ein Angebot, das die Komplexität von \emph{OpenStack} für Kunden verbergen soll \cite{platform9}.
+      Das Startup \emph{Platform 9} verspricht \emph{OpenStack}-as-a-Service; ein Angebot, das die Komplexität von \emph{OpenStack} für Kunden verbergen soll \cite{platform9}.
 
-      Trotz der Komplexität integrieren viele Anbieter auf dem Cloud-Markt vermehrt \emph{OpenStack} in ihr Portfolio. Unterstützer von \emph{OpenStack} sind u.a. \emph{SUSE}, \emph{Red Hat}, \emph{IBM}, \emph{Oracle} und \emph{Intel} \cite{heiseOpenStack}
+      Trotz der Komplexität integrieren viele Anbieter auf dem Cloud-Markt vermehrt \emph{OpenStack} in ihr Portfolio. Unterstützer von \emph{OpenStack} sind u.a. \emph{SUSE}, \emph{Red Hat}, \emph{IBM}, \emph{Oracle} und \emph{Intel} \cite{heiseOpenStack}\cite{IBMDockerOpenStack}. Auch die steigende Nachfrage nach Hybrid Clouds in der Industrie, begünstigt \emph{OpenStack}, wie in Kapitel \ref{hybridCloud} gezeigt wird.
       % \cite{https://opensource.com/resources/what-is-openstack}.
       % Wird als Zukunft von Cloud-Computing gehandelt.
 
-      Auch die Entwicklung von \emph{OpenStack} ist sehr aktiv. Anfang 2015 wurde mit \emph{Projekt Magnum} ein weiteres Modul angekündigt, das Docker und \emph{Kubernetes} in \emph{OpenStack} verfügbar macht \cite{openStackMagnum}. Davor war ein Betrieb von Containern nur über den Treiber \emph{Nova-Docker} für das Modul Nova möglich, dessen Funktionsumfang sehr begrenzt ist \cite{heiseOpenStackContainer}\cite{openStackDocker}.
+      Die Entwicklung von \emph{OpenStack} ist, mit der Verbesserung bestehender und Entwicklung neuer Modulfunktionen, sehr aktiv. Anfang 2015 wurde mit \emph{Projekt Magnum} ein weiteres Modul angekündigt, das Docker und \emph{Kubernetes} in \emph{OpenStack} verfügbar macht \cite{openStackMagnum}. Davor war ein Betrieb von Containern nur über den Treiber \emph{Nova-Docker} für das Modul Nova möglich, dessen Funktionsumfang im Zusammenhang mit Containern sehr begrenzt ist \cite{heiseOpenStackContainer}\cite{openStackDocker}.
       Magnum nutzt die bestehenden Funktionen von Nova und Heat, die virtuelle Instanzen verwalten und fügt Schnittstellen hinzu, um mit Docker- und Kubernetes-Installationen innerhalb der virtuellen Instanzen zu kommunizieren \cite{openStackMagnum}.
 
       Neben der neuen Integration von Magnum, unterstützt \emph{OpenStack} auch viele Hypervisor-Technologien wie z.B. KVM, XEN, Hyper-V von \emph{Microsoft} und vSphere von \emph{VMware}.
 
-      % TODO: https://docs.docker.com/machine/drivers/openstack/
-      % TODO: Mit integrieren in dieses Kaptiel: \cite{IBMDockerOpenStack}
+      Auch für \emph{OpenStack} bietet Docker einen eigenen Treiber an \cite{dockerMachineDriverOpenStack}.
 
       % http://getcloudify.org/2015/12/26/openstack-docker-kubernetes-hybrid-cloud-nfv-orchestration-mano-etsi-cloudify.html
       % http://natishalom.typepad.com/nati_shaloms_blog/2014/11/do-i-need-paas-if-i-use-docker.html
 
       % Das ist gut. auch für Einleitungskapitel, da 1. phzsischer 2. virtual 3. software defined everything chronologisch erklärt wird
       % http://www.golem.de/news/openstack-viele-brauchen-es-keiner-versteht-es-wir-erklaeren-es-1503-112814-2.html
+
+  \section{Hybrid Cloud}
+  \label{hybridCloud}
+    Hybrid Clouds bezwecken eine Kombination aus Private und Public Cloud. Beie Arten von Clouds bieten Schnittstellen an, die eine Kommunikation der beiden Arten ermöglicht. Für Benutzer von Cloud-Diensten ist die technische und meist geographische Trennung der beiden Infrastrukturen unsichtbar, da diese im Hintergrund von einer Hybrid-Cloud-Lösung verwaltet wird.
+
+    Durch die Verknüpfung von eigenen und fremden Rechenzentren, ist die Kompatibilität zwischen beiden Infrastrukturen von großer Bedeutung. Ohne sich in die Abhängigkeit eines Hybrid-Cloud-Produkts mit kommerziellen Technologien zu begeben, ist \emph{OpenStack} auch für dieses Szenario eine attraktive Alternative. Durch die zunehmende Akzeptanz von \emph{OpenStack} und dessen Integrationsmöglichkeiten in kommerzielle Produkte, wird sowohl die bereits genannte, notwendige Kompatibilität gewährleistet, als auch ein sogenannter Vendor-Lock-In vermieden. Durch die Verwendung von \emph{OpenStack} kann einfach zwischen Anbietern gewechselt werden. Außerdem können die Angebote von Hybrid-Cloud-Lösungen auf der Basis der zugrundeliegenden Open-Source-Technologie transparent miteinander verglichen werden.
+
+    Mit dem Freiheitsgrad einer von \emph{OpenStack} realisierten IaaS, lassen sich eine Vielzahl von Betriebssystem und Virtualisierungstechnologien nutzen. Dadurch ist auch der Betrieb von Containern mit Docker und Kubernetes, insbesondere durch das Modul Magnum, jederzeit möglich.
+
+    % TODO:Trend zu hybrid Cloud erwähnen, und Sicherheitsfolgen. Aber Begriff noch sehr schwammig... fehlt es an konkreten teschnischen Lösungen, oder? Sagt ja eigentlich nur aus, dass public und private Cloud nahtlos ineinander integriert werden... was das aus anwendungssicher auch immer zu bedeuten hat.
 
 
 
@@ -183,8 +186,6 @@
   % Welche Möglichkeiten zur sicheren Docker-Integration bieten diese?
   % Wortlaut Patrick: Wie funktionierts bei Azure, wie funktionierts wenn man es
   % selbst implementiert.
-
-  % --> mir ist nich klar, was ich da untersuchen kann.
 
   % Hypervisor-basierte Clouds:
   % Amazon Web Services (AWS) nutzt XEN.
@@ -234,12 +235,12 @@
   % Containerization does provide isolation for running applications on bare-metal, which protects the machine from a large array of threats and is sufficient for a wide range of use cases. Users in the following scenarios may not be good candidates to use VMs and can instead use containers; performance-critical applications running on a single-tenant private cloud, where cross-tenant or cross-application attacks are not as much of a concern; or they are using specialized hardware which cannot be passed through to a VM, or which hardware that offers direct-memory-access, thus nullifying the isolation benefits of virtualization. Many users of GPU computing are in this position.
   % Docker containers running on bare-metal have the same high-level restrictions applied to them as they would if running on virtual machines. In neither case, would a container normally be allowed to modify devices or hardware, either physical or virtual
 
-  % Aus CONCLUSION:
+  % TODO: Aus CONCLUSION:
   % Containers and Virtual Machines (VMs) can be deployed together to provide additional layers of isolation and security for selected services.
 
   % ^   \cite[S.6+7]{dockerSecIntro}
 
-  % PaaS Use Case
+  % TODO: PaaS Use Case
   % Platform as a Service focuses on providing Language Runtime and Services to developers leaving Infrastructure Provisioning and Management to the underlying Layer. PaaS could use Host OS, VM or Container as hosting Environment for applications. PaaS can be implemented using one of the three scenarios.
   % • Option 1 : Each App runs in an Application level container directly on Host OS where PaaS layer runs
   % • Option 2 : Each App runs in a VM on PaaS : Each App runs in its own VM
@@ -258,10 +259,10 @@
 
 
 
-  % Die Frage muss nicht sein: VMs oder Container. Man kann auch VM UND Container zusammen betreiben
+  % TODO: Die Frage muss nicht sein: VMs oder Container. Man kann auch VM UND Container zusammen betreiben
   % ^   \cite[S.33]{presContainerDockerSec}
 
-  % Datencontainer begünstigen auch das MVC-Pattern, welches nach dem Prinzip \emph{Seperation Of Concerns} die verschiedenen Komponenten
+  % TODO: Datencontainer begünstigen auch das MVC-Pattern, welches nach dem Prinzip \emph{Seperation Of Concerns} die verschiedenen Komponenten
   % Multi-Tier-Architektur
   % Seperation of Concerns...
   % bisschen MVC ...
