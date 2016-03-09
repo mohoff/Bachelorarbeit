@@ -6,11 +6,11 @@
 
 	\section{Virtualisierung}
   \label{introVirt}
-    Bei der Virtualisierung, deren Anfänge sich auf IBM-Forschungsprojekte von 1964 zurückführen lassen, werden ein oder mehrere virtuelle Systeme auf einem physischen System betrieben. Mehrere solcher Systeme können eine virtuelle Infrastruktur bilden, in der physische und virtuelle Systeme gemeinsam verwaltet werden können \cite[S.661]{tanenbaumOS}.
+    Bei der Virtualisierung, deren Anfänge sich auf IBM-Forschungsprojekte von 1964 zurückführen lassen, werden ein oder mehrere virtuelle Systeme auf einem physischen System betrieben. Ein virtuelles System kann dabei eine minimale Ausführungumgebung sein oder als vollständiges Betriebssystem vorliegen. Systeme können eine Serverinfrastruktur bilden, in der physische und virtuelle Systeme gemeinsam verwaltet werden können \cite[S.661]{tanenbaumOS}.
 
 		% TODO: Ausführungsumgebung --> Betriebssystem... per Konvenation auch einfach System genannt.
 
-		Ein Betriebssystem, das in der Rolle eines Wirts mehrere virtuelle Systeme betreibt, wird als Host oder Hostsystem bezeichnet. Systeme, die einzeln oder parallel virtualisiert auf einem solchen Host laufen, werden als Gast- oder virtuelle Systeme bezeichnet.
+		Ein Betriebssystem, das in der Rolle eines Wirts mehrere virtuelle Systeme betreibt, wird allgemein als Host oder Hostsystem bezeichnet. Systeme, die einzeln oder parallel virtualisiert auf einem solchen Host laufen, werden als (virtuelle) Gastsysteme bezeichnet.
 
 		Der Begriff des Hosts ist abzugrenzen von der Bedeutung eines Hosts in der Netzwerktechnik. In der Netzwerktechnik ist damit ein kommunikationsfähiger Netzwerkknoten gemeint. Der in dieser Arbeit mehrfach erwähnte Host meint das Betriebssystem, welches Gastsysteme startet und stoppt.
 
@@ -20,11 +20,11 @@
 			\item \textbf{Virtueller Host}: Hostsystem, das Gastsysteme verwaltet und selbst als Gastsystem eines übergeordneten Hosts existiert.
 		\end{itemize}
 
-		Die Einheit eines physischen Hosts inklusive aller darin betriebenen virtuellen Systeme, wird in dieser Arbeit als Maschine bezeichnet.
+		Im Vergleich zu dieser Unterscheidung ist ein Gastsystem immer virtualisierter Art. Die Einheit eines physischen Hosts inklusive aller darin betriebenen virtuellen Systeme, wird in dieser Arbeit als Maschine bezeichnet.
 
 		Wie der Begriff \glqq{}Virtueller Host\grqq{} andeutet, sind virtuelle Verschachtelungen in der Architektur von Maschinen möglich und auch in der Praxis bis zu einem gewissen Grad sinnvoll. Beispielsweise kann in einem Rechenzentrum, jeder physische Host mehrere Kunden abdecken, indem jeder Kunde eine Gastsystem zugewiesen bekommt. Ein Kunde kann dieses ihm zugewiesene Gastsystem wiederum als virtuellen Host betreiben, das jede Anwendung des Kunden in einem eigenen Gastsystem virtualisiert. Wie diese Trennung von Kunden und Kundenanwenddungen zeigt, eignet sich eine Verschachtelung der Systeme zur Abbildung von logischen Strukturen.
 
-		% --- schnit ----
+		% --- schnitt ----
 
 		Virtualisierte Systeme nutzen im Vergleich zu nativen (physischen) Systemen eine zusätzliche Softwareschicht, die den virtualisierten Systemen in der Ausprägung von virtuellen Maschinen, sogenannte \acrshort{VM}s, und Containern, mehrere Abstraktionen anbietet, um Funktionen des Hostsystems abzubilden \cite[S.2]{containerVirtPerformance}. Beide Ausprägungen erwecken aus Sicht des Gastsystems den Eindruck, dass ein alleinstehendes Betriebssystem ausgeführt wird.
     Der Einsatz von Virtualisierung bietet vielfältige Vorteile für \acrshort{IT}-Unternehmen. In der folgenden Auflistung sind einige Problemfaktoren und Anforderungen an Rechentzentren und darin laufender Software zusammengefasst, die alle durch Virtualisierungslösungen addressiert werden können \cite[S.1]{bsiVirt}\cite[S.662,672f.]{tanenbaumOS}\cite[S.299]{mandlOS}.
@@ -67,7 +67,7 @@
 		\end{table}
 		% TODO: Tabelle ist leider abgeschnitten
 
-		Wie zu sehen ist, bietet der Einsatz von serverseitiger Virtualisierung eine Reihe von Vorteilen, die ein rein physischer Betrieb von Servern nicht in dem Maß bieten kann. Diese Vorteile eröffneten IT-Unternehmen auch neue Geschäftsmodelle, auf denen der Erfolg von heutigen Cloud-Anbietern wie \emph{Amazon}, \emph{Google} und \emph{Microsoft} beruht. Selbst einhergehende Nachteile der Virtualisierung, wie z.B. Leistungsverluste und in dieser Arbeit untersuchte Sicherheitsrisiken, scheinen, den Vorteilen gegenübergestellt, nicht ins Gewicht zu fallen.
+		Wie in Tabelle \ref{tab:virtAdvantages} zu sehen ist, bietet der Einsatz von serverseitiger Virtualisierung eine Reihe von Vorteilen, die ein rein physischer Betrieb von Servern nicht in dem Maß bieten kann. Diese Vorteile eröffneten IT-Unternehmen auch neue Geschäftsmodelle, auf denen der Erfolg von heutigen Cloud-Anbietern wie \emph{Amazon}, \emph{Google} und \emph{Microsoft} beruht. Selbst einhergehende Nachteile der Virtualisierung, wie z.B. Leistungsverluste und in dieser Arbeit untersuchte Sicherheitsrisiken, scheinen, den Vorteilen gegenübergestellt, nicht ins Gewicht zu fallen.
 
 		Im Folgenden sind die Konzepte der Virtualisierung auf Hypervisor- und Containerbasis erklärt und in ihren ausschlaggebenden Eigenschaften gegenübergestellt.
 
