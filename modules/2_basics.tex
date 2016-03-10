@@ -6,27 +6,29 @@
 
 	\section{Virtualisierung}
   \label{introVirt}
-    Bei der Virtualisierung, deren Anfänge sich auf IBM-Forschungsprojekte von 1964 zurückführen lassen, werden ein oder mehrere virtuelle Systeme auf einem physischen System betrieben. Ein virtuelles System kann dabei eine minimale Ausführungumgebung sein oder als vollständiges Betriebssystem vorliegen. Systeme können eine Serverinfrastruktur bilden, in der physische und virtuelle Systeme gemeinsam verwaltet werden können \cite[S.661]{tanenbaumOS}.
+    Bei der Virtualisierung, deren Anfänge sich auf IBM-Forschungsprojekte von 1964 zurückführen lassen, werden ein oder mehrere virtuelle Systeme auf einem physischen System betrieben. Virtuelle und physische Systeme können dabei als minimale oder vollständige Betriebssysteme vorliegen. Systeme können in Rechenzentren eine Serverinfrastruktur bilden, in der virtuelle als auch physische Komponenten gemeinsam verwaltet werden \cite[S.661]{tanenbaumOS}.
 
-		% TODO: Ausführungsumgebung --> Betriebssystem... per Konvenation auch einfach System genannt.
+		Zunächst werden Formulierungskonventionen und ein Wortschatz definiert, die grundlegende Merkmale der Virtualisierung einführen und im Rahmen dieser Arbeit zum Verständnis beitragen sollen.
 
-		Ein Betriebssystem, das in der Rolle eines Wirts mehrere virtuelle Systeme betreibt, wird allgemein als Host oder Hostsystem bezeichnet. Systeme, die einzeln oder parallel virtualisiert auf einem solchen Host laufen, werden als (virtuelle) Gastsysteme bezeichnet.
+		Die Unterscheidung in \glqq{}virtuelle\grqq{} und \glqq{}physische\grqq{} Systeme ist nicht von Bedeutung, wenn allein der Begriff \glqq{}System\grqq{} aufgeführt ist. Wenn die Abgrenzung minimaler Betriebssysteme von vollständigen Betriebssystemen notwendig ist, wird das jeweilige Attribut an entsprechender Stelle verwendet. Standardmäßig ist allgemein von einem (Betriebs-)System die Rede. Per Definition in dieser Arbeit, besteht ein System aus mindestens einem Betriebssystem und zugehörigen Peripheriegeräte, wie z.B. einem Netzwerkanschluss.
+
+		Ein System, das in der Rolle eines Wirts mehrere virtuelle Systeme betreibt, wird allgemein als Host oder Hostsystem bezeichnet. Systeme, die einzeln oder parallel virtualisiert auf einem solchen Host laufen, werden als (virtuelle) Gastsysteme bezeichnet.
 
 		Der Begriff des Hosts ist abzugrenzen von der Bedeutung eines Hosts in der Netzwerktechnik. In der Netzwerktechnik ist damit ein kommunikationsfähiger Netzwerkknoten gemeint. Der in dieser Arbeit mehrfach erwähnte Host meint das Betriebssystem, welches Gastsysteme startet und stoppt.
 
-		Das Hostsystem kann physischer oder virtualisierter Natur sein:
+		Das Hostsystem kann physischer oder virtueller Natur sein:
 		\begin{itemize}
 			\item \textbf{Physischer Host}: Hostsystem, das Gastsysteme verwaltet und selbst direkt (nativ) auf der Hardware läuft.
 			\item \textbf{Virtueller Host}: Hostsystem, das Gastsysteme verwaltet und selbst als Gastsystem eines übergeordneten Hosts existiert.
 		\end{itemize}
 
-		Im Vergleich zu dieser Unterscheidung ist ein Gastsystem immer virtualisierter Art. Die Einheit eines physischen Hosts inklusive aller darin betriebenen virtuellen Systeme, wird in dieser Arbeit als Maschine bezeichnet.
+		Im Vergleich zu dieser Unterscheidung ist ein Gastsystem immer virtueller Natur. Die Einheit eines physischen Hosts inklusive aller darin betriebenen virtuellen Systeme, wird in dieser Arbeit als Maschine bezeichnet.
 
-		Wie der Begriff \glqq{}Virtueller Host\grqq{} andeutet, sind virtuelle Verschachtelungen in der Architektur von Maschinen möglich und auch in der Praxis bis zu einem gewissen Grad sinnvoll. Beispielsweise kann in einem Rechenzentrum, jeder physische Host mehrere Kunden abdecken, indem jeder Kunde eine Gastsystem zugewiesen bekommt. Ein Kunde kann dieses ihm zugewiesene Gastsystem wiederum als virtuellen Host betreiben, das jede Anwendung des Kunden in einem eigenen Gastsystem virtualisiert. Wie diese Trennung von Kunden und Kundenanwenddungen zeigt, eignet sich eine Verschachtelung der Systeme zur Abbildung von logischen Strukturen.
+		Wie der Begriff \glqq{}Virtueller Host\grqq{} andeutet, sind virtuelle Verschachtelungen in der Architektur von Maschinen möglich und auch in der Praxis bis zu einem gewissen Grad sinnvoll. Beispielsweise kann in einem Rechenzentrum, jeder physische Host von mehreren Kunden verwendet werden, indem jedem Kunden eine Gastsystem auf diesem physischen Host zugewiesen wird. Ein Kunde kann dieses Gastsystem wiederum als virtuellen Host betreiben, das jede Anwendung des Kunden in einem eigenen, neuen Gastsystem virtualisiert. Wie diese Trennung von Kunden und Kundenanwenddungen zeigt, eignet sich eine Verschachtelung der Systeme zur Abbildung von logischen Strukturen.
 
 		% --- schnitt ----
 
-		Virtualisierte Systeme nutzen im Vergleich zu nativen (physischen) Systemen eine zusätzliche Softwareschicht, die den virtualisierten Systemen in der Ausprägung von virtuellen Maschinen, sogenannte \acrshort{VM}s, und Containern, mehrere Abstraktionen anbietet, um Funktionen des Hostsystems abzubilden \cite[S.2]{containerVirtPerformance}. Beide Ausprägungen erwecken aus Sicht des Gastsystems den Eindruck, dass ein alleinstehendes Betriebssystem ausgeführt wird.
+		Virtualisierte Systeme nutzen im Vergleich zu nativen (physischen) Systemen zusätzliche Software, die den virtualisierten Systemen in der Ausprägung von virtuellen Maschinen, sogenannte \acrshort{VM}s, und Containern, mehrere Abstraktionen anbietet, um Funktionen des Hostsystems abzubilden \cite[S.2]{containerVirtPerformance}. Beide Ausprägungen erwecken aus Sicht des Gastsystems den Eindruck, dass ein alleinstehendes Betriebssystem ausgeführt wird.
     Der Einsatz von Virtualisierung bietet vielfältige Vorteile für \acrshort{IT}-Unternehmen. In der folgenden Auflistung sind einige Problemfaktoren und Anforderungen an Rechentzentren und darin laufender Software zusammengefasst, die alle durch Virtualisierungslösungen addressiert werden können \cite[S.1]{bsiVirt}\cite[S.662,672f.]{tanenbaumOS}\cite[S.299]{mandlOS}.
 
 		% \multicolumn{1}{l|}{
