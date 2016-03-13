@@ -23,23 +23,34 @@
 
     \emph{Bild zum Systemmodell}
 
-    Aus \fig \ref{fig:systemModel} können zwei unterschiedliche Gefahrenquellen identifiziert werden:
+    % TODO: Systemmodell erläutern ... Erst was abgebildet ist, dann mathematisch fundiert.
+    Das Systemmodell ist zunächst definiert als ein Docker-Host h und ein Set C, das aus Containern C1, C2, ... Cn besteht. Diese Container laufen auf einem Docker-Host, der aus einem Betriebssystem besteht, auf dem ein Docker-Daemon läuft, der C verwaltet.
 
-    % TODO: begin numbered itemize daraus machen
+    Aus \fig \ref{fig:systemModel} und der Funktionsweise von Docker (siehe Kapitel \ref{dockerIntro} können zwei unterschiedliche Gefahrenquellen (A) und (B) identifiziert werden:
 
-    \paragraph{A: Docker-Spezifika:}
-    In Containern werden Anwendungen ausgeführt, die nicht zwangsweise vertrauenswürdig sind. Wenn beispielweise Containerimages von einer öffentlichen Registry, wie dem Docker Hub, bezogen werden, existiert keine Garantie, dass aus diesen Images gestartete Container gegen keines der drei zuvor definierten Sicherheitsziele verstößt. Durch die Komplexität moderner Anwendungen und deren Abhängigkeiten zu Bibliotheken, ist es selbst bei quelloffenen Anwendungen schwierig, diese als vertrauenswürdig einzustufen. Deswegen muss davon ausgegangen werden, dass in Containern willkürliche Programme ablaufen (\emph{interne Gefahrenquellen}), die - versehentlich oder beabsichtigt - den Host schädigen können.
+    \begin{enumerate}[label=(\Alph*)]
+      \item \textbf{Docker-Spezifika:} In Containern werden Anwendungen ausgeführt, die nicht zwangsweise vertrauenswürdig sind. Wenn beispielweise Containerimages von einer öffentlichen Registry, wie dem Docker Hub, bezogen werden, existiert keine Garantie, dass aus diesen Images gestartete Container gegen keines der drei zuvor definierten Sicherheitsziele verstößt. Durch die Komplexität moderner Anwendungen und deren Abhängigkeiten zu Bibliotheken, ist es selbst bei quelloffenen Anwendungen schwierig, diese als vertrauenswürdig einzustufen. Deswegen muss davon ausgegangen werden, dass in Containern willkürliche Programme ablaufen (\emph{interne Gefahrenquellen}), die - versehentlich oder beabsichtigt - den Host schädigen können.
 
-    Außerdem kann jederzeit ein Fehler in der Codebasis von Docker entdeckt werden, der die Sicherheit von Docker-Hosts und Containern beeinträchtigt.
+      Außerdem kann jederzeit ein Fehler in der Codebasis von Docker entdeckt werden, der die Sicherheit von Docker-Hosts und Containern beeinträchtigt.
 
-    % Bzw. Container als kommunikationsfähige Netzwerkknoten
-    \paragraph{B: Container als Server im Internet:}
-    Viele Container stellen einen Dienst über das Internet zur Verfügung und stehen dadurch mit der Außenwelt in Kontakt. Ein Webserver beispielsweise, kann als Containerapplikation betrieben werden, indem er über über einen Port Anfragen von Clients entgegennimmt und diese nach abgeschlossener Verarbeitung beantwortet. Die Notwendigkeit, Containerschnittstellen über das Internet anzubieten, kann von Angreifern (\emph{externe Gefahrenquellen}) ausgenutzt werden, um Sicherheitsziele zu verletzen. Der Schutz des Netzwerks und der Verbindung des Hosts an das Internet, der in dieser Arbeit nicht behandelt wird, muss unabhängig von der eingesetzten Containertechnologie realisiert sein.
+      \item \textbf{Container als Server im Internet:} Viele Container stellen einen Dienst über das Internet zur Verfügung und stehen dadurch mit der Außenwelt in Kontakt. Ein Webserver beispielsweise, kann als Containerapplikation betrieben werden, indem er über über einen Port Anfragen von Clients entgegennimmt und diese nach abgeschlossener Verarbeitung beantwortet. Die Notwendigkeit, Containerschnittstellen über das Internet anzubieten, kann von Angreifern (\emph{externe Gefahrenquellen}) ausgenutzt werden, um Sicherheitsziele zu verletzen. Der Schutz des Netzwerks und der Verbindung des Hosts an das Internet, der in dieser Arbeit nicht behandelt wird, muss unabhängig von der eingesetzten Containertechnologie realisiert sein.
+    \end{enumerate}
 
   \section{Auswirkungen der identifizierten Risiken:}
-    Bei einer näheren Betrachtung, sind aus Sicht des Hostsystems die Folgen beider Gefahrenquellen jedoch sehr ähnlich. In beiden Fällen muss davon ausgegangen werden, dass ein Container schadhaften Code ausführt. Die Unterscheidung nach der Gefahrenquelle (Gefahr A oder Gefahr B) ist unerheblich, da beide Szenarien dazu führen, dass eine oder mehrere Container eines Hostsystems schadhaften Code ausführen.
+    Bei einer näheren Betrachtung, sind aus Sicht des Hostsystems die Folgen beider Gefahrenquellen jedoch sehr ähnlich. In beiden Fällen muss davon ausgegangen werden, dass ein Container schadhaften Code ausführt. Die Unterscheidung nach Gefahrenquelle (A) oder (B) ist unerheblich, da beide Szenarien dazu führen, dass eine oder mehrere Container eines Hostsystems schadhaften Code ausführen.
 
     Daraus ergibt sich die Schlussfolgerung, dass ein Container nicht vertrauenswürdig ist und aus Sicht der IT-Sicherheit angenommen werden muss, dass dieser von einem Angreifer kontrolliert wird.
+
+    Mithilfe dieser Erkenntnis kann das Systemmodell unter Einbeziehung eines Angreifermodells erweitert werden. M wird in zwei echte Teilmengen unterteilt, die jeweils korrekt funktionierende, legitime Container und kompromittierte Container repräsentieren:
+
+    C TEILMENGEVON M = {c1,c2,...ci | 0 < i < N UND C != {} UND i+j = N} mit c ELEMENTVON C     % ci == c
+    C' TEILMENGEVON M = {c1,c2,...cj | 0 < j < N UND C' != {} UND i+j = N} mit c' ELEMENTVON C'    % cj == c'
+    C' vereinigt mit C ergibt M.
+
+    Mit 0 < i < N, 0 < j < N und {C,C'} != {} wird ein Systemmodell erzeugt, das von mindestens zwei Container in einem Hostsystem ausgeht (#{M} > 1), wovon mindestens ein Container c legitim (#{C} > 0) und mindestens ein Container c' kompromittiert (#{C'} > 0) ist.
+
+    Dieses Modell bildet den Betrieb von Docker-Containern realitätsnah ab, da diese so konstruiert wurden, dass sie i.d.R. in einer Vielzahl parallel auf h laufen. Wie aus obiger Schlussfolgerung hervorgeht, muss angenommen werden, dass C' eine nicht-leere Menge ist, also mindestens ein Container c' existiert, der Schadcode ausführt. Dabei kann c' die Sicherheitsziele von h und C verletzen. Beide Eigenschaften werden von diesem Systemmodell abgedeckt.
+
 
     % Ob das zugrundeliegende Image fehlerhaft bzw. manipuliert ist (Gefahr A), oder ein Container aktiv von einem Angreifer kontrolliert wird (Gefahr B), spielt für den Host keine Rolle. Der Host muss in der Lage sein, die Systemsicherheit aufrecht zu erhalten. Die Systemsicherheit umfasst hierbei den Schutz des Hosts sowie anderer Container.
 
@@ -74,8 +85,10 @@
   \section{Theoretischer Lösungsansatz}
     Die Strategie zur Erfüllung der soeben definierten Sicherheitsanforderungen, beruht unter Docker auf einem zweistufigen Ansatz:
 
-    1. Angreifern soll es erschwert oder bestenfalls unmöglich gemacht werden, aus der virtualisierten Umgebung von c' auszubrechen. Angreifer sollen nicht die Möglichkeit besitzen, die ursprünglich für c' vorgesehenen Rechte zu erweitern.
-    2. Falls es einem Angreifer dennoch gelingen sollte, 1. zu verletzen, soll er durch weitere Zugriffskontrollen daran gehindert werden, Schaden im Hostsystem oder an anderen Containern anzurichten.
+    \begin{enumerate}[label=(\arabic*)]
+      \item Angreifern soll es erschwert oder bestenfalls unmöglich gemacht werden, aus der virtualisierten Umgebung eines c' auszubrechen. Angreifer sollen nicht die Möglichkeit besitzen, die ursprünglich für c' vorgesehenen Rechte zu erweitern.
+      \item Falls es einem Angreifer dennoch gelingen sollte, (1) zu verletzen, soll er durch weitere Zugriffskontrollen daran gehindert werden, Schaden im Hostsystem oder an anderen Containern anzurichten.
+    \end{enumerate}
 
     Mithilfe der im nächsten Abschnitt aufgelisteten Mittel, versucht Docker diese umzusetzen.
 
