@@ -24,7 +24,7 @@
     \emph{Bild zum Systemmodell}
 
     % TODO: Systemmodell erläutern ... Erst was abgebildet ist, dann mathematisch fundiert.
-    Das Systemmodell ist zunächst definiert als ein Docker-Host h und ein Set C, das aus Containern C1, C2, ... Cn besteht. Diese Container laufen auf einem Docker-Host, der aus einem Betriebssystem besteht, auf dem ein Docker-Daemon läuft, der C verwaltet.
+    Das Systemmodell ist zunächst definiert als ein Docker-Host h und ein Set C, das aus Containern C1, C2, ... Cn besteht. Diese Container laufen auf einem Docker-Host, der aus einem Betriebssystem besteht, auf dem ein Docker-Daemon läuft, der C verwaltet. Verteilte Docker-Systeme, in denen mehrere Hosts miteinander kommunizieren, werden in dieser Arbeit nicht betrachtet. Aus diesem Grund enthält eine Menge von Hosts H in diesem Fall nur einen Host h.
 
     Aus \fig \ref{fig:systemModel} und der Funktionsweise von Docker (siehe Kapitel \ref{dockerIntro} können zwei unterschiedliche Gefahrenquellen (A) und (B) identifiziert werden:
 
@@ -87,7 +87,7 @@
 
     \begin{enumerate}[label=(\arabic*)]
       \item Angreifern soll es erschwert oder bestenfalls unmöglich gemacht werden, aus der virtualisierten Umgebung eines c' auszubrechen. Angreifer sollen nicht die Möglichkeit besitzen, die ursprünglich für c' vorgesehenen Rechte zu erweitern.
-      \item Falls es einem Angreifer dennoch gelingen sollte, (1) zu verletzen, soll er durch weitere Zugriffskontrollen daran gehindert werden, Schaden im Hostsystem oder an anderen Containern anzurichten.
+      \item Falls es einem Angreifer dennoch gelingen sollte, (1) zu verletzen, soll er durch weitere Zugriffskontrollen daran gehindert werden, Schaden an h und C anzurichten.
     \end{enumerate}
 
     Mithilfe der im nächsten Abschnitt aufgelisteten Mittel, versucht Docker diese umzusetzen.
