@@ -40,18 +40,30 @@
 
 \chapter{Sicherheit durch Linux-Funktionen}
 \label{secLinux}
-	Dieses Kapitel stellt die von dem Betriebssystem Linux ermöglichten Sicherheitsmodelle und -mechanismen vor, die Docker unterstützt. Dazu zählen zunächst die Isolierung kritischer Bereiche, die meist nach dem chroot-Prinzip in Form von sogenannten Namespaces, erfolgt. Außerdem werden Control Groups, kurz Cgroups, vorgestellt, die eine Ressourcenverwaltung implementieren. Der Linux-Kernel bietet weitere Sicherheitsfunktionen an, die beispielsweise durch die Implementierung einer Mandatory Access Control (MAC) von Docker genutzt werden. Auch sind Capability-basierte Sicherheitsfunktionen, wie sie von Linux ermöglicht und in einer Reihe an Werkzeugen Anwendung finden, Gegenstand dieses Kapitels.
+	Die Docker-Entwickler haben in den letzten Monaten die Integrations- und Anpassungsmöglichkeiten zusätzlicher Sicherheitsmaßnahmen, v.a. die von Mandatory Access Controls (MACs), stark verbessert, da die Containersicherheit für \emph{Docker} nach eigenen Aussagen höchste Priorität hat \cite{githubDockerRoadmap}\cite{githubDockerChangelog}. Auch die Tatsache, dass sich zur Zeit die Konkurrenz \emph{CoreOS} mit der Containerlösung \emph{rkt} als sicherheitsfokusierte Alternative zu Docker auf dem Virtualisierungsmarkt etablieren will \cite{coreosAnnouncementRkt10}, ist für \emph{Docker} Anreiz die Sicherheit ihrer eigenen Entwicklung nicht zu vernachlässigen. Die Veröffentlichung des großen Sicherheitsupdates für Docker mit der Version 1.10 am 4. Februar 2016 geschah wenige Stunden nach der Ankündigung der Version 1.0 von \emph{rkt} seitens \emph{CoreOS} \cite{hnAnnouncementDocker110}\cite{hnAnnouncementRkt10}, was eine starke Konkurrenz zwischen den beiden Anbietern vermuten lässt. % /erkenntlich macht..
 
-	Diese Vielzahl an Mechanismen werden von Docker unterstützt, um nach den Prinzipien \emph{Defense In Depth} und \emph{Principle Of Least Privilege} einen möglichst sicheren Betrieb von Containern zu ermöglichen.
+	Die allgemein Vorgehensweise von Docker beruht auf den beiden Prinzipien \emph{Defense In Depth} und \emph{Principle Of Least Privilege}, um einen möglichst sicheren Betrieb von Containern zu ermöglichen.
 
 	\begin{itemize}
-			\item \emph{Defense In Depth}: Es werden möglichst viele Sicherheitsmechanismen aktiviert, um die Gesamtsicherheit zu erhöhen. Der Funktionsumfang der einzelnen Mechanismen kann sich - wie auch in der vorliegenden Sicherheitsarchitektur der Fall ist - überschneiden.
+			\item \emph{Defense In Depth}: Es werden möglichst viele, unabhängige Sicherheitsschichten kombiniert aktiviert, um die Gesamtsicherheit eines Systems zu erhöhen. Der Funktionsumfang der einzelnen Mechanismen kann sich - wie auch in der vorliegenden Sicherheitsarchitektur von Docker der Fall ist - mit Mechanismen anderer Schichten überschneiden.
 			\item \emph{Principle Of Least Privilege}: Die angewandten Sicherheitsmechanismen bewirken, dass die von Docker initiierte Aktionen eingeschränkt werden. Docker ist nur befugt Operationen auszuführen, die dazu dienen, seinen Zweck als Containertechnologie zu erfüllen. Alle anderen Privilegien werden Docker verwehrt.
 	\end{itemize}
 
-	Zudem bieten viele Mechanismen an, die Sicherheitskonfiguration, z.B. in der Form von Profilen, dynamisch anzupassen, sodass eine individuelle Begrenzung oder Ausdehnung von Rechten pro Containerapplikation möglich ist.
+	% Auf technischer Ebene sind zunächst die grundlegenden Mechanismen zur Isolation und Ressourcenverwaltung zu erwähnen, die das Konzept von Containern ermöglichen. Unter Linux sind das die Techniken Namespaces und Control Groups, von denen Docker, \emph{rkt} und andere Linux-basierten Containertechnologien Gebrauch machen.
 
-	Wie In Kapitel \ref{introVirtContainer} geschildert, wird Docker zur Zeit nur für Linux angeboten. Aus diesem Grund ist eine Untersuchung von Sicherheitsfeatures anderer Betriebssysteme in diesem Kapitel irrelevant.
+	Dieses Kapitel stellt die von dem Betriebssystem Linux ermöglichten Sicherheitsmodelle und -mechanismen vor, die Docker im Rahmen dieser beiden Prinzipien unterstützt.
+
+	Dazu zählen die Isolierung kritischer Bereiche, die auf Basis des \texttt{chroot}-Befehls in Form von Namespaces, erfolgt (s. Kapitel \ref{secIsolierung}). Außerdem werden Control Groups, kurz Cgroups, vorgestellt, die eine Ressourcenverwaltung implementieren (s. Kapitel \ref{secCgroups}). Während beide Mechanismen eine hohe Sicherheitsrelevanz aufweisen, können sie als Feature-erweiternde Funktionen eines Hostsystems verstanden werden, deren alleiniges Ziel es ist, die Idee von virtuellen Gastsystemen (Containern) zu realisieren. Die in CISSP definierten sicherheitserhöhenden Maßnahmen werden von Namespaces und Cgroups nicht berührt \cite{....}.
+	% TODO: CISSP-Quelle!!
+
+	Anschließend werden Zugriffskontrollen erklärt, die in verschiedenen Variationen unter Docker existieren (s. Kapitel \ref{secAccessControls}). Mechanismen dieser Art setzen teilweise Sicherheitsmodelle um, z.B. auf der Basis von sogenannten Capabilities.
+
+	%Auch sind Capability-basierte Sicherheitsfunktionen, wie sie von Linux ermöglicht und in einer Reihe an Werkzeugen Anwendung finden, Gegenstand dieses Kapitels.
+
+	% TODO: Mehr Bezug zur Forschungsfrage schaffen und den Annahmen,Schlussfolgerungen
+
+
+	Wie in Kapitel \ref{introVirtContainer} bereits geschildert, wird Docker zur Zeit nur für Linux angeboten. Aus diesem Grund ist eine Untersuchung von Sicherheitsfeatures anderer Betriebssysteme in diesem Kapitel irrelevant.
 
   % namespaces/etc (was es ist) in Einleitung mit rein? 1.) Erklaeren, 2.) Security/Docker untersuchen dazu im Security Hauptteil
   % 2 Unterkapitel, inhatliche Überschneidung evtl., Grund nennen warum so gegliedert, ...
@@ -271,7 +283,7 @@
 			Mit einem \emph{\acrshort{UTS}-namespace} ist es möglich, jedem Container einen eigenen Hostnamen zuzuweisen. Der Container kann diesen Namen abfragen und ändern \cite[S.3]{virtVSContainer}. Dieser Namespace trägt damit nicht zur Containersicherheit bei und ist daher nur aus Gründen der Vollständigkeit an dieser Stelle erwähnt.
 
 	\section{Ressourcenverwaltung / Limitierung von Ressourcen durch \texttt{\acrshort{cgroups}}}
-  \label{secResLimit}
+  \label{secCgroups}
 		\acrshort{DoS}-Attacken mit der Absicht das Sicherheitsziel der Verfügbarkeit zu verletzen, gehören in \gls{MultiTenantService}-Systemen zu einem gängigen Angriffsmuster \cite[S.5]{dockerSec1}. Um die Verfügbarkeit von Containern sicherzustellen, bietet der Linux-Kernel sogenannte \emph{\acrlong{cgroups}} (kurz \texttt{\acrshort{cgroups}}) an.
 
 		Alle gängigen Linux-basierten Containerlösungen, darunter auch Docker, nutzen aktuell \texttt{\acrshort{cgroups}}, um Ressourcen für Container zu verwalten \cite[S.16]{dockerSec2}. Der Einsatz von \texttt{\acrshort{cgroups}} unter Docker umfasst - wie im Quellcode von \emph{runC} zu sehen ist - die Kontrolle über \acrshort{CPU}, Arbeitsspeicher, Geräte (\emph{Devices Nodes}, Netzwerkinterfaces und \acrshort{I/O}-Operationen auf Speichermedien wie \acrshort{HDD}, \acrshort{SSD} und \acrshort{USB}-Speicher \cite{cgroupsRedhat}\cite{githubRunCCgroups}. Die Verwaltung von Letzteren wurden mit dem neusten Docker-Release, Version 1.10, erweitert \cite{https://blog.docker.com/2016/02/docker-1-10/}.
@@ -333,7 +345,10 @@
 		% verhindert fork bombs
 
   \section{Einschränkungen von Zugriffsrechten}
-		\emph{Kapitel mit nächstem Unterkapitel verschmelzen. Oder eigenes LSM-capability Kapitel machen, was diese Unterteilung rechtfertigt.}
+		\label{secAccessControls}
+
+		Auf Basis der in \ref{questionEffects} erarbeiteten Annahme, dass Angreifer ausgehend von \(\overline{c}\) Angriffe gegen die Sicherheitziele von \(h\) und \(C\) ausüben kann, müssen weitere Sicherheitsmechanismen verwendet werden, um letztere zu schützen. Diese zusätzlichen Mechanismen realisieren Zugriffskontrollen, die auch dann den sicheren Zustand von Hostsystemen und anderer Container erhalten, wenn es einem Angreifer möglich ist, seine Privilegien unrechtmäßig auszudehnen.
+
 		Zunächst werden zwei grundsätzliche Sicherheitsprobleme von Betriebssystemen, insbesondere Linux, vorgestellt, die in diesem Kapitel mit einigen geeigneten Lösungsansätzen addressiert werden.
 
 		\begin{itemize}
@@ -341,21 +356,19 @@
 			\item	Standardmäßig kontrolliert Linux den Zugriff auf Ressourcen anhand der Identität des anfragenden Users. Diese sogenannte \emph{Discretionary Access Control}, kurz \acrshort{DAC}, implementiert eine einfache Form von \emph{Access Control List} (\acrshort{ACL}). Wie in Kapitel \ref{question} aufgezeigt, muss davon ausgegangen werden, dass ein Container von einem Angreifer kontrolliert wird. Ein solcher nicht-priveligierter Container kann beispielsweise Sicherheitslücken des Linux-Werkzeugs \texttt{ping} ausnutzen, da das Werkzeug selbst mit Root-Rechten agiert, selbst aber von jedem Benutzer im System gestartet werden kann, auch einem komprimittiertem Container \cite[S.26]{SELinuxApparmor}. Sobald der Angreifer über Root-Rechte verfügt, wird der Schutz der \acrshort{DAC} umgangen.
 		\end{itemize}
 
-		Sofern praktikabel macht es demnach Sinn, das Betriebssystem präventiv zu schützen, indem der potentielle Schaden von Angriffen auf Basis des \emph{Princliple Of Least Privilege} eingedämmt wird. Diese Prinzip basiert auf der Einschränkung von Zugriffsrechten, der auch Root-Nutzer unterliegen. Neben diesem Prinzip, kann das Vorgehen von Docker auf ein zweites Modell, \emph{Defense In Depth}, zurückgeführt werden. Unter diesem Ansatz werden mehrere Mechanismen kombiniert. Das Ziel hierbei ist es, die Gesamtsicherheit eines Systems zu erhöhen, indem mehrere unabhängige Sicherheitsschichten implementiert werden. Der Funktionsumfang der Schichten überschneidet sich im Fall von Docker teilweise.
+		Sofern praktikabel macht es demnach Sinn, das Betriebssystem präventiv zu schützen, indem der potentielle Schaden von Angriffen auf Basis des \emph{Principle Of Least Privilege} eingedämmt wird.
 
-		Linux bietet verschiedene Möglichkeiten Mechanismen auf Basis der beiden vorgestellten Modelle zu realisieren. Diejenigen Möglichkeiten, für die Docker eine individuelle Unterstützung bietet, werden in diesem Kapitel vorgestellt. Es existieren noch weitere Sicherheitsupdates für den Linux-Kernel, wie \emph{grsecurity} und \emph{PAX}, allerdings erfordern jene durch ihre anwendungsunabhängige Natur keine Unterstützung seitens Docker \cite{dockerSecurity}. Aus diesem Grund wird diese Art von Sicherheitserweiterung in dieser Arbeit nicht weiter betrachtet.
+		Linux bietet verschiedene Möglichkeiten, Mechanismen auf Basis der beiden vorgestellten Modelle zu realisieren. Diejenigen Möglichkeiten, für die Docker eine individuelle Unterstützung bietet, werden in diesem Kapitel vorgestellt. Es existieren noch weitere Sicherheitserweiterungen für den Linux-Kernel, wie \emph{grsecurity} und \emph{PAX}, allerdings erfordern diese durch ihre anwendungsunabhängige Natur keine Unterstützung seitens Docker \cite{dockerSecurity}. Aus diesem Grund wird diese Art von Sicherheitserweiterung in dieser Arbeit nicht weiter betrachtet.
 		% TODO: Quellen für grsecurity und PAX.
 
-		Die Docker-Entwickler haben in den letzten Monaten die Integrations- und Anpassungsmöglichkeiten zusätzlicher Sicherheitsmaßnahmen, v.a. MACs, stark verbessert, da die Containersicherheit für \emph{Docker} nach eigenen Aussagen höchste Priorität hat \cite{githubDockerRoadmap}\cite{githubDockerChangelog}. Auch die Tatsache, dass sich zur Zeit die Konkurrenz \emph{CoreOS} mit der Containerlösung \emph{rkt} als sicherheitsfokusierte Alternative zu Docker auf dem Virtualisierungsmarkt etablieren will \cite{coreosAnnouncementRkt10}, ist für \emph{Docker} Anreiz die Sicherheit ihrer eigenen Entwicklung nicht zu vernachlässigen. Die Veröffentlichung des großen Sicherheitsupdates für Docker mit der Version 1.10 am vierten Februar 2016 geschah ca. drei Stunden nach der Ankündigung der Version 1.0 von \emph{rkt} seitens \emph{CoreOS} \cite{hnAnnouncementDocker110}\cite{hnAnnouncementRkt10}, was eine starke Konkurrenz zwischen den beiden Anbietern vermuten lässt. % /erkenntlich macht..
-
-		Zur Veranschaulichung werden in den folgenden Abschnitten Prozesse und User, die Zugriffsanfragen starten können, als Subjekte oder Akteure bezeichnet. Ressourcen, auf die ein Zugriff erfolgen kann, werden im Gegensatz dazu als Objekte behandelt. Objekte umfassen alle jene Ressourcen, die von einem Kernel in interne \glslink{KernelObject}{Kernelobjekte} aufgelöst werden können, also z.B. Dateien, Verzeichnisse, Sockets, Geräte, etc. Der Zugriff eines Subjekts auf ein Objekt wird zugelassen, sofern das Subjekt das dafür notwendige Recht, oder gleichbedeutend Privileg, besitzt.
+		Zur Veranschaulichung werden in den folgenden Abschnitten Prozesse und User, die Zugriffsanfragen starten können, als Subjekte oder Akteure bezeichnet. Ressourcen, auf die ein Zugriff erfolgen kann, werden im Gegensatz dazu als Objekte behandelt. Objekte umfassen alle jene Ressourcen, die von einem Kernel in interne \glslink{KernelObject}{Kernelobjekte} aufgelöst werden können, also z.B. Dateien, Verzeichnisse, Sockets, Geräte, etc. Der Zugriff eines Subjekts auf ein Objekt wird zugelassen, sofern das Subjekt das dafür notwendige Rech - oder gleichbedeutend: Privileg - besitzt.
 		% Oben behandelte Namespaces hatten schon einige Bugs. Alle zwar bisher behoben, trotzdem Beweis dafür, dass Namespace- und Cgroups-Sicherheit allein nicht aussreichen, um Container zu isolieren.
 
+		Einige der folgenden Mechanismen bieten anpassbare Sicherheitskonfiguration, z.B. in der Form von Profilen, an, sodass eine individuelle Begrenzung oder Ausdehnung von Rechten pro Container möglich ist.
 
-
-    \subsection{\texttt{capabilities}}
+    \subsection{Capabilities}
 		\label{capabilities}
-			\texttt{Capabilities} ist ein Feature, dass seit Kernelversion 2.2.11 in Linux integriert ist, um den traditionellen DAC-Mechanismus zu verfeinern \cite[S.42]{SELinuxApparmor}. Es existieren verschiedene Definitionen des Begriffs \glqq{}Capability\grqq{}. In dieser Arbeit sind unter diesem Begriff die POSIX-Capabilities gemeint, die seit Version 2.2 des Kernels in Linux fest integriert sind.
+			Capabilities sind ein Feature, dass seit Kernelversion 2.2.11 in Linux integriert ist, um den traditionellen DAC-Mechanismus zu verfeinern \cite[S.42]{SELinuxApparmor}. Es existieren verschiedene Definitionen des Begriffs \glqq{}Capability\grqq{}. In dieser Arbeit sind unter diesem Begriff die POSIX-Capabilities gemeint, die seit Version 2.2 des Kernels in Linux fest integriert sind.
 
 			Als natives Feature werden Capabilities nicht nur von Docker-Prozessen direkt verwendet, sondern auch die beiden MACs \emph{AppArmor} und \emph{SELinux} machen indirekt Gebrauch von ihnen.
 

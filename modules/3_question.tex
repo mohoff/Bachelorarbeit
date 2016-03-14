@@ -24,7 +24,7 @@
     \emph{Bild zum Systemmodell}
 
     % TODO: Systemmodell erläutern ... Erst was abgebildet ist, dann mathematisch fundiert.
-    Das Systemmodell ist zunächst definiert als ein Docker-Host h und ein Set C, das aus Containern C1, C2, ... Cn besteht. Diese Container laufen auf einem Docker-Host, der aus einem Betriebssystem besteht, auf dem ein Docker-Daemon läuft, der C verwaltet. Verteilte Docker-Systeme, in denen mehrere Hosts miteinander kommunizieren, werden in dieser Arbeit nicht betrachtet. Aus diesem Grund enthält eine Menge von Hosts H in diesem Fall nur einen Host h.
+    Das Systemmodell ist zunächst definiert als ein Docker-Host \(h\) und eine Menge \(M\), die aus den Containern \(m_1,m_2,\dotsc,m_n\) besteht. Diese Container laufen auf einem Docker-Host, der aus einem Betriebssystem besteht, auf dem ein Docker-Daemon läuft. Verteilte Docker-Systeme, in denen mehrere Hosts miteinander kommunizieren, werden in dieser Arbeit nicht betrachtet. Aus diesem Grund enthält eine Menge von Hosts \(H\) in diesem Fall nur den Host \(h\), der alle Container in \(M\) verwaltet.
 
     Aus \fig \ref{fig:systemModel} und der Funktionsweise von Docker (siehe Kapitel \ref{dockerIntro} können zwei unterschiedliche Gefahrenquellen (A) und (B) identifiziert werden:
 
@@ -36,39 +36,63 @@
       \item \textbf{Container als Server im Internet:} Viele Container stellen einen Dienst über das Internet zur Verfügung und stehen dadurch mit der Außenwelt in Kontakt. Ein Webserver beispielsweise, kann als Containerapplikation betrieben werden, indem er über über einen Port Anfragen von Clients entgegennimmt und diese nach abgeschlossener Verarbeitung beantwortet. Die Notwendigkeit, Containerschnittstellen über das Internet anzubieten, kann von Angreifern (\emph{externe Gefahrenquellen}) ausgenutzt werden, um Sicherheitsziele zu verletzen. Der Schutz des Netzwerks und der Verbindung des Hosts an das Internet, der in dieser Arbeit nicht behandelt wird, muss unabhängig von der eingesetzten Containertechnologie realisiert sein.
     \end{enumerate}
 
-  \section{Auswirkungen der identifizierten Risiken:}
+  \section{Auswirkungen der identifizierten Risiken}
+  \label{questionEffects}
     Bei einer näheren Betrachtung, sind aus Sicht des Hostsystems die Folgen beider Gefahrenquellen jedoch sehr ähnlich. In beiden Fällen muss davon ausgegangen werden, dass ein Container schadhaften Code ausführt. Die Unterscheidung nach Gefahrenquelle (A) oder (B) ist unerheblich, da beide Szenarien dazu führen, dass eine oder mehrere Container eines Hostsystems schadhaften Code ausführen.
 
     Daraus ergibt sich die Schlussfolgerung, dass ein Container nicht vertrauenswürdig ist und aus Sicht der IT-Sicherheit angenommen werden muss, dass dieser von einem Angreifer kontrolliert wird.
 
-    Mithilfe dieser Erkenntnis kann das Systemmodell unter Einbeziehung eines Angreifermodells erweitert werden. M wird in zwei echte Teilmengen unterteilt, die jeweils korrekt funktionierende, legitime Container und kompromittierte Container repräsentieren:
+    Mithilfe dieser Erkenntnis kann das Systemmodell unter Einbeziehung eines Angreifermodells erweitert werden. \(M\) wird in zwei echte, nicht-leere Teilmengen \(C\) und \(\overline{C}\) unterteilt. \(C\) enthält korrekt funktionierende, legitime Container und \(\overline{C}\) kompromittierte Container.
+    % TODO: oder besser: \(C\) mit der Eigenschaft \(\{\}\neq C \subset M \quad\) enthält korrekt funktionierende.....
+    % TODO: Schreiben, dass C und \overline{C} komplementär sind?
 
-    C TEILMENGEVON M = {c1,c2,...ci | 0 < i < N UND C != {} UND i+j = N} mit c ELEMENTVON C     % ci == c
-    C' TEILMENGEVON M = {c1,c2,...cj | 0 < j < N UND C' != {} UND i+j = N} mit c' ELEMENTVON C'    % cj == c'
-    C' vereinigt mit C ergibt M.
+    % \notin \subseteq \land \lor \exists \forall \quad \qquad
+    \begin{equation}
+    \label{eq:subsets}
+      \{\}\neq C \subset M \quad,\quad \{\}\neq \overline{C} \subset M %\quad,\quad C' \cup C = M
+    \end{equation}
+    \begin{equation}
+    \label{eq:unionset}
+      M = C \cup \overline{C} = \{m \; | \; m\in C \; \text{oder} \; m\in \overline{C}\}
+    \end{equation}
 
-    Mit 0 < i < N, 0 < j < N und {C,C'} != {} wird ein Systemmodell erzeugt, das von mindestens zwei Container in einem Hostsystem ausgeht (#{M} > 1), wovon mindestens ein Container c legitim (#{C} > 0) und mindestens ein Container c' kompromittiert (#{C'} > 0) ist.
+    Per Konvention wird fortan ein Element der Menge \(C\) als \(c\) und ein Element der Menge \(\overline{C}\) als \(\overline{c}\) notiert.
 
-    Dieses Modell bildet den Betrieb von Docker-Containern realitätsnah ab, da diese so konstruiert wurden, dass sie i.d.R. in einer Vielzahl parallel auf h laufen. Wie aus obiger Schlussfolgerung hervorgeht, muss angenommen werden, dass C' eine nicht-leere Menge ist, also mindestens ein Container c' existiert, der Schadcode ausführt. Dabei kann c' die Sicherheitsziele von h und C verletzen. Beide Eigenschaften werden von diesem Systemmodell abgedeckt.
+    \begin{equation}
+      C = \{c_1,c_2,\dotsc,c_i\;|\;0 < i < n \land C \neq \{\} \land i+j = N\}
+    \end{equation}
+    \begin{equation}
+      C = \{c | 0 < i < n \land C \neq \{\} \land i+j = N\}
+    \end{equation}
+    \begin{equation}
+    C' = \{c_1,c_2,\dotsc,c_j | 0 < j < n \land C' \neq \{\} \land i+j = N\}
+    \end{equation}
+    \begin{equation}
+      \exists c \in M
+    \end{equation}
+    \begin{equation}
+      \exists c' \in M
+    \end{equation}
 
+    Mit den Definitionen \ref{eq:subsets} und \ref{eq:unionset} wird ein Systemmodell erzeugt, das von mindestens zwei Container in einem Hostsystem ausgeht (\(\#\{M\} > 1\) bzw. \(M \neq \{\}\)), wovon mindestens ein Container \(c\) legitim und mindestens ein Container \(\overline{c}\) kompromittiert ist.
+
+    Damit bildet das Modell den Betrieb von Docker-Containern realitätsnah ab, da diese so konstruiert wurden, dass sie i.d.R. in einer Vielzahl parallel auf h laufen. Wie aus obiger Schlussfolgerung hervorgeht, muss angenommen werden, dass \(\overline{C}\) eine nicht-leere Menge ist, also mindestens ein Container \(\overline{c}\) existiert, der Schadcode ausführt und die Sicherheitsziele von \(h\) und zu schützenden Containern in \(C\) verletzen kann. Beide Eigenschaften werden von diesem Systemmodell abgedeckt.
 
     % Ob das zugrundeliegende Image fehlerhaft bzw. manipuliert ist (Gefahr A), oder ein Container aktiv von einem Angreifer kontrolliert wird (Gefahr B), spielt für den Host keine Rolle. Der Host muss in der Lage sein, die Systemsicherheit aufrecht zu erhalten. Die Systemsicherheit umfasst hierbei den Schutz des Hosts sowie anderer Container.
 
-    (Per Defintion wird ein Container, der schadhaften Code ausführen kann, also bösartig bezeichnet. Ein korrekt funktionierender Container, dessen Sicherheitsziele aufrecht gehalten werden sollen, wird abgekürzt als legitim aufgeführt.)
+    %Container c' aus dem Set C' ist in der Lage alle drei Sicherheitsziele zu verletzen. Man-in-the-Middle kann Vertraulichkeit verletzt werden, indem geheime Informationen abgefangen werden. Mit geheimen Informationen können unter Umständen Daten unrechtmäßig manipuliert werden, was die Integrität beeinflusst. Normale Programmflüsse können unterbrochen werden, was Beeinträchtigungen für die Verfügbarkeit mit sich zieht. Auch DoS-Attacken sind von c' aus möglich.
 
-    \emph{TODO: Formale Defintion: Set an Containern C auf einem Host. Annahme ist, dass nicht-leeres Subset C\' auf dem Host existiert, das bösartig ist. C\' kann 1 bis \#\{C\} groß sein. Wenn C'\ maximal \#\{C\}-1 groß ist, führt das zu einer stärker Behauptung, da es hierbei auch min. 1 legitimen Container zu schützen gibt}
-    % TODO:Formale definition
+    %Einige der von c' geführten Angriffe sind nur durchführbar, wenn der Container im Besitz bestimmter Rechte ist. Die Privilegien, die ein Container standardmäßig besitzt, können fest definiert werden.
 
-    Container c' aus dem Set C' ist in der Lage alle drei Sicherheitsziele zu verletzen. Man-in-the-Middle kann Vertraulichkeit verletzt werden, indem geheime Informationen abgefangen werden. Mit geheimen Informationen können unter Umständen Daten unrechtmäßig manipuliert werden, was die Integrität beeinflusst. Normale Programmflüsse können unterbrochen werden, was Beeinträchtigungen für die Verfügbarkeit mit sich zieht. Auch DoS-Attacken sind von c' aus möglich.
-
-    Einige der von c' geführten Angriffe sind nur durchführbar, wenn der Container im Besitz bestimmter Rechte ist. Die Privilegien, die ein Container standardmäßig besitzt, können fest definiert werden.
-
-    \emph{Privilege Escalation als extra Punkt aufführen? Ist eigtl kein direktes Sicherheitsziel. Eher im Punkt Gegenmaßnahmen aufführen....}
+    %\emph{Privilege Escalation als extra Punkt aufführen? Ist eigtl kein direktes Sicherheitsziel. Eher im Punkt Gegenmaßnahmen aufführen....}
 
     \begin{itemize}
-      \item \textbf{Vertraulichkeit}: c' kann Aktionen ausführen, die unbefugten Zugriff auf Informationen des Hosts oder anderer Container gewähren.
-      \item \textbf{Integrität}: c' kann Aktionen ausführen, die Daten des Hosts oder anderer Container manipulieren.
-      \item \textbf{Verfügbarkeit}: c' kann Aktionen ausführen, um von dem Host vorgesehene Mechanismen zur Aufrechterhaltung der Verfügbarkeit zu umgehen. Die Funktionstüchtigkeit des Hosts und die anderer Container kann dadurch beeinträchtigt werden.
+      \item \textbf{Vertraulichkeit}: c' kann Aktionen ausführen, die unbefugten Zugriff auf Informationen des Hosts oder anderer Container gewähren.\\
+      \emph{Beispiele: MITM-Angriff, Lesen von Daten anderer Container}
+      \item \textbf{Integrität}: c' kann Aktionen ausführen, die Daten des Hosts oder anderer Container manipulieren.\\
+      \emph{Beispiele: Überschreiben oder Löschen von Daten anderer Container}
+      \item \textbf{Verfügbarkeit}: c' kann Aktionen ausführen, um von dem Host vorgesehene Mechanismen zur Aufrechterhaltung der Verfügbarkeit zu umgehen. Die Funktionstüchtigkeit des Hosts und die anderer Container kann dadurch beeinträchtigt werden.\\
+      \emph{Beispiele: DoS-Angriffe wie Erschöpfung von Host-Ressourcen}
     \end{itemize}
 
     %- Container compromise: compromise C k ∈ C by means of illegitimate
@@ -86,8 +110,8 @@
     Die Strategie zur Erfüllung der soeben definierten Sicherheitsanforderungen, beruht unter Docker auf einem zweistufigen Ansatz:
 
     \begin{enumerate}[label=(\arabic*)]
-      \item Angreifern soll es erschwert oder bestenfalls unmöglich gemacht werden, aus der virtualisierten Umgebung eines c' auszubrechen. Angreifer sollen nicht die Möglichkeit besitzen, die ursprünglich für c' vorgesehenen Rechte zu erweitern.
-      \item Falls es einem Angreifer dennoch gelingen sollte, (1) zu verletzen, soll er durch weitere Zugriffskontrollen daran gehindert werden, Schaden an h und C anzurichten.
+      \item Angreifern soll es erschwert und bestenfalls unmöglich gemacht werden, aus der virtualisierten Umgebung eines \(\overline{c}\) auszubrechen. Angreifer sollen nicht die Möglichkeit besitzen, die ursprünglich für \(\overline{c}\) vorgesehenen Rechte zu erweitern.
+      \item Falls es einem Angreifer dennoch gelingen sollte, (1) zu verletzen, soll er durch weitere Zugriffskontrollen daran gehindert werden, Schaden an \(h\) und den zu schützenden Containern aus \(C\) anzurichten.
     \end{enumerate}
 
     Mithilfe der im nächsten Abschnitt aufgelisteten Mittel, versucht Docker diese umzusetzen.
@@ -112,21 +136,11 @@
 
     Im Rahmen der Arbeit werden die Sicherheitsmaßnahmen sowie deren Einstatz unter Docker vorgestellt. Die in diesem Kapitel erarbeiteten Annahmen und Schlussfolgerungen bilden dabei die Basis der Untersuchung. Die einzelnen Sicherheitsmerkmale sind dabei unabhängig von der Infrastruktur. Das bedeutet, dass sie bei einem lokalen Betrieb von Docker auf Computern von Entwicklern, bis hinzu Docker-Installationen in Cloud-Infrastrukturen relevant sind.
 
-    In dieser Arbeit wird auch betrachtet, welche Integrationsmöglichkeiten für Docker in Cloud-Infrastrukturen existieren und welche speziellen Sicherheitskomponenten einsetzbar sind bzw. von externen Dienstleistern angeboten werden.
-
-
+    In dieser Arbeit wird auch betrachtet, welche Integrationsmöglichkeiten für Docker in Cloud-Infrastrukturen existieren und welche speziellen Sicherheitskomponenten einsetzbar sind bzw. in welchem Umfang diese von externen Dienstleistern angeboten werden.
 
   %Docker setzt auf Software-Ebene überwiegend technische Kontrollen um, die kombiniert eine mehrschichtige \emph{Defense In Depth} bilden.
-  % TODO: Docker als Softwareprodukt setzt überwiegend technische Kontrollen um (Kapitel 4). Aber begünstigt auch adminstrative Kontrollen (Kapitel 5).
+  % Docker als Softwareprodukt setzt überwiegend technische Kontrollen um (Kapitel 4). Aber begünstigt auch adminstrative Kontrollen (Kapitel 5).
 
-  % TODO: Entweder in Fazit oder Overview-Kapitel
-  Docker verfolgt eine softwarebasierte \emph{Defense In Depth}, bei der verschiedenartige Sicherheitsschichten realisiert werden, um einen bestmöglichsten Schutz zu ermöglichen. Eine Geheimhaltung von technischen Sicherheitsmaßnahmen, auch \emph{Security Through Obscurity} genannt, kann nicht praktiziert werden, da Docker und Linux selbst quelloffene Projekte sind.
-
-  % TODO: Besser als Intro in Kapitel 4
-  Zunächst sind die grundlegenden Mechanismen zur Isolation und Ressourcenverwaltung zu erwähnen, die das Konzept von Containern ermöglichen. Unter Linux sind das die Techniken Namespaces für die Isolation und Control Groups für die Ressourcenverwaltung, die Docker und andere Linux-basierten Containertechnologien nutzen. Während beide Mechanismen eine hohe Sicherheitsrelevanz aufweisen, basiert deren Design auf der Annahme, dass alle Container sowie das Hostsystem legitim sind. Beide Mechanismen können als Feature-erweiternde Hostfunktionen verstanden werden, deren alleiniges Ziel es ist, die Idee von virtuellen Gastsystemen (Containern) auf der Basis des \texttt{chroot}-Befehls zu realisieren. Die in CISSP definierten sicherheitserhöhenden Maßnahmen werden von Namespaces und Cgroups nicht berührt.
-
-  % TODO: besser als Intro in Kapitel 5
-  Auf Basis der in \ref{...} erarbeiteten Annahme, dass Angreifer ausgehend von Containern Angriffe gegen die Sicherheitsiele ausüben kann, müssen weitere Sicherheitsmechanismen verwendet werden, um das Hostsystem sowie andere legitime Container zu schützen. Diese zusätzlichen Mechanismen realisieren Zugriffskontrollen, die auch dann den sicheren Zustand von Hostsystemen und anderer Container erhalten, wenn es einem Angreifer möglich ist, seine Privilegien unrechtmäßig auszudehnen.
 
   % Angewandt auf die Praxis: es muss universeller Ansatz gewählt werden, da jeder Kunde andere Sicherheitsanforderungen hat. Demnach können Schwachstellen, die die Vertraulichkeit, die Integrität oder Verfügbarkeit der Kundensoftware bedrohen, fatale Folgen für den Umsatz und die Reputation der Kunden und Betreiber von Rechenzentren ergeben.
 

@@ -46,20 +46,22 @@
     Der Hauptteil ab Kapitel \ref{secLinux} untergliedert sich in mehrere Sicherheitsgebiete, in die die Arbeit eingeteilt ist:
     \begin{enumerate}
       \item \textbf{Sicherheitsmechanismen, die Linux ermöglicht} und teils obligatorisch von Docker eingesetzt werden. Darunter fallen Techniken zur Isolierung, Ressourcen- und Rechteverwaltung von Containern sowie Methoden, um das Hostsystem mit zusätzlichen Sicherheitsfeatures von Linux abzusichern.
-      \item \textbf{Sicherheit im Docker-Ökosystem}. Darunter fallen z.B.
-        \begin{itemize}
-          \item Integrität von Images
-          \item Absicherung der Kommunikation zwischen dem Docker-Client und dem Docker-Host
-          \item \glspl{BestPractice} im Umgang mit Docker-Komponenten sowie Sicherheitsrichtlinien.
-          \item Verwendung von Third-Party Tools, wie \emph{Kubernetes} % TODO: Glossareintrag Third-Party
-        \end{itemize}
-      \item \textbf{Sicherheit von Docker in Cloud-Infrastrukturen}. Gegenstand der Untersuchung ist, ob und wie Docker in der Cloud eingesetzt werden kann, sodass Sicherheitsanforderungen von Unternehmen erfüllt werden.
-        % TODO: Etwas mehr Details dazu, wenn klar ist was hier reinkommt.
+      \item \textbf{Sicherheit im Docker-Ökosystem} und wie diese durch unterschiedliche Konzepte ermöglicht oder begünstigt wird.
+        %Darunter fallen z.B.
+        %\begin{itemize}
+        %  \item Integrität von Images
+        %  \item Absicherung der Kommunikation zwischen dem Docker-Client und dem Docker-Host
+        %  \item \glspl{BestPractice} im Umgang mit Docker-Komponenten sowie Sicherheitsrichtlinien.
+        %  \item Verwendung von Third-Party Tools, wie \emph{Kubernetes}
+        %\end{itemize}
+      \item \textbf{Sicherheit von Docker in Cloud-Infrastrukturen} sowie Integrationsmöglichkeiten von Docker.
+        %Gegenstand der Untersuchung ist, ob und wie Docker in der Cloud eingesetzt werden kann, sodass Sicherheitsanforderungen von Unternehmen erfüllt werden.
     \end{enumerate}
 
     Abgeschlossen wird die Arbeit im letzten Kapitel \ref{result} mit einer Zusammenfassung der Erkenntnisse und einem Ausblick auf die Zukunft von Docker und der containerbasierten Virtualisierung.
 
-    In der Arbeit vorkommende Produkt-, Technologie-, Bibliotheken- und Unternehmensnamen sind durchgehend \emph{kursiv} gedruckt. Eine Ausnahme bildet Docker, in der die reguläre Schreibweise für die Plattform Docker vorgesehen ist, während die kursive Variante das Unternehmen \emph{Docker} meint.
+  \section{Stil der Arbeit}
+    In der Arbeit vorkommende Produkt-, Technologie-, Bibliothek- und Unternehmensnamen sind durchgehend \emph{kursiv} gedruckt. Eine Ausnahme bildet Docker, in der die reguläre Schreibweise für die Technologie Docker vorgesehen ist, während die kursive Variante das Unternehmen \emph{Docker} meint.
 
     Im Gegensatz dazu sind technische Identifikationsmerkmale, Befehle und Variablennamen \texttt{mono-type} geschrieben. Platzhalter für aufgeführte Befehlsparameter sind in Großbuchstaben abgedruckt. Ein Befehl \texttt{cmd} beispielsweise, der einen Parameter erwartet, ist dementsprechend als \texttt{cmd PARAMETER} generisch formuliert.
 \end{document}
