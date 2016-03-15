@@ -11,21 +11,15 @@
 \usepackage{listings} % Enables code blocks
 \usepackage{enumerate}
 %\usepackage{tabularx}
-\usepackage{ltablex}
+%\usepackage{ltablex}
 \usepackage{enumitem}
 % \usepackage{microtype}
-%\usepackage{longtable}
+\usepackage{ltxtable}
 \usepackage{subcaption}
 \usepackage{chngcntr} % Change counter (start numeric page numbering on first content page)
 \usepackage[acronym]{glossaries} % Add parameter [toc] to include glossary in index page. Needs to be defined after package 'hyperref' so glossary occurances are linked.
 
 \makeglossaries % Generates (one or multiple) glossaries
-
-\lstset{aboveskip=5mm,
-  belowskip=5mm,
-  basicstyle={\small\ttfamily},
-  tabsize=1
-}
 
 % Add glossary entries
 \loadglsentries{./modules/glossary}
@@ -37,6 +31,12 @@
 
 % Use 1.5x line spacing
 \onehalfspacing
+
+\lstset{aboveskip=5mm,
+  belowskip=5mm,
+  basicstyle={\small\ttfamily},
+  tabsize=1
+}
 
 % Enables consecutive figure and table numbering, independent of chapter count
 \counterwithout{figure}{chapter}
@@ -68,6 +68,8 @@
     \par\noindent\makebox[2.5in]{\hrulefill} \hfill\makebox[2.0in]{\hrulefill}%
     \par\noindent\makebox[2.5in][l]{Unterschrift}      \hfill\makebox[2.0in][l]{Datum}%
 }
+\newcommand{\cvalid}{\(c\)}
+\newcommand{\cbroken}{\(\overline{c}\)}
 
 \title{\Thema}
 \author{\Autor}
@@ -79,6 +81,9 @@
     pdfcreator={\Autor},
     pdfkeywords={Docker, Sicherheit, Virtualisierung}
 }
+
+% Add hyphenations
+\include{./modules/hyphenation}
 
 % Content
 \begin{document}

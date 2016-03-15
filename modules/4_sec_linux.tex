@@ -85,7 +85,7 @@
 		Unter Linux existieren sechs Namespaces, die in die Kategorien IPC, Network, Mount, PID, User und UTS unterteilt sind. Von Docker werden alle verwendet, jedoch wird der User-Namespace erst seit Docker-Version 1.10 unterstützt. Außerdem muss dieser nach aktuellem Stand manuell aktiviert werden, da er standardmäßig nicht zum Einsatz kommt.
 		% TODO: Quelle
 
-		Zudem besteht die Möglichkeit, dass bald weitere Namespaces dem bestehenden Set hinzugefügt werden. Zum einen wird derzeit ein eigener Namespace für Control Groups implementiert, ein Mechanismus, der in Kapitel \ref{cgroups} erläutert wird. Zum anderen ist in Diskussion, für die bestehenden Sicherheitsmodule des Kernels (siehe Kapitel \ref{lsm}), diverse Logfunktionen und Geräte unter Linux (Devices), eigene Namespaces zur Verfügung zu stellen \cite[S.19]{presContainerSec}.
+		Zudem besteht die Möglichkeit, dass bald weitere Namespaces dem bestehenden Set hinzugefügt werden. Zum einen wird derzeit ein eigener Namespace für Control Groups implementiert, ein Mechanismus, der in Kapitel \ref{secCgroups} erläutert wird. Zum anderen ist in Diskussion, für die bestehenden Sicherheitsmodule des Kernels (siehe Kapitel \ref{lsm}), diverse Logfunktionen und Geräte unter Linux (Devices), eigene Namespaces zur Verfügung zu stellen \cite[S.19]{presContainerSec}.
 
 		% Nach ..(reshetova).. müssen Anforderungen an Prozessisolierung, Dateisystemisolierung, Geräteisolierung, Prozessisolierung und Netzwerklimitierung erfüllt sein.
 
@@ -402,7 +402,7 @@
 			%		^ 		\cite{https://github.com/docker/docker/pull/5773} und \cite{https://github.com/docker/docker/issues/3629}
 
     \subsection{Mandatory Access Control (\acrshort{MAC-SEC}) und Linux Security Modules (\acrshort{LSM}s)}
-		\ref{lsm}
+		\label{lsm}
 			Wie bereits erwähnt, erfüllt der DAC-Mechanismus nicht moderne Anforderungen an die Sicherheit in Containersystemen, da er z.B. von Superuser-Tools umgangen werden kann. Aus diesem Grund integriert Docker die beiden MAC-Mechanismen \emph{Security-Enhanced Linux} (\emph{SELinux}) und \emph{AppArmor}, die anhand eines identitätsunabhängigen Regelwerks zusätzliche Sicherheit bieten. Unter Einbeziehung solcher Kontrollmodule kann nun z.B. auch der Zugriff eines Angreifers eingeschränkt werden, selbst wenn dieser über Sicherheitslücken in den Besitz von Root-Rechten gelangt.
 
 			Die Integration der beiden MACs geschieht modular über das \emph{Linux Security Modules}-Framework, auch abgekürzt \acrshort{LSM} genannt, das inzwischen standardmäßig in den Kernel eingebaut ist. Module, die in das Framework eingebettet werden, sind kombinierbar. Sicherheitsmodelle können so konsekutiv umgesetzt werden, um die bereits angesprochene \emph{Defense In Depth} umzusetzen \cite[S.3]{LSMFramework}.

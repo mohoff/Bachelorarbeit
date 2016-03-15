@@ -31,45 +31,104 @@
 		Virtualisierte Systeme nutzen im Vergleich zu nativen (physischen) Systemen zusätzliche Software, die den virtualisierten Systemen in der Ausprägung von virtuellen Maschinen, sogenannte \acrshort{VM}s, und Containern, mehrere Abstraktionen anbietet, um Funktionen des Hostsystems abzubilden \cite[S.2]{containerVirtPerformance}. Beide Ausprägungen erwecken aus Sicht des Gastsystems den Eindruck, dass ein alleinstehendes Betriebssystem ausgeführt wird.
     Der Einsatz von Virtualisierung bietet vielfältige Vorteile für \acrshort{IT}-Unternehmen. In der folgenden Auflistung sind einige Problemfaktoren und Anforderungen an Rechentzentren und darin laufender Software zusammengefasst, die alle durch Virtualisierungslösungen addressiert werden können \cite[S.1]{bsiVirt}\cite[S.662,672f.]{tanenbaumOS}\cite[S.299]{mandlOS}.
 
+
+		% NOT WORKING
+		% -------------------------------
+
+		%\setlength\LTleft{0pt}
+		%\setlength\LTright{0pt}
+		%\newcolumntype{v}[1]{>{\PreserveBackslash\RaggedRight\hspace{0pt}}p{#1}}
+		%\begin{center}
+		%\begin{longtable}{@{\extracolsep{\fill}}c|c}%{l|l}       %{v{0.5\textwidth}v{0.5\textwidth}}
+			%\hline
+			%\textbf{Herausforderung} & \textbf{Lösungsansatz mithilfe} \\
+			% 												&  \textbf{von Virtualisierung} \\
+		  %\hline
+			%\endfirsthead
+
+			%\hline
+			%\textbf{Herausforderung} & \textbf{Lösungsansatz mithilfe} \\
+			% 												&  \textbf{von Virtualisierung} \\
+		  %\hline
+			%\endhead
+
+			%\hline
+
+			%\multicolumn{2}{c}% {r}
+			%{{\emph{weiter auf nächster Seite}}} \\
+			%\endfoot
+
+			%\hline \hline
+			%\endlastfoot
+
+			%\hline
+			%Rechenzentren sollen möglichst effizient betrieben werden, da anfallende Energiekosten für den Betrieb und die Kühlung von Servern auch bei geringer Auslastung anfallen.
+			%& Kosteneinsparungen bei der Anschaffung von Hardware und Lizenzen sowie dem Energieverbrauch möglich, da virtuelle Instanzen die physischen Ressourcen effizienter ausnutzen können und demnach in Summe auch weniger physische Maschinen benötigt werden. \\
+			%\hline
+			%Softwarelösungen sollen skalierbar sein. Je nach Bedarf sollen Kapazitäten in der IT-Infrastruktur freigeschalten oder reduziert werden können.
+			%& Die Virtualisierung ermöglicht es, hardwareunabhängige, portierbare und reproduzierbare Softwarekomponenten zu realisieren, die flexibel aktiviert und deaktiviert werden können. \\
+			%\hline
+			%In einem Rechenzentrum wird Software unterschiedlicher Kunden ausgeführt (Multi-Tenancy-Umgebung). Eine Trennung dieser Kundeninstanzen muss gewährleistet sein, sodass diese nicht miteinander interferieren können.
+			%& Virtuelle Lösungen bieten verschiedene native Möglichkeiten zur Isolierung von Systemen. Eine Gefahr von Interferenz zwischen Kunden kann je nach eingesetzer Technologie auf unterschiedliche Art und Weise reduziert werden. \\
+			%\hline
+			%Redundanz, um Ausfällen entgegenzuwirken, soll gewährleistet sein.
+			%& VMs und Container sind flexibel zu starten und stoppen. Ausfallsicherheit wird in Form mehrerer redundanter virtueller Instanzen und der Unterstützung von Tools ermöglicht. \\
+			%\hline
+			%Bestimmte Architekturen, wie z.B. 3-Tier-Architektur, sollen komfortabel umgesetzt werden.
+			%& Einzelne Bausteine beliebiger Architekturen lassen sich mit virtuellen Instanzen unabhängig voneinander betreiben und vernetzen. \\
+			%\hline
+			%Über die Zeit hinweg entstehen unterschiedliche Softwareversionen, die ggf. von teils alten Anwendungen und Bibliotheken abhängen. Die verschiedenen Versionen sollen zuverlässig und unabhängig voneinander betrieben werden. Nicht nur Anwendungen, sondern auch Betriebssysteme unterschiedlicher Art sollen ggf. möglichst hardwareunabhängig einsetzbar sein.
+			%& Virtualisierungen bieten gute Migrationseigenschaften und sind mit einer Vielzahl von Betriebssystemen kompatibel. Vor allem die containerbasierte Virtualisierung erlaubt einen hohen Grad an Modularisierung und Kompatibilität. Produkte werden können nicht nur als Programme vertrieben, sondern als plattformunabhängige \emph{Virtual Appliances}, also in virtuelle Instanzen eingebettete Anwendungen \cite[S.672f.]{tanenbaumOS}. \\
+			%\hline
+			%Neue Services und Kunden sollen einfach in bestehende Infrastrukturen integrierbar sein. Systeme sollen einfach kombinierbar und zwischen Rechenzentren portierbar sein.
+			%& Virtuelle Instanzen können als sogennante Snapshots \glqq{}eingefroren\grqq{} werden und in anderen Infrastrukturen wieder fortgefahren werden.\\
+			%\hline
+			%Gute Administrationsmöglichkeiten und Wartbarkeit der Infrastruktur
+			%& Virtualisierte Systeme lassen sich neben physischen Systemen zusammen, ggf. an zentralisierter Stelle, verwalten. Eine gleichzeitige Senkung der Administrationskosten ist möglich \cite[S.1]{bsiVirt}.\\
+			%\hline
+
+			%\caption{Das ist die Caption}
+		%\end{longtable}
+		%\end{center}
+
 		% \multicolumn{1}{l|}{
+		\vspace{0.5cm}
 		\begin{table}[htp]
 			\begin{centering}
 		  %\begin{tabular}{ | l | l | }
-			\begin{tabularx}{\textwidth}{>{\hsize=1\hsize}X>{\hsize=1\hsize}X}
+			\begin{tabularx}{\textwidth}{>{\hsize=1\hsize}X|>{\hsize=1\hsize}X}
 				\hline
 				\textbf{Herausforderung} & \textbf{Lösungsansatz mithilfe von Virtualisierung} \\
 				\hline
-				Rechenzentren sollen möglichst effizient betrieben werden, da anfallende Energiekosten für den Betrieb und die Kühlung von Servern auch bei geringer Auslastung anfallen.
-				& Kosteneinsparungen bei der Anschaffung von Hardware und Lizenzen sowie dem Energieverbrauch möglich, da virtuelle Instanzen die physischen Ressourcen effizienter ausnutzen können und demnach in Summe auch weniger physische Maschinen benötigt werden. \\
+				Effizienter Betrieb von Rechenzentren
+				& Einsparungen bei Anschaffung von Hardware und Lizenzen. Bessere Auslastung physischer Ressourcen. \\
 				\hline
-				Softwarelösungen sollen skalierbar sein. Je nach Bedarf sollen Kapazitäten in der IT-Infrastruktur freigeschalten oder reduziert werden können.
-				& Die Virtualisierung ermöglicht es, hardwareunabhängige, portierbare und reproduzierbare Softwarekomponenten zu realisieren, die flexibel aktiviert und deaktiviert werden können. \\
+				Skalierbarkeit und Redundanz von Diensten
+				& Hardwareunabhängige, portierbare und reproduzierbare virtuelle Instanzen, die schnell starten und stoppen. \\
 				\hline
-				In einem Rechenzentrum wird Software unterschiedlicher Kunden ausgeführt (Multi-Tenancy-Umgebung). Eine Trennung dieser Kundeninstanzen muss gewährleistet sein, sodass diese nicht miteinander interferieren können.
-				& Virtuelle Lösungen bieten verschiedene native Möglichkeiten zur Isolierung von Systemen. Eine Gefahr von Interferenz zwischen Kunden kann je nach eingesetzer Technologie auf unterschiedliche Art und Weise reduziert werden. \\
+				Realisierung von Multi-Tenancy-Umgebungen
+				& Abgrenzung von Kundeninstanzen durch Isolierung. \\
 				\hline
-				Redundanz, um Ausfällen entgegenzuwirken, soll gewährleistet sein.
-				& VMs und Container sind flexibel zu starten und stoppen. Ausfallsicherheit wird in Form mehrerer redundanter virtueller Instanzen und der Unterstützung von Tools ermöglicht. \\
+				Realisierung bestimmter Architekturen, wie z.B. 3-Tier-Architektur
+				& Reproduzierbarkeit und Koppelung virtueller Instanzen sowie unabhängige Netzwerkfunktionen. \\
 				\hline
-				Bestimmte Architekturen, wie z.B. 3-Tier-Architektur, sollen komfortabel umgesetzt werden.
-				& Einzelne Bausteine beliebiger Architekturen lassen sich mit virtuellen Instanzen unabhängig voneinander betreiben und vernetzen. \\
+				Unterstützung mehrerer Software-Versionen sowie Legacy-Code
+				& Gute Migrationseigenschaften, hoher Grad an Kompatibilität, Unabhängigkeit von Hardware und Betriebssystemen z.B. mit \emph{Virtual Appliances} möglich \cite[S.672f.]{tanenbaumOS}.\\
 				\hline
-				Über die Zeit hinweg entstehen unterschiedliche Softwareversionen, die ggf. von teils alten Anwendungen und Bibliotheken abhängen. Die verschiedenen Versionen sollen zuverlässig und unabhängig voneinander betrieben werden. Nicht nur Anwendungen, sondern auch Betriebssysteme unterschiedlicher Art sollen ggf. möglichst hardwareunabhängig einsetzbar sein.
-				& Virtualisierungen bieten gute Migrationseigenschaften und sind mit einer Vielzahl von Betriebssystemen kompatibel. Vor allem die containerbasierte Virtualisierung erlaubt einen hohen Grad an Modularisierung und Kompatibilität. Produkte werden können nicht nur als Programme vertrieben, sondern als plattformunabhängige \emph{Virtual Appliances}, also in virtuelle Instanzen eingebettete Anwendungen \cite[S.672f.]{tanenbaumOS}. \\
+				%Neue Services und Kunden sollen einfach in bestehende Infrastrukturen integrierbar sein. Systeme sollen einfach kombinierbar und zwischen Rechenzentren portierbar sein.
+				%& Virtuelle Instanzen können als sogennante Snapshots \glqq{}eingefroren\grqq{} werden und in anderen Infrastrukturen wieder fortgefahren werden.\\
+			  %\hline
+				Administration und Wartbarkeit
+				& Zentralisiert für physische und virtuelle Systeme möglich, Unterstützung mit Tools, Senkung von Administrationskosten \cite[S.1]{bsiVirt}. \\
 				\hline
-				Neue Services und Kunden sollen einfach in bestehende Infrastrukturen integrierbar sein. Systeme sollen einfach kombinierbar und zwischen Rechenzentren portierbar sein.
-				& Virtuelle Instanzen können als sogennante Snapshots \glqq{}eingefroren\grqq{} werden und in anderen Infrastrukturen wieder fortgefahren werden.\\
-			  \hline
-				Gute Administrationsmöglichkeiten und Wartbarkeit der Infrastruktur
-				& Virtualisierte Systeme lassen sich neben physischen Systemen zusammen, ggf. an zentralisierter Stelle, verwalten. Eine gleichzeitige Senkung der Administrationskosten ist möglich \cite[S.1]{bsiVirt}.
 		  \end{tabularx}
-			\caption{Mehrere Herausforderungen im Betrieb von IT-Infrastrukturen und deren Lösungsansatz mithilfe von Virtualisierung}
-			\end{centering}
+			\vspace{0.5cm}
+			\caption{Herausforderungen und Lösungsansätze durch Virtualisierung in Rechenzentren.}
 			\label{tab:virtAdvantages}
+			\end{centering}
 		\end{table}
-		% TODO: Tabelle ist leider abgeschnitten
 
-		Wie in Tabelle \ref{tab:virtAdvantages} zu sehen ist, bietet der Einsatz von serverseitiger Virtualisierung eine Reihe von Vorteilen, die ein rein physischer Betrieb von Servern nicht in dem Maß bieten kann. Diese Vorteile eröffneten IT-Unternehmen auch neue Geschäftsmodelle, auf denen der Erfolg von heutigen Cloud-Anbietern wie \emph{Amazon}, \emph{Google} und \emph{Microsoft} beruht. Selbst einhergehende Nachteile der Virtualisierung, wie z.B. Leistungsverluste und in dieser Arbeit untersuchte Sicherheitsrisiken, scheinen, den Vorteilen gegenübergestellt, nicht ins Gewicht zu fallen.
+		Wie in Tabelle \ref{tab:virtAdvantages} stichpunktartig zusammengefasst ist, bietet der Einsatz von serverseitiger Virtualisierung eine Reihe von Vorteilen, die ein rein physischer Betrieb von Servern nicht in dem Maß bieten kann. Diese Vorteile eröffneten IT-Unternehmen auch neue Geschäftsmodelle, auf denen der Erfolg von heutigen Cloud-Anbietern wie \emph{Amazon}, \emph{Google} und \emph{Microsoft} beruht. Selbst einhergehende Nachteile der Virtualisierung, wie z.B. Leistungsverluste und in dieser Arbeit untersuchte Sicherheitsrisiken, scheinen, den Vorteilen gegenübergestellt, nicht ins Gewicht zu fallen.
 
 		Im Folgenden sind die Konzepte der Virtualisierung auf Hypervisor- und Containerbasis erklärt und in ihren ausschlaggebenden Eigenschaften gegenübergestellt.
 

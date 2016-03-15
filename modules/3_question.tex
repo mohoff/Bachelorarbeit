@@ -22,8 +22,8 @@
     Das Systemmodell von Hypervisor-basierten Systemen kann nicht verwendet werden, da das Design der Containersysteme stark von Erstgenannten abweicht. Während nach \cite[S.125]{CISSP} virtuelle Maschinen als eigener Sicherheitsmechanismus des Betriebssystems aufgelistet ist, stimmt das für die Containersysteme und deren Architektur nicht. Andere Sicherheitsfeatures des Hosts, die ab Kapitel \ref{secLinux} vorgestellt werden, müssen aktiviert werden, um die Containersicherheit zu erhöhen.
 
     \emph{Bild zum Systemmodell}
+    % TODO!
 
-    % TODO: Systemmodell erläutern ... Erst was abgebildet ist, dann mathematisch fundiert.
     Das Systemmodell ist zunächst definiert als ein Docker-Host \(h\) und eine Menge \(M\), die aus den Containern \(m_1,m_2,\dotsc,m_n\) besteht. Diese Container laufen auf einem Docker-Host, der aus einem Betriebssystem besteht, auf dem ein Docker-Daemon läuft. Verteilte Docker-Systeme, in denen mehrere Hosts miteinander kommunizieren, werden in dieser Arbeit nicht betrachtet. Aus diesem Grund enthält eine Menge von Hosts \(H\) in diesem Fall nur den Host \(h\), der alle Container in \(M\) verwaltet.
 
     Aus \fig \ref{fig:systemModel} und der Funktionsweise von Docker (siehe Kapitel \ref{dockerIntro} können zwei unterschiedliche Gefahrenquellen (A) und (B) identifiziert werden:
@@ -56,27 +56,28 @@
       M = C \cup \overline{C} = \{m \; | \; m\in C \; \text{oder} \; m\in \overline{C}\}
     \end{equation}
 
-    Per Konvention wird fortan ein Element der Menge \(C\) als \(c\) und ein Element der Menge \(\overline{C}\) als \(\overline{c}\) notiert.
+    Per Konvention wird fortan ein beliebiges Element der Menge \(C\) als \cvalid{} und ein beliebiges Element der Menge \(\overline{C}\) als \cbroken{} notiert.
 
-    \begin{equation}
-      C = \{c_1,c_2,\dotsc,c_i\;|\;0 < i < n \land C \neq \{\} \land i+j = N\}
-    \end{equation}
-    \begin{equation}
-      C = \{c | 0 < i < n \land C \neq \{\} \land i+j = N\}
-    \end{equation}
-    \begin{equation}
-    C' = \{c_1,c_2,\dotsc,c_j | 0 < j < n \land C' \neq \{\} \land i+j = N\}
-    \end{equation}
-    \begin{equation}
-      \exists c \in M
-    \end{equation}
-    \begin{equation}
-      \exists c' \in M
-    \end{equation}
+    %\begin{equation}
+    %  C = \{c_1,c_2,\dotsc,c_i\;|\;0 < i < n \land C \neq \{\} \land i+j = N\}
+    %\end{equation}
+    %\begin{equation}
+    %  C = \{c | 0 < i < n \land C \neq \{\} \land i+j = N\}
+    %\end{equation}
+    %\begin{equation}
+    %  C' = \{c_1,c_2,\dotsc,c_j | 0 < j < n \land C' \neq \{\} \land i+j = N\}
+    %\end{equation}
+    %\begin{equation}
+    %  \exists c \in M
+    %\end{equation}
+    %\begin{equation}
+    %  \exists c' \in M
+    %\end{equation}
+    % TODO: iwas von hier aufnehmen? Oder sind obige zwei Formeln ausreichend? Sollten eig...
 
-    Mit den Definitionen \ref{eq:subsets} und \ref{eq:unionset} wird ein Systemmodell erzeugt, das von mindestens zwei Container in einem Hostsystem ausgeht (\(\#\{M\} > 1\) bzw. \(M \neq \{\}\)), wovon mindestens ein Container \(c\) legitim und mindestens ein Container \(\overline{c}\) kompromittiert ist.
+    Mit den Definitionen \ref{eq:subsets} und \ref{eq:unionset} wird ein Systemmodell erzeugt, das von mindestens zwei Container in einem Hostsystem ausgeht, wovon mindestens ein Container \cvalid{} legitim und mindestens ein Container \cbroken{} kompromittiert ist.
 
-    Damit bildet das Modell den Betrieb von Docker-Containern realitätsnah ab, da diese so konstruiert wurden, dass sie i.d.R. in einer Vielzahl parallel auf h laufen. Wie aus obiger Schlussfolgerung hervorgeht, muss angenommen werden, dass \(\overline{C}\) eine nicht-leere Menge ist, also mindestens ein Container \(\overline{c}\) existiert, der Schadcode ausführt und die Sicherheitsziele von \(h\) und zu schützenden Containern in \(C\) verletzen kann. Beide Eigenschaften werden von diesem Systemmodell abgedeckt.
+    Damit bildet das Modell den Betrieb von Docker-Containern realitätsnah ab, da diese so konstruiert wurden, dass sie i.d.R. in einer Vielzahl parallel auf h laufen. Wie aus obiger Schlussfolgerung hervorgeht, muss angenommen werden, dass \(\overline{C}\) eine nicht-leere Menge ist, also mindestens ein Container \cbroken{} existiert, der Schadcode ausführt und die Sicherheitsziele von \(h\) und zu schützenden Containern in \(C\) verletzen kann. Beide Eigenschaften werden von diesem Systemmodell abgedeckt.
 
     % Ob das zugrundeliegende Image fehlerhaft bzw. manipuliert ist (Gefahr A), oder ein Container aktiv von einem Angreifer kontrolliert wird (Gefahr B), spielt für den Host keine Rolle. Der Host muss in der Lage sein, die Systemsicherheit aufrecht zu erhalten. Die Systemsicherheit umfasst hierbei den Schutz des Hosts sowie anderer Container.
 
@@ -87,11 +88,11 @@
     %\emph{Privilege Escalation als extra Punkt aufführen? Ist eigtl kein direktes Sicherheitsziel. Eher im Punkt Gegenmaßnahmen aufführen....}
 
     \begin{itemize}
-      \item \textbf{Vertraulichkeit}: c' kann Aktionen ausführen, die unbefugten Zugriff auf Informationen des Hosts oder anderer Container gewähren.\\
+      \item \textbf{Vertraulichkeit}: \cbroken{} kann Aktionen ausführen, die unbefugten Zugriff auf Informationen des Hosts oder anderer Container gewähren.\\
       \emph{Beispiele: MITM-Angriff, Lesen von Daten anderer Container}
-      \item \textbf{Integrität}: c' kann Aktionen ausführen, die Daten des Hosts oder anderer Container manipulieren.\\
+      \item \textbf{Integrität}: \cbroken{} kann Aktionen ausführen, die Daten des Hosts oder anderer Container manipulieren.\\
       \emph{Beispiele: Überschreiben oder Löschen von Daten anderer Container}
-      \item \textbf{Verfügbarkeit}: c' kann Aktionen ausführen, um von dem Host vorgesehene Mechanismen zur Aufrechterhaltung der Verfügbarkeit zu umgehen. Die Funktionstüchtigkeit des Hosts und die anderer Container kann dadurch beeinträchtigt werden.\\
+      \item \textbf{Verfügbarkeit}: \cbroken{} kann Aktionen ausführen, um von dem Host vorgesehene Mechanismen zur Aufrechterhaltung der Verfügbarkeit zu umgehen. Die Funktionstüchtigkeit des Hosts und die anderer Container kann dadurch beeinträchtigt werden.\\
       \emph{Beispiele: DoS-Angriffe wie Erschöpfung von Host-Ressourcen}
     \end{itemize}
 
@@ -110,7 +111,7 @@
     Die Strategie zur Erfüllung der soeben definierten Sicherheitsanforderungen, beruht unter Docker auf einem zweistufigen Ansatz:
 
     \begin{enumerate}[label=(\arabic*)]
-      \item Angreifern soll es erschwert und bestenfalls unmöglich gemacht werden, aus der virtualisierten Umgebung eines \(\overline{c}\) auszubrechen. Angreifer sollen nicht die Möglichkeit besitzen, die ursprünglich für \(\overline{c}\) vorgesehenen Rechte zu erweitern.
+      \item Angreifern soll es erschwert und bestenfalls unmöglich gemacht werden, aus der virtualisierten Umgebung eines \cbroken{} auszubrechen. Angreifer sollen nicht die Möglichkeit besitzen, die ursprünglich für \cbroken{} vorgesehenen Rechte zu erweitern.
       \item Falls es einem Angreifer dennoch gelingen sollte, (1) zu verletzen, soll er durch weitere Zugriffskontrollen daran gehindert werden, Schaden an \(h\) und den zu schützenden Containern aus \(C\) anzurichten.
     \end{enumerate}
 
