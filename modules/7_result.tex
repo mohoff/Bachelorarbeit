@@ -13,7 +13,11 @@
 
   Wie die Ergebnisse aus Kapitel \ref{secInfrastructure} zeigen, bieten alle bekannten Anbieter von Public Clouds, sowie \emph{OpenStack} als Lösungsansatz von Private Clouds dokumentierte Integrationsmöglichkeiten für Docker an. Spezielle Sicherheitsmerkmale von Docker in Cloud-Infrastrukturen existieren innerhalb eines Docker-Hostsystems nicht. Sicherheitsrelevante Attribute innerhalb eines Docker-Systems wurden in Kapitel \ref{secLinux} und \ref{secEcosystem} behandelt. Vielmehr rückt in Cloud-Infrastrukturen die Netzwerksicherheit in den Vordergrund, die im Fall einieger Public Cloud-Anbietern mit seperaten Sicherheitskomponenten realisiert werden kann.
 
-  Ein weiterer wichtiger Punkt in der Sicherheit von Cloud-Infrastrukturen ist die Art des Cloud-Angebots: Wie in \fig \ref{...} zu sehen, weisen die am meisten verbreiteten Typen SaaS, PaaS und IaaS in ihrer Natur unterschiedliche Sicherheitsmerkmale auf. Da man als Nutzer von IaaS einen hohen Freiheitsgrad bei der Architektur eigener Dienste erhält, sind auch Sicherheitseigenschaften der genutzten Infrastruktur eigenverantwortlich umzusetzen. Diese Verwantwortung wird durch den engeren Rahmen von SaaS und PaaS überwiegend auf den Betreiber der Infrastruktur übertragen.
+  Ein weiterer wichtiger Punkt in der Sicherheit von Cloud-Infrastrukturen ist die Art des Cloud-Angebots: Die am meisten verbreiteten Typen SaaS, PaaS und IaaS weisen in ihrer Natur unterschiedliche Sicherheitsmerkmale auf. Da man als Nutzer von IaaS einen hohen Freiheitsgrad bei der Architektur eigener Dienste erhält, sind auch Sicherheitseigenschaften der genutzten Infrastruktur eigenverantwortlich umzusetzen. Diese Verwantwortung wird durch den engeren Rahmen von SaaS und PaaS generell auf den Betreiber der Infrastruktur übertragen.
+
+  Das Docker, das unter PaaS und IaaS verwendet werden kann, unterscheidet sich unter beiden Angebotstypen nicht. Damit sind auch die Sicherheitseigenschaften von Docker für PaaS und IaaS identisch. Spezielle Anforderungen an die Sicherheit für Anwendungen in können umgesetzt werden, indem die in Kapitel \ref{secLinux} und \ref{secEcosystem} vorgestellten Methoden und Mechanismen aktiviert werden oder weitere Sicherheitsinstanzen außerhalb des Docker-Okösystems hinzugezogen werden. Letztere können z.B. Firewalls oder Authentifizierung über \emph{Kerberos} sein.
+
+
 
   % Aus alleiniger Sicherheitssicht die Frage: Ist Sicherheit essentiell, verzichtet ein Unternehmen lieber auf Performancegewinne bei Cotnainern und setzt auf bewaehrte Hypervisor.
   % Allerdings sehen aktuelle Entwicklungen vor, Container innerhalb von Hypervisor-basierten Gastsystemen zu betreiben, da der durch Container ermöglichte Workflow mit CI und CD durch v.a. hohen Automatisierungsgrad sehr effizient ist.
@@ -35,7 +39,12 @@
         \item Universelles, einfach zu bedienendes Werkzeug zur Erstellung von Sicherheitsprofilen für \emph{SELinux}, \emph{AppArmor} und \emph{Seccomp} angekündigt \cite{githubGeneralSecProfiles}.
         \item Native Unterstützung für Windows \cite{dockerWindowsSupport}.
         \item Integration der OCF-Spezifikationen \cite{https://blog.docker.com/2015/12/containerd-daemon-to-control-runc/}\cite{https://blog.docker.com/2015/12/progress-report-open-container-initiative/}.
-        \item
+        \item Trennung der Docker-CLIs
+        % TODO: Mehr Infos
+        % TODO: Aufspaltung der Docker-Komponenten in Docker-Distribution:
+        % Aufspaltung in Docker Distribution, das Toolchain enthaelt
+        % Fokus auf Security, Reliability, Performance
+        % ^   \cite[S.31]{http://www.slideshare.net/Docker/docker-48351569}
       \end{itemize}
     \item Unternehmensreife Lösungen: \emph{Docker Datacenter}\cite{https://blog.docker.com/2016/03/configuring-load-balancing-service-discovery-docker-universal-control-plane/}\cite{https://blog.docker.com/2016/02/docker-datacenter-caas/}, \emph{Docker Cloud} \cite{https://blog.docker.com/2016/03/announcing-docker-cloud/}, Prägung des Begriffs \glqq{}CaaS\grqq{} im Docker-Blog \cite{https://blog.docker.com/2016/02/containers-as-a-service-caas/}\cite{https://blog.docker.com/2016/02/containers-as-a-service-caas-2/}
     \item Werkzeuge zur Orchestrierung, Verwaltung und Skalierung von Containern: \emph{Docker Swarm}, Akquirierung von \emph{Conductant, Inc,.} \cite{https://blog.docker.com/2016/03/docker-welcomes-aurora-project-creators/}, Einführung von sogenannten \glqq{}\emph{Swarm}-Weeks\grqq{} \cite{https://blog.docker.com/2016/03/get-prepared-swarmweek/}\cite{https://blog.docker.com/2016/02/swarmweek-is-coming/}.
@@ -43,25 +52,29 @@
     \item Wahrung einer engagierten Open-Source-Gemeinschaft: Berichte über Docker-Meetups und jährliche Konferenz \emph{DockerCon}.
   \end{itemize}
 
-  V.a. der Kauf von \emph{Unikernel Systems} ist aus Sicht der Sicherheit sehr interessant. \emph{Weiter ausbauen hier...}
-  % TODO: Mehr auf Unikernel eingehen. Eingeständnisse für Schwächen in Sachen Sicherheit?
+  V.a. der Kauf von \emph{Unikernel Systems} im Janaur 2016 ist aus Sicht der Sicherheit sehr interessant. Die Entwickler von \emph{Unikernel Systems} entwerfen Unikernels, die in Docker-Container langfristig eingebaut werden sollen. Unter der Verwendung von Unikernels wird das klassische Konzept eines geteilten Kernels ersetzt mit einem Konzept, das pro Container einen minimalen Unikernel vorsieht. Neben flexiblen Einsatzmöglichkeiten, wirkt sich Unikernels positiv auf die Sicherheit in Containern aus.
+
+  Nicht nur Containertechnologien, sondern auch der Linux verändert sich. Wie in Kapitel \ref{secIsolierung} und \ref{secCgroups} erwähnt, sind Erweiterungen des Linux-Kernels, in Form von neuen Namespaces und einer Überarbeitung der Control Groups, absehbar. Durch die Unzufriedenheit über die aktuelle Implementierung von LSMs, ist es möglich, dass diese Architektur zukünftig Änderungen unterzogen wird \cite{https://lwn.net/Articles/443099/}. Durch die Mitarbeit vieler Experten, auch z.B. von \emph{Red Hat}, sollten zukünftige Linux-Neuerungen schnell in Docker integrierbar sein.
+
+  Docker mag für viele eine zu neue und nicht ausreichend getestete Technologie sein, um in Produktion laufende Anwendungen zu betreiben. Es muss allerdings beachtet werden, dass sich bei der Konzeption von Infrastrukturen niemand zwischen Containern und der Virtualisierung mit Hypervisoren entscheiden muss. Vielmehr macht in einem sicherheitskritischen Umfeld eine Kombination beider Virtualisierungstechniken Sinn. Die Sicherheit eines Hypervisors, und der von Containern ermöglichte, automatisierbare Workflow, lassen sich in einer kombinierten Lösungen gewinnbringend einsetzen.
+
+
+  % Mehr auf Unikernel eingehen. Eingeständnisse für Schwächen in Sachen Sicherheit?
   % Docker kauft Unikernel Systems
   % Siehe bookmarks auf techcrunch. Auch gute Grafik dazu..
   % Deutung: Docker weiss, dass Container allein unsicher sind, un mit Unikernels Docker-Container direkt auf Hypervisorn betreiben will
   % --> Mix von Hypervisor und Containern. Damit ist Kernel nicht mehr shared, sondern jeder Container hat sein eigenen minimal kernel.
   % Siehe bookmarks und blog.docker january 2016
 
-
-
   %Organisationen und Unternehmen schließen sich zusammen, um ein standardisiertes und universales Containerformat zu implementieren.
   %\cite[S.4]{dockerLXCKub}
-  % TODO: Bessere Quelle: OCF seite, github repo dazu.
+  % Bessere Quelle: OCF seite, github repo dazu.
 
   % Gutes Intro von Docker mit public cloud orechestration
   % Und: "next gen" "paas" gelabber
   % ^   \cite[S.4+5]{virtVSContainer}
 
-  % TODO: "Security"-Battle zwischen Docker (viele security features am 04.02.201 mit version 1.10) und dem release von CoreOS 1.0 am selben tag (?), das sich als
+  % "Security"-Battle zwischen Docker (viele security features am 04.02.201 mit version 1.10) und dem release von CoreOS 1.0 am selben tag (?), das sich als
   % sichere Containerloesung mit rkt vermarktet.
   %   ^   \cite{alles mit urls belegbar...} --> schon geschehen in kapitel LSM/MAC
 
@@ -74,24 +87,19 @@
 
   % (Kompatibilitaet zwischen den vielen MACS/LSMs/Seccomp/Caps/etc. ? Diese in Zukunft sichergestellt?)
 
-  % TODO: LSM bald ersetzt durch Seccomp-style oder vereinheitliches, im kernel standardmaessig integriertes security-framework???
+  %  LSM bald ersetzt durch Seccomp-style oder vereinheitliches, im kernel standardmaessig integriertes security-framework???
   %   ^   \cite{https://lwn.net/Articles/443099/}
 
   % EIGENE GEDANKEN:
-  % dockers monetarisierung schwaechelt, da shift zu einem level drueber --> kubernetes. TODO Docker swarm/compose nicht sehr erfolgreich..
+  % dockers monetarisierung schwaechelt, da shift zu einem level drueber --> kubernetes. Docker swarm/compose nicht sehr erfolgreich..
   % Und container mit dem OCP/OCI/OCF standardisiert werden.
   % Einigster core value von docker sind paar tools und die registries/docker hub. Docker als "next maven" fuer container images?
 
-  % TODO: im github repo von runc, dem neuen containerstandard werden technologien (namesapces,cgroups,selinux,apparmor) abstrahiert. es ist von "zusätzlichen isolatoren" die rede (siehe SPEC.md oder so in runC), damit ist selinux,seccomp,apparmor,caps gemeint
+  % im github repo von runc, dem neuen containerstandard werden technologien (namesapces,cgroups,selinux,apparmor) abstrahiert. es ist von "zusätzlichen isolatoren" die rede (siehe SPEC.md oder so in runC), damit ist selinux,seccomp,apparmor,caps gemeint
   %       Außerdem mehr die Rede von "pods", nicht "containern". Ein pod hat ein oder mherere container enthalten. --> Shift von Container zu Pods. Docker wird unwichtiger, Kubernetes wird wichtiger.
 
   % Docker will plugin infrastructure....
   % https://github.com/docker/docker/pull/15365 ... wurde verlinkt von 1.10 release notes (https://github.com/docker/docker/releases/tag/v1.10.0 > security)
-
-  % TODO: Aufspaltung der Docker-Komponenten in Docker-Distribution:
-  % Aufspaltung in Docker Distribution, das Toolchain enthaelt
-  % Fokus auf Security, Reliability, Performance
-  % ^   \cite[S.31]{http://www.slideshare.net/Docker/docker-48351569}
 
   % TODO: Conclusion 5_sec_ecosystem:
   % Anbieter sind in externen Sicherheitsfeatures wie IDS,IPS,Malware,Viren,DOS sehr aehnlich. Docker ist in jeder Cloud dasselbe Docker, sprich Sicherheit ändert sich nicht und ist im aktuellen Stand mit kapitel 4_sec_linux und 5_sec_ecosystem behandelt. Der Grad an Sicherheit, der pro Anwendung eines Kunden gilt, muss berücksichtigt werden. Aus der Konstellation aus SET1 und SET2 fallen durch mangelende Unterstützung mancher Cloudanbieter, Anbieter weg.
@@ -101,4 +109,5 @@
   % Ausserdem stellen Unternehmen so sicher, nicht "den Anschluss in der Technik und aktuellen Entwicklungen zu verpassen"
   % Beleg: Erst Docker / Kubernetes... Jetzt OpenStack
   % --> alle 3 sind open-source und werden von kommerziellen Unternehmen unterstützt bis unter den Unternehmen Einigkeit über neuen Open-Source-Standard herrscht, der breit akzeptiert ist. Konkurrenz spielt sich dann auf anderer Ebene ab (Orchestrierung, Tooling, Performance, Preis), wie die Zukunft zeigen wird.
+
 \end{document}
