@@ -8,21 +8,60 @@
   % seit Juli 2015 ist standardisiertes Containerformat der big player in Arbeit
   % Ausblick im Kontext von Container VS. konventioneller Virtualisierung
 
-  Docker verfolgt eine softwarebasierte \emph{Defense In Depth}, bei der verschiedenartige Sicherheitsschichten realisiert werden, um einen bestmöglichsten Schutz zu ermöglichen. Eine Geheimhaltung von technischen Sicherheitsmaßnahmen, auch \emph{Security Through Obscurity} genannt, kann nicht praktiziert werden, da Docker und Linux selbst quelloffene Projekte sind.
+  Wie die Vielzahl an vorgestellten Sicherheitsmechanismen aus Kapitel \ref{secLinux} zeigt, setzt Docker mit diesen nach den Prinzipien \emph{Defense In Depth} und \emph{Principle Of Least Privilege} eine komplexe, mehrschichtige Sicherheitsarchitektur auf Softwarebasis um. Diese in Kapitel \ref{questionRealization} als technische Kontrollen definierte Maßnahmen, werden durch weitere technische und administrative Konzepte aus Kapitel \ref{secEcosystem} ergänzt. Eine Geheimhaltung von technischen Sicherheitsmaßnahmen, auch \emph{Security Through Obscurity} genannt, kann nicht praktiziert werden, da es sich bei Docker und Linux um quelloffene Projekte handelt.
+  % TODO: Security Through Obscurity auch verpöhnt
 
-  Spekulation in der Industrie ist, dass sich Organisationen und Unternehmen zusammenschließen und sich auf eine neue, universale Lösung einigen, die die heutigen Fähigkeiten der sich ergänzenden Technologien Docker und Kubernetes, abdeckt \cite[S.4]{dockerLXCKub}.
+  Wie die Ergebnisse aus Kapitel \ref{secInfrastructure} zeigen, bieten alle bekannten Anbieter von Public Clouds, sowie \emph{OpenStack} als Lösungsansatz von Private Clouds dokumentierte Integrationsmöglichkeiten für Docker an. Spezielle Sicherheitsmerkmale von Docker in Cloud-Infrastrukturen existieren innerhalb eines Docker-Hostsystems nicht. Sicherheitsrelevante Attribute innerhalb eines Docker-Systems wurden in Kapitel \ref{secLinux} und \ref{secEcosystem} behandelt. Vielmehr rückt in Cloud-Infrastrukturen die Netzwerksicherheit in den Vordergrund, die im Fall einieger Public Cloud-Anbietern mit seperaten Sicherheitskomponenten realisiert werden kann.
 
-  % Gutes Intro von Docker mit public cloud orechestration
-  % Und: "next gen" "paas" gelabber
-  % ^   \cite[S.4+5]{virtVSContainer}
+  Ein weiterer wichtiger Punkt in der Sicherheit von Cloud-Infrastrukturen ist die Art des Cloud-Angebots: Wie in \fig \ref{...} zu sehen, weisen die am meisten verbreiteten Typen SaaS, PaaS und IaaS in ihrer Natur unterschiedliche Sicherheitsmerkmale auf. Da man als Nutzer von IaaS einen hohen Freiheitsgrad bei der Architektur eigener Dienste erhält, sind auch Sicherheitseigenschaften der genutzten Infrastruktur eigenverantwortlich umzusetzen. Diese Verwantwortung wird durch den engeren Rahmen von SaaS und PaaS überwiegend auf den Betreiber der Infrastruktur übertragen.
 
+  % Aus alleiniger Sicherheitssicht die Frage: Ist Sicherheit essentiell, verzichtet ein Unternehmen lieber auf Performancegewinne bei Cotnainern und setzt auf bewaehrte Hypervisor.
+  % Allerdings sehen aktuelle Entwicklungen vor, Container innerhalb von Hypervisor-basierten Gastsystemen zu betreiben, da der durch Container ermöglichte Workflow mit CI und CD durch v.a. hohen Automatisierungsgrad sehr effizient ist.
+
+  % Mit Blick auf die Zukunft, sind einige Trends für die Cloud aus aktuellen Veröffentlichungen von Software, Diskussionen, Blog-Artikeln und der Gründung und Aquirierung von Startups, abzulesen.
+
+  Bereits im Docker-Projekt existiert eine firmenübergreifende, interdisziplinäre Zusammenarbeit von Entwicklern, um die Technologie zu erweitern und abzusichern. Durch die Kooperation von Organisationen und Unternehmen der letzten Monate im Rahmen der OCI, weitete sich die Zusammenarbeit aus, um ein standardisiertes und universales Containerformat zu erstellen und etablieren.
+
+  \emph{Docker} ist dadurch gezwungen sein aktuelles Geschäftsmodell zu überdenken. Mit dem quelloffenen OCF wird ein Industriestandard geschaffen, mit dem sich Docker nur noch am Rande profilieren kann. Durch die Standardisierung von Containern ist zu erwarten, dass sich die ursprüngliche Innovationspotential von Containern, das allein \emph{Docker} ausnutzen konnte, auf die Orchestrierung und Verwaltung von Containern verschiebt. \emph{Docker} wird es in diesem Bereich schwieriger haben, eine Marktdominanz zu erreichen, da die Konkurrenz zu \emph{Docker Swarm} mit \emph{Kubernetes} von \emph{Google} und \emph{Marathon} von \emph{Mesosphere} bereits heute sehr beliebt ist.
+
+  Wie die jüngsten Enthüllungen von \emph{Docker} zeigen, setzt das Unternehmen den öffentlichen Fokus seiner Arbeit zunehmend auf Unternehmenslösungen und die Bereitstellung von Images und Werkzeugen.
+
+  Die Aktivitäten im Docker-Blog von August 2015 bis März 2016 sowie Beiträge auf der \emph{GitHub}-Plattform im gleichen Zeitraum bestätigen diesen Trend. Diese öffentlichen Aktivitäten sind im Folgenden stichpunktartig kategorisiert:
+
+  \begin{itemize}
+    \item Verbesserung der bestehenden Plattform:
+      \begin{itemize}
+        \item Erweiterbarkeit von Docker durch Plugins: ein generisches Plugin-Framework wird für Docker-Version 1.11 erwartet \cite{githubDockerRoadmap}\cite{https://github.com/docker/docker/pull/15365}.
+        \item Universelles, einfach zu bedienendes Werkzeug zur Erstellung von Sicherheitsprofilen für \emph{SELinux}, \emph{AppArmor} und \emph{Seccomp} angekündigt \cite{githubGeneralSecProfiles}.
+        \item Native Unterstützung für Windows \cite{dockerWindowsSupport}.
+        \item Integration der OCF-Spezifikationen \cite{https://blog.docker.com/2015/12/containerd-daemon-to-control-runc/}\cite{https://blog.docker.com/2015/12/progress-report-open-container-initiative/}.
+        \item
+      \end{itemize}
+    \item Unternehmensreife Lösungen: \emph{Docker Datacenter}\cite{https://blog.docker.com/2016/03/configuring-load-balancing-service-discovery-docker-universal-control-plane/}\cite{https://blog.docker.com/2016/02/docker-datacenter-caas/}, \emph{Docker Cloud} \cite{https://blog.docker.com/2016/03/announcing-docker-cloud/}, Prägung des Begriffs \glqq{}CaaS\grqq{} im Docker-Blog \cite{https://blog.docker.com/2016/02/containers-as-a-service-caas/}\cite{https://blog.docker.com/2016/02/containers-as-a-service-caas-2/}
+    \item Werkzeuge zur Orchestrierung, Verwaltung und Skalierung von Containern: \emph{Docker Swarm}, Akquirierung von \emph{Conductant, Inc,.} \cite{https://blog.docker.com/2016/03/docker-welcomes-aurora-project-creators/}, Einführung von sogenannten \glqq{}\emph{Swarm}-Weeks\grqq{} \cite{https://blog.docker.com/2016/03/get-prepared-swarmweek/}\cite{https://blog.docker.com/2016/02/swarmweek-is-coming/}.
+    \item Entwicklung von sogenannten Unikernels und Aquirierung von \emph{Unikernel Systems} \cite{https://blog.docker.com/2016/01/unikernel/}
+    \item Wahrung einer engagierten Open-Source-Gemeinschaft: Berichte über Docker-Meetups und jährliche Konferenz \emph{DockerCon}.
+  \end{itemize}
+
+  V.a. der Kauf von \emph{Unikernel Systems} ist aus Sicht der Sicherheit sehr interessant. \emph{Weiter ausbauen hier...}
+  % TODO: Mehr auf Unikernel eingehen. Eingeständnisse für Schwächen in Sachen Sicherheit?
   % Docker kauft Unikernel Systems
   % Siehe bookmarks auf techcrunch. Auch gute Grafik dazu..
   % Deutung: Docker weiss, dass Container allein unsicher sind, un mit Unikernels Docker-Container direkt auf Hypervisorn betreiben will
   % --> Mix von Hypervisor und Containern. Damit ist Kernel nicht mehr shared, sondern jeder Container hat sein eigenen minimal kernel.
   % Siehe bookmarks und blog.docker january 2016
 
-  % "Security"-Battle zwischen Docker (viele security features am 04.02.201 mit version 1.10) und dem release von CoreOS 1.0 am selben tag (?), das sich als
+
+
+  %Organisationen und Unternehmen schließen sich zusammen, um ein standardisiertes und universales Containerformat zu implementieren.
+  %\cite[S.4]{dockerLXCKub}
+  % TODO: Bessere Quelle: OCF seite, github repo dazu.
+
+  % Gutes Intro von Docker mit public cloud orechestration
+  % Und: "next gen" "paas" gelabber
+  % ^   \cite[S.4+5]{virtVSContainer}
+
+  % TODO: "Security"-Battle zwischen Docker (viele security features am 04.02.201 mit version 1.10) und dem release von CoreOS 1.0 am selben tag (?), das sich als
   % sichere Containerloesung mit rkt vermarktet.
   %   ^   \cite{alles mit urls belegbar...} --> schon geschehen in kapitel LSM/MAC
 
@@ -30,23 +69,23 @@
   % Um sehr technische details von selinux,apparmor,seccomp,caps zu abstrahieren. Es soll schnittstelle entstehen, mit denen jeder entwickler moeglichst einfach eigenen containersicherheitsprofil festlegt
   % das apparmor oder seccomp dynamisch anwendet, je nach support vom host.
   %   ^   \cite{frazelli/bane tool .... v.1.10 blog post ..... https://github.com/docker/docker/issues/17142#issuecomment-148974642}
-	% TODO: Eigene AppArmor profile erstellen mit 'bane': https://github.com/jfrazelle/bane ... Tooling-Efforts von Docker in Sachen Security support
-	% Auch: proposal als neues profil generator sec blabla: http://blog.docker.com/2016/02/docker-engine-1-10-security/
 
-  % Kompatibilitaet zwischen den vielen MACS/LSMs/Seccomp/Caps/etc. ? Diese in Zukunft sichergestellt?
+	% Auch: Bane proposal als neues profil generator sec blabla: http://blog.docker.com/2016/02/docker-engine-1-10-security/
 
-  % LSM bald ersetzt durch Seccomp-style oder vereinheitliches, im kernel standardmaessig integriertes security-framework???
+  % (Kompatibilitaet zwischen den vielen MACS/LSMs/Seccomp/Caps/etc. ? Diese in Zukunft sichergestellt?)
+
+  % TODO: LSM bald ersetzt durch Seccomp-style oder vereinheitliches, im kernel standardmaessig integriertes security-framework???
   %   ^   \cite{https://lwn.net/Articles/443099/}
 
   % EIGENE GEDANKEN:
-  % dockers monetarisierung schwaechelt, da shift zu einem level drueber --> kubernetes. Docker swarm/compose nicht sehr erfolgreich..
+  % dockers monetarisierung schwaechelt, da shift zu einem level drueber --> kubernetes. TODO Docker swarm/compose nicht sehr erfolgreich..
   % Und container mit dem OCP/OCI/OCF standardisiert werden.
   % Einigster core value von docker sind paar tools und die registries/docker hub. Docker als "next maven" fuer container images?
 
   % TODO: im github repo von runc, dem neuen containerstandard werden technologien (namesapces,cgroups,selinux,apparmor) abstrahiert. es ist von "zusätzlichen isolatoren" die rede (siehe SPEC.md oder so in runC), damit ist selinux,seccomp,apparmor,caps gemeint
   %       Außerdem mehr die Rede von "pods", nicht "containern". Ein pod hat ein oder mherere container enthalten. --> Shift von Container zu Pods. Docker wird unwichtiger, Kubernetes wird wichtiger.
 
-  % TODO: Docker will plugin infrastructure....
+  % Docker will plugin infrastructure....
   % https://github.com/docker/docker/pull/15365 ... wurde verlinkt von 1.10 release notes (https://github.com/docker/docker/releases/tag/v1.10.0 > security)
 
   % TODO: Aufspaltung der Docker-Komponenten in Docker-Distribution:
@@ -57,9 +96,6 @@
   % TODO: Conclusion 5_sec_ecosystem:
   % Anbieter sind in externen Sicherheitsfeatures wie IDS,IPS,Malware,Viren,DOS sehr aehnlich. Docker ist in jeder Cloud dasselbe Docker, sprich Sicherheit ändert sich nicht und ist im aktuellen Stand mit kapitel 4_sec_linux und 5_sec_ecosystem behandelt. Der Grad an Sicherheit, der pro Anwendung eines Kunden gilt, muss berücksichtigt werden. Aus der Konstellation aus SET1 und SET2 fallen durch mangelende Unterstützung mancher Cloudanbieter, Anbieter weg.
   % Zukünftig kann erwartet werden, dass sich Anbieter auch in Sachen OS-usw-Unterstützung ähnlicher werden. Konkurrenz wird dann über andere Eigenschaften ausgestochen werden. Z.B. Preis. --> Cloud wird zum Massenprodukt, und bis nächste Innovation kommt ist Unterscheidung nur über Preis und Performance möglich, da alle ähnliches Featuresset haben. ... Vergleich mit anderen Dingen, z.B. HDD-SDD-Laptop-Hersteller
-
-  % TODO: Docker  kauft Aurora, Anfang Maerz 2016. Das ist sowas wie Kubernetes
-  %         https://blog.docker.com/2016/03/docker-welcomes-aurora-project-creators/
 
   % In der Wirtschaft ist Vendor-Lock-In ein Thema. Kunden wollen sich nicht auf eine Technologie beschränken und heissen Portabilität und Interoperabilität zwischen mehreren Anbietern willkommen. Anbietern von Clouds sind deswegen interessiert, Open-Source Produkte zu entwickeln und medienlaut als Unterstützer dieses Oopen-Source-Produkts genannt zu werden. Mit Open-Source-Software ist oft gewährleistet, dass sie von vielen Unternehmen unterstützt wird.
   % Ausserdem stellen Unternehmen so sicher, nicht "den Anschluss in der Technik und aktuellen Entwicklungen zu verpassen"
