@@ -19,7 +19,7 @@
       \label{fig:overview_googleTrends}
   \end{figure}
 
-  Obwohl das Konzept von Containern bereits im Jahr 2000 als \emph{Jails} in dem Betriebssystem \emph{FreeBSD} und seit 2004 als \emph{Zones} unter \emph{Solaris} verwendet wurde \cite{zonesReleasenotes}\cite{jailsReleasenotes}, gelang keiner dieser Technologien vor Docker der Durchbruch. Wie Docker den bis 2013 vorherrschenden Ruf von Containertechnologien, dass Container noch nicht ausgereift seien \cite[S.8]{containerVirtPerformance}, nachhaltig verändern konnte, ist in der Einführung zu Docker in Kapitel \ref{dockerIntro} beschreiben.
+  Obwohl das Konzept von Containern bereits im Jahr 2000 als \emph{Jails} in dem Betriebssystem \emph{FreeBSD} und seit 2004 als \emph{Zones} unter \emph{Solaris} verwendet wurde \cite{zonesReleasenotes}\cite{jailsReleasenotes}, erreichte keiner dieser Technologien vor Docker den Durchbruch. Wie Docker den bis 2013 vorherrschenden Ruf von Containertechnologien, dass Container noch nicht ausgereift seien \cite[S.8]{containerVirtPerformance}, nachhaltig verändern konnte, ist in der Einführung zu Docker in Kapitel \ref{dockerIntro} beschreiben.
 
   Heute sind Container in vielen Szenarien, v.a. skalierbaren Infrastrukturen, trotz intrinsischer Sicherheitsdefizite gegenüber Hypervisor-gestützten Virtualisierungsarten beliebt. Vor allem \glspl{MultiTenantService} werden gerne mit Docker umgesetzt \cite[S.6]{dockerBook}\cite{dockerUnderstandingDocker}.
 
@@ -34,19 +34,27 @@
   % TODO: Oft in Github-Repos geforscht, da offizielle Docker Docs teilweise hinterherhinken. Aktuelle Diskussionen sind in github issues mit drin, da dort auch problem eroertert werden. In den docker-docs und docker-blogeintraegen oft nur "wow docker kann jetyzt auch das"
 
   \section{Ziel der Arbeit}
-    Ziel der Arbeit ist es, die von Containersystemen genutzten Sicherheitsmechanismen vorzustellen und zu untersuchen, inwiefern diese zu im Fall von Docker zu einer höheren Sicherheit des Systems beitragen.
+    Ziel der Arbeit ist es, die von der Containertechnolgie Docker genutzten Sicherheitsmechanismen zu untersuchen. Die sicherheitsrelevanten Modelle und Mechanismen werden im Rahmen der Arbeit vorgestellt und es wird erklärt, wie diese zu einer höheren Sicherheit in Docker-Systemen beitragen.
+    %vorzustellen und zu untersuchen, inwiefern diese zu im Fall von Docker zu einer höheren Sicherheit des Systems beitragen.
+    Außerdem werden Integrationsmöglichkeiten von Docker sowie sicherheitsrelevante Merkmale im Kontext von Cloud-Infrastrukturen erarbeitet.
 
     Eine ausführliche Konstruktion der Fragestellung erfolgt mithilfe einer Risikoanalyse in Kapitel \ref{question}.
 
   \section{Struktur der Arbeit}
-    Zu Beginn wird in den Grundlagen ab Kapitel \ref{introVirt} die Virtualisierung beschrieben. Dabei werden die zwei prominentesten Virtualisierungstechniken, Hypervisor-basierte (Sektion \ref{introVirtHypervisor}) und Container-basierte (Sektion \ref{introVirtContainer}) Virtualisierung, gegenübergestellt. In diesem Kapitel werden nur die für diese Arbeit relevante Techniken der Systemvirtualisierung beschrieben, also solche, in denen Funktionen von kompletten Betriebssystemen abstrahiert werden. Andere Arten, beispielsweise die Anwendungs-, Storage- oder Netzwerkvirtualisierung, werden nicht behandelt, da sie isoliert keinen Bezug zu Docker haben. Anschließend werden die allgemeinen Sicherheitsziele von \acrshort{IT}-Systemen in Kapitel \ref{introSecGoals} erklärt, auf die im Hauptteil Bezug genommen wird. Abgeschlossen wird das Grundlagenkapitel mit einer Einführung in Docker (Kapitel \ref{dockerIntro}), in dem Begriffe sowie Funktionsweisen innerhalb dieser Technologie erläutert werden.
+    Zu Beginn wird im Grundlagenkapitel \ref{basics} die Virtualisierung beschrieben. Dabei werden die zwei prominentesten Virtualisierungstechniken, hypervisorbasierte (Abschnitt \ref{introVirtHypervisor}) und containerbasierte (Abschnitt \ref{introVirtContainer}) Virtualisierung, gegenübergestellt.
+    %In diesem Kapitel werden nur die für diese Arbeit relevante Techniken der Systemvirtualisierung beschrieben, also solche, in denen Funktionen von kompletten Betriebssystemen abstrahiert werden.
+    Andere Arten, beispielsweise die Anwendungs-, Speicher- oder Netzwerkvirtualisierung, werden nicht behandelt, da sie isoliert keinen Bezug zu Docker haben.
 
-    Die genannten Grundlagen sind sehr weitreichende Themengebiete. Um in den einleitenden Kapiteln nicht ausführlich zu werden, sind Eckdaten einiger am Rande auftretender Begriffe im angehängten Glossar zusammengefasst.
+    Anschließend werden die allgemeinen Sicherheitsziele von \acrshort{IT}-Systemen in Kapitel \ref{introSecGoals} erklärt, auf die im Hauptteil der Arbeit Bezug genommen wird. Abgeschlossen wird das Grundlagenkapitel mit einer Einführung in Docker (Kapitel \ref{dockerIntro}), in dem Begriffe sowie Funktionsweisen innerhalb dieser Technologie erläutert werden.
 
-    Der Hauptteil ab Kapitel \ref{secLinux} untergliedert sich in mehrere Sicherheitsgebiete, in die die Arbeit eingeteilt ist:
+    Die genannten Grundlagenthemen sind sehr weitreichende Themengebiete. Um in den einleitenden Kapiteln nicht ausführlich zu werden, sind Eckdaten einiger, nicht im Fokus der Arbeit stehende Begriffe im angehängten Glossar zusammengefasst.
+
+    In Kapitel \ref{question} wird die Fragestellung auf Basis einiger Annahmen ausführlich erörtert. Es wird ein Systemmodell eingeführt, das als Referenz für die Untersuchungen in Kapitel \ref{secLinux} herangezogen wird.
+
+    Der Hauptteil von Kapitel \ref{secLinux} bis \ref{secInfrastructure} untergliedert sich in mehrere Gebiete, in die die Arbeit eingeteilt ist:
     \begin{enumerate}
-      \item \textbf{Sicherheitsmechanismen, die Linux ermöglicht} und teils obligatorisch von Docker eingesetzt werden. Darunter fallen Techniken zur Isolierung, Ressourcen- und Rechteverwaltung von Containern sowie Methoden, um das Hostsystem mit zusätzlichen Sicherheitsfeatures von Linux abzusichern.
-      \item \textbf{Sicherheit im Docker-Ökosystem} und wie diese durch unterschiedliche Konzepte ermöglicht oder begünstigt wird.
+      \item \textbf{Kapitel \ref{secLinux} - Sicherheit durch Linux-Funktionen:} Vorstellung von Linux-Funktionen, die Isolierung, Ressourcenverwaltung und Zugriffskontrolle ermöglichen. Darstellung der Integration dieser Mechanismen unter in Docker.
+      \item \textbf{Kapitel \ref{secEcosystem} - Sicherheit im Docker-Ökosystem:} Erörterung sicherheitsrelevanter Merkmale im Docker-Ökosystem. Umfasst u.a. die Verifikation von Docker-Images, Plugins und die Unterstützung von Tools.
         %Darunter fallen z.B.
         %\begin{itemize}
         %  \item Integrität von Images
@@ -54,11 +62,11 @@
         %  \item \glspl{BestPractice} im Umgang mit Docker-Komponenten sowie Sicherheitsrichtlinien.
         %  \item Verwendung von Third-Party Tools, wie \emph{Kubernetes}
         %\end{itemize}
-      \item \textbf{Sicherheit von Docker in Cloud-Infrastrukturen} sowie Integrationsmöglichkeiten von Docker.
+      \item \textbf{Kapitel \ref{secInfrastructure} - Docker in Cloud-Infrastrukturen:} Integrationsmöglichkeiten von Docker in verschiedene Cloud-Infrastrukturen werden aufgezeigt. Erklärung sicherheitsrelevante Merkmale dieser Infrastrukturen.
         %Gegenstand der Untersuchung ist, ob und wie Docker in der Cloud eingesetzt werden kann, sodass Sicherheitsanforderungen von Unternehmen erfüllt werden.
     \end{enumerate}
 
-    Abgeschlossen wird die Arbeit im letzten Kapitel \ref{result} mit einer Zusammenfassung der Erkenntnisse und einem Ausblick auf die Zukunft von Docker und der containerbasierten Virtualisierung.
+    Abgeschlossen wird die Arbeit im letzten Kapitel \ref{result} mit einer Zusammenfassung der Erkenntnisse. Außerdem werden aktuelle Trends sowie mögliche zukünftige Entwicklungen in der containerbasierten Virtualisierung vorgestellt.
 
   \section{Stil der Arbeit}
     Da die meisten Quellen in der englischen Sprache verfasst sind, hat sich auch im deutschen Sprachgebrauch eine englische Terminologie von Gegenständen der IT etabliert. Zusammen mit der Tatsache, dass die Übersetzung englischer Begriffe häufig nicht das Verständnis eines deutschen Lesers begünstigt, sind einige Begriffe original in englisch gehalten.
