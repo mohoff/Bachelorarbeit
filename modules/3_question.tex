@@ -3,12 +3,14 @@
 
 \chapter{Fragestellung}
 \label{question}
-  Die Wertschöpfung moderner IT-Unternehmen beruht auf dem Angebot von Diensten, auch Services genannt, die über das Internet den Nutzern zur Verfügung gestellt werden. Die Services werden von Anwendungen angeboten, die in der Regel selbst in Rechenzentren betrieben werden. Der überwiegende Vermögensgegenstand in diesem Modell ist die Software, die in den Rechenzentren produktiv läuft. Der Wert dieser ist direkt abhängig von der Funktionstüchtigkeit eines Rechenzentrums. Je nach Anwendungsfall kommt den Sicherheitszielen aus Kapitel \ref{introSecGoals} unterschiedliche Wichtigkeit zu.
+  Die Wertschöpfung moderner IT-Unternehmen beruht auf dem Angebot von Diensten, auch Services genannt, die über das Internet den Nutzern zur Verfügung gestellt werden. Die Services werden von Anwendungen angeboten, die in der Regel selbst in Rechenzentren betrieben werden. Der überwiegende Vermögensgegenstand in diesem Modell ist die Software, die in den Rechenzentren produktiv läuft. Der Wert dieser ist direkt abhängig von Eigenschaften wie Leistung und Sicherheit eines Rechenzentrums.
 
-  Kunden, die ihr Produkt über Rechenzentren anbieten sind u.a. an Sicherheitsfeatures interessiert, die die Sicherheitsziele der Vertraulichkeit, Integrität und Verfügbarkeit sicherstellen.
+  Kunden, die ihr Produkt über Rechenzentren anbieten sind u.a. an Sicherheitsfeatures interessiert, die die Sicherheitsziele der Vertraulichkeit, Integrität und Verfügbarkeit sicherstellen. Je nach Anwendungsfall kommt diesen Zielen unterschiedliche Wichtigkeit zu. Die Erfüllung der Sicherheitsziele muss für einen sicheren Betrieb auf mehreren Ebenen, z.B. Anwendungs-, Virtualisierungs- und Netzwerkebene gegeben sein.
+
+
   Die Betreiber von Rechenzentren streben neben den zur Verfügung gestellten Sicherheitsfunktionen, einen möglichst effizienten Betrieb der Kundensysteme in der eigenen Infrastruktur an.
 
-  Wie in Kapitel \ref{basics} gezeigt, bietet der Einsatz von Containertechnologien aus Sicht der Performance und Effizienz sowie administrativen Faktoren, attraktive Eigenschaften für die Betreiber von Rechenzentren. Mit gegebener Hardware lassen sich z.B. mit Containerlösungen i.d.R. mehr Kundenanwendungen realisieren, wie wenn letztere mit konventioneller Hypervisor-Technologie betrieben werden.
+  Wie in Kapitel \ref{basics} gezeigt, bietet der Einsatz von Containertechnologien aus Sicht der Leistung, Effizienz sowie administrativen Faktoren, attraktive Eigenschaften für die Betreiber von Rechenzentren. Mit gegebener Hardware lassen sich z.B. mit Containertechnologien durchschnittlich mehr Kundenanwendungen realisieren, wie wenn letztere mit der konventionellen Hypervisor-Technologie betrieben werden.
 
   % Die Betreiber von Rechenzentren wiederum müssen diese Nachfrage befriedigen.
   % Dabei streben sie einen möglichst effizienten
@@ -38,9 +40,11 @@
 
   \section{Auswirkungen der identifizierten Risiken}
   \label{questionEffects}
-    Bei einer näheren Betrachtung, sind aus Sicht des Hostsystems die Folgen beider Gefahrenquellen jedoch sehr ähnlich. In beiden Fällen muss davon ausgegangen werden, dass ein Container schadhaften Code ausführt. Die Unterscheidung nach Gefahrenquelle (A) oder (B) ist unerheblich, da beide Szenarien dazu führen, dass eine oder mehrere Container eines Hostsystems schadhaften Code ausführen.
+    Bei einer näheren Betrachtung, sind aus Sicht des Hostsystems die Folgen beider Gefahrenquellen jedoch sehr ähnlich. In beiden Fällen muss davon ausgegangen werden, dass ein Container schadhaften Code ausführt.
 
-    Daraus ergibt sich die Schlussfolgerung, dass ein Container nicht vertrauenswürdig ist und aus Sicht der IT-Sicherheit angenommen werden muss, dass dieser von einem Angreifer kontrolliert wird.
+    Beide Gefahrenquellen (A) und (B) führen dazu, dass ein oder mehrere Container eines Hostsystems schadhaften Code ausführen. Eine Unterscheidung der Risiken, die bei der Untersuchung der Eintrittswahrscheinlichkeiten von Bedeutung ist, wird durch folgende Schlussfolgerung irrelevant.
+
+    \textbf{Schlussfolgerung}: Ein Container ist nicht vertrauenswürdig. Bei der Konstruktion einer Sicherheitsarchitektur muss davon ausgegangen werden, dass ein Container von einem Angreifer kontrolliert wird.
 
     Mithilfe dieser Erkenntnis kann das Systemmodell unter Einbeziehung eines Angreifermodells erweitert werden. \(M\) wird in zwei echte, nicht-leere Teilmengen \(C\) und \(\overline{C}\) unterteilt. \(C\) enthält korrekt funktionierende, legitime Container und \(\overline{C}\) kompromittierte Container.
     % TODO: oder besser: \(C\) mit der Eigenschaft \(\{\}\neq C \subset M \quad\) enthält korrekt funktionierende.....
@@ -105,7 +109,7 @@
   \section{Anforderungen an die Sicherheit von Containern}
     Aus den Annahmen und der Schlussfolgerung im letzen Abschnitt, lassen sich allgemeine Sicherheitsanforderungen formulieren:
 
-    Allgemeine Anforderung: Von einem kompromittiertem Container c', darf der Rest des Systems nicht betroffen sein. Die Sicherheitsziele der Vertraulichkeit, Integrität und Verfügbarkeit sollen für das Hostsystem und andere Container gewahrt werden.
+    Allgemeine Anforderung: Von einem kompromittiertem Container \cbroken{}, darf der Rest des Systems nicht betroffen sein. Die Sicherheitsziele der Vertraulichkeit, Integrität und Verfügbarkeit sollen für das Hostsystem und andere Container gewahrt werden.
 
   \section{Theoretischer Lösungsansatz}
     Die Strategie zur Erfüllung der soeben definierten Sicherheitsanforderungen, beruht unter Docker auf einem zweistufigen Ansatz:
@@ -127,14 +131,14 @@
 
     \begin{itemize}
       \item \textbf{Technische Kontrollen:} Umfasst alle hardware- und softwarebasierten Mechanismen, z.B. ein Zugriffsschutz unter Verwendung einer MAC.
-      \item \textbf{Administrative Kontrollen:} Enthält Management-Kontrollen, die z.B. durch Konfigurationen, Entwicklung einer Sicherheitspolitik, Best Practices, Sicherheitsschulungen des Personals, umgesetzt werden.
+      \item \textbf{Administrative Kontrollen:} Enthält Management-Kontrollen, die z.B. durch Konfigurationen, Entwicklung einer Sicherheitspolitik, Reduzierung der Fehleranfälligkeit durch hohen Automatisierungsgrad und Sicherheitsschulungen des Personals umgesetzt werden.
       \item \textbf{Physische Kontrollen:} Beinhalten Mechanismen wie Sicherheitsschleusen, Schlösser und Wachpersonal. Obwohl ein Bezug zum Betrieb von Rechenzentren hergestellt werden kann, haben physische Kontrollen keine spezifische Relevanz für die containerbasierte Virtualisierung und sind aus diesem Grund an dieser Stelle nur zum Zweck der Vollständigkeit aufgeführt.
     \end{itemize}
 
-    Docker hat als Softwareprodukt die Möglichkeit, direkt technische Kontrollen in die Codebasis einzubauen bzw. solche, die der Linux-Kernel implementiert, zu unterstützen. Auch administrative Sicherheitsansätze verfolgt Docker, die teilweise durch technische Mittel anwendbar sind.
+    Docker hat als Softwareprodukt die Möglichkeit, direkt technische Kontrollen in die Codebasis einzubauen bzw. solche, die der Linux-Kernel implementiert, zu unterstützen. Auch administrative Sicherheitsansätze verfolgt Docker, die teilweise durch technische Mittel umgesetzt werden können.
 
   \section{Ziel der Arbeit}
-    Gegenstand dieser Arbeit ist, die von Docker integrierten technischen, Software-basierten sowie administrativen Maßnahmen zu analysieren.
+    Gegenstand dieser Arbeit ist, die von Docker integrierten technischen, softwarebasierten sowie administrativen Maßnahmen zu analysieren.
 
     Im Rahmen der Arbeit werden die Sicherheitsmaßnahmen sowie deren Einstatz unter Docker vorgestellt. Die in diesem Kapitel erarbeiteten Annahmen und Schlussfolgerungen bilden dabei die Basis der Untersuchung. Die einzelnen Sicherheitsmerkmale sind dabei unabhängig von der Infrastruktur. Das bedeutet, dass sie bei einem lokalen Betrieb von Docker auf Computern von Entwicklern, bis hinzu Docker-Installationen in Cloud-Infrastrukturen relevant sind.
 
