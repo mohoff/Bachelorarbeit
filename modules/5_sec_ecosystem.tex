@@ -16,7 +16,7 @@
 %   6. Upload to internal registry server
 %   7. Share with others
 
-\chapter{Sicherheit im Docker-Ökosystem}
+\chapter{}
 \label{secEcosystem}
   In diesem Kapitel werden einige Anwendungsaspekte von Docker unter einem Sicherheitskontext beleuchtet. Maßgeblich sollen weiterhin die drei definierten Sicherheitsziele zur Bewertung von Sicherheitseigenschaften dienen. Während Kapitel \ref{secLinux} native Sicherheitskomponenten von Docker und Linux untersucht hat, wird in den folgenden Abschnitten das Docker-Ökosystem in Betracht gezogen. Unter einem Ökosystem versteht sich hierbei die Gesamtheit aller Komponenten und Interaktionsmöglichkeiten, die im Zusammenhang mit Docker existieren. Der Fokus der Untersuchung liegt auf Anwendungsebene. Das bedeutet, dass hauptsächlich Methoden vorgestellt werden, die Docker Entwicklern und Administratoren zur Verfügung stellt, um die Arbeit mit den Docker-Komponenten aus Kapitel \ref{dockerIntro} sicher zu gestalten. Außerdem wird vorgestellt, wie sich die sicherheitsrelevanten Komponenten und Operationen in den letzten Monaten aus der Sicherheitsperspektive geändert haben.
 
@@ -184,9 +184,9 @@
     \paragraph{Vorteile:}
     \begin{itemize}
       \item Durch die Vielzahl an Involvierten können Sicherheitslücken schneller entdeckt und behoben werden. Über 1300 Individuen haben sich bislang für die Weiterentwicklung der Codebasis und der Aufdeckung von Fehlern und Sicherheitsrisiken an Docker beteiligt.
-      %Die Codequalität profitiert auch von Experten anderer Unternehmen und Organisationen, im Docker-Projekt z.B. von \emph{RedHat}-Mitarbeitern.
+      %Die Codequalität profitiert auch von Experten anderer Unternehmen und Organisationen, im Docker-Projekt z.B. von \emph{Red Hat}-Mitarbeitern.
       \item Eigene Sicherheitspraktiken können von Anwendern durch die Kenntnis über den Quellcode hinzugefügt werden.
-      \item Nach dem Kerkhoffs'schen Prinzip ist einer Anwendung von \emph{Security Through Obscurity} generell abzuraten \cite[S.15]{nist}.
+      \item Nach dem Kerkhoffs'schen Prinzip ist einer Anwendung von \emph{Security Through Obscurity} generell abzuraten. Ein offenes Design von Serversystemen ist von NIST als allgemeines Sicherheitsprinzip vorgeschlagen \cite[S.15]{nist}.
     \end{itemize}
 
     \paragraph{Nachteile:}

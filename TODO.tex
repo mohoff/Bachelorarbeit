@@ -1,10 +1,21 @@
 
+%%%%% LAST STEPS %%%%%
+
+% TODO: texttt{}-Bloecke sauber zeilenbrechen. --> mit usepackage oder anderem workaround?
+% --> Zeilenumbruch davor (Aufgabe am Ende kurz vor Abgabe)
+
+% TODO: Acronym "MAC" kommt 3 mal vor... Sicherstellen, dass alle 3 mal richtig referenziert ist
+
+% TODO: Hyphenations am Ende machen, wenn Inhalt steht.
+
+
 %%%%% STRUKTUR und STIL %%%%%
 
 % TODO: einheitliche Schreibweise von control groups, capabilities, namespaces
 % --> normal schreiben, kursiv mit \emph{..}, oder monotype mit \texttt{..} ???
 
 % TODO: Klaeren, ob Bilder mit englischen Texten selbst nachgebaut werden muessen mit eingedeutschten Begriffen?
+% --> Laut Patrick englisch lassen
 
 % TODO: Kommandozeilen-Screenshots besser als Codeblocks/lstlistings? Oder ist ok mit violettem Hintergrund...(bei eigenen Screenshots)
 
@@ -14,12 +25,9 @@
 
 
 
-% TODO: texttt{}-Bloecke sauber zeilenbrechen. --> mit usepackage oder anderem workaround?
-% --> Zeilenumbruch davor (Aufgabe am Ende kurz vor Abgabe)
 
-% TODO: Tabelle in Einleitungskapitel "Virtualisierung" fixen. Da muss Seitenumbruch rein iwie.
-% --> Entweder richtiges Package finden, sonst zwei Tabellen auf 2 Seiten (Aufgabe am Ende kurz vor Abgabe)
-% Mit tex-files von Karlo vergleichen, der das angeblich mit longtables hinbekommen hat...
+
+
 
 % TODO: Rework abstract syntax. Its shitty. Gibts da was gutes als Vorlage?
 
@@ -31,52 +39,57 @@
 
 % TODO: Linux security/lsm namespace: https://lwn.net/Articles/623575/
 
-% TODO: Konsistente Schreibeweise von "RedHat"/"Red Hat"
-
-% Begriff "System" definieren. Gesamtheit von Hostsystem und Gastsystem. Meint Betriebssystem inklusive daraus gestartete Container
-
-% DONE: grsecurity und SMACK und TOMOYO auch mit rein zum erklaeren oder besser begruenden warum sie alle keine direkte relevanz zu docker haben (keine profile, sondern einfach kernel patches, die ohne konfiguration auskommen)
-
-% TODO: Acronym "MAC" kommt 3 mal vor... Sicherstellen, dass alle 3 mal richtig referenziert ist
-
-% TODO: Begriff Host von dem in der Netzwerktechnik im OSI-Modell abgrenzen
-
 % TODO: Ins Glossar: chroot, Jails?, Zones?, System Calls (oder eigenen kapitel?), Apache 2.0 Lizenz, Golang, COW, High Performance Computing, embedded systems, Socket (s.1149,s.1162f.,s.1176,s.1235{linuxInterface}), Bash, 3-Tier-Architektur, Zero-Day-Exploit, responsible disclosure, SaaS, PaaS, IaaS, (CaaS)
-% TODO: Glossar: Virtual Appliances: also in virtuelle Instanzen eingebettete Anwendungen .
-
-% TODO: Hyphenations am Ende machen, wenn Inhalt steht.
-
-% TODO: Nirgendwo Third-Party schreiben, da guter dt. Begriff mit Drittanbieter/Dritte existiert.
+% Glossar: Virtual Appliances: also in virtuelle Instanzen eingebettete Anwendungen .
+% Fork Bomb: die die Ressourcen eines Systems erschöpfen, indem sie als Programm rekursiv Kopien von sich selbst in einer Endlosschleife erzeugen
+% Immutable infrastructure (docker einleitung bei CI und CD) ... http://blog.tutum.co/2015/06/02/immutable-infrastructure-and-containers/ .... http://unikernel.org/blog/2015/unikernels-meet-docker/
 
 % TODO: reformat chapter style with package titlesec
 %\titleformat{\section}
 %{\filcenter\normalfont\Large\bfseries}
 %{\chaptertitlename~\thechapter} {0.5em} {}
 
-% TODO: Bei erstem Vorkommen von Golang, REferenz auf deren Website setzen.
-
-% TODO: Als abkürzungen festlegen und verlinken: HP, IBM, LXC
-
 % TODO: ADD im Kapitel Dockerfile hinzufügen, da im Kapitel "Images" erwähnt.
 
-% TODO: Isolierung-Unterkapitel in eine sinnvolle Reihenfolge bringen
+% TODO: Quelle \cite{nist} weiter untersuchen. V.a. S.15,23 hat gute Infos
 
-% TODO: Local DoS: Fork-bomb (siehe \cite[S.793]{linuxInterface})
 
-% TODO: Unterschiedung von Produkt Docker und Unternehmen Docker. Das Unternehmen evtl. kursiv schreiben oder mit (TM)-Zeichen am Ende
-          % --> Klaeren ob das okay so ist, auch obs ok ist das in "struktur der arbeit" zu schreiben
 
-% TODO: Eigenes groses Kapitel "Docker im Vergleich zu anderen Containertechnologien"
-%       Hauptsaechlich Docker und CoreOS' rkt vergleichen (rkt bietet KVM support an: man hat die wahl zwischen hardwarevirtualisierung und containern)
 
-% TODO: Quelle \cite{nist} weiter untersuchen. V.a. S.15 hat gute Infos
-
-% TODO: Buzzword "Immutable Infrastructure" iwo reinbringen? Passt das zu CI/CD?
-% http://unikernel.org/blog/2015/unikernels-meet-docker/
 
 % TODO: fuer jeden github-repo link einen author finden. commited lines finden und hauptcontributor mit author="" angeben.
 
+
+
+
+
 %%%% ERLEDIGTE TODOS %%%%%
+
+% DO NOT: Eigenes groses Kapitel "Docker im Vergleich zu anderen Containertechnologien"
+%       Hauptsaechlich Docker und CoreOS' rkt vergleichen (rkt bietet KVM support an: man hat die wahl zwischen hardwarevirtualisierung und containern)
+
+% Unterschiedung von Produkt Docker und Unternehmen Docker. Das Unternehmen evtl. kursiv schreiben oder mit (TM)-Zeichen am Ende
+          % --> Klaeren ob das okay so ist, auch obs ok ist das in "struktur der arbeit" zu schreiben
+
+% Isolierung-Unterkapitel in eine sinnvolle Reihenfolge bringen
+
+% DO NOT: Bei erstem Vorkommen von Golang, REferenz auf deren Website setzen.
+
+% DO NOT: Als abkürzungen festlegen und verlinken: HP, IBM
+
+% Nirgendwo Third-Party schreiben, da guter dt. Begriff mit Drittanbieter/Dritte existiert.
+
+% Begriff Host von dem in der Netzwerktechnik im OSI-Modell abgrenzen
+
+% Konsistente Schreibeweise von "RedHat"/"Red Hat"
+
+% Begriff "System" definieren. Gesamtheit von Hostsystem und Gastsystem. Meint Betriebssystem inklusive daraus gestartete Container
+
+% DONE: grsecurity und SMACK und TOMOYO auch mit rein zum erklaeren oder besser begruenden warum sie alle keine direkte relevanz zu docker haben (keine profile, sondern einfach kernel patches, die ohne konfiguration auskommen)
+
+% Tabelle in Einleitungskapitel "Virtualisierung" fixen. Da muss Seitenumbruch rein iwie.
+% --> Entweder richtiges Package finden, sonst zwei Tabellen auf 2 Seiten (Aufgabe am Ende kurz vor Abgabe)
+% Mit tex-files von Karlo vergleichen, der das angeblich mit longtables hinbekommen hat...
 
 % Klaeren: MAC abkuerzung doppeltdeutig: Media/Mandatory Access Control
 % --> wie wird das im Abkürzungsverzeichnis gemanaged?

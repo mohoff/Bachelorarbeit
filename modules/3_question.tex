@@ -16,17 +16,19 @@
   % Dabei streben sie einen möglichst effizienten
   %, wollen gleichzeitig jedoch auch selbst Gewinn machen. Durch den Betrieb von Containern in Rechenzentren kann im Vergleich zu Hypervisorlösungen theoretisch mehr Gewinn geschöpft werden, da sich mit ihnen - bei gleicher Hardware - mehr virtuelle Kapazität realisieren lässt. Die Sicherheit virtueller Instanzen darf im Betrieb von Containern jedoch nicht leiden, um weiterhin den Kundenanforderungen zu entsprechen.
 
-  Mit den außer Frage stehenden Leistungs- und Effizienzvorteilen, ist demnach die erste zentrale Frage für Betreiber von Cloud-Infrastrukturen, inwiefern Sicherheitsfunktionen von Containertechnologien die erforderlichen Sicherheitsziele erfüllen. Diese Fragestellung kann anhand einer genaueren Untersuchung, angelehnt an die von Mandl in \cite[S.36]{CISSP} vorgestellte Risikoanalyse, genauer formuliert werden. Die Risikoanalyse dient gleichzeitig dazu, Annahmen vorzustellen und Schlussfolgerungen zu ziehen, auf deren Basis die zu betrachtenden Eigenschaften von Docker gegen Ende dieses Kapitels definiert werden.
+  Mit den außer Frage stehenden Leistungs- und Effizienzvorteilen, ist demnach die erste zentrale Frage für Betreiber von Cloud-Infrastrukturen, inwiefern Sicherheitsfunktionen von Containertechnologien die erforderlichen Sicherheitsziele erfüllen. Diese Fragestellung kann anhand einer genaueren Untersuchung genauer formuliert werden, die auf der von Mandl in \cite[S.36]{CISSP} vorgestellten Risikoanalyse sowie den Empfehlungen von NIST in \cite[S.23]{nist} basieren. Die Risikoanalyse dient gleichzeitig dazu, Annahmen vorzustellen und Schlussfolgerungen zu ziehen, auf deren Basis die zu betrachtenden Eigenschaften von Docker gegen Ende dieses Kapitels definiert werden.
 
-  \section{Identifikation der Bedrohungen}
-    Die verschiedenen Bedrohungsarten werdem im Folgenden auf Basis eines Systemmodells der Container-basierten Virtualisierung identifiziert.
 
-    Das Systemmodell von Hypervisor-basierten Systemen kann nicht verwendet werden, da das Design der Containersysteme stark von Erstgenannten abweicht. Während nach \cite[S.125]{CISSP} virtuelle Maschinen als eigener Sicherheitsmechanismus des Betriebssystems aufgelistet ist, stimmt das für die Containersysteme und deren Architektur nicht. Andere Sicherheitsfeatures des Hosts, die ab Kapitel \ref{secLinux} vorgestellt werden, müssen aktiviert werden, um die Containersicherheit zu erhöhen.
+  \section{Identifikation des Systems}
+    Das Systemmodell von hypervisorbasierten Systemen kann nicht verwendet werden, da das Design der Containersysteme stark von Erstgenannten abweicht. Während nach \cite[S.125]{CISSP} virtuelle Maschinen als eigener Sicherheitsmechanismus des Betriebssystems aufgelistet ist, stimmt das für die Containersysteme und deren Architektur nicht. Andere Sicherheitsfeatures des Hosts, die ab Kapitel \ref{secLinux} vorgestellt werden, müssen aktiviert werden, um die Containersicherheit zu erhöhen.
 
     \emph{Bild zum Systemmodell}
     % TODO!
 
     Das Systemmodell ist zunächst definiert als ein Docker-Host \(h\) und eine Menge \(M\), die aus den Containern \(m_1,m_2,\dotsc,m_n\) besteht. Diese Container laufen auf einem Docker-Host, der aus einem Betriebssystem besteht, auf dem ein Docker-Daemon läuft. Verteilte Docker-Systeme, in denen mehrere Hosts miteinander kommunizieren, werden in dieser Arbeit nicht betrachtet. Aus diesem Grund enthält eine Menge von Hosts \(H\) in diesem Fall nur den Host \(h\), der alle Container in \(M\) verwaltet.
+
+  \section{Identifikation der Bedrohungen}
+    In diesem Schritt werden die verschiedenen Bedrohungsarten auf Basis des zuvor definierten Systemmodells erörtert.
 
     Aus \fig \ref{fig:systemModel} und der Funktionsweise von Docker (siehe Kapitel \ref{dockerIntro} können zwei unterschiedliche Gefahrenquellen (A) und (B) identifiziert werden:
 
@@ -127,7 +129,7 @@
 
   \section{Umsetzung des Lösungsansatzes} % um Bedrohungspotential zu minimieren.
   \label{questionRealization}
-    Zunächst lassen sich die möglichen Sicherheitsmechanismen in drei Arten unterteilen. Zum Verständnis des Aufbaus der folgenden Kapitel, sind diese kurz vorgestellt \cite[S.40]{CISSP}:
+    Zunächst lassen sich die möglichen Sicherheitsmechanismen in drei Arten unterteilen. Zum Verständnis des Aufbaus der folgenden Kapitel, sind diese kurz vorgestellt \cite[S.40]{CISSP}\cite[S.23]{nist}:
 
     \begin{itemize}
       \item \textbf{Technische Kontrollen:} Umfasst alle hardware- und softwarebasierten Mechanismen, z.B. ein Zugriffsschutz unter Verwendung einer MAC.

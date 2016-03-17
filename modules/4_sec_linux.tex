@@ -74,9 +74,9 @@
 
 	% Alle vorgestellten Features realisieren Teile des Konzepts "Principle of Least Authority". System ist am sichersten, wenn jedes Subjekt nur minimalen Rechte besitzt, die es benötigt, um Aufgaben auszuführen. Je größer die Menge an eingeräumten Rechten ist, desto größer ist auch das Sicherheitsrisiko eines Missbrauchs \cite[S.722]{tanenbaumOS}.
 
-	\section{Isolierung durch \texttt{namespaces}}
+	\section{Isolierung}
   \label{secIsolierung}
-		Namespaces stellen den grundlegenden Mechanismus dar, um eine Isolation für Container zu ermöglichen.
+		Die Isolierung für Container wird unter Linux für die meisten kritischen Bereiche eines Systems über Namespaces realisiert.
 
 		Wenn unter Linux ein neuer Prozess gestartet werden soll, wird über \emph{System Calls} dem Kernel mitgeteilt, einen neuen \emph{namespace} bereitzustellen. Je nach Anforderung gibt es verschiedene \emph{namespaces}, z.B. ein \emph{network namespace}, der dem neuen Prozess ein Netzwerkinterface zuweist. Um Container als isolierte Arbeitsbereiche auf einem Host zu erstellen, werden die \emph{namespaces} des Kernels verwendet. Da Container selbst eine eigene komplette Laufzeitumgebung darstellen sollen, müssen kritische Bereiche des Hosts durch \emph{namespaces} abgedeckt sein, sodass neben dem Netzwerk auch z.B. ein beschränkter Zugriff auf den Arbeitsspeicher und die \acrshort{CPU} gewährleistet ist \cite[S.3]{dockerIntroIEEE}.
 
@@ -174,36 +174,6 @@
 			% Filesystem Isolation kann mit user namespaces verstaekrt werden, indem user und groups IDs auf wenige rpriveliigierte host uids und group ids gemappt werden. Zusammen mit dem mount namespace und einer pivot_root umgebung kann das den schutz fuer filesystembasierte Attacken erhoehen
 			%		^ 	\cite[S.11]{dockerSec2}
 
-    \subsection{Geräteisolierung}
-			% Es gibt keinen richtigen Namespace dafuer, da linux device driver (die physischen devices kontrollieren), nicht namespace aware sind und damit nicht sicher in containern verwendet werden koennen
-			% Nur die Cells-Implementierung baut einen 'device namespace'
-			% Sonst nur ueber capabilities einschraenkbar (gennant im text: CAP_SYS_MKNOD)
-			%		^ 	\cite[S.12]{dockerSec2}
-
-			In Unix-basierenden Betriebssystemen wie Linux erfolgt der Zugriff auf Hardware über sogenannte \emph{Device Nodes}, die im Dateisystem von speziellen Dateien repräsentiert sind.
-			% TODO: Device Nodes ins Glossar aufnehmen. Dort dann sagen, dass es speyielle Files sind etc.
-
-			Ein paar wichtige \emph{Device Nodes} und deren Zuständigkeiten sind im Folgenden aufgeführt.
-
-			\begin{itemize}
-				\item \texttt{/dev/mem}: Arbeitsspeicher
-				\item \texttt{/dev/sd*}: Dateien für den Zugriff auf Speichermedien
-				\item \texttt{/dev/tty}: Terminal
-			\end{itemize}
-
-			Wie zu sehen ist, handelt sich dabei um teils äußerst kritische Komponenten einer Maschine, über die Container unter keinen Umständen verfügen dürfen. Deswegen ist es notwendig den Zugriff auf \emph{Device Nodes} stark einzuschränken, um den Host vor Missbrauch zu schützen \cite[S.4]{dockerSec1}.
-			% TODO: Starke Abhängigkeit zu cgroups (guten Übergang machen bzw. Abgrenzung)
-
-			% Standardmaessig haben Container keinen zugriff auf Devices. Kann aber explizit bei container launch anders festgelegt werden \cite[S.4]{dockerSecIntro}
-
-			%Fast alles bisher:
-
-
-			% Problem mit PseudoRandomNumberGenerator in /dev/random und /dev/urandom, da das blocking devices sind
-			%		^ 	\cite[S.18]{dockerSec2}
-
-			% Problem mit HotPlug Support unter Linux
-			%		^ 	\cite[S.19]{dockerSec2}
 
     \subsection{\acrshort{IPC}-Isolierung durch den \texttt{\acrshort{IPC}-namespace}}
 			Unter \acrshort{IPC} versteht man ein Sammlung an Tools, die für den Datenaustausch zwischen Prozessen genutzt werden. Dazu gehören z.B. Semaphoren, Message Queues und geteilte Speichersegmente.
@@ -282,36 +252,71 @@
 		\subsection{\acrshort{UTS}-Isolierung durch den \texttt{\acrshort{UTS}-namespace}}
 			Mit einem \emph{\acrshort{UTS}-namespace} ist es möglich, jedem Container einen eigenen Hostnamen zuzuweisen. Der Container kann diesen Namen abfragen und ändern \cite[S.3]{virtVSContainer}. Dieser Namespace trägt damit nicht zur Containersicherheit bei und ist daher nur aus Gründen der Vollständigkeit an dieser Stelle erwähnt.
 
-	\section{Ressourcenverwaltung / Limitierung von Ressourcen durch \texttt{\acrshort{cgroups}}}
-  \label{secCgroups}
-		\acrshort{DoS}-Attacken mit der Absicht das Sicherheitsziel der Verfügbarkeit zu verletzen, gehören in \gls{MultiTenantService}-Systemen zu einem gängigen Angriffsmuster \cite[S.5]{dockerSec1}. Um die Verfügbarkeit von Containern sicherzustellen, bietet der Linux-Kernel sogenannte \emph{\acrlong{cgroups}} (kurz \texttt{\acrshort{cgroups}}) an.
+		\subsection{Geräteisolierung}
+			% Es gibt keinen richtigen Namespace dafuer, da linux device driver (die physischen devices kontrollieren), nicht namespace aware sind und damit nicht sicher in containern verwendet werden koennen
+			% Nur die Cells-Implementierung baut einen 'device namespace'
+			% Sonst nur ueber capabilities einschraenkbar (gennant im text: CAP_SYS_MKNOD)
+			%		^ 	\cite[S.12]{dockerSec2}
 
-		Alle gängigen Linux-basierten Containerlösungen, darunter auch Docker, nutzen aktuell \texttt{\acrshort{cgroups}}, um Ressourcen für Container zu verwalten \cite[S.16]{dockerSec2}. Der Einsatz von \texttt{\acrshort{cgroups}} unter Docker umfasst - wie im Quellcode von \emph{runC} zu sehen ist - die Kontrolle über \acrshort{CPU}, Arbeitsspeicher, Geräte (\emph{Devices Nodes}, Netzwerkinterfaces und \acrshort{I/O}-Operationen auf Speichermedien wie \acrshort{HDD}, \acrshort{SSD} und \acrshort{USB}-Speicher \cite{cgroupsRedhat}\cite{githubRunCCgroups}. Die Verwaltung von Letzteren wurden mit dem neusten Docker-Release, Version 1.10, erweitert \cite{https://blog.docker.com/2016/02/docker-1-10/}.
+			In Unix-basierenden Betriebssystemen wie Linux erfolgt der Zugriff auf Hardware über sogenannte \emph{Device Nodes}, die im Dateisystem von speziellen Dateien repräsentiert sind.
+			% TODO: Device Nodes ins Glossar aufnehmen. Dort dann sagen, dass es speyielle Files sind etc.
+
+			Ein paar wichtige \emph{Device Nodes} und deren Zuständigkeiten sind im Folgenden aufgeführt.
+
+			\begin{itemize}
+				\item \texttt{/dev/mem}: Arbeitsspeicher
+				\item \texttt{/dev/sd*}: Dateien für den Zugriff auf Speichermedien
+				\item \texttt{/dev/tty}: Terminal
+			\end{itemize}
+
+			Wie zu sehen ist, handelt sich dabei um teils äußerst kritische Komponenten einer Maschine, über die Container unter keinen Umständen verfügen dürfen. Deswegen ist es notwendig den Zugriff auf \emph{Device Nodes} stark einzuschränken, um den Host vor Missbrauch zu schützen \cite[S.4]{dockerSec1}.
+			% TODO: Starke Abhängigkeit zu cgroups (guten Übergang machen bzw. Abgrenzung)
+
+			% Standardmaessig haben Container keinen zugriff auf Devices. Kann aber explizit bei container launch anders festgelegt werden \cite[S.4]{dockerSecIntro}
+
+			%Fast alles bisher:
+
+
+			% Problem mit PseudoRandomNumberGenerator in /dev/random und /dev/urandom, da das blocking devices sind
+			%		^ 	\cite[S.18]{dockerSec2}
+
+			% Problem mit HotPlug Support unter Linux
+			%		^ 	\cite[S.19]{dockerSec2}
+
+	\section{Ressourcenverwaltung durch Control Groups}
+  \label{secCgroups}
+		\acrshort{DoS}-Attacken beabsichtigen das Sicherheitsziel der Verfügbarkeit zu verletzen und gehören in \gls{MultiTenantService}-Systemen zu einem gängigen Angriffsmuster \cite[S.5]{dockerSec1}. Um die Verfügbarkeit von Containern sicherzustellen, bietet der Linux-Kernel sogenannte Control Groups ({\acrshort{Cgroups}) an.
+
+		Alle gängigen Linux-basierten Containerlösungen, darunter auch Docker, nutzen aktuell Control Groups, um Ressourcen für Container zu verwalten \cite[S.16]{dockerSec2}. Der Einsatz von Cgroups unter Docker umfasst - wie im Quellcode von \emph{runC} zu sehen ist - die Kontrolle über \acrshort{CPU}, Arbeitsspeicher, Geräte (\emph{Devices Nodes}, Netzwerkinterfaces und \acrshort{I/O}-Operationen auf Speichermedien wie \acrshort{HDD}, \acrshort{SSD} und \acrshort{USB}-Speicher \cite{cgroupsRedhat}\cite{githubRunCCgroups}. Die Verwaltung von Letzteren wurden mit dem neusten Docker-Release, Version 1.10, erweitert \cite{docker110}.
 
 		% \emph{control groups}, oder auch verkürzt \emph{cgroups} genannt, ist hierbei das Schlüsselfeature des Linuxkernels, um dieser Art von Angriff entgegenzuwirken. Sie stellen sicher, dass jeder Container nur begrenzt Hostressourcen beansprucht. Mit Docker lassen sich Limits und Bedingungen individuell pro Container anpassen, z.B. an einen bestimmten Container gerichtetes Arbeitsspeicherlimit in Bytes, das ihm maximal im Betrieb zur Verfügung steht \cite[S.4]{dockerSecIntro}.
 		% --> Quelle aus docker docs findbar?
 
-		\texttt{\acrshort{cgroups}} sind historisch aus dem Konzept von sogenannten \emph{\acrlong{rlimits}}, auch \texttt{\acrshort{rlimits}} genannt, gewachsen. Mit \emph{rlimits} werden \gls{weicheHarteLimits} definiert, die pro Prozess angewandt werden. Der Betrieb von Contaiern verlangen jedoch eine Ressourcenverteilung auf Containerbasis, sodass Limits pro Container, aus technischer Sicht einem Set an Prozessen, vergeben werden.
-		% TODO: rlimits abgleichen mit \cite[fundamentalkapitel]{linuxInterface}
-
-		%Dieses minimale Konzept auf Prozessebene ist für den Betrieb moderner Container jedoch unzureichend, da u.a. keine Beschränkungen auf Containerebene, also für Prozessgruppen, vorgenommen werden können. % z.B. keine Aktionen festgelegt werden können, die ausgeführt werden, wenn ein solches Limit erreicht ist. Außerdem können die \acrshort{CPU} und der Speicher nur begrenzt von \emph{\acrlong{rlimits}} kontrolliert werden.
-
-		Viele Containertechnologien erweiterten deswegen \texttt{\acrshort{rlimits}} mit eigenen Features. Z.b. fügten die Entwickler von \emph{FreeBSD} für den Betrieb von \emph{Jails} sogenannte \emph{Hierarchical Resource Limits} hinzu \cite{freeBsdRCTL}. \emph{Solaris} bietet die Nutzung von \emph{Resource Pools} an, die eine Partitionierung von Ressourcen implementiert \cite{cgroupsUniHierarchyDoc}. Auch \emph{OpenVZ} und \emph{Linux-VServer} erweitern \texttt{\acrshort{rlimits}}, sodass Ressourcenlimits pro Container definiert werden können \cite[S.15+16]{dockerSec2}.
-
-		Die Nachteile von \texttt{\acrshort{rlimits}} wurden mit der Implementierung von \texttt{\acrshort{cgroups}} für den Linux-Kernel behoben. Mit diesem relativ neuen Mechanismus werden Prozesse in hierarchischen Gruppen angeordnet, die individuell verwaltet werden und deren Attribute vererbt werden können. Neben vielseitiger und feingranularer Funktionen zum Management von z.B. \acrshort{CPU}- und Speicherressourcen, können unter \texttt{\acrshort{cgroups}} komplexe Verfahren implementiert werden, die zur Korrektur von limitüberschreitender Prozesse dienen \cite{cgroupsRedhat}. Die Implementierung von \texttt{\acrshort{cgroups}} wurde ab 2012 weiter verbessert, sodass eine Update unter dem Namen \emph{Unified Control Group Hierarchy} seit 2014 in den Linux-Kernel integriert ist \cite{cgroupsFixing}\cite{cgroupsUniHierarchy}. Von Docker wird dieses Update noch nicht verwendet \cite{githubCgroupsUniHierNotSupported}. In zukünftige Kernelversionen soll ein neuer Cgroups-Namespace implementiert werden, der auf der Unified Hierarchy basiert. Die \emph{Unified Hierarchy} wird aktuell noch nicht von Docker unterstützt.
-
-		Wichtig zu erwähnen ist, dass die Implementierung von \texttt{\acrshort{cgroups}}, verglichen mit der von \texttt{\acrshort{rlimits}}, angeblich noch nicht vollständig ist. Das Feature Dateisysteme als Ressourcen mit \texttt{\acrshort{cgroups}} zu steuern, fehlt nach Angaben von \cite[S.19]{dockerSec2}. Auch im Quellcode von \emph{runC} ist eine Dateisystem-Interface als \glqq{}nicht unterstützt\grqq{} gekennzeichnet und wird demzufolge auch nicht von Docker genutzt. \cite{githubRunCCgroups}. Diskussionen im \emph{GitHub}-Repository von Docker verweisen in Bezug zu diesem Feature auf Abhängigkeiten zur Art des Dateisystems. Offenbar lassen sich sogenannte Dateisystem-Quotas nur mit \emph{Device Mapper} und \emph{Brtfs} softwaretechnisch lösen, \emph{AuFS} jedoch ermöglicht das nur indirekt über die Zuweisung von Festplattenpartitionen fester Größe. Diese Gegebenheit lässt vermuten, dass eine universelle Lösung aktuell an der Breite unterstützter Dateisysteme scheitert \cite{githubDockerIssueFsQuota}. Die neusten Entwicklungen sehen jedoch eine Quota-Implementierung vor \cite{githubDockerPullBrtfs}.
-
-		Es ist zu erwarten, dass die fehlenden Funktionen von Cgroups sowie die ausstehende Unterstützung der \emph{Unified Hierarchy}, im Rahmen der Integration des Cgroup-Namespace zukünftig stattfindet. Eine weitere einheitliche Verwaltung von Ressourcen auf der Basis von Cgroups ist vorgesehen \cite[S.16+19]{dockerSec2}.
-
-		Über die Kommandozeile lässt sich der \texttt{run}-Befehl, der ausgeführt wird, um einen Container zu starten, mit Angaben zur Ressourcennutzung parametrisieren. Z.b. bewirkt die Hintereinanderausführung folgender Befehle, dass dem zuletzt gestarteten Container doppelt so viel CPU-Leistung zur Verfügung gestellt wird, wie dem ersten Container \cite{dockerRun}.
+		Über die Kommandozeile lässt sich der \texttt{run}-Befehl, der ausgeführt wird, um einen Container zu starten, mit Angaben zur Ressourcennutzung parametrisieren. Z.B. bewirkt die Hintereinanderausführung folgender Befehle, dass dem zuletzt gestarteten Container doppelt so viel CPU-Leistung zur Verfügung gestellt wird, wie dem ersten Container \cite{dockerRun}.
 
 		\begin{lstlisting}
 			user@machine:$ docker run <IMAGE> --cpu-shares=50
 			user@machine:$ docker run <IMAGE> --cpu-shares=100
 		\end{lstlisting}
 
-		Neben dem Ressourcenmanagement bieten \texttt{\acrshort{cgroups}} auch Nutzungsstatistiken an. Diese können unter Docker mit dem Befehl \texttt{docker stats <CONTAINER> [<CONTAINER>]} abgerufen werden \cite{dockerMetrics}.
+		Neben dem Ressourcenmanagement bieten Control Groups auch Nutzungsstatistiken an. Diese können unter Docker mit dem Befehl \texttt{docker stats <CONTAINER> [<CONTAINER>]} abgerufen werden \cite{dockerMetrics}.
+
+		Control Groups sind historisch aus dem Konzept von sogenannten Ressource Limits, auch Rlimits genannt, gewachsen. Mit Ressource Limits werden \gls{weicheHarteLimits} definiert, die pro Prozess angewandt werden. Der Betrieb von Contaiern verlangen jedoch eine Ressourcenverteilung auf Containerbasis. Deswegen werden Ressource Limits pro Container vergeben, die aus technischer Sicht jeweils einem Set an Prozessen gleichen.
+		% TODO: rlimits abgleichen mit \cite[fundamentalkapitel]{linuxInterface}
+
+		%Dieses minimale Konzept auf Prozessebene ist für den Betrieb moderner Container jedoch unzureichend, da u.a. keine Beschränkungen auf Containerebene, also für Prozessgruppen, vorgenommen werden können. % z.B. keine Aktionen festgelegt werden können, die ausgeführt werden, wenn ein solches Limit erreicht ist. Außerdem können die \acrshort{CPU} und der Speicher nur begrenzt von \emph{\acrlong{rlimits}} kontrolliert werden.
+
+		Viele Containertechnologien erweiterten deswegen Resource Limits mit eigenen Features. Z.b. fügten die Entwickler von \emph{FreeBSD} für den Betrieb von \emph{Jails} sogenannte \emph{Hierarchical Resource Limits} hinzu \cite{freeBsdRCTL}. \emph{Solaris} bietet die Nutzung von Resource Pools an, die eine Partitionierung von Ressourcen implementieren \cite{cgroupsUniHierarchyDoc}. Auch \emph{OpenVZ} und \emph{Linux-VServer} erweitern die Ressource Limits, sodass weiche und harte Limits pro Container definiert werden können \cite[S.15+16]{dockerSec2}.
+
+		Die Nachteile von Ressource Limits wurden mit der Implementierung von Control Groups für den Linux-Kernel behoben. Mit diesem relativ neuen Mechanismus werden Prozesse in hierarchischen Gruppen angeordnet, die individuell verwaltet werden und deren Attribute vererbt werden können. Neben vielseitiger und feingranularer Funktionen zum Management von z.B. CPU- und Speicherressourcen, können unter Control Groups komplexe Verfahren implementiert werden, die zur Korrektur von limitüberschreitender Prozesse dienen \cite{cgroupsRedhat}. Die Implementierung von Control Groups wurde ab 2012 weiter verbessert, sodass eine Update unter dem Namen Unified Control Group Hierarchy im Jahr 2014 in den Linux-Kernel integriert wurde \cite{cgroupsFixing}\cite{cgroupsUniHierarchy}. Von Docker wird dieses Update noch nicht verwendet \cite{githubCgroupsUniHierNotSupported}. In zukünftige Kernelversionen soll ein neuer Control Groups-Namespace implementiert werden, der auf der Unified Hierarchy basiert. Die Unified Hierarchy wird aktuell noch nicht von Docker unterstützt.
+
+		Wichtig zu erwähnen ist, dass die Implementierung von Control Groups, verglichen mit der von Ressource Limits, angeblich nicht vollständig ist. Das Feature Dateisysteme als Ressourcen mit Control Groups zu steuern, fehlt nach Aussagen von Reshetova et al. \cite[S.19]{dockerSec2}. Auch im aktuellen Quellcode von \emph{runC} ist eine Schnittstelle zum Dateisystem als \glqq{}nicht unterstützt\grqq{} gekennzeichnet und wird demzufolge auch nicht von Docker genutzt \cite{githubRunCCgroups}. Diskussionen im \emph{GitHub}-Repository von Docker verweisen in Bezug zu diesem Feature auf Abhängigkeiten zur Art des Dateisystems. Offenbar lassen sich Kontingente für die Nutzung von Dateisystemen nur mit \emph{Device Mapper} und \emph{Brtfs} softwaretechnisch lösen. \emph{AuFS} ermöglicht dieses Featuer hingegen nur indirekt über die Zuweisung von Festplattenpartitionen fester Größe. Diese Gegebenheit lässt vermuten, dass eine universelle Lösung aktuell an der Breite unterstützter Dateisysteme scheitert \cite{githubDockerIssueFsQuota}. Die neusten Entwicklungen sehen jedoch eine Implementierung von Kontingenten vor \cite{githubDockerPullBrtfs}.
+
+		Es ist zu erwarten, dass die fehlenden Funktionen von Control Groups sowie die ausstehende Unterstützung der Unified Hierarchy zukünftig im Rahmen der Integration des Control Groups-Namespace stattfindet.
+		%Eine weitere einheitliche Verwaltung von Ressourcen auf der Basis von Control Groups ist vorgesehen \cite[S.16+19]{dockerSec2}.
+
+		Für Docker-Version 1.11 wurde außerdem die Unterstützung von PID-Control Groups angekündigt. Sie sollen ergänzen zu den bereits unterstützten Ressourcentypen die Anzahl der erlaubten Prozesse innerhalb eines Containers regulieren \cite{githubCgroupPID}\cite{docker110Security}. Dieses Update verhindert das Angriffsmuster sogenannter Fork Bombs, die durch einen hohen Speicherverbrauch das Sicherheitsziel der Verfügbarkeit verletzen.
+		% TODO: Abgleichen mit ... Local DoS: Fork-bomb (siehe \cite[S.793]{linuxInterface})
 
 		% TODO: Evtl. stress test aus
 		% https://goldmann.pl/blog/2014/09/11/resource-management-in-docker/

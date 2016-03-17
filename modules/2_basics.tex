@@ -6,15 +6,13 @@
 
 	\section{Virtualisierung}
   \label{introVirt}
-    Bei der Virtualisierung, deren Anfänge sich auf IBM-Forschungsprojekte von 1964 zurückführen lassen, werden ein oder mehrere virtuelle Systeme auf einem physischen System betrieben. Virtuelle und physische Systeme können dabei als minimale oder vollständige Betriebssysteme vorliegen. Systeme können in Rechenzentren eine Serverinfrastruktur bilden, in der virtuelle als auch physische Komponenten gemeinsam verwaltet werden \cite[S.661]{tanenbaumOS}.
+    Bei der Virtualisierung, deren Anfänge sich auf IBM-Forschungsprojekte von 1964 zurückführen lassen, werden ein oder mehrere virtuelle Systeme auf einem physischen System betrieben \cite[S.8]{advancedServerVirt}. Virtuelle und physische Systeme können dabei als minimale oder vollständige Betriebssysteme vorliegen. Systeme können in Rechenzentren eine Serverinfrastruktur bilden, in der virtuelle als auch physische Komponenten gemeinsam verwaltet werden \cite[S.661]{tanenbaumOS}.
 
-		Zunächst werden Formulierungskonventionen und ein Wortschatz definiert, die grundlegende Merkmale der Virtualisierung einführen und im Rahmen dieser Arbeit zum Verständnis beitragen sollen.
+		Die Unterscheidung in virtuelle und physische Systeme ist nicht von Bedeutung, wenn allein der Begriff \glqq{}System\grqq{} aufgeführt ist. Wenn die Abgrenzung minimaler Betriebssysteme von vollständigen Betriebssystemen notwendig ist, wird das jeweilige Attribut an entsprechender Stelle verwendet. Standardmäßig ist allgemein von einem (Betriebs-)System die Rede. Per Definition in dieser Arbeit, besteht ein System aus mindestens einem Betriebssystem und zugehörigen Peripheriegeräte, wie z.B. einer Netzwerkkarte.
 
-		Die Unterscheidung in \glqq{}virtuelle\grqq{} und \glqq{}physische\grqq{} Systeme ist nicht von Bedeutung, wenn allein der Begriff \glqq{}System\grqq{} aufgeführt ist. Wenn die Abgrenzung minimaler Betriebssysteme von vollständigen Betriebssystemen notwendig ist, wird das jeweilige Attribut an entsprechender Stelle verwendet. Standardmäßig ist allgemein von einem (Betriebs-)System die Rede. Per Definition in dieser Arbeit, besteht ein System aus mindestens einem Betriebssystem und zugehörigen Peripheriegeräte, wie z.B. einem Netzwerkanschluss.
+		Ein System, das mehrere virtuelle Systeme betreibt, wird allgemein als Host oder Hostsystem bezeichnet. Systeme, die einzeln oder parallel virtualisiert auf einem solchen Host laufen, werden als (virtuelle) Gastsysteme bezeichnet.
 
-		Ein System, das in der Rolle eines Wirts mehrere virtuelle Systeme betreibt, wird allgemein als Host oder Hostsystem bezeichnet. Systeme, die einzeln oder parallel virtualisiert auf einem solchen Host laufen, werden als (virtuelle) Gastsysteme bezeichnet.
-
-		Der Begriff des Hosts ist abzugrenzen von der Bedeutung eines Hosts in der Netzwerktechnik. In der Netzwerktechnik ist damit ein kommunikationsfähiger Netzwerkknoten gemeint. Der in dieser Arbeit mehrfach erwähnte Host meint das Betriebssystem, welches Gastsysteme startet und stoppt.
+		Der Begriff des Hosts ist abzugrenzen von der Bedeutung eines Hosts in der Netzwerktechnik. In der Netzwerktechnik ist damit ein kommunikationsfähiger Netzwerkknoten gemeint. Ein in dieser Arbeit erwähnter Host meint das Betriebssystem, welches Gastsysteme, mithilfe von Virtualisierungsprogrammen wie Docker, startet und stoppt.
 
 		Das Hostsystem kann physischer oder virtueller Natur sein:
 		\begin{itemize}
@@ -22,80 +20,24 @@
 			\item \textbf{Virtueller Host}: Hostsystem, das Gastsysteme verwaltet und selbst als Gastsystem eines übergeordneten Hosts existiert.
 		\end{itemize}
 
-		Im Vergleich zu dieser Unterscheidung ist ein Gastsystem immer virtueller Natur. Die Einheit eines physischen Hosts inklusive aller darin betriebenen virtuellen Systeme, wird in dieser Arbeit als Maschine bezeichnet.
+		Im Vergleich zu dieser Unterscheidung, ist ein Gastsystem immer virtueller Natur.
+		%Die Einheit eines physischen Hosts inklusive aller darin betriebenen virtuellen Systeme, wird in dieser Arbeit als Maschine bezeichnet.
 
-		Wie der Begriff \glqq{}Virtueller Host\grqq{} andeutet, sind virtuelle Verschachtelungen in der Architektur von Maschinen möglich und auch in der Praxis bis zu einem gewissen Grad sinnvoll. Beispielsweise kann in einem Rechenzentrum, jeder physische Host von mehreren Kunden verwendet werden, indem jedem Kunden eine Gastsystem auf diesem physischen Host zugewiesen wird. Ein Kunde kann dieses Gastsystem wiederum als virtuellen Host betreiben, das jede Anwendung des Kunden in einem eigenen, neuen Gastsystem virtualisiert. Wie diese Trennung von Kunden und Kundenanwenddungen zeigt, eignet sich eine Verschachtelung der Systeme zur Abbildung von logischen Strukturen.
+		Wie die Beschreibung eines virtuellen Hosts andeutet, sind virtuelle Verschachtelungen in der Architektur von Maschinen möglich und auch in der Praxis bis zu einem gewissen Grad sinnvoll. Beispielsweise kann in einem Rechenzentrum, jeder physische Host von mehreren Kunden verwendet werden, indem jedem Kunden eine Gastsystem auf diesem physischen Host zugewiesen wird. Ein Kunde kann dieses Gastsystem wiederum als virtuellen Host betreiben, das jede Anwendung des Kunden in einem eigenen, neuen Gastsystem virtualisiert. Wie diese Trennung von Kunden und Kundenanwendungen zeigt, eignet sich eine Verschachtelung der virtuellen Systeme zur Abbildung von logischen Strukturen.
 
-		% --- schnitt ----
+		Gastsysteme existieren in zwei Ausprägungen:
+		\begin{itemize}
+			\item \textbf{Hypervisorbasierte Gastsysteme:} Ein Gastsystem auf Basis eines Hypervisors wird als \acrshort{VM} bezeichnet.
+			\item \textbf{Containerbasierte Gastsysteme:} Ein Gastsystem auf Basis einer Containertechnologie (z.B. Docker) wird als Container bezeichnet.
+		\end{itemize}
 
-		Virtualisierte Systeme nutzen im Vergleich zu nativen (physischen) Systemen zusätzliche Software, die den virtualisierten Systemen in der Ausprägung von virtuellen Maschinen, sogenannte \acrshort{VM}s, und Containern, mehrere Abstraktionen anbietet, um Funktionen des Hostsystems abzubilden \cite[S.2]{containerVirtPerformance}. Beide Ausprägungen erwecken aus Sicht des Gastsystems den Eindruck, dass ein alleinstehendes Betriebssystem ausgeführt wird.
-    Der Einsatz von Virtualisierung bietet vielfältige Vorteile für \acrshort{IT}-Unternehmen. In der folgenden Auflistung sind einige Problemfaktoren und Anforderungen an Rechentzentren und darin laufender Software zusammengefasst, die alle durch Virtualisierungslösungen addressiert werden können \cite[S.1]{bsiVirt}\cite[S.662,672f.]{tanenbaumOS}\cite[S.299]{mandlOS}.
+		Die Art und Weise, wie beide Arten Funktionen des Hostsystems abstrahieren, weist Unterschiede auf, die in Abschnitt \ref{introVirtHypervisor} und \ref{introVirtContainer} näher beschrieben sind. Beide Ausprägungen erwecken aus Sicht des Gastsystems den Eindruck, dass ein alleinstehendes, direkt auf der Hardware laufendes Betriebssystem ausgeführt wird.
 
+    Der Einsatz von Virtualisierung bietet vielfältige, attraktive Eigenschaften für \acrshort{IT}-Unternehmen. In der folgenden Auflistung sind einige Problemfaktoren und Anforderungen an Rechenzentren und darin laufender Software zusammengefasst, die alle durch Virtualisierungslösungen addressiert werden können \cite[S.1]{bsiVirt}\cite[S.662,672f.]{tanenbaumOS}\cite[S.299]{mandlOS}.
 
-		% NOT WORKING
-		% -------------------------------
-
-		%\setlength\LTleft{0pt}
-		%\setlength\LTright{0pt}
-		%\newcolumntype{v}[1]{>{\PreserveBackslash\RaggedRight\hspace{0pt}}p{#1}}
-		%\begin{center}
-		%\begin{longtable}{@{\extracolsep{\fill}}c|c}%{l|l}       %{v{0.5\textwidth}v{0.5\textwidth}}
-			%\hline
-			%\textbf{Herausforderung} & \textbf{Lösungsansatz mithilfe} \\
-			% 												&  \textbf{von Virtualisierung} \\
-		  %\hline
-			%\endfirsthead
-
-			%\hline
-			%\textbf{Herausforderung} & \textbf{Lösungsansatz mithilfe} \\
-			% 												&  \textbf{von Virtualisierung} \\
-		  %\hline
-			%\endhead
-
-			%\hline
-
-			%\multicolumn{2}{c}% {r}
-			%{{\emph{weiter auf nächster Seite}}} \\
-			%\endfoot
-
-			%\hline \hline
-			%\endlastfoot
-
-			%\hline
-			%Rechenzentren sollen möglichst effizient betrieben werden, da anfallende Energiekosten für den Betrieb und die Kühlung von Servern auch bei geringer Auslastung anfallen.
-			%& Kosteneinsparungen bei der Anschaffung von Hardware und Lizenzen sowie dem Energieverbrauch möglich, da virtuelle Instanzen die physischen Ressourcen effizienter ausnutzen können und demnach in Summe auch weniger physische Maschinen benötigt werden. \\
-			%\hline
-			%Softwarelösungen sollen skalierbar sein. Je nach Bedarf sollen Kapazitäten in der IT-Infrastruktur freigeschalten oder reduziert werden können.
-			%& Die Virtualisierung ermöglicht es, hardwareunabhängige, portierbare und reproduzierbare Softwarekomponenten zu realisieren, die flexibel aktiviert und deaktiviert werden können. \\
-			%\hline
-			%In einem Rechenzentrum wird Software unterschiedlicher Kunden ausgeführt (Multi-Tenancy-Umgebung). Eine Trennung dieser Kundeninstanzen muss gewährleistet sein, sodass diese nicht miteinander interferieren können.
-			%& Virtuelle Lösungen bieten verschiedene native Möglichkeiten zur Isolierung von Systemen. Eine Gefahr von Interferenz zwischen Kunden kann je nach eingesetzer Technologie auf unterschiedliche Art und Weise reduziert werden. \\
-			%\hline
-			%Redundanz, um Ausfällen entgegenzuwirken, soll gewährleistet sein.
-			%& VMs und Container sind flexibel zu starten und stoppen. Ausfallsicherheit wird in Form mehrerer redundanter virtueller Instanzen und der Unterstützung von Tools ermöglicht. \\
-			%\hline
-			%Bestimmte Architekturen, wie z.B. 3-Tier-Architektur, sollen komfortabel umgesetzt werden.
-			%& Einzelne Bausteine beliebiger Architekturen lassen sich mit virtuellen Instanzen unabhängig voneinander betreiben und vernetzen. \\
-			%\hline
-			%Über die Zeit hinweg entstehen unterschiedliche Softwareversionen, die ggf. von teils alten Anwendungen und Bibliotheken abhängen. Die verschiedenen Versionen sollen zuverlässig und unabhängig voneinander betrieben werden. Nicht nur Anwendungen, sondern auch Betriebssysteme unterschiedlicher Art sollen ggf. möglichst hardwareunabhängig einsetzbar sein.
-			%& Virtualisierungen bieten gute Migrationseigenschaften und sind mit einer Vielzahl von Betriebssystemen kompatibel. Vor allem die containerbasierte Virtualisierung erlaubt einen hohen Grad an Modularisierung und Kompatibilität. Produkte werden können nicht nur als Programme vertrieben, sondern als plattformunabhängige \emph{Virtual Appliances}, also in virtuelle Instanzen eingebettete Anwendungen \cite[S.672f.]{tanenbaumOS}. \\
-			%\hline
-			%Neue Services und Kunden sollen einfach in bestehende Infrastrukturen integrierbar sein. Systeme sollen einfach kombinierbar und zwischen Rechenzentren portierbar sein.
-			%& Virtuelle Instanzen können als sogennante Snapshots \glqq{}eingefroren\grqq{} werden und in anderen Infrastrukturen wieder fortgefahren werden.\\
-			%\hline
-			%Gute Administrationsmöglichkeiten und Wartbarkeit der Infrastruktur
-			%& Virtualisierte Systeme lassen sich neben physischen Systemen zusammen, ggf. an zentralisierter Stelle, verwalten. Eine gleichzeitige Senkung der Administrationskosten ist möglich \cite[S.1]{bsiVirt}.\\
-			%\hline
-
-			%\caption{Das ist die Caption}
-		%\end{longtable}
-		%\end{center}
-
-		% \multicolumn{1}{l|}{
 		\vspace{0.5cm}
 		\begin{table}[htp]
 			\begin{centering}
-		  %\begin{tabular}{ | l | l | }
 			\begin{tabularx}{\textwidth}{>{\hsize=1\hsize}X|>{\hsize=1\hsize}X}
 				\hline
 				\textbf{Herausforderung} & \textbf{Lösungsansatz mithilfe von Virtualisierung} \\
@@ -115,9 +57,6 @@
 				Unterstützung mehrerer Software-Versionen sowie Legacy-Code
 				& Gute Migrationseigenschaften, hoher Grad an Kompatibilität, Unabhängigkeit von Hardware und Betriebssystemen z.B. mit \emph{Virtual Appliances} möglich \cite[S.672f.]{tanenbaumOS}.\\
 				\hline
-				%Neue Services und Kunden sollen einfach in bestehende Infrastrukturen integrierbar sein. Systeme sollen einfach kombinierbar und zwischen Rechenzentren portierbar sein.
-				%& Virtuelle Instanzen können als sogennante Snapshots \glqq{}eingefroren\grqq{} werden und in anderen Infrastrukturen wieder fortgefahren werden.\\
-			  %\hline
 				Administration und Wartbarkeit
 				& Zentralisiert für physische und virtuelle Systeme möglich, Unterstützung mit Tools, Senkung von Administrationskosten \cite[S.1]{bsiVirt}. \\
 				\hline
@@ -128,26 +67,25 @@
 			\end{centering}
 		\end{table}
 
-		Wie in Tabelle \ref{tab:virtAdvantages} stichpunktartig zusammengefasst ist, bietet der Einsatz von serverseitiger Virtualisierung eine Reihe von Vorteilen, die ein rein physischer Betrieb von Servern nicht in dem Maß bieten kann. Diese Vorteile eröffneten IT-Unternehmen auch neue Geschäftsmodelle, auf denen der Erfolg von heutigen Cloud-Anbietern wie \emph{Amazon}, \emph{Google} und \emph{Microsoft} beruht. Selbst einhergehende Nachteile der Virtualisierung, wie z.B. Leistungsverluste und in dieser Arbeit untersuchte Sicherheitsrisiken, scheinen, den Vorteilen gegenübergestellt, nicht ins Gewicht zu fallen.
+		%Wie in Tabelle \ref{tab:virtAdvantages} stichpunktartig zusammengefasst ist, bietet der Einsatz von serverseitiger Virtualisierung eine Reihe von Vorteilen, die ein rein physischer Betrieb von Servern nicht in dem Maß bieten kann.
+		Die Virtualisierungsmerkmale aus Tabelle \ref{tab:virtAdvantages} eröffneten IT-Unternehmen neue Geschäftsmodelle, auf denen der Erfolg von heutigen Cloud-Anbietern wie \emph{Amazon}, \emph{Google} und \emph{Microsoft} beruht. Selbst einhergehende Nachteile der Virtualisierung, wie z.B. Leistungsverluste und in dieser Arbeit untersuchte Sicherheitsrisiken, scheinen, basierend auf dem Erfolg genannter Anbieter, nicht ins Gewicht zu fallen.
 
-		Im Folgenden sind die Konzepte der Virtualisierung auf Hypervisor- und Containerbasis erklärt und in ihren ausschlaggebenden Eigenschaften gegenübergestellt.
+		%Im Folgenden sind die Konzepte der Virtualisierung auf Hypervisor- und Containerbasis erklärt und in ihren ausschlaggebenden Eigenschaften gegenübergestellt.
 
-		%% TODO: folgendes integrieren im text von introVirt .... UPDATE: schon teils geschehen 2 abseatze drueber
-	  %Sowohl Hypervisor-gestützte VMs als auch Container erwecken aus Sicht des Gasts den Eindruck, dass ein alleinstehendes Betriebssystem ausgeführt wird (QUELLE: “OpenVZ,” 2012. [Online]. Available: http://www.openvz.org). Um diese Illusion zu schaffen, wird jedoch wie beschrieben jeweils ein anderer Ansatz eingesetzt.
 
 		% TODO: cahpter 2 usage scenarios einbinden aus
 		%	Evtl. auch strengere Trennung in verschiedene Vorteile von Virtualisierung.
 		%		^		\cite[S.2,3]{dockerSec2}
 
-    \subsection{Hypervisor-basierte Virtualisierung}
+    \subsection{Hypervisorasierte Virtualisierung}
     \label{introVirtHypervisor}
       Im Kontext einer Hypervisor-basierten Virtualisierung wird das virtuelle System eine \acrshort{VM} genannt. \acrshort{VM}s enthalten jeweils eine Umgebung, die Abstraktionen eines sogenannten Hypervisors nutzt, um Hardwareressourcen des Hosts zu verwenden. Der Hypervisor, auch seltener \emph{Virtual Machine Monitor} (\emph{VMM}) genannt, ist ein Stück Software, das zwischen einem Host- und einem Gast-Betriebssystem (der \acrshort{VM}) vermittelt und Hardwareabstraktionen des ersteren bereitstellt \cite[S.6]{dockerBook}\cite[S.2]{containerVirtPerformance}\cite[S.2]{dockerSec1}. Ein weitere wichtige Eigenschaft eines Hypervisors ist es, dem Gast jede für den Betrieb eines Betriebssystems nötige Funktion anzubieten \cite[S.106]{tanenbaumOS}
 
       % Auf dieser Art von Systemen laufen eine oder mehrere VMs unabhängig voneinander auf physischer Hardware (in der englischen Literatur auch "bare metal" genannt). Der Hypervisor, der auch \emph{Virtual Machine Monitor} (\emph{VMM}) genannt wird \cite[S.2]{containerVirtPerformance}, nimmt dabei die Rolle eines Vermittlers zwischen Host-OS und Gast-OS ein \cite[S.6]{dockerBook} und abstrahiert dem Gast das komplette Funktionsset des Hosts. \cite[S.2]{dockerSec1}.
 
-      Durch diese Technik läuft in jeder \acrshort{VM} ein eigenes (Gast-)Betriebssystem, das von solchen anderer \acrshort{VM}s isoliert läuft. Durch die Abstraktion des zwischenliegenden Hypervisors ist es möglich, mehrere unterschiedliche Gastbetriebssysteme auf einem physikalischen Host auszuführen \cite[S.2]{containerVirtPerformance}\cite[S.106]{tanenbaumOS}.
+      Durch diese Technik läuft in jeder \acrshort{VM} ein eigenes (Gast-)Betriebssystem, das von solchen anderer \acrshort{VM}s isoliert läuft. Durch die Abstraktion des zwischenliegenden Hypervisors ist es möglich, mehrere unterschiedliche Gastsysteme auf einem Hostsystem auszuführen \cite[S.2]{containerVirtPerformance}\cite[S.106]{tanenbaumOS}.
 
-			Trotz der in Tabelle \ref{virtAdvantages} aufgeführten effizienteren Ressourcennutzung im Rahmen von Virtualisierungstechniken, stehen Hypervisor heute unter dem Ruf ineffizient zu arbeiten. Dieser größte Kritikpunkt der genannten Virtualisierungsmethode, lässt sich auf den Erfolg der containerbasierten Virtualisierung zurückführen, die, wie in Kapitel \ref{introVirtContainer} weiter ausgeführt, weniger Overhead erzeugen.
+			Trotz der in Tabelle \ref{tab:virtAdvantages} aufgeführten effizienteren Ressourcennutzung im Rahmen von Virtualisierungstechniken, stehen Hypervisor heute unter dem Ruf ineffizient zu arbeiten. Dieser größte Kritikpunkt der genannten Virtualisierungsmethode, lässt sich auf den Erfolg der containerbasierten Virtualisierung zurückführen, die, wie in Kapitel \ref{introVirtContainer} weiter ausgeführt, weniger Overhead erzeugen.
 			% TODO: Overhead ins Glossar?
 
       Hypervisortechnologien werden in solche von Typ 1 und Typ 2 unterschieden:
@@ -168,7 +106,7 @@
 
 			% TODO: Verstehen und erklären: Unterschied zwischen containerbasierter und typ2-hypervisor -virtualisierung.
 
-    \subsection{Container-basierte Virtualisierung}
+    \subsection{Containerbasierte Virtualisierung}
     \label{introVirtContainer}
       Container-basierte Virtualisierung wird vorrangig als leichtgewichtige Alternative zu der Hypervisor-basierten Virtualisierung gesehen\cite[S.2]{containerVirtPerformance}. Erstere nutzt direkt den Hostkernel, um virtuelle Umgebungen zu schaffen. Ein Hypervisor wird in diesem Ansatz nicht benötigt \cite[S.6+7]{dockerBook}. Vielmehr wird das native System und dessen Ressourcen partitioniert, sodass mehrere virtuelle, voneinander isolierte Instanzen, sogenannte \emph{user space} Instanzen, betrieben werden können, die als Container bezeichnet werden \cite[S.2]{containerVirtPerformance}\cite[S.3]{dockerSecIntro}\cite[S.1]{dockerSec2}. Die Isolation basiert auf dem Konzept von Kontexten, die unter Linux \emph{Namespaces} genannt werden. Diese, sowie \emph{Control Groups}, die für das Ressourcenmanagement verantwortlich sind, werden in den Kapiteln \ref{secIsolierung} und \ref{secCgroups} genauer betrachtet \cite[S.4]{dockerSecIntro}.
 
@@ -219,6 +157,8 @@
 		% klassische Sicherheitsanforderungen, die im Kontext von SELinux relevant sind:
 		%		Vertraulichkeit, Systemintegrität, "Principle of Least Privilege"
 
+		% TODO: Auf NIST verweisen und server security principles
+
 
     \subsection{Vertraulichkeit}
 			Die Vertraulichkeit steht für das Konzept von Geheimhaltung. In Computersystemen können z.B. in Kapitel \ref{secLinux} beschriebene Mechanismen des Kernels aktiviert werden, um eine bestimmte Information vor unautorisierten Zugriffen zu schützen. Ausschließlich Befugte haben Zugang zu der Information. In einem Multi-Tenency-System ist es beispielsweise notwendig, Kundeninformationen von unberechtigten Nutzern geheimzuhalten.
@@ -250,7 +190,7 @@
 
     Eine bekannte Herausforderung in der Softwareentwicklung ist Code, der in der Umgebung eines Entwicklers fehlerfrei ausgeführt wird, jedoch in Produktionsumgebungen Fehler verursacht. In der Regel fallen beide Umgebungen in unterschiedliche personelle Zuständigkeitsbereiche, was vereinfacht eine fehleranfällige Übergabe von Entwicklungs- nach Produktionsumgebung mit sich zieht. Diesem Umstand wurde in der Industrie teilweise mit der Einführung von \emph{\gls{DevOps}}-Teams entgegengewirkt.
 
-    Das Kernproblem im genanntem Szenario sind die Entwicklungs- und Produktionsumgebung, zwischen denen Code ausgetauscht wird, da diese sich in Größe, Form und Administration unterscheiden können. Einen anderen Ansatz diese Problem auf eine technische Art und Weise zu lösen, bieten Container. Quellcode - bzw. dessen ausführbarer Build - wird inklusive Ausführungsumgebung flexibel von einem Laptop, auf dem er entwickelt wurde, auf physische oder virtuelle Test- und später Produktionsserver übertragen. Letztere liegen in der Praxis häufig in einer externen Cloud-Infrastuktur, wie z.B. \emph{Azure} des Dienstleisters \emph{Microsoft}. Mit hoher Wahrscheinlichkeit sind die Anwendungscontainer unabhängig von der Infrastruktur sofort startfähig. Dieser kurzlebige Zyklus zwischen Entwicklung, Testen und produktivem Deployment, erlaubt einen effizienten und konsistenten Workflow \cite[S.8+12]{dockerBook}, der mit den Konzepten der \emph{Continuous Integration} und \emph{Continuous Delivery} unterstützt werden kann.
+    Das Kernproblem im genanntem Szenario sind die Entwicklungs- und Produktionsumgebung, zwischen denen Code ausgetauscht wird, da diese sich in Größe, Form und Administration unterscheiden können. Einen anderen Ansatz diese Problem auf eine technische Art und Weise zu lösen, bieten Container. Quellcode - bzw. dessen ausführbarer Build - wird inklusive Ausführungsumgebung flexibel von einem Laptop, auf dem er entwickelt wurde, auf physische oder virtuelle Test- und später Produktionsserver übertragen. Letztere liegen in der Praxis häufig in einer externen Cloud-Infrastuktur, wie z.B. \emph{Azure} des Dienstleisters \emph{Microsoft}. Mit hoher Wahrscheinlichkeit sind die Anwendungscontainer unabhängig von der Infrastruktur sofort startfähig. Dieser kurzlebige Zyklus zwischen Entwicklung, Testen und produktivem Deployment, erlaubt einen effizienten und konsistenten Workflow \cite[S.8+12]{dockerBook}, der mit den Konzepten der \emph{Continuous Integration} und \emph{Continuous Delivery} kombinierbar ist. Durch Container, die zustandslos Anwendungen beinhalten, sowie einer statischen Containervorlage, die unter Docker als Dockerfile existiert, wird auch eine sogenannte \emph{Immutable Infrastructure} begünstigt.
     %TODO: Reinarbeiten: Unterschiedliche "Cuts" im Schichtenmodell von Visulisierung. Alt: Zwischen Guest und App. NEU: Zwischen Guest und Host.
 
     Da Quellcode das wertvollste Asset der meisten \acrshort{IT}-Firmen ist und dieser erst dann Wert hat, wenn er bei einem Kunden den produktiven Betrieb aufnimmt, ist der beschriebene Workflow ein wichtiges Entscheidungskriterium bei der Wahl der Virtualisierungslösung \cite[S.1]{dockerIntroIEEE}. Das Tooling und die Unterstützung des Workflows ist Dockers große Stärke.
@@ -294,11 +234,10 @@
 		\label{dockerDockerfile}
       Ein Dockerfile ist eine Datei mit selbigem Namen, die ein oder mehrere Anweisungen enthält. Letztere werden konsekutiv ausgeführt und führen jeweils zu einer neuen Schicht, die in das später generierte Image einfließt. Damit stellen Dockerfiles eine einfache Möglichkeit dar, Images automatisiert zu generieren.
 
-      Eine Anweisung kann z.B. sein, ein Tool zu installieren oder zu starten, eine Umgebungsvariable festlegen oder einen Port zu öffnen. Ein funktionstüchtiges, minimalistisches Dockerfile ist im Folgenden dargestellt und erklärt.
+			Mit Anweisungen können z.B. tools installiert und gestartet, Umgebungsvariablen festgelegt und Ports geöffnet werden. Ein exemplarisches Dockerfile ist im Folgenden dargestellt \cite{githubDockerfileNginx}.
 
 			\begin{lstlisting}
 				FROM ubuntu
-				MAINTAINER Moritz Hoffmann <mh203@hdm-stuttgart.de>
 
 				RUN \
 					apt-get update && \
@@ -311,11 +250,10 @@
 				EXPOSE 443
 			\end{lstlisting}
 
-			Die Erklärung der einzelnen Anweisungen \cite{dockerDockerfileDocs}:
+			Die Erklärungen der einzelnen Anweisungen \cite{dockerDockerfileDocs}:
 
 			\begin{itemize}
 				\item \texttt{FROM}: Setzt das Basisimage für alle folgenden Anweisungen. Jedes Dockerfile muss diese Anweisung am Anfang enthalten.
-				\item \texttt{MAINTAINER}: Hiermit kann ein Autor des Images festgelegt werden.
 				\item \texttt{RUN}: Führt angehängten Befehl während des \gls{Build}vorgangs aus und erzeugt damit eine neue Schicht.
 				\item \texttt{WORKDIR}: Setzt das Arbeitsverzeichnis, von dem aus z.B. alle folgenden \texttt{RUN}- und \texttt{CMD}-Anweisungen ausgeführt werden. Kann mehrmals pro Dockerfile vorkommen.
 				\item \texttt{CMD}: Führt angehängten Befehl aus, wenn der Container gestartet wird. Pro Dockerfile kann es nur eine \texttt{CMD}-Anweisung geben.
