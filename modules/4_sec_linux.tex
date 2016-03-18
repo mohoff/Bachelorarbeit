@@ -80,7 +80,7 @@
 
 		Wenn unter Linux ein neuer Prozess gestartet werden soll, wird über \emph{System Calls} dem Kernel mitgeteilt, einen neuen \emph{namespace} bereitzustellen. Je nach Anforderung gibt es verschiedene \emph{namespaces}, z.B. ein \emph{network namespace}, der dem neuen Prozess ein Netzwerkinterface zuweist. Um Container als isolierte Arbeitsbereiche auf einem Host zu erstellen, werden die \emph{namespaces} des Kernels verwendet. Da Container selbst eine eigene komplette Laufzeitumgebung darstellen sollen, müssen kritische Bereiche des Hosts durch \emph{namespaces} abgedeckt sein, sodass neben dem Netzwerk auch z.B. ein beschränkter Zugriff auf den Arbeitsspeicher und die \acrshort{CPU} gewährleistet ist \cite[S.3]{dockerIntroIEEE}.
 
-		Technisch betrachtet beinhaltet ein \emph{namespace} eine Lookup-Tabelle, die global verfügbare Ressourcen abstrahiert und dem \emph{namespace} bereitstellt. Änderungen globaler Ressourcen sind sichtbar für Prozesse im relevanten \emph{namespace}, jedoch unsichtbar für solche außerhalb \cite[S.1+2]{IBMcheckpointRestart}\cite{namespaces}. Dadurch können \emph{namespaces} als Lösungsansatz betrachtet werden, um das Sicherheitsziel Vertraulichkeit zu erreichen. Sie sind damit der grundlegende Baustein, um eine Containerisolierung unter Linux zu realisieren.
+		Technisch betrachtet beinhaltet ein \emph{namespace} eine Lookup-Tabelle, die global verfügbare Ressourcen abstrahiert und dem \emph{namespace} bereitstellt. Änderungen globaler Ressourcen sind sichtbar für Prozesse im relevanten \emph{namespace}, jedoch unsichtbar für solche außerhalb \cite[S.1f.]{IBMcheckpointRestart}\cite{namespaces}. Dadurch können \emph{namespaces} als Lösungsansatz betrachtet werden, um das Sicherheitsziel Vertraulichkeit zu erreichen. Sie sind damit der grundlegende Baustein, um eine Containerisolierung unter Linux zu realisieren.
 
 		Unter Linux existieren sechs Namespaces, die in die Kategorien IPC, Network, Mount, PID, User und UTS unterteilt sind. Von Docker werden alle verwendet, jedoch wird der User-Namespace erst seit Docker-Version 1.10 unterstützt. Außerdem muss dieser nach aktuellem Stand manuell aktiviert werden, da er standardmäßig nicht zum Einsatz kommt.
 		% TODO: Quelle
@@ -117,7 +117,7 @@
 			\end{figure}
 			% TODO: lstlisting hieraus machen bzw. Screenshot mit "BlackOnWhite"-Colorsetting des Terminals machen (gilt fuer alle Terminal Screenshots!)
 
-			\fig \ref{fig:sec_pidNsHost} stellt einen Auschnitt der Ausgabe des Befehls \texttt{ps -eaxfZ} auf dem Host dar. Er enthält die laufenden Docker-Prozesse des Daemons mit \texttt{PID=627} (Zeile 1) sowie die eines Containers, in dem eine \emph{Bash} gestartet wurde (Zeile 2). Innerhalb der \emph{Bash} wurde der Befehl \texttt{sleep 1000} zweifach ausgeführt, was die Erstellung zweier neuer Prozesse zur Folge hat (Zeile 3 und 4). Wie zu erkennen ist, sind die Containerprozesse aus Sicht des Hosts mit einer eigenen \texttt{PID} vollkommen transparent.
+			\fig \ref{fig:sec_pidNsHost} stellt einen Auschnitt der Ausgabe des Befehls \texttt{ps -eaxfZ} auf dem Host dar. Er enthält die laufenden Docker-Prozesse des Daemons mit \texttt{PID=627} (Zeile 1) sowie die eines Containers, in dem eine Shell gestartet wurde (Zeile 2). Innerhalb der Shell wurde der Befehl \texttt{sleep 1000} zweifach ausgeführt, was die Erstellung zweier neuer Prozesse zur Folge hat (Zeile 3 und 4). Wie zu erkennen ist, sind die Containerprozesse aus Sicht des Hosts mit einer eigenen \texttt{PID} vollkommen transparent.
 
 			\begin{figure}[h]
 					\centering
@@ -127,7 +127,7 @@
 			\end{figure}
 			% TODO: lstlisting hieraus machen bzw. Screenshot mit "BlackOnWhite"-Colorsetting des Terminals machen (gilt fuer alle Terminal Screenshots!)
 
-			\fig \ref{fig:sec_pidNsContainer} zeigt die vollständige Ausgabe des gleichen Befehls innerhalb eines Containers. Prozesse außerhalb des Containers sind unsichtbar. Außerdem weisen die Containerprozesse im Vergleich zu \fig \ref{fig:sec_pidNsHost} nun eine andere \texttt{PID} auf. Da die \emph{Bash} der initiale Containerprozess ist, erhält sie die \texttt{PID=1}.
+			\fig \ref{fig:sec_pidNsContainer} zeigt die vollständige Ausgabe des gleichen Befehls innerhalb eines Containers. Prozesse außerhalb des Containers sind unsichtbar. Außerdem weisen die Containerprozesse im Vergleich zu \fig \ref{fig:sec_pidNsHost} nun eine andere \texttt{PID} auf. Da die Shell der initiale Containerprozess ist, erhält sie die \texttt{PID=1}.
 
 			%Fast alles bisher:
 
@@ -285,7 +285,7 @@
 
 	\section{Ressourcenverwaltung durch Control Groups}
   \label{secCgroups}
-		\acrshort{DoS}-Attacken beabsichtigen das Sicherheitsziel der Verfügbarkeit zu verletzen und gehören in \gls{MultiTenantService}-Systemen zu einem gängigen Angriffsmuster \cite[S.5]{dockerSec1}. Um die Verfügbarkeit von Containern sicherzustellen, bietet der Linux-Kernel sogenannte Control Groups ({\acrshort{Cgroups}) an.
+		\acrshort{DoS}-Attacken beabsichtigen das Sicherheitsziel der Verfügbarkeit zu verletzen und gehören in \gls{MultiTenantService}-Systemen zu einem gängigen Angriffsmuster \cite[S.5]{dockerSec1}. Um die Verfügbarkeit von Containern sicherzustellen, bietet der Linux-Kernel sogenannte Control Groups (\acrshort{cgroups}) an.
 
 		Alle gängigen Linux-basierten Containerlösungen, darunter auch Docker, nutzen aktuell Control Groups, um Ressourcen für Container zu verwalten \cite[S.16]{dockerSec2}. Der Einsatz von Cgroups unter Docker umfasst - wie im Quellcode von \emph{runC} zu sehen ist - die Kontrolle über \acrshort{CPU}, Arbeitsspeicher, Geräte (\emph{Devices Nodes}, Netzwerkinterfaces und \acrshort{I/O}-Operationen auf Speichermedien wie \acrshort{HDD}, \acrshort{SSD} und \acrshort{USB}-Speicher \cite{cgroupsRedhat}\cite{githubRunCCgroups}. Die Verwaltung von Letzteren wurden mit dem neusten Docker-Release, Version 1.10, erweitert \cite{docker110}.
 
@@ -315,7 +315,7 @@
 		Es ist zu erwarten, dass die fehlenden Funktionen von Control Groups sowie die ausstehende Unterstützung der Unified Hierarchy zukünftig im Rahmen der Integration des Control Groups-Namespace stattfindet.
 		%Eine weitere einheitliche Verwaltung von Ressourcen auf der Basis von Control Groups ist vorgesehen \cite[S.16+19]{dockerSec2}.
 
-		Für Docker-Version 1.11 wurde außerdem die Unterstützung von PID-Control Groups angekündigt. Sie sollen ergänzen zu den bereits unterstützten Ressourcentypen die Anzahl der erlaubten Prozesse innerhalb eines Containers regulieren \cite{githubCgroupPID}\cite{docker110Security}. Dieses Update verhindert das Angriffsmuster sogenannter Fork Bombs, die durch einen hohen Speicherverbrauch das Sicherheitsziel der Verfügbarkeit verletzen.
+		Für Docker-Version 1.11 wurde außerdem die Unterstützung von PID-Control Groups angekündigt. Sie sollen ergänzen zu den bereits unterstützten Ressourcentypen die Anzahl der erlaubten Prozesse innerhalb eines Containers regulieren \cite{githubCgroupPID}\cite{docker110Security}. Dieses Update verhindert das Angriffsmuster sogenannter \glspl{ForkBomb}.
 		% TODO: Abgleichen mit ... Local DoS: Fork-bomb (siehe \cite[S.793]{linuxInterface})
 
 		% TODO: Evtl. stress test aus
@@ -632,8 +632,8 @@
 
 					% We use similar separation in OpenShift. Each gear (user/app process)runs with the same SELinux type (openshift_t). Policy defines the rules controlling the access of the gear type and a unique MCS label to make sure one gear can not interact with other gears.
 
-				\paragraph{Multi-Level Security (MLS)}
-					\emph{DELETE -- MLS nicht unter Docker genutzt...}
+				%\paragraph{Multi-Level Security (MLS)}
+					%\emph{DELETE -- MLS nicht unter Docker genutzt...}
 					% Arbeitet MLS nur auf s0...sX ebene und ignoriert c0..cX?
 
 					% MLS enforces the Bell-La Padula Mandatory Access Model

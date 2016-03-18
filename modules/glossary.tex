@@ -15,12 +15,12 @@
 \newglossaryentry{Cloud}
 {%
   name={Cloud},
-  description={Eine entfernte Rechnerinfrastruktur, die Dienste (Anwendungen, Plattformen, etc.) zur Nutzung bereitstellt.
+  description={Eine Serverinfrastruktur, die Dienste (Anwendungen, Plattformen, etc.) zur Nutzung bereitstellt.
     \begin{itemize}
-      \item Private Cloud: Dienste werden in eigenem Rechenzentrum betrieben.
-      \item Public Cloud: Dienste werden in Rechenzentren von externen Anbietern betrieben. Virtuelle Instanzen werden mit anderen Kunden des Betreibers geteilt.
+      \item Private Cloud: Dienste werden in einem eigenen Rechenzentrum betrieben.
+      \item Public Cloud: Dienste werden in Rechenzentren externer Anbieter betrieben. Virtuelle Instanzen werden mit anderen Kunden des Betreibers geteilt. Beispiele: \emph{Amazon Web Services}, \emph{Microsoft Azure}
       \item Hybrid Cloud: Mischform aus Private und Public Cloud. Nahtlose, für den Nutzer unsichtbare Integration der beiden Grundformen.
-    \end{itemize}%\cite{cloud}
+    \end{itemize}
   }
 }
 
@@ -61,11 +61,66 @@
 \newglossaryentry{DenialOfService}
 {%
   name={Denial of Service},
-  description={\emph{gescheite Quelle. Buch hier am besten.}}
+  description={Allgemeine Bezeichnung von Angriffen, die i.d.R. durch die Überlastung von Ressourcen das Sicherheitsziel der Verfügbarkeit verletzen. Beispiel: Fork-Bomb},
+  see={ForkBomb}
 }
 
 \newglossaryentry{KernelObject}
 {%
   name={Kernelobjekt},
   description={Datenstrukturen im Kernel, die verschiedene Ressourcen (z.B. Datei, Verzeichnis, etc.) abbildet und von LSMs ausgewertet werden kann \cite{kernelObjects}}
+}
+
+\newglossaryentry{chroot}
+{%
+  name={chroot},
+  description={Steht für \texttt{change root} und ist eine Funktion von UNIX-Systemen, um das Root-Verzeichnis des aktuellen Prozesses zu wechseln \cite{chroot}. Grundlegendes Konzept für Linux-Namespaces}
+}
+
+\newglossaryentry{SystemCall}
+{%
+  name={System Call},
+  description={Fundamentale Schnittstelle unter Linux, die Anwendungen den Zugriff auf Funktionen des Kernels ermöglicht \cite{systemcall}}
+}
+
+\newglossaryentry{CopyOnWrite}
+{%
+  name={Copy-On-Write},
+  description={Verfahren, bei dem mehrere Prozesse auf die gleiche, geteilte Ressource zugreifen. Erst wenn ein Prozess die Ressource manipulieren will, erhält dieser eine eigene Kopie der Ressource. Somit ist die Integrität der Ressource für die anderen Prozesse weiterhin gewährleistet \cite{dockerImagesAndContainers}}
+}
+
+\newglossaryentry{Shell}
+{%
+  name={Shell},
+  description={Benutzerschnittstelle, die interaktive und kommandobasierte Nutzung von Betriebssystemen und Anwendungen ermöglicht. Unter Linux meist als Bash verfügbar, eine Implementierung der Shell}
+}
+
+\newglossaryentry{ZeroDayExploit}
+{%
+  name={Zero-Day-Exploit},
+  description={Schwachstelle in einer Software, die von Angreifern ausgenutzt werden kann, da sie den Erstellern der Software nicht bekannt ist.}
+}
+
+\newglossaryentry{ResponsibleDisclosure}
+{%
+  name={Responsible Disclosure},
+  description={Bezeichnet in der IT eine spezielle Art der Bekanntmachung von Schwachstellen in einer Software. Dabei einigen sich alle Beteiligten darauf, i.d.R. auf Vertrauensbasis, die Schwachstelle einen bestimmten Zeitraum oder bis sie behoben wurde, geheim zu halten}
+}
+
+\newglossaryentry{VirtualAppliance}
+{%
+  name={Virtual Appliance},
+  description={VM, die Paket aus Anwendung, Bibliothek und Betriebssystem enthält. Kunden erwerben funktionierende VM, anstelle einer alleinigen Anwendung \cite[S.672f.]{tanenbaumOS}}
+}
+
+\newglossaryentry{ForkBomb}
+{%
+  name={Fork Bomb},
+  description={Angriff, der die Ressourcen eines Systems erschöpft, indem ein das schadhafte Programm rekursiv Kopien von sich selbst in einer Endlosschleife erzeugt. Durch den damit verbundenen Speicherbedarf, verletzt der Angriff das Sicherheitsziel der Verfügbarkeit}
+}
+
+\newglossaryentry{ImmutableInfrastructure}
+{%
+  name={Immutable Infrastructure},
+  description={Konzept für den Betrieb von serverseitiger Software. Verlangt, dass Dienste zustandslos operieren und im Betrieb nicht modifiziert werden dürfen. Dienste werden einmalig beim Startvorgang aus Vorlegen, z.B. einem Dockerfile, erstellt. Daten (Zustand) werden außerhalb besagter Dienste gehalten \cite{unikernelMeetsDocker}\cite{immutableInfrastructure}}
 }
