@@ -247,7 +247,8 @@
 
     Der große Vorteil von Docker gegenüber älteren Containerlösungen, wie z.B. dem Docker-Vorgänger \emph{LXC}, ist der Grad an Abstraktion und die Bedienungsfreundlichkeit, die Nutzern ermöglicht wird. Während sich Lösungen vor Docker auf dem Markt durch deren schwierige Installation und Management sowie schwachen Automatisierungsfunktionen nicht etablieren konnten, addressiert Docker genau diese Schwachpunkte \cite[S.7]{dockerBook} und bietet parallel viele Tools für Entwickler an. Auch die IT-Konzepte \emph{Continuous Delivery}, \emph{Continuous Integration}, \emph{Immutable Infrastructure}, \emph{Microservices} und \emph{DevOps}-Teams werden durch die Eigenschaften von Docker begünstigt.
 
-		Je nach Anwendungsfall können Container Testumgebungen, Anwendungen bzw. Teile davon, oder Replikate komplexer Anwendungen für Entwicklungs- und Produktionszwecke abbilden. Container nehmen dadruch die Rolle austauschbarer, kombinierbarer und portierbarer Module eines Systems ein \cite[S.12]{dockerBook}.
+		Je nach Anwendungsfall können Container Testumgebungen, Anwendungen bzw. Teile davon, oder Replikate komplexer Anwendungen für Entwicklungs- und Produktionszwecke abbilden. Container nehmen dadruch die Rolle austauschbarer, kombinierbarer und portierbarer Module einer Architektur ein, die mithilfe besagter IT-Konzepte automatisierbar ist \cite[S.12]{dockerBook}.
+
 
 		%eben Containern viele Tools und einen Workflow für Entwickler, die beide die Arbeit mit Containern erleichtern sollen \cite[S.1]{dockerIntroIEEE}.
 
@@ -259,9 +260,10 @@
 
 
 		%%%%%%%%%%%%%%%%%%%%%%%% TODO: Put in Glossary: %%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-    Eine bekannte Herausforderung in der Softwareentwicklung ist Code, der in der Umgebung eines Entwicklers fehlerfrei ausgeführt wird, jedoch in Produktionsumgebungen Fehler verursacht. In der Regel fallen beide Umgebungen in unterschiedliche personelle Zuständigkeitsbereiche, was vereinfacht eine fehleranfällige Übergabe von Entwicklungs- nach Produktionsumgebung mit sich zieht. Diesem Umstand wurde in der Industrie teilweise mit der Einführung von \emph{\gls{DevOps}}-Teams entgegengewirkt.
+    %Eine bekannte Herausforderung in der Softwareentwicklung ist Code, der in der Umgebung eines Entwicklers fehlerfrei ausgeführt wird, jedoch in Produktionsumgebungen Fehler verursacht. In der Regel fallen beide Umgebungen in unterschiedliche personelle Zuständigkeitsbereiche, was vereinfacht eine fe
+		%hleranfällige Übergabe von Entwicklungs- nach Produktionsumgebung mit sich zieht. Diesem Umstand wurde in der Industrie teilweise mit der Einführung von \emph{\gls{DevOps}}-Teams entgegengewirkt.
 
-    Das Kernproblem im genanntem Szenario sind die Entwicklungs- und Produktionsumgebung, zwischen denen Code ausgetauscht wird, da diese sich in Größe, Form und Administration unterscheiden können. Einen anderen Ansatz diese Problem auf eine technische Art und Weise zu lösen, bieten Container. Quellcode - bzw. dessen ausführbarer Build - wird inklusive Ausführungsumgebung flexibel von einem Laptop, auf dem er entwickelt wurde, auf physische oder virtuelle Test- und später Produktionsserver übertragen. Letztere liegen in der Praxis häufig in einer externen Cloud-Infrastuktur, wie z.B. \emph{Azure} des Dienstleisters \emph{Microsoft}. Mit hoher Wahrscheinlichkeit sind die Anwendungscontainer unabhängig von der Infrastruktur sofort startfähig. Dieser kurzlebige Zyklus zwischen Entwicklung, Testen und produktivem Deployment, erlaubt einen effizienten und konsistenten Workflow \cite[S.8,12]{dockerBook}, der mit den Konzepten der \emph{Continuous Integration} und \emph{Continuous Delivery} kombinierbar ist. Durch Container, die zustandslos Anwendungen beinhalten, sowie einer statischen Containervorlage, die unter Docker als Dockerfile existiert, wird auch eine sogenannte \emph{Immutable Infrastructure} begünstigt.
+    %Das Kernproblem im genanntem Szenario sind die Entwicklungs- und Produktionsumgebung, zwischen denen Code ausgetauscht wird, da diese sich in Größe, Form und Administration unterscheiden können. Einen anderen Ansatz diese Problem auf eine technische Art und Weise zu lösen, bieten Container. Quellcode - bzw. dessen ausführbarer Build - wird inklusive Ausführungsumgebung flexibel von einem Laptop, auf dem er entwickelt wurde, auf physische oder virtuelle Test- und später Produktionsserver übertragen. Letztere liegen in der Praxis häufig in einer externen Cloud-Infrastuktur, wie z.B. \emph{Azure} des Dienstleisters \emph{Microsoft}. Mit hoher Wahrscheinlichkeit sind die Anwendungscontainer unabhängig von der Infrastruktur sofort startfähig. Dieser kurzlebige Zyklus zwischen Entwicklung, Testen und produktivem Deployment, erlaubt einen effizienten und konsistenten Workflow \cite[S.8,12]{dockerBook}, der mit den Konzepten der \emph{Continuous Integration} und \emph{Continuous Delivery} kombinierbar ist. Durch Container, die zustandslos Anwendungen beinhalten, sowie einer statischen Containervorlage, die unter Docker als Dockerfile existiert, wird auch eine sogenannte \emph{Immutable Infrastructure} begünstigt.
     %TODO: Reinarbeiten: Unterschiedliche "Cuts" im Schichtenmodell von Visulisierung. Alt: Zwischen Guest und App. NEU: Zwischen Guest und Host.
 
 		% TODO: Tooling, Workflow
@@ -277,9 +279,9 @@
     % Auch Startups wie CoreOS, MesoSphere und SaltStack, die an den Erfolg von Docker anschließen wollen, haben sich gebildet und unterstützen Kubernetes.
     % ^    /cite[S.4]{dockerLXCKub}
 
-		\subsection{Docker Architektur}
+		\subsection{Architektur}
 		\label{dockerArchitecture}
-      Docker selbst ist nach einem Client-Server-Modell aufgebaut: Ein Docker-Client kommuniziert mit einem Docker-Daemon, also ein Prozess der den Server abbildet \cite{dockerUnderstandingDocker}. Beide Teile können auf einer Maschine oder einzeln auf unterschiedlichen Hosts laufen. Die Kommunikation zwischen Client und Daemon geschieht über eine \acrshort{REST}ful \acrshort{API}. Wie \fig \ref{fig:intro_dockerArchitecture} zeigt, ist es dadurch auch möglich Befehle entfernter Clients über ein Netzwerk an den Daemon zu senden \cite[S.3]{dockerSecIntro}.
+      Die Architektur von Docker ist nach einem Client-Server-Modell aufgebaut: Ein Docker-Client kommuniziert mit einem Docker-Daemon, der den Server abbildet \cite{dockerUnderstandingDocker}. Beide Teile können auf einer Maschine oder einzeln auf unterschiedlichen Hosts laufen. Die Kommunikation zwischen Client und Daemon geschieht auf Basis von \acrshort{HTTP} über eine \acrshort{REST}ful \acrshort{API}. Wie \fig \ref{fig:intro_dockerArchitecture} zeigt, ist es dadurch auch möglich Befehle entfernter Clients über ein Netzwerk an den Daemon zu senden \cite[S.3]{dockerSecIntro}.
       % in beiden Fällen wird eine RESTful API genutzt? Setzt das docker binary nur CLI-Kommandos in REST-API-Aufrufe um?
       % Docker-Binary \texttt{docker}
 
@@ -290,23 +292,23 @@
           \label{fig:intro_dockerArchitecture}
       \end{figure}
 
-      Der Daemon kann von einer Registry Images (siehe Kapitel \ref{dockerImages} und \ref{dockerRegistries}) beziehen, z.B. dem öffentlichen Docker Hub.
+      Der Daemon kann von einer Registry Images (siehe Abschnitt \ref{dockerImages} und \ref{dockerRegistries}) beziehen, z.B. dem öffentlichen \emph{Docker Hub}.
       % Kommunikation zwischen Client und Server via TCPIP oder Unix Sockets?
 
-      Der Docker-Host selbst ist wie in \fig \ref{fig:intro_dockerHost} dargestellt, aufgebaut. Im Idealfall läuft auf der Hardware ein minimales Linux-Betriebssystem, auf dem die Docker-Engine installiert ist. Die Engine verwaltet im Betrieb die Container (siehe Kapitel \ref{dockerContainer}), in denen in \fig \ref{fig:intro_dockerHost} die Apps A-E laufen. Wie auch in der Grafik zu sehen ist, teilen sich die Container gemeinsam verwendete Bibliotheken.% nach der bereits geschilderten \emph{Copy-on-write} Methode.
+      Der Docker-Host selbst ist wie in \fig \ref{fig:intro_dockerHost} dargestellt, aufgebaut. In einem Hostsystem läuft ein Linux-Betriebssystem, auf dem die Docker-Engine installiert ist. Die Engine verwaltet den Betrieb von Containern (siehe Abschnitt \ref{dockerContainer}), in denen in \fig \ref{fig:intro_dockerHost} die Applikationen A-E laufen. Wie auch in der Grafik zu sehen ist, teilen sich die Container gemeinsam verwendete Bibliotheken. Diese Eigenschaft wird in Abschnitt \ref{dockerImages} näher untersucht.
 
       \begin{figure}[h]
           \centering
           \includegraphics[width=0.9\textwidth]{./images/intro_dockerHost.jpg}
-          \caption{Aufbau eines Docker-Hosts, wenn dieser unter einem Linux-Betriebssystem betrieben wird, das direkt auf der Serverhardware läuft. \cite[S.3]{dockerSecIntro}.}
+          \caption{Aufbau eines Docker-Hostsystems \cite[S.3]{dockerSecIntro}.}
           \label{fig:intro_dockerHost}
       \end{figure}
 
 		\subsection{Dockerfile}
 		\label{dockerDockerfile}
-      Ein Dockerfile ist eine Datei mit selbigem Namen, die ein oder mehrere Anweisungen enthält. Letztere werden konsekutiv ausgeführt und führen jeweils zu einer neuen Schicht, die in das später generierte Image einfließt. Damit stellen Dockerfiles eine einfache Möglichkeit dar, Images automatisiert zu generieren.
+      Ein Dockerfile ist eine Datei mit selbigem Namen, die die Erstellung eines Images mithilfe einer oder mehrerer Anweisungen spezifiziert. Anweisungen werden konsekutiv ausgeführt und führen jeweils zu einer neuen Schicht eines Images, die später in Summe das Image ergeben. Damit stellen Dockerfiles eine einfache Möglichkeit dar, Images auf Basis einer Vorlage automatisiert zu generieren.
 
-			Mit Anweisungen können z.B. tools installiert und gestartet, Umgebungsvariablen festgelegt und Ports geöffnet werden. Ein exemplarisches Dockerfile ist im Folgenden dargestellt \cite{githubDockerfileNginx}.
+			Eine Anweisung kann z.B. ein Tool installieren oder starten, eine Umgebungsvariable festgelegen oder einen Port öffnen. Ein exemplarisches Dockerfile ist im Folgenden dargestellt \cite{githubDockerfileNginx}.
 
 			\begin{lstlisting}
 				FROM ubuntu
@@ -322,32 +324,65 @@
 				EXPOSE 443
 			\end{lstlisting}
 
-			Die Erklärungen der einzelnen Anweisungen \cite{dockerDockerfileDocs}:
+			Wie in diesem Dockerfile zu erkennen ist, bestehen Anweisungen aus einem Schlüsselwort in Großbuchstaben und mindestens einem Parameter. Die Erklärungen zu den einzelnen Anweisungen ist in Tabelle \ref{tab:dockerfile} gegeben \cite{dockerDockerfileDocs}:
 
-			\begin{itemize}
-				\item \texttt{FROM}: Setzt das Basisimage für alle folgenden Anweisungen. Jedes Dockerfile muss diese Anweisung am Anfang enthalten.
-				\item \texttt{RUN}: Führt angehängten Befehl während des \gls{Build}vorgangs aus und erzeugt damit eine neue Schicht.
-				\item \texttt{WORKDIR}: Setzt das Arbeitsverzeichnis, von dem aus z.B. alle folgenden \texttt{RUN}- und \texttt{CMD}-Anweisungen ausgeführt werden. Kann mehrmals pro Dockerfile vorkommen.
-				\item \texttt{CMD}: Führt angehängten Befehl aus, wenn der Container gestartet wird. Pro Dockerfile kann es nur eine \texttt{CMD}-Anweisung geben.
-				\item \texttt{EXPOSE}: Öffnet angegebenen Port des Containers zur Laufzeit, in obigem Beispiel Port 80 und 443 für \acrshort{HTTP} und \acrshort{HTTPS}. Gebunden wird dieser standardmäßig auf dem Host auf einen \glqq{}registered\grqq{} Port (1024-49151).
-			\end{itemize}
+			%\begin{itemize}
+				%\item \texttt{FROM}: Setzt das Basisimage für alle folgenden Anweisungen. Jedes Dockerfile muss diese Anweisung am Anfang enthalten.
+				%\item \texttt{RUN}: Führt angehängten Befehl während des \gls{Build}vorgangs aus. Mit \texttt{\&\&} können mehrere Befehle konsekutiv ausgeführt werden.
+				%\item \texttt{WORKDIR}: Setzt das Arbeitsverzeichnis, von dem aus z.B. alle folgenden \texttt{RUN}- und \texttt{CMD}-Anweisungen ausgeführt werden. Kann mehrmals pro Dockerfile vorkommen.
+				%\item \texttt{CMD}: Führt angehängten Befehl aus, wenn der Container gestartet wird. Pro Dockerfile kann es nur eine \texttt{CMD}-Anweisung geben.
+				%\item \texttt{EXPOSE}: Öffnet angegebenen Port des Containers zur Laufzeit, in obigem Beispiel Port 80 und 443 für \acrshort{HTTP} und \acrshort{HTTPS}. Gebunden wird dieser standardmäßig auf dem Host auf einen \glqq{}registered\grqq{} Port (1024-49151).
+			%\end{itemize}
 
-		\subsection{Containerformate \texttt{LXC}, \texttt{libcontainer}, \texttt{runC} und \texttt{OCF}}
+			\vspace{0.5cm}
+			\begin{table}[htp]
+				\begin{centering}
+				\begin{tabularx}{\textwidth}{>{\hsize=0.5\hsize}X|>{\hsize=1\hsize}X}
+					\hline
+					\textbf{Schlüsselwort} & \textbf{Bedeutung} \\
+					\textbf{einer Anweisung} & \\
+					\hline
+					FROM
+					& Setzt das Basisimage für alle folgenden Anweisungen. Jedes Dockerfile muss diese Anweisung am Anfang enthalten. In obigem Beispiel wird die neuste \emph{Ubuntu}-Version verwendet. \\
+					\hline
+					RUN
+					& Führt den angehängten Befehl während des \gls{Build}vorgangs aus und erzeugt damit eine neue Schicht. \\
+					\hline
+					WORKDIR
+					& Setzt das Arbeitsverzeichnis als Bezugspunkt für alle folgenden \texttt{RUN}- und \texttt{CMD}-Anweisungen. Kann mehrmals pro Dockerfile vorkommen. \\
+					\hline
+					CMD
+					& Führt den angehängten Befehl aus, wenn der Container gestartet wird. Pro Dockerfile kann nur eine \texttt{CMD}-Anweisung existieren. \\
+					\hline
+					EXPOSE
+					& Öffnet den angegebenen Port des Containers zur Laufzeit. In obigem Beispiel sind das Port 80 und 443 für \acrshort{HTTP} und \acrshort{HTTPS}. Auf dem Hostsystem werden diese standardmäßig auf einen Port zwischen 1024 und 49151 abgebildet. \\
+					% \glqq{}registered\grqq{} Port ....
+					\hline
+				\end{tabularx}
+				\vspace{0.5cm}
+				\caption{Anweisungen eines Dockerfiles und deren Bedeutung.}
+				\label{tab:dockerfile}
+				\end{centering}
+			\end{table}
+
+
+
+		\subsection{Containerformate \emph{\acrshort{LXC}}, \emph{libcontainer} und \emph{\acrshort{OCF}}}
 		\label{dockerContainerformate}
-			Containerformate bilden das Herzstück der containerbasierten Virtualisierung. In ihnen ist in Form einer \acrshort{API} definiert, auf welche Art und Weise Container mit dem Host kommunizieren. Es wird z.B. festgelegt, wie das Dateisystem des Hosts verwendet wird, welche Hostfeatures genutzt werden dürfen und wie die allgemeine Laufzeitumgebung von Containern spezifiziert ist.
+			Containerformate bilden das Herzstück der containerbasierten Virtualisierung. In ihnen ist in Form einer \acrshort{API} definiert, auf welche Art und Weise Container mit dem Hostsystem kommunizieren. Es wird z.B. festgelegt, wie das Dateisystem des Hostsystems verwendet wird, welche Features genutzt werden dürfen und wie die allgemeine Laufzeitumgebung von Containern spezifiziert ist.
 
 			Dockers Containerformat hat sich in den letzten Monaten oft verändert, daher soll an dieser Stelle auf die neusten Entwicklungen eingegangen werden.
 
-			Im ersten Release von Docker wurde die Ausführungsumgebung \emph{LXC} verwendet, die im März 2014 von der \emph{Docker}-eigenen Entwicklung \emph{libcontainer} abgelöst wurde. \emph{libcontainer} ist komplett in der Programmiersprache \emph{Golang} implementiert und kann ohne Dependencies mit dem Kernel kommunizieren \cite{dockerLibcontainer}.
+			Im ersten Release von Docker wurde die Ausführungsumgebung \emph{LXC} verwendet, die im März 2014 von der \emph{Docker}-eigenen Entwicklung \emph{libcontainer} abgelöst wurde. \emph{libcontainer} ist komplett in der Programmiersprache \emph{Golang} implementiert und kann ohne weitere Abhängigkeiten mit dem Linux-Kernel kommunizieren \cite{dockerLibcontainer}.
 
-			Ende Juni 2015 hat Docker angekündigt, zusammen mit mehr als 20 Vertretern aus der Industrie, u.a. \emph{Google}, \emph{IBM} und \emph{VMware}, einen neuen Standard \emph{Open Container Format} (\emph{\acrshort{OCF}}) zu schaffen, welcher im Rahmen des \emph{Open Container Project}s (\emph{\acrshort{OCP}}) entstehen soll \cite{dockerOCP}. Am gleichen Tag hat Docker \emph{runC} angekündigt, eine Implementierung des \emph{\acrshort{OCF}}, die maßgeblich auf dem alten Format \emph{libcontainer} beruht, aber die Spezifikationen von \emph{\acrshort{OCF}} umsetzt \cite{dockerRunC}\cite{dockerRunCGithub}\cite{runC}.
+			Ende Juni 2015 kündigte Docker an, zusammen mit mehr als 20 Vertretern aus der Industrie, u.a. \emph{Google}, \emph{IBM} und \emph{VMware}, einen neuen Standard \emph{Open Container Format} (\emph{\acrshort{OCF}}) zu schaffen, welcher im Rahmen des \emph{Open Container Project}s (\emph{\acrshort{OCP}}) entstehen soll \cite{dockerOCP}. Gleichzeitig stellte \emph{\acrshort{runC}} vor, das eine Implementierung des \emph{OCF} darstellt und maßgeblich auf dem alten Format \emph{libcontainer} beruht \cite{dockerRunC}\cite{dockerRunCGithub}\cite{runC}.
 
-		\subsection{Images}
+		\subsection{Image}
     \label{dockerImages}
-			Images bilden als unveränderbare Files die Basis von Containern. Sie sind einfach portierbar und können geteilt, gespeichert und aktualisiert werden. Images sind durch ein \emph{Union}-Dateisystem in Schichten gegliedert, die überlagert ein Image ergeben, das als Container gestartet werden kann \cite[S.11]{dockerBook}. \emph{Union}-Dateisysteme wie \emph{AuFS} und \emph{Device Mapper} haben gemeinsam, dass sie alle auf dem \emph{Copy-on-write}-Modell basieren \cite[S.8]{dockerBook}\cite[S.3]{dockerIntroIEEE}\cite[S.4]{dockerSecIntro}.
+			Images bilden als unveränderbare Dateien die Basis von Containern. Sie sind einfach portierbar und können geteilt, gespeichert und aktualisiert werden. Images sind durch ein \emph{Union}-Dateisystem in Schichten unterteilt, die überlagert ein Image ergeben, das als Container gestartet werden kann \cite[S.11]{dockerBook}. Die von Docker unterstützten \emph{Union}-Dateisysteme, wie z.B. \emph{AuFS}, \emph{Brtfs} und \emph{Device Mapper} basieren auf dem \emph{\gls{CopyOnWrite}}-Modell \cite[S.8]{dockerBook}\cite[S.3]{dockerIntroIEEE}\cite[S.4]{dockerSecIntro}.
 			% TODO: Zusatz: "Die Docker alle unterstuetzt (mit Storage Drivern)"
 
-			Genauer gesagt besteht ein Image aus einem Manifest, das auf Datenebene ein oder mehrere Schichten (Layers) referenziert. Images und Schichten sind jeweils über Hashwerte eindeutig refernzierbar und liegen auf dem Docker-Host im Verzeichnis \texttt{/var/lib/docker/graph/}. Im Unterordner eines Images liegen mehrere Image-spezifische Dateien (vgl. \fig \ref{fig:intro_dockerImageVZ}), u.a. das Manifest in der Datei \texttt{json}, das in einer \acrshort{JSON}-Struktur vorliegt und neben Metainformationen auch Details des Dockerfiles, aus dem das Image generiert wurde, beinhaltet \cite{githubDockerGlossary}.
+			Genauer gesagt, besteht ein Image aus einem Manifest, das ein oder mehrere Schichten (Layers) referenziert. Images und Schichten sind jeweils über Hashwerte eindeutig referenzierbar und liegen auf dem Docker-Hostsystem im Verzeichnis \texttt{/var/lib/docker/graph/}. Im Unterordner eines Images liegen mehrere, für ein Image spezifische Dateien (s. \fig \ref{fig:intro_dockerImageVZ}), u.a. das Manifest in der Datei \texttt{json}, das in einer \acrshort{JSON}-Struktur vorliegt und neben Metainformationen auch Details des Dockerfiles, aus dem das Image generiert wurde, beinhaltet \cite{githubDockerGlossary}.
 
 			\begin{figure}[!htbp]
           \centering
@@ -356,37 +391,34 @@
           \label{fig:intro_dockerImageVZ}
       \end{figure}
 
-			Images werden Schritt für Schritt erstellt, z.B. mit den folgenden Aktionen \cite[S.11]{dockerBook}.
-			\begin{itemize}
-				\item Eine Datei hinzufügen
-				\item Ein Kommando ausführen, z.B. ein Tool mittels des Paketmanagers \texttt{apt} installieren
-				\item Einen Port öffnen, z.B. den Port 80 für einen Webserver
-			\end{itemize}
+			Images werden schrittweise aus den Anweisungen eines Dockerfiles erstellt. Die Schichten eines Images stellen i.d.R. eine minimale Ausführungsumgebung mit Bibliotheken, Binaries und Hilfspaketen sowie den Quellcode der Anwendung, die im Container ausgeführt werden soll, dar. Die Schichtenstruktur erlaubt es, Images modular aufzubauen, sodass sich Änderungen eines Images nur auf eine Schicht auswirken.
 
-      Die Schichten eines Images umfassen in der Regel jeweils eine minimale Ausführungsumgebung mit Bibliotheken, Binaries und Hilfspaketen sowie den Quellcode der Anwendung, die im Container ausgeführt werden soll. Die Schichtenstruktur erlaubt es, Images modularisiert aufzubauen, sodass sich Änderungen eines Images zur auf eine Schicht auswirkt. Soll z.B. in ein bestehendes Image der Webserver \emph{Nginx} integriert werden, kann dieser mit dem Kommando \texttt{apt-get install nginx} installiert werden, was eine neue Schicht im Image erzeugt. Eine Auswahl an möglichen Befehlen, die jeweils eine Schicht generieren, ist im Dockerfile-Kapitel \ref{dockerDockerfile} gegeben.
+			Soll z.B. in ein bestehendes Image der Webserver \emph{Nginx} integriert werden, kann dieser mit dem Kommando \texttt{apt-get install nginx} innerhalb eines Containers zur Laufzeit installiert werden, was eine neue Schicht im Image zur Folge hat.
 
-			Mit mehreren ähnlichen Images ist gewährleistet, dass nur die konkreten Unterschiede zwischen diesen als eigene Schichten hinterlegt sind. Eine gemeinsame Codebasis, die von mehreren Images genutzt wird, liegt in wenigen Schichten, die sich die Images teilen \cite[S.3]{dockerIntroIEEE}. Wie in \fig \ref{fig:intro_imagelayers} beispielhaft zu sehen ist, basieren die beiden Images \texttt{redis:3.0.6} und \texttt{nginx:1.9.9} auf zwei gleichen Schichten, die durch die Anweisungen \texttt{ADD} und \texttt{CMD} erzeugt werden. In dieser Abbildung sind die Informationen zu dem Image in der ersten Zeile zu sehen und die Schichten der Images sind in den jeweiligen Spalten vertikal gelistet.
+			Mit mehreren ähnlichen Images ist gewährleistet, dass nur die konkreten Unterschiede zwischen diesen als eigene Schichten hinterlegt sind. Eine gemeinsame Codebasis, die von mehreren Images genutzt wird, liegt in wenigen Schichten vor, die sich die Images teilen \cite[S.3]{dockerIntroIEEE}.
+
+			Wie in \fig \ref{fig:intro_imagelayers} zu sehen ist, basieren die beiden beispielhaften Images \texttt{redis:3.0.6} und \texttt{nginx:1.9.9} auf zwei gleichen Schichten, die durch die Anweisungen \texttt{ADD} und \texttt{CMD} jeweils erzeugt werden. In dieser Abbildung sind die einzelnen Schichten eines Images vertikal gelistet. Merkmale der resultierenden Images sind in der ersten Zeile zusammengefasst.
       % Vergleich mit git commit und VCS (S.3 dockerIntroIEEE)
 
 			\begin{figure}[!htbp]
           \centering
-          \includegraphics[width=0.8\textwidth]{./images/intro_imagelayers.jpg}
-          \caption{Visualisierung eines Vergleichs von Images von \emph{Redis}, \emph{Nginx} und \emph{CentOS} auf Schichtebene \cite{dockerImagelayers}.}
+          \includegraphics[width=0.9\textwidth]{./images/intro_imagelayers.jpg}
+          \caption{Vergleich von drei Images auf Schichtebene \cite{dockerImagelayers}.}
           \label{fig:intro_imagelayers}
       \end{figure}
 
       % Copy-on-write erklären.
 
-      Über die Kommandozeile kann z.B. das Image eines \emph{CentOS}-Betriebssystems von der öffentlichen Docker-Registry (siehe Kapitel \ref{dockerRegistries}) wie in \fig \ref{fig:intro_dockerPull} mit dem Befehl \texttt{docker pull nginx} auf die lokale Maschine gespeichert werden \cite{dockerHubNginx}\cite{dockerPull}. Wie in \fig \ref{fig:intro_dockerPull} und \fig \ref{fig:intro_imagelayers} zu sehen ist, werden sechs Schichten heruntergeladen, die jeweils über einen Hashwert identifiziert werden und zusammengefügt das angefragte Image \texttt{centos:7.2.1511} ergeben.
+      Wie in \fig \ref{fig:intro_dockerPull} dargestellt, kann über die \gls{Shell} z.B. das Image eines \emph{CentOS}-Betriebssystems mit dem Befehl \texttt{docker pull nginx} aus dem \emph{Docker Hub} (siehe Abschnitt \ref{dockerRegistries}) bezogen werden \cite{dockerHubNginx}\cite{dockerPull}. Wie in \fig \ref{fig:intro_imagelayers} und \fig \ref{fig:intro_dockerPull} zu sehen ist, werden sechs Schichten heruntergeladen, die jeweils über einen Hashwert identifiziert werden und zusammengefügt das angefragte Image \texttt{centos:7.2.1511} ergeben.
 
 			\begin{figure}[!htbp]
           \centering
           \includegraphics[width=1.0\textwidth]{./images/intro_dockerPull.jpg}
-          \caption{Screenshot von der Ausführung des Befehls \texttt{docker pull <image>} (eigene Abbildung).}
+          \caption{Screenshot von der Ausführung des Befehls \texttt{docker pull IMAGE} (eigene Abbildung).}
           \label{fig:intro_dockerPull}
       \end{figure}
 
-			Eine Liste aller lokal vorliegenden Images, wie in \fig \ref{fig:intro_dockerImages}, kann mit dem Befehl \texttt{docker images} in der \acrshort{Shell} generiert werden \cite{dockerImages}.
+			Eine Liste aller lokal auf dem Hostsystem vorliegenden Images, kann - wie in \fig \ref{fig:intro_dockerImages} - mit dem Befehl \texttt{docker images} in der Shell generiert werden \cite{dockerImages}.
 
 			\begin{figure}[!htbp]
           \centering
@@ -410,11 +442,14 @@
     \subsection{Container}
 		\label{dockerContainer}
       % Metapher mit dem Docker-Wal, der Container lädt: Docker als Frachtschiff, mit dem Container verschifft werden.
-			Ein Container ist die laufende Instanz eines Images, die in Sekundenbruchteilen gestartet werden kann \cite[S.1]{dockerIntroIEEE}. Sie beinhalten eine idealerweise minimale Laufzeitumgebung, in der eine oder mehrere Anwendungen laufen.
+			Ein Container ist die laufende Instanz eines Images, die in Sekundenbruchteilen startet \cite[S.1]{dockerIntroIEEE}. Er existiert als Gastsystem auf einem Docker-Hostsystem und kann mehrere Anwendungen betreiben. Nach dem Konzept von \emph{Microservices} läuft in einem Container nur eine Anwendung.
 
-      In Bezug zu anderen Docker-Begriffen, enthält ein Container ein Image und erlaubt eine Reihen von Operationen, die auf ihn angewandt werden können. Darunter fallen z.B. das Erstellen, Starten, Stoppen, Neustarten und Beenden eines Containers. Welchen Inhalt einen Container hat, also ob ein Container z.B. auf einem Datenbank- oder Webserver-Image beruht, ist dafür unerheblich \cite[S.12]{dockerBook}\cite[S.2]{dockerLXCKub}.
+      Ein Container wird über eine Reihe an Operationen gesteuert. Diese umfassen das Erstellen, Starten, Stoppen, Neustarten und Beenden eines Containers. Welchen Inhalt einen Container hat, also ob ein Container z.B. auf einem Datenbank- oder Webserver-Image beruht, ist dafür unerheblich \cite[S.12]{dockerBook}\cite[S.2]{dockerLXCKub}.
 
-      Ein Container wird als priveligiert bezeichnet, wenn er mit Root-Rechten gestartet wurde. Standardmäßig startet ein Container unpriveligiert ohne Root-Rechte. Mit einem reduzierten Set an ausführbaren Aktionen, die über verschiedenene, in Kapitel \ref{secLinux} vorgestellte Mechanismen definiert werden, lassen sich Container unabhängig von Root-Rechten einschränken.
+			Z.B. wird ein Container über das Kommando \texttt{docker run IMAGE} gestartet und über \texttt{docker rm CONTAINER} gestoppt.
+			%In Bezug zu anderen Docker-Begriffen, enthält ein Container ein Image und erlaubt eine Reihen von Operationen, die auf ihn angewandt werden können.
+
+      Ein Container wird als priveligiert bezeichnet, wenn er mit Rootrechten gestartet wurde. Standardmäßig startet ein Container unpriveligiert ohne Rootrechte. Mit einem reduzierten Set an ausführbaren Aktionen, die über verschiedenene, in Kapitel \ref{secLinux} vorgestellte Mechanismen definiert werden, lassen sich Container unabhängig von Rootrechten einschränken.
 			% TODO: QUELLE + Verweis auf capabiltiies kapitel? Oder Glossareintrag "capabilities"
 
       % Der Hosts selbst muss auch gemanaged werden.
@@ -427,14 +462,14 @@
       % In der Praxis werden herkömmliche, oft historisch gewachsene Lösungen nicht vollständig und sofort auf Docker umgerüstet. Mit der Koexistenz von Hypervisor-basierten Virtualisierungen und Containerlösungen, werden auch Configuration Management Tools wie Puppet und Chef im Zusammenhang mit Docker verwendet.
       % ^  \cite[S.14]{dockerBook}
 
-		\subsection{Registries}
+		\subsection{Registry}
 		\label{dockerRegistries}
-      Eine Registry ist eine Webanwendung, der als Speicher- und Verteilerplattform für Images dient. Über eine wohldefinierte API, die Registry-API, sind Docker-Komponenten in der Lage mit Registries zu kommunizieren. Images sind mit Tags versehen in Repositories gegliedert, die wiederum in der Registry liegen \cite{dockerRegistry}. Ein Repository besteht aus mindestens einem Image.
+      Eine Registry ist eine Webanwendung, die als Speicher- und Verteilerplattform für Images dient. Über eine Registry-API, sind Docker-Komponenten in der Lage mit Registries zu kommunizieren. Images sind mit Tags versehen in Repositories gegliedert, die wiederum in der Registry persistiert werden \cite{dockerRegistry}. %Ein Repository besteht aus mindestens einem Image.
 			% TODO: visit source, and extend registry info here
 			% TODO: was zu registry api version 1 und 2, 2.1, 2.2, 2.3 schreiben und bisschen vergleichen
 			%		^		\cite{http://www.slideshare.net/Docker/docker-48351569 ... slide 11}\cite{https://docs.docker.com/registry/spec/api/}
 
-      \emph{Docker} stellt eine Vielzahl an Images öffentlich und frei verwendbar in einem Service, dem Docker Hub, zur Verfügung \cite[S.11]{dockerBook}\cite[S.3]{dockerSec1}\cite{dockerRegistry}. Für dieses System können Personen und Organisationen Accounts anlegen und eigenständig Images in öffentliche und private Repositories hochladen. Das Docker-Hub bietet bereits mehr als 150.000 Repositories, die etwa 240.000 Nutzer zusammenstellten und hochluden, zur freien Verwendung an (Stand Juni 2015) \cite[S.16]{slideshareDockercon15}. Wie in \fig \ref{fig:intro_registry} zu sehen ist, werden auch Nutzungsstatistiken pro Image gesammelt und angezeigt. Durch diese erweiternden Features ist das Docker Hub per Definition keine Registry, sondern enthält eine Registry als Teil des Angebotspektrums. % \cite[S.8]{http://www.slideshare.net/Docker/docker-48351569}
+      \emph{Docker} stellt eine Vielzahl an Images frei verfügbar in einem Dienst, dem \emph{Docker Hub}, zur Verfügung \cite[S.11]{dockerBook}\cite[S.3]{dockerSec1}\cite{dockerRegistry}. Für dieses System können Personen und Organisationen Konten anlegen und eigenständig Images in öffentliche und private Repositories hochladen. Das \emph{Docker Hub} bietet bereits mehr als 150.000 Repositories, die von ca. 240.000 Nutzer zusammenstellt und hochgeladen wurden (Stand Juni 2015) \cite[S.16]{slideshareDockercon15}. Wie in \fig \ref{fig:intro_registry} zu sehen ist, werden auch Nutzungsstatistiken pro Image gesammelt und angezeigt. Durch diese erweiternden Features ist das \emph{Docker Hub} strenggenommen keine Registry, sondern enthält eine Registry als Teil einer Webanwendung. % \cite[S.8]{http://www.slideshare.net/Docker/docker-48351569}
 
       \begin{figure}[h]
           \centering
@@ -443,7 +478,8 @@
           \label{fig:intro_registry}
       \end{figure}
 
-			Um Images in einem Repository voneinander zu unterscheiden, werden Images Tags zugewiesen, um beispielweise mehrere Versionen eines Images in einem Repository zu kennzeichnen. Die Images werden nach dem Schema \texttt{<repository>:<tag>} identifiziert. So gibt es z.B. im offiziellen Repository des Webservers \emph{Nginx} Images mit den Tags \texttt{latest}, \texttt{1}, \texttt{1.9} und \texttt{1.9.9} \cite{dockerHubNginx}. Wenn bei dem Download kein Tag angegeben ist, wie in Kapitel wird automatisch das aktuellste Image mit dem Tag \texttt{latest} bezogen.
+			Um Images in einem Repository voneinander zu unterscheiden, werden diese mit sogenannten Tags gekennzeichnet, um mehrere Versionen eines Images in einem Repository zu markieren. Die Images werden nach dem Schema \texttt{<repository>:<tag>} identifiziert. Es gibt z.B. im offiziellen Repository des Webservers \emph{Nginx} mehrere Images mit den Tags \texttt{latest}, \texttt{1}, \texttt{1.9} und \texttt{1.9.9} \cite{dockerHubNginx}.
+			%Wenn beim Herunterladen kein Tag angegeben ist, wird automatisch die aktuellste Imageversion mit dem Tag \texttt{latest} bezogen.
 
       % es gibt eine Trusted Registry. Die noch erklären.
 
