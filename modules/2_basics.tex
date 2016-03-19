@@ -447,10 +447,18 @@
       Ein Container wird über eine Reihe an Operationen gesteuert. Diese umfassen das Erstellen, Starten, Stoppen, Neustarten und Beenden eines Containers. Welchen Inhalt einen Container hat, also ob ein Container z.B. auf einem Datenbank- oder Webserver-Image beruht, ist dafür unerheblich \cite[S.12]{dockerBook}\cite[S.2]{dockerLXCKub}.
 
 			Z.B. wird ein Container über das Kommando \texttt{docker run IMAGE} gestartet und über \texttt{docker rm CONTAINER} gestoppt.
-			%In Bezug zu anderen Docker-Begriffen, enthält ein Container ein Image und erlaubt eine Reihen von Operationen, die auf ihn angewandt werden können.
+
+			Wie in \fig \ref{fig:intro_dockerContainer} illustriert, wird dem Image beim Startvorgang eine weitere Containerschicht hinzugefügt, in die Datenänderungen während dem Containerbetrieb geschrieben werden. Auf die Schichten des unterliegenden Images wird nur lesend zugegriffen.
+
+			\begin{figure}[!htbp]
+          \centering
+          \includegraphics[width=1.0\textwidth]{./images/intro_dockerContainer.jpg}
+          \caption{Schichtenaufbau eines Containers \cite{dockerImagesAndContainers}.}
+          \label{fig:intro_dockerContainer}
+      \end{figure}
 
       Ein Container wird als priveligiert bezeichnet, wenn er mit Rootrechten gestartet wurde. Standardmäßig startet ein Container unpriveligiert ohne Rootrechte. Mit einem reduzierten Set an ausführbaren Aktionen, die über verschiedenene, in Kapitel \ref{secLinux} vorgestellte Mechanismen definiert werden, lassen sich Container unabhängig von Rootrechten einschränken.
-			% TODO: QUELLE + Verweis auf capabiltiies kapitel? Oder Glossareintrag "capabilities"
+			% QUELLE + Verweis auf capabiltiies kapitel? Oder Glossareintrag "capabilities"
 
       % Der Hosts selbst muss auch gemanaged werden.
       % Docker als Anwendung muss installiert, gemanaged, und deployed werden auf einem Host.

@@ -3,14 +3,11 @@
 
 \chapter{Fragestellung}
 \label{question}
-  Die Wertschöpfung moderner IT-Unternehmen beruht auf dem Angebot von Diensten, auch Services genannt, die über das Internet den Nutzern zur Verfügung gestellt werden. Die Services werden von Anwendungen angeboten, die in der Regel selbst in Rechenzentren betrieben werden. Der überwiegende Vermögensgegenstand in diesem Modell ist die Software, die in den Rechenzentren produktiv läuft. Der Wert dieser ist direkt abhängig von Eigenschaften wie Leistung und Sicherheit eines Rechenzentrums.
+  Die Wertschöpfung moderner IT-Unternehmen beruht auf dem Angebot von Diensten, die über das Internet den Nutzern zur Verfügung gestellt werden. Die Dienste werden von Anwendungen realisiert, die i.d.R. in Rechenzentren betrieben werden. Der überwiegende Vermögensgegenstand in diesem Modell ist die Software, die in den Rechenzentren produktiv läuft. Der Wert dieser ist direkt abhängig von Eigenschaften wie der Leistung und Sicherheit eines Rechenzentrums.
 
-  Kunden, die ihr Produkt über Rechenzentren anbieten sind u.a. an Sicherheitsfeatures interessiert, die die Sicherheitsziele der Vertraulichkeit, Integrität und Verfügbarkeit sicherstellen. Je nach Anwendungsfall kommt diesen Zielen unterschiedliche Wichtigkeit zu. Die Erfüllung der Sicherheitsziele muss für einen sicheren Betrieb auf mehreren Ebenen, z.B. Anwendungs-, Virtualisierungs- und Netzwerkebene gegeben sein.
+  Kunden, die ihr Produkt über Rechenzentren anbieten, sind u.a. an Sicherheitsfeatures interessiert, die die Sicherheitsziele aus Abschnitt \ref{introSecGoals} sicherstellen. Je nach Anwendungsfall kommt diesen Zielen unterschiedliche Wichtigkeit zu. Die Erfüllung der Sicherheitsziele muss für einen sicheren Betrieb auf Anwendungs-, Virtualisierungs- und Netzwerkebene gegeben sein.
 
-
-  Die Betreiber von Rechenzentren streben neben den zur Verfügung gestellten Sicherheitsfunktionen, einen möglichst effizienten Betrieb der Kundensysteme in der eigenen Infrastruktur an.
-
-  Wie in Kapitel \ref{basics} gezeigt, bietet der Einsatz von Containertechnologien aus Sicht der Leistung, Effizienz sowie administrativen Faktoren, attraktive Eigenschaften für die Betreiber von Rechenzentren. Mit gegebener Hardware lassen sich z.B. mit Containertechnologien durchschnittlich mehr Kundenanwendungen realisieren, wie wenn letztere mit der konventionellen Hypervisor-Technologie betrieben werden.
+  Die Betreiber von Rechenzentren streben gleichzeitig einen möglichst effizienten Betrieb der Kundensysteme in der eigenen Infrastruktur an. Wie in Kapitel \ref{basics} gezeigt, bietet der Einsatz von Containertechnologien aus Sicht der Leistung, Effizienz sowie administrativen Faktoren, attraktive Eigenschaften für die Betreiber von Rechenzentren. Mit gegebener Hardware lassen sich z.B. mit Containertechnologien durchschnittlich mehr Kundenanwendungen realisieren, wie wenn letztere mit der konventionellen Hypervisortechnologie betrieben werden.
 
   % Die Betreiber von Rechenzentren wiederum müssen diese Nachfrage befriedigen.
   % Dabei streben sie einen möglichst effizienten
@@ -20,31 +17,31 @@
 
 
   \section{Identifikation des Systems}
-    Das Systemmodell von hypervisorbasierten Systemen kann nicht verwendet werden, da das Design der Containersysteme stark von Erstgenannten abweicht. Während nach \cite[S.125]{CISSP} virtuelle Maschinen als eigener Sicherheitsmechanismus des Betriebssystems aufgelistet ist, stimmt das für die Containersysteme und deren Architektur nicht. Andere Sicherheitsfeatures des Hosts, die ab Kapitel \ref{secLinux} vorgestellt werden, müssen aktiviert werden, um die Containersicherheit zu erhöhen.
+    Das Systemmodell von hypervisorbasierten Systemen kann nicht verwendet werden, da das Design der Containersysteme stark von Erstgenannten abweicht. Während nach \cite[S.125]{CISSP} virtuelle Maschinen als eigener Sicherheitsmechanismus des Betriebssystems aufgelistet ist, stimmt das für die Containersysteme und deren Architektur nicht. Andere Sicherheitsfeatures des Hostsystems müssen aktiviert werden, um die Containersicherheit zu erhöhen.
 
     \emph{Bild zum Systemmodell}
     % TODO!
 
-    Das Systemmodell ist zunächst definiert als ein Docker-Host \(h\) und eine Menge \(M\), die aus den Containern \(m_1,m_2,\dotsc,m_n\) besteht. Diese Container laufen auf einem Docker-Host, der aus einem Betriebssystem besteht, auf dem ein Docker-Daemon läuft. Verteilte Docker-Systeme, in denen mehrere Hosts miteinander kommunizieren, werden in dieser Arbeit nicht betrachtet. Aus diesem Grund enthält eine Menge von Hosts \(H\) in diesem Fall nur den Host \(h\), der alle Container in \(M\) verwaltet.
+    Das Systemmodell ist zunächst definiert als ein Hostsystem \(h\) und einer Containermenge \(M\), die aus den Containern \(m_1,m_2,\dotsc,m_n\) besteht. Die Container werden von einem Docker-Daemon verwaltet, der in \(h\) läuft.
+
+    Verteilte Docker-Systeme, in denen mehrere Hosts miteinander kommunizieren, werden in dieser Arbeit nicht betrachtet. Aus diesem Grund existiert in diesem Systemmodell nur ein Hostsystem \(h\) mit Docker-Installation, das alle Container in \(M\) verwaltet.
 
   \section{Identifikation der Bedrohungen}
     In diesem Schritt werden die verschiedenen Bedrohungsarten auf Basis des zuvor definierten Systemmodells erörtert.
 
-    Aus \fig \ref{fig:systemModel} und der Funktionsweise von Docker (siehe Kapitel \ref{dockerIntro} können zwei unterschiedliche Gefahrenquellen (A) und (B) identifiziert werden:
+    Aus \fig \ref{fig:systemModel} und der Funktionsweise von Docker (s. Abschnitt \ref{dockerIntro}) können zwei unterschiedliche Gefahrenquellen (A) und (B) identifiziert werden:
 
     \begin{enumerate}[label=(\Alph*)]
-      \item \textbf{Docker-Spezifika:} In Containern werden Anwendungen ausgeführt, die nicht zwangsweise vertrauenswürdig sind. Wenn beispielweise Containerimages von einer öffentlichen Registry, wie dem Docker Hub, bezogen werden, existiert keine Garantie, dass aus diesen Images gestartete Container gegen keines der drei zuvor definierten Sicherheitsziele verstößt. Durch die Komplexität moderner Anwendungen und deren Abhängigkeiten zu Bibliotheken, ist es selbst bei quelloffenen Anwendungen schwierig, diese als vertrauenswürdig einzustufen. Deswegen muss davon ausgegangen werden, dass in Containern willkürliche Programme ablaufen (\emph{interne Gefahrenquellen}), die - versehentlich oder beabsichtigt - den Host schädigen können.
+      \item \textbf{Docker-Spezifika:} In Containern werden Anwendungen ausgeführt, die nicht zwangsweise vertrauenswürdig sind. Wenn beispielweise Containerimages von einer öffentlichen Registry, wie dem \emph{Docker Hub}, bezogen werden, existiert keine Garantie, dass aus diesen Images gestartete Container nicht gegen die Sicherheitsziele der Vertraulichkeit, Integrität und Verfügbarkeit verstoßen. Durch die Komplexität moderner Anwendungen und deren Abhängigkeiten zu Bibliotheken, ist es selbst bei quelloffenen Anwendungen schwierig, diese als vertrauenswürdig einzustufen. Deswegen muss davon ausgegangen werden, dass in Containern willkürliche Programme ablaufen (\emph{interne Gefahrenquellen}), die - versehentlich oder beabsichtigt - den Host schädigen können.
 
-      Außerdem kann jederzeit ein Fehler in der Codebasis von Docker entdeckt werden, der die Sicherheit von Docker-Hosts und Containern beeinträchtigt.
+      Außerdem kann jederzeit ein Fehler in der Codebasis von Docker entdeckt werden, der die Sicherheit von Docker-Hostsystemen und Containern beeinträchtigt.
 
-      \item \textbf{Container als Server im Internet:} Viele Container stellen einen Dienst über das Internet zur Verfügung und stehen dadurch mit der Außenwelt in Kontakt. Ein Webserver beispielsweise, kann als Containerapplikation betrieben werden, indem er über über einen Port Anfragen von Clients entgegennimmt und diese nach abgeschlossener Verarbeitung beantwortet. Die Notwendigkeit, Containerschnittstellen über das Internet anzubieten, kann von Angreifern (\emph{externe Gefahrenquellen}) ausgenutzt werden, um Sicherheitsziele zu verletzen. Der Schutz des Netzwerks und der Verbindung des Hosts an das Internet, der in dieser Arbeit nicht behandelt wird, muss unabhängig von der eingesetzten Containertechnologie realisiert sein.
+      \item \textbf{Container als Server im Internet:} Viele Container stellen einen Dienst über das Internet zur Verfügung und stehen dadurch mit der Außenwelt in Kontakt. Ein Webserver beispielsweise, kann als Containerapplikation betrieben werden, indem er über über einen Port Anfragen von Clients entgegennimmt und diese nach abgeschlossener Verarbeitung beantwortet. Die Notwendigkeit, Containerschnittstellen über das Internet anzubieten, kann von Angreifern (\emph{externe Gefahrenquellen}) ausgenutzt werden, um Sicherheitsziele zu verletzen. Der Schutz des Netzwerks und der Verbindung des Hosts an das Internet, müssen unabhängig von der eingesetzten Containertechnologie realisiert werden.
     \end{enumerate}
 
   \section{Auswirkungen der identifizierten Risiken}
   \label{questionEffects}
-    Bei einer näheren Betrachtung, sind aus Sicht des Hostsystems die Folgen beider Gefahrenquellen jedoch sehr ähnlich. In beiden Fällen muss davon ausgegangen werden, dass ein Container schadhaften Code ausführt.
-
-    Beide Gefahrenquellen (A) und (B) führen dazu, dass ein oder mehrere Container eines Hostsystems schadhaften Code ausführen. Eine Unterscheidung der Risiken, die bei der Untersuchung der Eintrittswahrscheinlichkeiten von Bedeutung ist, wird durch folgende Schlussfolgerung irrelevant.
+    Bei einer näheren Betrachtung, sind aus Sicht des Hostsystems die Folgen beider Gefahrenquellen sehr ähnlich. Beide Gefahrenquellen (A) und (B) führen dazu, dass ein oder mehrere Container eines Hostsystems schadhaften Code ausführen. Eine Unterscheidung der Risiken, die bei der Untersuchung der Eintrittswahrscheinlichkeiten von Bedeutung ist, wird durch folgende Schlussfolgerung irrelevant.
 
     \textbf{Schlussfolgerung}: Ein Container ist nicht vertrauenswürdig. Bei der Konstruktion einer Sicherheitsarchitektur muss davon ausgegangen werden, dass ein Container von einem Angreifer kontrolliert wird.
 
@@ -82,8 +79,9 @@
     % TODO: iwas von hier aufnehmen? Oder sind obige zwei Formeln ausreichend? Sollten eig...
 
     Mit den Definitionen \ref{eq:subsets} und \ref{eq:unionset} wird ein Systemmodell erzeugt, das von mindestens zwei Container in einem Hostsystem ausgeht, wovon mindestens ein Container \cvalid{} legitim und mindestens ein Container \cbroken{} kompromittiert ist.
+    % TODO: Dieser Sachverhalt ist in \fig ... graphisch dargestellt.
 
-    Damit bildet das Modell den Betrieb von Docker-Containern realitätsnah ab, da diese so konstruiert wurden, dass sie i.d.R. in einer Vielzahl parallel auf h laufen. Wie aus obiger Schlussfolgerung hervorgeht, muss angenommen werden, dass \(\overline{C}\) eine nicht-leere Menge ist, also mindestens ein Container \cbroken{} existiert, der Schadcode ausführt und die Sicherheitsziele von \(h\) und zu schützenden Containern in \(C\) verletzen kann. Beide Eigenschaften werden von diesem Systemmodell abgedeckt.
+    Damit bildet das Modell den Betrieb von Docker-Containern realitätsnah ab, da diese so konstruiert wurden, dass sie i.d.R. in einer Vielzahl parallel auf \(h\) laufen. Wie aus obiger Schlussfolgerung hervorgeht, muss angenommen werden, dass \(\overline{C}\) eine nicht-leere Menge ist, also mindestens ein Container \cbroken{} existiert, der Schadcode ausführt und die Sicherheitsziele von \(h\) und zu schützenden Containern in \(C\) verletzen kann. Beide Eigenschaften werden von diesem Systemmodell abgedeckt.
 
     % Ob das zugrundeliegende Image fehlerhaft bzw. manipuliert ist (Gefahr A), oder ein Container aktiv von einem Angreifer kontrolliert wird (Gefahr B), spielt für den Host keine Rolle. Der Host muss in der Lage sein, die Systemsicherheit aufrecht zu erhalten. Die Systemsicherheit umfasst hierbei den Schutz des Hosts sowie anderer Container.
 
@@ -93,12 +91,14 @@
 
     %\emph{Privilege Escalation als extra Punkt aufführen? Ist eigtl kein direktes Sicherheitsziel. Eher im Punkt Gegenmaßnahmen aufführen....}
 
+    Durch die Existenz von \cbroken{}, können die Sicherheitszeiele der Vertraulichkeit, Integrität und Verfügbarkeit verletzt werden:
+
     \begin{itemize}
-      \item \textbf{Vertraulichkeit}: \cbroken{} kann Aktionen ausführen, die unbefugten Zugriff auf Informationen des Hosts oder anderer Container gewähren.\\
+      \item \textbf{Vertraulichkeit}: \cbroken{} kann Aktionen ausführen, die unbefugten Zugriff auf Informationen von \(h\) und Container aus \(C\) ermöglichen.\\
       \emph{Beispiele: MITM-Angriff, Lesen von Daten anderer Container}
-      \item \textbf{Integrität}: \cbroken{} kann Aktionen ausführen, die Daten des Hosts oder anderer Container manipulieren.\\
+      \item \textbf{Integrität}: \cbroken{} kann Aktionen ausführen, die Daten von \(h\) und \(C\) manipulieren.\\
       \emph{Beispiele: Überschreiben oder Löschen von Daten anderer Container}
-      \item \textbf{Verfügbarkeit}: \cbroken{} kann Aktionen ausführen, um von dem Host vorgesehene Mechanismen zur Aufrechterhaltung der Verfügbarkeit zu umgehen. Die Funktionstüchtigkeit des Hosts und die anderer Container kann dadurch beeinträchtigt werden.\\
+      \item \textbf{Verfügbarkeit}: \cbroken{} kann Aktionen ausführen, um die von \(h\) vorgesehenen Mechanismen zur Aufrechterhaltung der Verfügbarkeit, zu umgehen. Die Funktionstüchtigkeit von \(h\) und \(C\) kann dadurch beeinträchtigt werden.\\
       \emph{Beispiele: DoS-Angriffe wie Erschöpfung von Host-Ressourcen}
     \end{itemize}
 
@@ -109,16 +109,16 @@
     %- Privilege escalation: obtain a privilege not originally granted to a C j ∈ C.
 
   \section{Anforderungen an die Sicherheit von Containern}
-    Aus den Annahmen und der Schlussfolgerung im letzen Abschnitt, lassen sich allgemeine Sicherheitsanforderungen formulieren:
+    Aus den Annahmen und der Schlussfolgerung in Abschnitt \ref{questionEffects}, lässt sich eine allgemeine Sicherheitsanforderung formulieren:
 
-    Allgemeine Anforderung: Von einem kompromittiertem Container \cbroken{}, darf der Rest des Systems nicht betroffen sein. Die Sicherheitsziele der Vertraulichkeit, Integrität und Verfügbarkeit sollen für das Hostsystem und andere Container gewahrt werden.
+    Von einem kompromittiertem Container \cbroken{}, darf der zu schützende Rest des Systems nicht betroffen sein. Die Sicherheitsziele der Vertraulichkeit, Integrität und Verfügbarkeit sollen für \(h\) und \(C\) gewahrt werden.
 
   \section{Theoretischer Lösungsansatz}
-    Die Strategie zur Erfüllung der soeben definierten Sicherheitsanforderungen, beruht unter Docker auf einem zweistufigen Ansatz:
+    Die Strategie zur Erfüllung der definierten Sicherheitsanforderungen, beruht unter Docker auf einem zweistufigen Ansatz:
 
     \begin{enumerate}[label=(\arabic*)]
       \item Angreifern soll es erschwert und bestenfalls unmöglich gemacht werden, aus der virtualisierten Umgebung eines \cbroken{} auszubrechen. Angreifer sollen nicht die Möglichkeit besitzen, die ursprünglich für \cbroken{} vorgesehenen Rechte zu erweitern.
-      \item Falls es einem Angreifer dennoch gelingen sollte, (1) zu verletzen, soll er durch weitere Zugriffskontrollen daran gehindert werden, Schaden an \(h\) und den zu schützenden Containern aus \(C\) anzurichten.
+      \item Falls es einem Angreifer dennoch gelingen sollte (1) zu verletzen, soll er durch weitere Zugriffskontrollen daran gehindert werden, Schaden in \(h\) und den zu schützenden Containern aus \(C\) anzurichten.
     \end{enumerate}
 
     Mithilfe der im nächsten Abschnitt aufgelisteten Mittel, versucht Docker diese umzusetzen.
@@ -129,18 +129,18 @@
 
   \section{Umsetzung des Lösungsansatzes} % um Bedrohungspotential zu minimieren.
   \label{questionRealization}
-    Zunächst lassen sich die möglichen Sicherheitsmechanismen in drei Arten unterteilen. Zum Verständnis des Aufbaus der folgenden Kapitel, sind diese kurz vorgestellt \cite[S.40]{CISSP}\cite[S.23]{nist}:
+    Zunächst lassen sich die möglichen Sicherheitsmechanismen in drei Arten unterteilen. Zur Einordnung der folgenden Kapitel, sind diese kurz vorgestellt \cite[S.40]{CISSP}\cite[S.23]{nist}:
 
     \begin{itemize}
-      \item \textbf{Technische Kontrollen:} Umfasst alle hardware- und softwarebasierten Mechanismen, z.B. ein Zugriffsschutz unter Verwendung einer MAC.
-      \item \textbf{Administrative Kontrollen:} Enthält Management-Kontrollen, die z.B. durch Konfigurationen, Entwicklung einer Sicherheitspolitik, Reduzierung der Fehleranfälligkeit durch hohen Automatisierungsgrad und Sicherheitsschulungen des Personals umgesetzt werden.
+      \item \textbf{Technische Kontrollen:} Umfasst alle hardware- und softwarebasierten Mechanismen, z.B. ein Zugriffsschutz unter Verwendung einer \acrshort{MAC}.
+      \item \textbf{Administrative Kontrollen:} Enthält Managementkontrollen, die z.B. durch Konfigurationen, Entwicklung einer Sicherheitspolitik, Reduzierung der Fehleranfälligkeit durch Automatisierung und Sicherheitsschulungen des Personals umgesetzt werden.
       \item \textbf{Physische Kontrollen:} Beinhalten Mechanismen wie Sicherheitsschleusen, Schlösser und Wachpersonal. Obwohl ein Bezug zum Betrieb von Rechenzentren hergestellt werden kann, haben physische Kontrollen keine spezifische Relevanz für die containerbasierte Virtualisierung und sind aus diesem Grund an dieser Stelle nur zum Zweck der Vollständigkeit aufgeführt.
     \end{itemize}
 
-    Docker hat als Softwareprodukt die Möglichkeit, direkt technische Kontrollen in die Codebasis einzubauen bzw. solche, die der Linux-Kernel implementiert, zu unterstützen. Auch administrative Sicherheitsansätze verfolgt Docker, die teilweise durch technische Mittel umgesetzt werden können.
+    Docker hat als Softwareprodukt die Möglichkeit, direkt technische Kontrollen in die Codebasis einzubauen bzw. solche, die der Linux-Kernel implementiert, zu unterstützen. Auch administrative Sicherheitsansätze verfolgt Docker, die teilweise durch technische Mittel begünstigt werden.
 
   \section{Ziel der Arbeit}
-    Gegenstand dieser Arbeit ist, die von Docker integrierten technischen, softwarebasierten sowie administrativen Maßnahmen zu analysieren.
+    Gegenstand dieser Arbeit ist, die von Docker integrierten softwarebasierten und administrativen Maßnahmen zu analysieren.
 
     Im Rahmen der Arbeit werden die Sicherheitsmaßnahmen sowie deren Einstatz unter Docker vorgestellt. Die in diesem Kapitel erarbeiteten Annahmen und Schlussfolgerungen bilden dabei die Basis der Untersuchung. Die einzelnen Sicherheitsmerkmale sind dabei unabhängig von der Infrastruktur. Das bedeutet, dass sie bei einem lokalen Betrieb von Docker auf Computern von Entwicklern, bis hinzu Docker-Installationen in Cloud-Infrastrukturen relevant sind.
 
