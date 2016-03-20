@@ -18,19 +18,19 @@
 
 \chapter{Sicherheit im Docker-Ökosystem}
 \label{secEcosystem}
-  In diesem Kapitel werden einige Anwendungsaspekte von Docker unter einem Sicherheitskontext beleuchtet. Maßgeblich sollen weiterhin die drei definierten Sicherheitsziele zur Bewertung von Sicherheitseigenschaften dienen. Während Kapitel \ref{secLinux} native Sicherheitskomponenten von Docker und Linux untersucht hat, wird in den folgenden Abschnitten das Docker-Ökosystem in Betracht gezogen. Unter einem Ökosystem versteht sich hierbei die Gesamtheit aller Komponenten und Interaktionsmöglichkeiten, die im Zusammenhang mit Docker existieren. Der Fokus der Untersuchung liegt auf Anwendungsebene. Das bedeutet, dass hauptsächlich Methoden vorgestellt werden, die Docker Entwicklern und Administratoren zur Verfügung stellt, um die Arbeit mit den Docker-Komponenten aus Kapitel \ref{dockerIntro} sicher zu gestalten. Außerdem wird vorgestellt, wie sich die sicherheitsrelevanten Komponenten und Operationen in den letzten Monaten aus der Sicherheitsperspektive geändert haben.
+  In diesem Kapitel werden einige Anwendungsaspekte von Docker aus Sicherheitssicht beleuchtet. Maßgeblich sollen weiterhin die in Abschnitt \ref{introSecGoals} definierten Sicherheitsziele zur Bewertung von Docker-Eigenschaften dienen. Während Kapitel \ref{secLinux} native Sicherheitskomponenten von Docker und Linux untersucht, wird in den folgenden Abschnitten das Docker-Ökosystem in Betracht gezogen. Darunter versteht sich die Gesamtheit aller Komponenten und Interaktionsmöglichkeiten, die im Zusammenhang mit Docker existieren. Der Fokus der Untersuchung liegt auf Anwendungsebene. Das bedeutet, dass hauptsächlich Methoden vorgestellt werden, die Docker Entwicklern und Administratoren zur Verfügung stellt, um die Arbeit mit den Docker-Komponenten aus Kapitel \ref{dockerIntro} sicher zu gestalten. Außerdem wird vorgestellt, wie sich die sicherheitsrelevanten Komponenten und Operationen in den letzten Monaten verändert haben.
 
-  % TODO: Erwaehnen, das Fokus auf erst neulich hinzugefuegten, aktuell entwickelten und zukünftig geplanten Features liegt.
+  % (TODO): Erwaehnen, das Fokus auf erst neulich hinzugefuegten, aktuell entwickelten und zukünftig geplanten Features liegt.
 
-  Die Untersuchung sieht folgende Themen vor:
+  %Die Untersuchung sieht folgende Themen vor:
 
-  \begin{itemize}
-    \item Verbindung zwischen Docker-Client und Docker-Daemon
-    \item Verwaltung von Images
-    \item Betrieb von Containern
-    \item Verwendung von Plugins
-    \item Verwendung von 3rd-Party-Tools, wie z.B. Kubernetes
-  \end{itemize}
+  %\begin{itemize}
+    %\item Verbindung zwischen Docker-Client und Docker-Daemon
+    %\item Verwaltung von Images
+    %\item Betrieb von Containern
+    %\item Verwendung von Plugins
+    %\item Verwendung von 3rd-Party-Tools, wie z.B. Kubernetes
+  %\end{itemize}
 
   % Je nach Vorankommen, können hier ganze Sektions weggelassen werden imo.
   % Tendenziell mehr die Themen zuerst, die direkt mit Security zu tun haben.
@@ -45,24 +45,30 @@
   %   ^   \cite{https://news.ycombinator.com/item?id=11037543}
 
   \section{Private Registries}
-    Docker bietet neben der Nutzung des öffentlichen Docker Hubs an, private Registries zu erstellen. Diese können dann, z.B. von einer Firewall gesichert oder von einem Load-Balancer unterstützt, in der firmeneignen Infrastruktur oder in Rechenzentren externer Public-Cloud-Anbieter betrieben werden. Für Cloud-Anbieter stellt Docker einige Speichertreiber zur Verfügung, z.B. für Amazons S3 \cite{dockerStorageDriverS3}, Microsofts Azure \cite{dockerStorageDriverAzure}, und OpenStacks Swift \cite{dockerStorageDriverSwift}. Bei Bedarf können eigene Speichertreiber mit der \emph{Storage-API} implementiert werden \cite{dockerStorageDriver}.
+    Docker bietet neben der Nutzung des öffentlichen \emph{Docker Hubs} an, private Registries zu erstellen. Diese können dann, z.B. von einer Firewall gesichert, in einer unternehmenseignen Infrastruktur oder in Rechenzentren externer Public-Cloud-Anbieter betrieben werden. Private Registries können als Container betrieben werden \cite{dockerRegistry}.
+
+    Für Cloud-Anbieter stellt Docker einige Speichertreiber zur Verfügung, z.B. für Amazons S3 \cite{dockerStorageDriverS3}, Microsofts Azure \cite{dockerStorageDriverAzure}, und OpenStacks Swift \cite{dockerStorageDriverSwift}. Bei Bedarf können eigene Speichertreiber mithilfe einer API implementiert werden \cite{dockerStorageDriver}.
     % \cite[S.5]{dockerSecIntro}
-    Neben der Vertraulichkeit von Images, bieten private Registries den Vorteil, dass sich die Speicherung und Verteilung von Images an den internen und häufig durch \emph{Continuous Integration} und \emph{Continuous Delivery} automatisierten Softwareentwicklungsprozess anpassen lassen. Registries selbst können als Container betrieben werden \cite{dockerRegistry}.
+
+    Neben der Vertraulichkeit von Images, bieten private Registries den Vorteil, dass sich die Speicherung und Verteilung von Images an den internen und häufig durch \emph{Continuous Integration} und \emph{Continuous Delivery} automatisierten Softwareentwicklungsprozess anpassen lassen. .
     % TODO: CI/CD im Glossar definieren
 
-    Außerdem lässt sich das öffentliche Docker Hub in einer privaten Registry spiegeln. Bei dem Herunterladen von Images aus der öffentlichen Registry, kann somit auf eine externe Verbindung verzichtet werden, sofern die Spiegelung in Form einer privaten Registry im eigenen Netz existiert. Docker kann mit der Option \texttt{--registry-mirror=ADDRESS} angewiesen werden, anstelle des Docker Hubs eine Spiegelung zu verwenden \cite{dockerRegistryMirror}.
+    Außerdem lässt sich das \emph{Docker Hub} in einer privaten Registry spiegeln. Bei dem Herunterladen von Images aus der öffentlichen Registry, kann somit auf eine externe Verbindung verzichtet werden, sofern die Spiegelung in Form einer privaten Registry im eigenen Netz existiert. Docker kann mit der Option \texttt{--registry-mirror=ADDRESS} angewiesen werden, anstelle des \emph{Docker Hubs} eine Spiegelung zu verwenden \cite{dockerRegistryMirror}. Diese Form der Redundanz ist eine Maßnahme, um die Verfügbarkeit von Images sowie Geschwindigkeit des Downloads dieser zu erhöhen.
 
-    Der Zugriff auf eine Registry kann z.B. über \acrshort{HTTPS} und der Verwendung von Zertifikaten abgesichert werden \cite{dockerRegistry} (vgl. Kapitel \ref{conClientServer}).
+    Der Zugriff auf eine Registry kann über \acrshort{HTTPS} und der Verwendung von Zertifikaten abgesichert werden \cite{dockerRegistry} (vgl. Abschnitt \ref{conClientServer}).
 
   \section{Verfikation und Verteilung von Images}
-    Der Sicherheitsforscher Jonathan Rudenberg hat im Dezember 2014 drei Sicherheitsrisiken im Zusammenhang mit Dockers damaliger Verifikation und Verteilungs von Images aufgedeckt \cite{githubRegistryV1Issues}\cite{registryV1IssuesRudenberg}. U.a. ist es durch Verwendung des \texttt{docker pull}-Befehls möglich manipulierte Images zu beziehen, die bereits beim Entpacken auf dem lokalen System beliebige Dateien im Hostsystem überschreiben können \cite{registryV1IssuesRedHat}. Sowohl die Integrität von Daten als auch die Verfügbarkeit der Hosts sind durch eine solche Gefahr direkt gefährdet. Auch die Aktualität von Images, sowie die Authenzität von Personen und Organisationen, die Images veröffentlichen, kann darunter leiden, wie in Kapitel \ref{tuf} zu sehen ist.
+    Der Sicherheitsforscher Jonathan Rudenberg hat im Dezember 2014 drei Sicherheitsrisiken im Zusammenhang mit Dockers damaliger Verifikation und Verteilungs von Images aufgedeckt \cite{githubRegistryV1Issues}\cite{registryV1IssuesRudenberg}. U.a. ist es durch Verwendung des \texttt{docker pull}-Befehls möglich manipulierte Images zu beziehen, die bereits beim Entpacken auf dem lokalen Hostsystem beliebige Dateien überschreiben können \cite{registryV1IssuesRedHat}. Sowohl die Datenintegrität als auch die Verfügbarkeit des Hostsystems sind durch eine solche Sicherheitslücke direkt gefährdet. Wie in Abschnitt \ref{tuf} zu sehen ist, kann auch die Aktualität von Images sowie die Authenzität von Personen und Organisationen, die Images veröffentlichen, darunter leiden.
 
-    In Docker wurden seit Version 1.8 schrittweise Mechanismen implementiert, die die Verifikation einerseits und das Verteilungsmodell von Images verbessern sollen. Diese umgesetzten, teilweise sich überschneidenen Ansätze, sind im Folgenden in Aspekte der Verifikation und Aspekte der Verteilung aufgeteilt.
+    In Docker wurden seit Version 1.8 schrittweise Mechanismen implementiert, die die Verifikation einerseits und das Verteilungsmodell von Images andererseits verbessern sollen. Diese umgesetzten, teilweise sich überschneidenen Ansätze, sind im Folgenden unter den Aspekten Verifikation und Verteilung aufgeteilt.
 
     \subsection{Verifikation von Images}
-      Seit Februar 2016 mit der Veröffentlichung von Docker-Version 1.10 sind Images über deren Inhalt addressierbar. Auf Implementierungsebene bedeutet das, dass die Layer-IDs nicht wie zuvor zufällig generierte UUIDs repräsentieren, sondern als SHA256-Hashwerte, die über die Layerdaten gebildet werden, vorliegen \cite[S.16]{slideshareImageDistribution}. Der SHA256-Hashalgorithmus wird derzeit als kryptographisch sicher gesehen, was zur Folge hat, dass die generierten Layer-IDs kollisionssicher sind und damit als einmalig gelten. Durch die deterministische Natur von Hashfunktionen wird gleichzeitig eine Methode implementiert, die die Integrität von Layern sicherstellt. In der Praxis kann die Korrektheit von Layerdaten validiert werden, indem ein frisch berechneter Hash eines Layers mit dem referenzierten Hasheintrag in den Image-Metadaten, dem Manifest, verglichen wird. Die referenzierten Hashwerte der Layer sind im Manifest in Form eines Hashbaums strukturiert. Seit der Version 2 des Manifests, kann die Manifestdatei signiert werden, um auch die Integrität der Metadaten zu gewährleisten \cite{githubImageManifest21}.
+      Seit Februar 2016 sind mit der Veröffentlichung von Docker-Version 1.10 Images über deren Inhalt addressierbar. Auf Implementierungsebene bedeutet das, dass die Layer nicht mehr über zufällig generierte UUIDs referenziert werden. Es werden SHA256-Hashwerte über die Layerdaten gebildet werden \cite[S.16]{slideshareImageDistribution}. Der SHA256-Hashalgorithmus wird derzeit als kryptographisch sicher gesehen. Folglich sind die generierten Layer-IDs kollisionssicher sind und damit einmalig.
 
-      Die zuvor verwendeten UUIDs erfüllen die deterministische Eigenschaft nicht, da sie unabhängig von den Daten bei jeder Generierung zufällig auf Basis der PRNG-Implementierung in \emph{Golang} entstehen \cite{githubImageUUID}.
+      Durch die deterministische Natur von Hashfunktionen wird gleichzeitig eine Methode implementiert, die die Integrität der Schichten sicherstellt. In der Praxis kann die Korrektheit von Daten der Schichten validiert werden, indem ein frisch berechneter Hash einer Schicht mit dem referenzierten Hasheintrag in den Image-Metadaten (Manifest) verglichen wird. Die referenzierten Hashwerte der Schicht sind im Manifest in Form eines Hashbaums strukturiert. Seit der Version 2 des Manifests, kann die Manifestdatei signiert werden, um auch die Integrität der Metadaten zu gewährleisten \cite{githubImageManifest21}.
+
+      Die zuvor verwendeten UUIDs erfüllen die deterministische Eigenschaft nicht, da sie unabhängig vom Inhalt bei jeder Generierung zufällig auf Basis der PRNG-Implementierung in \emph{Golang} entstehen \cite{githubImageUUID}.
+
 
       % Exkurs, das UUID nicht sicher sind aber SHA256 schon .... UUID sind eigtl auch sicher, nur eben immer nicht-deterministisch...
 
@@ -79,9 +85,7 @@
       Die Integrität von Images spielt auch bei der Verteilung von Images über Docker-Registries eine große Rolle.
       % Die Verifikation von Daten hat zum Ziel die Integrität dieser zu bestätigen. Die Integrität von Images spielt beim Herunterladen von Images von entfernten Registries eine wichtige Rolle.
 
-      Im August 2015 wurde mit der Docker-Version 1.8 ein Paket- und Verteilungsmodell umgesetzt, das die von Rudenberg entdeckten Schwächen in der Bereitstellung von Images beheben soll \cite{dockerContentTrust}. Unter dem Featurenamen \emph{Docker Content Trust} integriert Docker das Model \emph{The Update Framework} (TUF) \cite{tufFramework}, welches Gefahrenquellen wie manipulierte Images, Replay- und MITM-Angriffe ausschließt. Die Sicherheit von TUF basiert auf der Signierung von Images, mit der anhand mehrerer kryptographischer Schlüssel die Integrität, Authenzität sowie Aktualität von Images sichergestellt wird. Die Verwendung dieses Features ist optional und kann mit der Umgebungsvariable \texttt{DOCKER\_CONTENT\_TRUST} gesteuert werden.
-
-      \emph{Docker Content Trust} wird in Docker als Notary integriert. Der Notary implementiert das TUF in \emph{Golang} und bietet Erstellern von Inhalten die Möglichkeit ihre Daten zu signieren. Die signierten Daten können dann über einen Notary-Server zum Download angeboten werden \cite{githubNotary}\cite{dockerContentTrust}.
+      Im August 2015 wurde mit der Docker-Version 1.8 ein Paket- und Verteilungsmodell umgesetzt, das die von Rudenberg entdeckten Schwächen in der Bereitstellung von Images beheben soll \cite{dockerContentTrust}. Unter dem Featurenamen \emph{Docker Content Trust} integriert Docker das Modell \emph{The Update Framework} (\acrshort{TUF}) \cite{tufFramework}, welches Gefahrenquellen wie manipulierte Images, Replay- und MITM-Angriffe ausschließt. Die Sicherheit von TUF basiert auf der Signierung von Images, mit der anhand mehrerer kryptographischer Schlüssel die Integrität, Authenzität sowie Aktualität von Images sichergestellt wird. Die Verwendung dieses Features ist optional und kann mit der Umgebungsvariable \texttt{DOCKER\_CONTENT\_TRUST} gesteuert werden. \emph{Docker Content Trust} wird in Docker als Notary integriert. Der Notary implementiert das TUF und bietet Erstellern von Inhalten die Möglichkeit ihre Daten zu signieren. Die signierten Daten können dann über einen Notary-Server zum Download angeboten werden \cite{githubNotary}\cite{dockerContentTrust}.
 
       % https://lwn.net/Articles/628343/
       % https://github.com/docker/docker/issues/9719
@@ -94,15 +98,15 @@
 
   \section{Verbindung zwischen Daemon und Client}
   \label{conClientServer}
-    Wie in Kapitel \ref{dockerArchitecture} dargestellt, werden Anweisungen von Docker-Clients an einen Docker-Daemon übertragen, der diese über eine REST-API empfängt. Standardmäßig findet diese Kommunikation seit Version 0.5.2 über einen nicht netzwerkfähigen UNIX-Socket statt \cite{dockerSecurity}.
+    Wie in der Architektur von Docker in Abschnitt \ref{dockerArchitecture} dargestellt, werden Anweisungen von Docker-Clients an einen Docker-Daemon übertragen, der diese über eine \acrshort{REST}-\acrshort{API} empfängt. Standardmäßig findet diese Kommunikation über einen nicht netzwerkfähigen Unix-Socket statt \cite{dockerSecurity}.
 
     Eine Umgebung, die vorsieht Client und Daemon voneinander getrennt über ein Netzwerk zu betreiben, benötigt jedoch einen HTTP-Socket, um die Konnektivität der beiden Komponenten über das Netzwerk zu gewährleisten.
 
     Obwohl die Netzwerksicherheit nicht Bestandteil dieser Arbeit ist, werden die Mechanismen, die Docker zur Absicherung der Kommunikation zwischen Client und Daemon unterstützt, kurz vorgestellt.
 
-    Mittels eigener Zertifikate können sich Daemon und Clients gegenseitig sicher über HTTPS authentifizieren. Unbefugte, fremde Daemons oder Clients können dadurch nicht mit einem vertrauenswürdigen Komplementär interagieren. Die Authentifizierung kann demnach uni- oder bidirektional erfolgen. Durch die sichere Kommunikation mittels HTTPS, das auf dem Protokoll TLS basiert, erfüllen die zu übermittelnden Daten die Sicherheitsziele Vertraulichkeit und Integrität.
+    Mittels eigener Zertifikate können sich Daemon und Clients gegenseitig sicher über HTTPS authentifizieren. Unbefugte, fremde Daemons oder Clients können dadurch nicht mit einem vertrauenswürdigen Komplementär interagieren. Die Authentifizierung kann demnach uni- oder bidirektional erfolgen. Durch die sichere Kommunikation mittels HTTPS, das auf dem Protokoll \acrshort{TLS} basiert, erfüllen die zu übermittelnden Daten die Sicherheitsziele Vertraulichkeit und Integrität.
 
-    Die entsprechende Konfiguration eines Daemons kann z.B. mit dem Befehl \texttt{docker daemon --tlsverify --tlscacert=CA.pem --tlscert=SERVER-CERT.pem --tlskey=SERVER-KEY.pem} vorgenommen werden. Analog dazu erfolgt die clientseitige Einstellung über \texttt{docker --tlsverify --tlscacert=CA.pem --tlscert=CERT.pem --tlskey=KEY.pem COMMAND}. Der Parameter \texttt{--tlsverify} gibt jeweils an, dass der Kommunikationspartner authentifiziert werden muss. Die Authenfikation geschieht über die Parameterwerte \texttt{--tlscert} und \texttt{--tlskey} des Kommunikationspartners, die zusammen die Identität dessen bekannt geben. Unter Angabe eines CA-Zertifikats mit Parameter \texttt{--tlscacert} hat die Authentifizierung nur dann Erfolg, wenn das Zertifikat des Kommunikationspartners von dieser CA ausgestellt wurde \cite{dockerSecurityHTTPS}. In einer Unternehmensinfrastruktur kann so die Kommunikation durch eine unternehmenseigene CA weiter restriktiviert werden. Eine detailreichere Beschreibung der verschiedenen Betriebsmodi ist unter \cite{dockerSecurityHTTPS} gegeben.
+    Die entsprechende Konfiguration eines Daemons kann z.B. mit dem Befehl \texttt{docker daemon --tlsverify --tlscacert=CA.pem --tlscert=SERVER-CERT.pem --tlskey=SERVER-KEY.pem} vorgenommen werden. Analog dazu erfolgt die clientseitige Einstellung über \texttt{docker --tlsverify --tlscacert=CA.pem --tlscert=CERT.pem --tlskey=KEY.pem COMMAND}. Der Parameter \texttt{--tlsverify} gibt jeweils an, dass der Kommunikationspartner authentifiziert werden muss. Die Authenfikation geschieht über die Parameterwerte \texttt{--tlscert} und \texttt{--tlskey} des Kommunikationspartners, die zusammen die Identität dessen bekannt geben. Unter Angabe eines \acrshort{CA}-Zertifikats mit Parameter \texttt{--tlscacert} hat die Authentifizierung nur dann Erfolg, wenn das Zertifikat des Kommunikationspartners von dieser \acrshort{CA} ausgestellt wurde \cite{dockerSecurityHTTPS}. In einer Unternehmensinfrastruktur kann so die Kommunikation durch eine unternehmenseigene CA weiter eingegrenzt werden. Eine detailreichere Beschreibung der verschiedenen Betriebsmodi ist unter \cite{dockerSecurityHTTPS} gegeben.
 
     Über die Umgebungsvariable \texttt{DOCKER\_TLS\_VERIFY} sowie der Speicherung der notwendigen Zertifikate und Schlüssel unter \texttt{.docker/} im Homeverzeichnis, kann die Konfiguration der Authentifizierung einmalig für die zukünftige Kommunikation vorgenommen werden \cite{dockerSecurityHTTPS}.
 
@@ -116,11 +120,11 @@
 
   \section{Docker Plugins}
   \label{plugins}
-    Seit Juni 2015 unternahmen die Entwickler von Docker Anstrengungen, um optionale Komponenten von Docker in eine eigene Plugin-Infrastruktur zu integrieren, in der Plugins modular aktiviert und deaktiviert werden können \cite{githubDockerChangelog}\cite{dockerPlugins}. Plugins werden von einem Docker-Daemon genutzt und erweitern dessen Fähigkeiten. Neben den ersten Plugins für diverse Netzwerkfunktionen, z.B. \emph{Weave}, und der Einbindung von Datenträgern, z.B. \emph{Flocker}, fand im Frühjahr 2016 mit Docker-Version 1.10 auch ein ursprünglich von \emph{Twistlock}\cite{twistlock} entwickeltes Authorisierungs-Plugin Einzug in Docker, das in diesem Kapitel zur Vereinfachung auch als \emph{AuthZ} bezeichnet wird \cite{githubPluginList}\cite{dockerPlugins}\cite{authzTwistlock}.
+    Seit Juni 2015 unternahmen die Entwickler von Docker Anstrengungen, um optionale Komponenten von Docker in eine eigene Plugininfrastruktur zu integrieren, in der Plugins modular aktiviert und deaktiviert werden können \cite{githubDockerChangelog}\cite{dockerPlugins}. Plugins werden von einem Docker-Daemon genutzt und erweitern dessen Fähigkeiten. Neben den ersten Plugins für diverse Netzwerkfunktionen, z.B. \emph{Weave}, und der Einbindung von Datenträgern, z.B. \emph{Flocker}, fand im Frühjahr 2016 mit Docker-Version 1.10 auch ein ursprünglich von \emph{Twistlock}\cite{twistlock} entwickeltes Authorisierungsplugin Einzug in Docker. Zur Vereinfachung wird dieses im Folgenden als \emph{AuthZ} bezeichnet \cite{githubPluginList}\cite{dockerPlugins}\cite{authzTwistlock}.
 
-    Ergänzend dazu war auch ein Authentifizierungs-Plugin \emph{AuthN} geplant, das Nutzer vor deren Authorisierung durch \emph{AuthZ}, authentifiziert \cite{githubAuthZDockerAccessControl}. Am 23. Februar 2016 hat jedoch ein Docker-Mitarbeiter bekannt gegeben, dass die Integration von \emph{AuthN} eingestellt wird. Grund hierfür ist, dass die Authentifizierung - nach der Meinung einiger Docker-Entwickler - leicht außerhalb des Daemons stattfinden kann, z.B. mit dem Authentifizierungsdienst Kerberos\cite{kerberos} \cite{githubAuthZKerberosSupport}\cite{githubAuthNLaydown}.
+    Ergänzend dazu war auch ein Authentifizierungsplugin \emph{AuthN} geplant, das Nutzer, vor deren Authorisierung durch \emph{AuthZ}, authentifiziert \cite{githubAuthZDockerAccessControl}. Am 23. Februar 2016 hat jedoch ein Docker-Mitarbeiter bekannt gegeben, dass die Integration von \emph{AuthN} eingestellt wird. Grund hierfür ist, dass die Authentifizierung - nach der Meinung einiger Docker-Entwickler - leicht außerhalb des Daemons stattfinden kann, z.B. mit dem Authentifizierungsdienst Kerberos \cite{kerberos}\cite{githubAuthZKerberosSupport}\cite{githubAuthNLaydown}.
 
-    Das Sicherheitsplugin \emph{AuthZ} hat zum Ziel ein Framework bereitzustellen, über das es Administratoren möglich ist, eine nutzer- und rollenbasierte Sicherheitspolitik umzusetzen. Diese umfasst Regeln, die die Benutzung des Docker-Daemons betreffen. Nach der ursprünglichen Implementierung von \emph{Twistlock} sind die Regeln in eine JSON-Struktur gefasst \cite{githubAuthZJSON}. Ohne ein solches Plugin ist jedem Nutzer, der den Docker-Daemon ausführen kann, die komplette Kontrolle über das Docker-System gegeben. V.a. in Unternehmen macht es aber Sinn, verschiedenen Nutzer im Rahmen eines RBAC-Sicherheitsmodells eine bestimmte Rolle zuzuweisen, die deren Rechte definiert. Ein einfacher Anwendungsfall könnte folgende Regeln beinhalten \cite{authzTwistlock}:
+    Das Sicherheitsplugin \emph{AuthZ} hat zum Ziel ein Framework bereitzustellen, über das es Administratoren möglich ist, eine nutzer- und rollenbasierte Sicherheitspolitik (\acrshort{RBAC}) umzusetzen. Diese umfasst Regeln, die die Benutzung des Docker-Daemons betreffen. Nach der ursprünglichen Implementierung von \emph{Twistlock} sind die Regeln in eine JSON-Struktur gefasst \cite{githubAuthZJSON}. Ohne ein solches Plugin ist jedem Nutzer, der den Docker-Daemon ausführen kann, die komplette Kontrolle über das Docker-System gegeben. V.a. in Unternehmen macht es aber Sinn, verschiedenen Nutzer im Rahmen eines RBAC-Sicherheitsmodells eine bestimmte Rolle zuzuweisen, die deren Rechte definiert. Ein einfacher Anwendungsfall könnte folgende Regeln beinhalten \cite{authzTwistlock}:
     % TODO: Einarbeiten: Abbildung administrativer Sicherheitsmodelle (durch technische Mechanismen?)
 
     \begin{itemize}
@@ -129,7 +133,7 @@
         \item User \emph{Admin} darf jede Operation \texttt{docker ...} über den Daemon ausführen.
     \end{itemize}
 
-    Aus Sicht der Architektur funktioniert die Authorisierung, wie sie in \fig \ref{fig:sec_authz} illustriert ist. Die Anfragen von lokalen oder entfernten Clients werden, wie in Kapitel \ref{dockerArchitecture} beschrieben, an einen Daemon geschickt. Dieser führt nun nicht die Befehle der Clients umgehend aus, sondern leitet die Anfrage an das \emph{AuthZ}-Framework weiter. Genauer erhält \emph{AuthZ} einen Nutzerkontext und einen Befehlskontext, die, z.B. anhand der zuvor definierten Regeln, ausgewertet werden. Anhand der dem Plugin vorliegenden Parameter entscheidet es, ob der Nutzer berechtigt ist, den angefragten Befehl auszuführen. Falls das nicht der Fall ist, wird eine Fehlernachricht über den Daemon an den Client gesendet (vgl. \fig \ref{fig:sec_authzDeny}). Falls die Anfrage genehmigt wurde, führt der Daemon den darin enthaltenen Befehl aus, und kontaktiert das Plugin ein zweites Mal mit dem Ergebnis des ausgeführten Befehls (vgl. \fig \ref{fig:sec_authzAllow}). \emph{AuthZ} hat hierbei die Gelegenheit, die Antwort, bevor sie zum Client gesendet wird, zu modifizieren \cite{githubAuthZDraft}\cite{authzTwistlock}.
+    Aus Sicht der Architektur funktioniert die Authorisierung, wie sie in \fig \ref{fig:sec_authz} illustriert ist. Die Anfragen von lokalen oder entfernten Clients werden, wie in Kapitel \ref{dockerArchitecture} beschrieben, an einen Daemon geschickt. Dieser führt nun nicht die Befehle der Clients umgehend aus, sondern leitet die Anfrage an das \emph{AuthZ}-Framework weiter. Genauer erhält \emph{AuthZ} einen Nutzerkontext und einen Befehlskontext, die, anhand der zuvor definierten Regeln, ausgewertet werden. Anhand der dem Plugin vorliegenden Parameter entscheidet es, ob der Nutzer berechtigt ist, den angefragten Befehl auszuführen. Falls das nicht der Fall ist, wird eine Fehlernachricht über den Daemon an den Client gesendet (vgl. \fig \ref{fig:sec_authzDeny}). Falls die Anfrage genehmigt wurde, führt der Daemon den darin enthaltenen Befehl aus und kontaktiert das Plugin ein zweites Mal mit dem Ergebnis des ausgeführten Befehls (vgl. \fig \ref{fig:sec_authzAllow}). \emph{AuthZ} hat hierbei die Gelegenheit, die Antwort zu modifiezieren bevor sie zum Client gesendet wird \cite{githubAuthZDraft}\cite{authzTwistlock}.
 
     %\begin{figure}[h]
         %\centering
@@ -145,28 +149,11 @@
         %\label{fig:sec_authzDeny}
     %\end{figure}
 
-    \begin{figure}
-      \centering
-      \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=1.0\linewidth]{./images/sec_authzAllow.png}
-        \caption{Erfolgreiche Authorisierung}
-        \label{fig:sec_authzAllow}
-      \end{subfigure}%
-      \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=1.0\linewidth]{./images/sec_authzDeny.png}
-        \caption{Fehlgeschlagene Authorisierung}
-        \label{fig:sec_authzDeny}
-      \end{subfigure}
-      \caption{Ablaufdiagramm einer Befehlsausführung mit dem Authorisierungs-Plugins \emph{AuthZ} von Docker \cite{githubAuthZExtended}.}
-      \label{fig:sec_authz}
-    \end{figure}
-    % TODO: Evtl. untereinander machen da zu wenig Platz. Oder Grafik neu machen mit weniger/groesserem Text
 
-    Die Formate von Anfragen und Antworten, die über das HTTP-Protokoll ausgetauscht werden, sind in \cite{githubAuthZExtended} spezifiziert.
 
-    Mehrere Sicherheitsmodule können konsekutiv ausgeführt werden, sodass jede clientseitige Interaktion mit dem Daemon, die Ausführung mehrerer \emph{AuthZ}-Implementierungen zur Folge hat.
+    Die Struktur von Anfragen und Antworten, die über das HTTP-Protokoll ausgetauscht werden, sind in \cite{githubAuthZExtended} spezifiziert.
+
+    Mehrere Sicherheitsmodule können konsekutiv ausgeführt werden, sodass jeder clientseitigen Interaktion mit dem Daemon, die Ausführung mehrerer \emph{AuthZ}-Implementierungen folgt.
 
     Mit folgender Syntax können Authorisierungs-Plugins für den Daemon aktiviert werden \cite{githubAuthZExtended}:
 
@@ -175,7 +162,7 @@
                    [--authorization-plugin=PLUGIN2] [...]
     \end{lstlisting}
 
-    Da es sich bei diesen sicherheitsrelevanten Plugins um ein sehr neues Feature von Docker handelt, war die offizielle Dokumentation zum Zeitpunkt der Erstellung dieser Arbeit nicht vollständig. V.a. die fehlende Spezifikation des Formats eines \emph{AuthZ}-Regelwerks im Docker-Repository lässt vermuten, dass eine vollständige Einführung von \emph{AuthZ} erst im Rahmen zukünftiger Docker-Releases stattfindet.
+    Da es sich bei diesen sicherheitsrelevanten Plugins um ein sehr neues Feature von Docker handelt, war die offizielle Dokumentation zum Zeitpunkt der Erstellung dieser Arbeit nicht vollständig. V.a. die fehlende Spezifikation des Formats eines \emph{AuthZ}-Regelwerks im Docker-Repository lässt vermuten, dass eine vollständige Einführung von \emph{AuthZ} erst im Rahmen zukünftiger Docker-Veröffentlichungen stattfindet.
 
   \section{Open-Source-Charakter und Sicherheitspolitik von Docker}
   \label{opensource}
@@ -186,57 +173,66 @@
       \item Durch die Vielzahl an Involvierten können Sicherheitslücken schneller entdeckt und behoben werden. Über 1300 Individuen haben sich bislang für die Weiterentwicklung der Codebasis und der Aufdeckung von Fehlern und Sicherheitsrisiken an Docker beteiligt.
       %Die Codequalität profitiert auch von Experten anderer Unternehmen und Organisationen, im Docker-Projekt z.B. von \emph{Red Hat}-Mitarbeitern.
       \item Eigene Sicherheitspraktiken können von Anwendern durch die Kenntnis über den Quellcode hinzugefügt werden.
-      \item Nach dem Kerkhoffs'schen Prinzip ist einer Anwendung von \emph{Security Through Obscurity} generell abzuraten. Ein offenes Design von Serversystemen ist von NIST als allgemeines Sicherheitsprinzip vorgeschlagen \cite[S.15]{nist}.
+      \item Nach dem \emph{Kerkhoffs'schen Prinzip} ist einer Anwendung von \emph{Security Through Obscurity} generell abzuraten. Ein offenes Design von Serversystemen ist von NIST als allgemeines Sicherheitsprinzip vorgeschlagen \cite[S.15]{nist}.
     \end{itemize}
 
     \paragraph{Nachteile:}
     \begin{itemize}
       \item Sicherheitslücken sind von Angreifern prinzipiell schneller zu finden, wenn diese im Besitz des Quellcodes sind.
-      \item Außerdem ist durch die lose Zusammenarbeit vieler Experten nicht gewährleistet, dass bestimmte Implementierungen nach dem Mehraugenprinzip kontrolliert werden. Die böswillige Absicht nur eines Entwicklers kann in einer Open-Source-Kultur weiterhin fatale Be\-ein\-träch\-ti\-gung\-en der Sicherheit mit sich ziehen.
+      \item Durch die lose Zusammenarbeit vieler Experten ist nicht gewährleistet, dass bestimmte Implementierungen nach dem Mehraugenprinzip kontrolliert werden. Die böswillige Absicht nur eines Entwicklers kann in einer Open-Source-Kultur weiterhin starke Beeinträchtigungen der Sicherheit mit sich bringen.
     \end{itemize}
 
-    Die Vor- und Nachteile zeigen auf, dass es keinen Gewinner nach Maßstäben der Sicherheit gibt. Sowohl Open-Source- als auch proprietäre Softwarelösungen können erfolgreich sein, wie die Vergangenheit bekannter Betriebssysteme und Anwendungen zeigt. Für \emph{Docker} hat sich der Open-Source-Ansatz bislang bewährt.
+    Die Vor- und Nachteile zeigen auf, dass es keinen eindeutigen Gewinner nach Maßstäben der Sicherheit gibt. Sowohl Open-Source- als auch proprietäre Softwarelösungen können erfolgreich sein, wie die Vergangenheit bekannter Betriebssysteme und Anwendungen zeigt. Für \emph{Docker} hat sich der Open-Source-Ansatz bislang bewährt.
 
     Um die Zusammenarbeit im Docker-Projekt zu organisieren, wurden Regeln und Konventionen formuliert, die auch die Sicherheit betreffen \cite{githubDockerContribution}. Zusammen mit den Sicherheitsrichtlinien aus der offiziellen Docker-Homepage, ergeben sich folgende weitere, sicherheitsrelevante Eigenschaften von Docker.
 
     \begin{itemize}
-      \item Prinzip von \emph{Responsible Disclosure} wird, als Hauptbestandteil der Sicherheitspolitik von Docker, umgesetzt. Konform dazu, können entdeckte Schwachstellen jederzeit an security@docker.com kommuniziert werden \cite{dockerSecurityPortal}.
+      \item Prinzip von \emph{Responsible Disclosure} wird als Hauptbestandteil der Sicherheitspolitik von Docker umgesetzt. Konform dazu, können entdeckte Schwachstellen jederzeit an eine zentrale E-Mail-Adresse kommuniziert werden \cite{dockerSecurityPortal}.
       \item Wartung einer zentralen \acrshort{CVE}-Datenbank, die bekannte Sicherheitsrisiken von Docker enthält. Die darin veröffentlichten Informationen erfüllen das Prinzip \emph{Responsible Disclosure} \cite{dockerCVEList}.
       \item Externe Sicherheitsfirmen werden vierteljährlich beauftragt, Sicherheitsaudits und Penetrationstests zur Kontrolle der Codebasis und Infrastruktur durchzuführen \cite[S.5]{dockerSecIntro}.
     \end{itemize}
 
-  \section{Security Best-Practises}
-    Es existieren Skripte, die die Docker-Umgebung nach eingehaltenen und nicht erfüllten Best-Practices für die Sicherheit überprüfen.
+  \section{Best-Practices für die Sicherheit}
+    In den folgenden Abschnitten sind verschiedene Best-Practices im Umgang mit Docker aufgezählt.
 
-    Der bekannteste Vertreter ist \emph{Docker Bench} \cite{githubDockerBench}, welcher in das Docker-Projekt integriert ist und nach Aussagen der Entwickler auf Befunden des Sicherheitsberichts des unabhängigen \emph{Center for Internet Security} \cite{dockerBenchmarkCIS} beruht. Dieser Bericht ist im Mai 2015 entstanden und enthält sicherheitsrelevante Befunde zu Docker in der Version 1.6. Aktuellere Berichte zu moderneren Docker-Versionen existieren nicht.
+    Während insgesamt weitaus mehr Best-Pracices existieren, sind im Folgenden nur jeden ausgewählt, die in den meisten Anwendungsfällen angewandt werden können.
 
-    Die darin enthaltenen Kontrollen sind in einem eigenen Image als Shellskripte definiert. Zur Ausführung der Tests muss dieses Image als Container gestartet werden. Im Rahmen dieser Tests werden direkt über Shellbefehle abrufbare Parameter untersucht. Darunter sind z.B.:
+    \subsection{Skripte}
+      Es existieren Skripte, die Docker-Hostsysteme nach eingehaltenen und nicht erfüllten Best-Practices überprüfen.
 
-    \begin{itemize}
-      \item Rechte, Besitzer- und Gruppenzugehörigkeiten von Dateien und Verzeichnissen
-      \item Docker- und Kernelversion
-      \item Log- und Netzwerkeinstellungen
-      \item TLS-Unterstützung
-      \item \texttt{--priviledged}-Status von Containern
-      \item Verwendung von Capabilities, \emph{AppArmor}- und \emph{SELinux}-Profilen
-    \end{itemize}
+      Der bekannteste Vertreter ist \emph{Docker Bench} \cite{githubDockerBench}, welcher in das Docker-Projekt integriert ist und nach Aussagen der Entwickler auf Befunden des Sicherheitsberichts des unabhängigen \emph{Center for Internet Security} beruht \cite{dockerBenchmarkCIS}. Dieser Bericht ist im Mai 2015 entstanden und enthält sicherheitsrelevante Befunde zu Docker in der Version 1.6. Aktuellere Berichte zu moderneren Docker-Versionen existieren nicht.
 
-    Die Tests sind unter \cite{githubDockerBenchTests} in ihrer aktuellsten Version im Detail veröffentlicht.
+      Die darin enthaltenen Kontrollen sind in einem eigenen Image als Shellskripte definiert. Zur Ausführung der Tests muss dieses Image als Container gestartet werden. Im Rahmen dieser Tests werden direkt über Shellbefehle abrufbare Parameter untersucht. Darunter sind z.B.:
+
+      \begin{itemize}
+        \item Rechte, Besitzer- und Gruppenzugehörigkeiten von Dateien und Verzeichnissen
+        \item Docker- und Kernelversion
+        \item Log- und Netzwerkeinstellungen
+        \item TLS-Unterstützung
+        \item Existenz von (nicht-)priveligierten Containern
+        \item Verwendung von Capabilities, \emph{AppArmor}- und \emph{SELinux}-Profilen
+      \end{itemize}
+
+      Die konkreten Tests sind unter \cite{githubDockerBenchTests} in ihrer aktuellsten Version im Detail veröffentlicht.
 
     \subsection{Datencontainer}
-      Die von Werkzeugen wie \emph{Docker Bench} ausführbare Tests beschränken sich auf explizit abrufbare Parameter des Hosts und von Docker. In Server-Infrastrukturen existieren jedoch auch Sicherheitskriterien, deren Kontrolle nicht über Abfragen von Host- oder Docker-Einstellungen abzudecken ist. Insbesondere wirken sich Merkmale der Infrastuktur auf die Verfügbarkeit von Services sowie Wartbarkeit der Infrastruktur aus.
+      Die von Werkzeugen wie \emph{Docker Bench} ausführbare Tests beschränken sich auf explizit abrufbare Parameter des Hosts und von Docker. In Serverinfrastrukturen existieren jedoch auch Sicherheitskriterien, deren Kontrolle nicht über Abfragen von Einstellungen des Hostsystems oder von Docker abzudecken ist. V.a. Merkmale der Infrastuktur wirken sich auf die Verfügbarkeit von Diensten sowie der Wartbarkeit einer Infrastruktur aus.
 
-      Z.B. wird von \emph{Docker} empfohlen, eigene Datencontainer zu betreiben, über die Anwendungen ihren Zustand auf Datenebene persistieren können. Anwendungen können in diesem Szenario über mehrere Container hinweg auf den Datencontainer zugreifen, sofern letzterer Methoden implementiert, um Race-Conditions zu verarbeiten. Standardmäßig gehen Änderungen, die während dem Betrieb von Containern auftreten, verloren sobald der Container gestoppt wird. Diese Eigenschaft beruht auf der obersten Schicht eines Containers, dem RW-Layer, der bei Containerstart einem Image hinzugefügt wird. Dieser Layer ist unabhängig von dem zugrundeliegendem Image und existiert nur temporär zur der Laufzeit des Containers. Dieser Eigenschaft unterliegt auch der Datencontainer. Aus diesem Grund empfiehlt es sich, die Verzeichnisse von Datencontainern aus dem Hostsystem über Mountpoints einzubinden. Welche Verzeichnisse des Hosts über Datencontainer für Service-Containern verfügbar sind, kann in Datencontainern zentral eingestellt werden.
+      Aus diesem Grund wird von \emph{Docker} empfohlen, eigene Datencontainer zu betreiben, über die Anwendungen anderer Container ihren Zustand auf Datenebene persistieren können. Anwendungen können in diesem Szenario über mehrere Container hinweg auf den Datencontainer zugreifen, sofern letzterer Methoden implementiert, um Race-Conditions zu verarbeiten. Standardmäßig gehen Änderungen, die während dem Betrieb von Containern auftreten, verloren, sobald der Container gestoppt wird. Diese Eigenschaft beruht auf der obersten Schicht eines Containers, die bei Containerstart einem Image hinzugefügt wird. Dieser Layer ist unabhängig von dem zugrundeliegendem Image und existiert nur temporär zur der Laufzeit des Containers.
+
+      Dieser Eigenschaft unterliegen auch Datencontainer. Deshalb empfiehlt es sich, die Verzeichnisse von Datencontainern aus dem Hostsystem über Mounts einzubinden. Welche Verzeichnisse des Hostsystems über Datencontainer für Anwendungscontainern verfügbar sind, kann in Datencontainern zentral eingestellt werden \cite{dockerManageDataContainers}.
       % TODO: Referenz zu Grundlagenkapitel "Einführung in Docker"
 
       % mounts von normalen servicecontainern werden vermieden.
       % "Zustand/State" ist getrennt
 
     \subsection{Verwaltung von Credentials}
-      Informationen zu Benutzernamen und Passwörtern sollten nicht statisch als Zeichenketten in ein Image integriert sein. Vielmehr sollen Credentials generell als Umgebungsvariablen mit der \texttt{ENV}-Direktive der Dockerfiles in Images verfügbar gemacht werden. Beispielsweise setzen die Entwickler von der Datenbank \emph{Postgres} diese Praxis in ihrem \emph{Postgres}-Image um, indem sie die Umgebungsvariablen \texttt{POSTGRES\_USER} und \texttt{POSTGRES\_PASSWORD} definieren, die beim Startvorgang des Containers abgefragt werden \cite{dockerHubPostgres}\cite{githubPostgresCredentialCheck}.
-      
+      Informationen zu Benutzernamen und Passwörtern sollten nicht statisch als Zeichenketten in ein Image integriert sein. Vielmehr sollen Credentials generell als Umgebungsvariablen mit der \texttt{ENV}-Direktive der Dockerfiles in Images verfügbar gemacht werden.
+
+      Beispielsweise setzen die Entwickler von der Datenbank \emph{Postgres} diese Praxis in ihrem \emph{Postgres}-Image um, indem sie die Umgebungsvariablen \texttt{POSTGRES\_USER} und \texttt{POSTGRES\_PASSWORD} definieren, die beim Startvorgang des Containers abgefragt werden \cite{dockerHubPostgres}\cite{githubPostgresCredentialCheck}.
+
   \section{Tools}
-    Im Docker-Ökosystem existieren zahlreiche Tools, die entweder den Funktionsumfang von Docker erweitern oder die zusätzliche Möglichkeiten bieten, Docker-Container zu verwalten. Neben Veröffentlichungen von \emph{Docker}, z.B. mit \emph{Docker Swarm}, \emph{Docker Compose} und \emph{Docker Datacenter}, können auch einige Entwicklungen von Drittanbietern verwendet werden. Diese umfassen beispielsweise \emph{Shipyard}, \emph{Kubernetes}, \emph{Vagrant} und \emph{docker-slim}. Die genannten Tools decken teilweise gleiche Features ab oder bauen im Fall von \emph{Docker Swarm} und \emph{Shipyard} aufeinander auf.
+    Im Docker-Ökosystem existieren zahlreiche Tools, die entweder den Funktionsumfang von Docker erweitern oder zusätzliche Möglichkeiten bieten, Docker-Container zu verwalten. Neben Veröffentlichungen von \emph{Docker}, z.B. mit \emph{Docker Swarm}, \emph{Docker Compose} und \emph{Docker Datacenter}, können auch einige Entwicklungen von Drittanbietern verwendet werden. Diese umfassen beispielsweise \emph{Kubernetes} \cite{kubernetes}, \emph{Shipyard} \cite{kubernetes} und \emph{docker-slim} \cite{githubDockerSlim}. Die genannten Tools decken teilweise gleiche Features ab oder bauen im Fall von \emph{Docker Swarm} und \emph{Shipyard} aufeinander auf.
 
     Viele erweiternde Features werden von Docker auch mittels der Schnittstelle Docker-Plugins unterstützt. Die sicherheitsrelevante Erweiterung \emph{AuthZ} wurde bereits in Kapitel \ref{plugins} vorgestellt.
 
@@ -253,16 +249,18 @@
     % Vieles in Docker-main integriert oder pluggable gemacht mit plugin framework.
 
     \subsection{Kubernetes}
-      \emph{orchestration, management fokus, sicherheitsrelevant?}
+      %\emph{orchestration, management fokus, sicherheitsrelevant?}
       % neueres Cluster-Management Tool von Google
       % Hat Relevanz fuer Herr Fahner/Daimler
-      Als ausgewählter Vertreter der Verwaltungs- und Orchestrierungswerkzeuge, wird in diesem Abschnitt das von \emph{Google} entwickelte Open-Source-Tool \emph{Kubernetes} vorgestellt. Der Fokus von \emph{Kubernetes} liegt auf der Verwaltung von Containern, die über mehrere Hosts verteilt sind. Damit eignet sich das Tool v.a. in Cloud-Infrastrukturen, welche sich meist aus Rechenzentren mit mehreren, über das Netzwerk miteinander verbundenen Hostsystemen zusammensetzen. Es führt neue Konzepte ein, um eine Vielzahl an Containern auf physische und virtuelle Systeme abzubilden.
+      Als ausgewählter Vertreter der Verwaltungs- und Orchestrierungswerkzeuge, wird in diesem Abschnitt das von \emph{Google} entwickelte Open-Source-Werkzeug \emph{Kubernetes} vorgestellt.
 
-      Neben einigen Startups, haben sich \emph{Google}, \emph{Microsoft}, \emph{VMware}, \emph{IBM} und \emph{Red Hat} als \emph{Kubernetes}-Unterstützer geäußert.
+      Der Fokus von \emph{Kubernetes} liegt auf der Verwaltung und Orchestrierung von Containern, die über mehrere Hosts verteilt sind. Damit eignet sich das Tool v.a. in Cloud-Infrastrukturen, welche sich i.d.R. aus mehreren, über das Netzwerk miteinander verbundenen Hostsystemen zusammensetzen. Es führt neue Konzepte ein, um eine Vielzahl von Containern auf physische und virtuelle Systemen zu verwalten.
 
-      Aus der Sicht von \emph{Kubernetes} stellen Docker-Container die kleinste zu verwaltende Einheit dar. Welche Anwendung in einem Container läuft und welche Sicherheitsmechanismen aus Kapitel \ref{secLinux} der Container nutzt, um das jeweilige Hostsystem zu schützen, ist für den Betrieb von \emph{Kubernetes} zunächst unerheblich.
+      %Neben einigen Startups, haben sich \emph{Google}, \emph{Microsoft}, \emph{VMware}, \emph{IBM} und \emph{Red Hat} als \emph{Kubernetes}-Unterstützer geäußert.
 
-      \emph{Kubernetes} erfüllt hauptsächlich administrative Anforderungen an die Sicherheit, die auch hier wieder auf Basis des \emph{Principle of Least Privilege} umgesetzt werden. Damit ist die Implementierung einer rollenbasierten Nutzerkontrolle (\acrshort{RBAC}) gemeint, die Nutzer über alle von Kubernetes kontrollierten Container hinweg, authorisiert und authentifiziert \cite{githubKubernetesSecurity}. Im Vergleich dazu, ermöglicht die Verwendung des Authentifizierungs-Framework \emph{AuthZ} aus Kapitel \ref{plugins} nur die Authentifizierung auf einem Hostsystem.
+      Aus der Sicht von \emph{Kubernetes} stellen z.B. Docker-Container die kleinste zu verwaltende Einheit dar. Welche Anwendung in einem Container läuft und welche Sicherheitsmechanismen aus Kapitel \ref{secLinux} der Container nutzt, um das jeweilige Hostsystem zu schützen, ist für den Betrieb von \emph{Kubernetes} zunächst unerheblich.
+
+      \emph{Kubernetes} erfüllt hauptsächlich administrative Anforderungen an die Sicherheit, die auch hier wieder auf Basis des \emph{Principle of Least Privilege} umgesetzt werden. Damit ist die Implementierung einer rollenbasierten Nutzerkontrolle (\acrshort{RBAC}) gemeint, die Nutzer über alle von Kubernetes kontrollierten Container hinweg, authorisiert und authentifiziert \cite{githubKubernetesSecurity}. Im Vergleich dazu, ermöglicht die Verwendung des Authentifizierungs-Framework \emph{AuthZ} aus Kapitel \ref{plugins} nur die Authentifizierung von Nutzern auf einem Hostsystem.
 
       % TODO: Vieles was Kubernetes macht, passiert auf Netzwerkebene. Und das nicht in dieser Arbeit.
 
@@ -272,7 +270,7 @@
       % (Bringt angeblich tolles Networking-Feature mit.)
 
     \subsection{docker-slim}
-      \emph{docker-slim} ist ein Werkzeug, das u.a. automatisch Sicherheitsprofile erstellt. Es untersucht dabei Anwendungen, die in einem Container laufen und zeichnet Zugriffe dieser auf, z.B. die verwendeten \emph{System Calls}. Aus diesen Aufzeichnungen und einer Analyse der statischen Daten eines Images werden Profile für \emph{Seccomp} und \emph{AppArmor} erstellt, die anschließend verwendet werden können. Die Generierung eines \emph{AppArmor}-Profils ist aktuell in der Entwicklungsphase.
+      \emph{docker-slim} ist ein Werkzeug, das u.a. automatisch Sicherheitsprofile erstellt. Es untersucht dabei Anwendungen, die in einem Container laufen und zeichnet Zugriffe dieser auf, z.B. die verwendeten \emph{System Calls}. Aus diesen Aufzeichnungen und einer Analyse der statischen Daten eines Images werden Profile für \emph{Seccomp} und \emph{AppArmor} erstellt, die anschließend verwendet werden können. Die Generierung eines \emph{AppArmor}-Profils ist aktuell in der Entwicklungsphase \cite{githubDockerSlim}.
 
     \subsection{Bane}
       Auch das von Docker-Mitarbeiterin Jessie Frazelle entwickelte Werkzeug \emph{Bane} hat zum Ziel, \emph{AppArmor}-Profile automatisch zu generieren. Im Gegensatz zu \emph{docker-slim} analysiert es nicht Images und Container, sondern übersetzt Anweisungen einer gut lesbaren Konfigurationsdatei in ein \emph{AppArmor}-Profil. Der Vorteil der Konfigurationsdatei gegenüber einer Datei, die ein \emph{AppArmor}-Profil enthält, ist, dass sich ausdruckstärkere, kategorisierbare Anweisungen formulieren lassen, sodass zum Erstellen der Datei keine speziellen \emph{AppArmor}-Kenntnisse erforderlich sind \cite{githubBane}.
@@ -306,10 +304,10 @@
         ...
       \end{lstlisting}
 
-      Wie bei einem Vergleich der beiden Fragmente zu sehen ist, ist die Konfigurationsdatei strukturierter und durch Verwendung von aussagekräftigen Bezeichnern wie \texttt{Filesystem}, \texttt{WritablePaths}, \texttt{AllowExec} und \texttt{DenyExec} besser lesbar als das daraus resultierende \emph{AppArmor}-Profil.
+      Wie bei einem Vergleich der beiden Fragmente zu sehen ist, ist die Konfigurationsdatei strukturierter und durch Verwendung von aussagekräftigen Bezeichnern wie \texttt{Filesystem}, \texttt{WritablePaths}, \texttt{AllowExec} und \texttt{DenyExec} übersichtlicher als das daraus generierte \emph{AppArmor}-Profil.
 
       Nach Aussage von Jessie Frazelle in
       \cite{githubBane}, \cite{githubGeneralSecProfiles}
-      und \cite{docker110Security} stellt \emph{Bane} den Grundbaustein eines universalen, nativen Sicherheitmoduls mit Profilen für Capabilities, \emph{AppArmor} und \emph{Seccomp} dar. Dieses wird voraussichtlich in einen zukünftigen Release von Docker einfließen.
+      und \cite{docker110Security} stellt \emph{Bane} den Grundbaustein eines zukünftigen universalen, nativen Sicherheitmoduls mit Profilen für Capabilities, \emph{AppArmor} und \emph{Seccomp} dar. Dieses wird voraussichtlich in eine zukünftige Docker-Version einfließen.
 
 \end{document}

@@ -3,9 +3,9 @@
 
 \chapter{Docker in Cloud-Infrastrukturen}
 \label{secInfrastructure}
-  Wie in der Einleitung gezeigt, bietet der Einsatz von Virtualisierungslösungen, insbesondere Container, in Rechenzentren einige Vorteile.
+  Wie in der Abschnitt \ref{introVirt} des Grunlagenkapitels gezeigt, bietet der Einsatz von Virtualisierungslösungen, insbesondere Containern, in Rechenzentren einige Vorteile.
 
-  Je nach Anforderungen der Anwendung und der verfügbaren unternehmensinternen Ressourcen und externen Anbieter, lässt sich eine Lösung mithilfe \fig .... und \fig ... bilden. Unabhängig von der gewählten Virtualisierungstechnologie, lassen sich die Vorteile von Containern bezüglich Automatisierung, CI und CD immer nutzen. Auch wenn sich z.B. ein Unternehmen aus Sicherheitsgründen für eine Private Cloud (\fig 3.1) in Kombination mit einer hypervisorbasierten Virtualisierung (\fig 4.1) entscheidet, können die besagten Vorteile von Containern trotzdem innerhalb einer VM der Private Cloud genutzt werden, indem in die VMs z.B. Docker installiert wird.
+  Je nach Anforderungen der Anwendung und der verfügbaren unternehmensinternen Ressourcen und externen Anbieter, lässt sich eine Lösung mithilfe \fig .... und \fig ... bilden. Unabhängig von der gewählten Virtualisierungstechnologie, lassen sich die Vorteile von Containern bezüglich Automatisierung, \acrshort{CI} und \acrshort{CD} immer nutzen. Auch wenn sich z.B. ein Unternehmen aus Sicherheitsgründen für eine Private Cloud (\fig 3.1) in Kombination mit einer hypervisorbasierten Virtualisierung (\fig 4.1) entscheidet, können die besagten Vorteile von Containern trotzdem innerhalb einer VM der Private Cloud genutzt werden, indem in die VMs z.B. Docker installiert wird.
 
   % Neben der technischen Überlegenheit, hat es Docker durch ein sehr erfolgreiches Marketing geschafft, als Heilmittel vieler Probleme in IT-Abteilungen in Unternehmen geschätzt zu werden.
 
@@ -16,16 +16,14 @@
   % --> 4 Bilder dazu.
   % Aus den Sicherheitsanforderungen der betriebenen Anwendungen/Services kann man aus beiden Sets 2 wählen. Wichtig ist zu checken, ob Auswahl aus Set 2 auch von etwaigen Drittanbietern, die Set1 u.U. beinhaltet, angeboten werden.
 
-  Mit dem CLI-Werkzeug \emph{Docker Machine} stellt \emph{Docker} die Option zur Verfügung, von Linux-, Mac- und Windows-Clients aus lokale und entfernte Docker-Hosts zu verwalten. Mit frei konfigurierbaren, sowie auf Cloud-Anbietern angepassten Treibern, eignet sich das Werkzeug auch zur Administration von Docker-Installationen in Private und Public Clouds \cite{dockerMachineOverview}\cite{dockerMachineDriverGeneric}\cite{dockerMachineOverviewCloud}.
+  Mit dem CLI-Werkzeug \emph{Docker Machine} stellt \emph{Docker} die Option zur Verfügung, von Linux-, Mac- und Windows-Clients aus lokale und entfernte Docker-Hostsysteme zu verwalten. Mit frei konfigurierbaren, sowie auf Cloud-Anbietern angepassten Treibern, eignet sich das Werkzeug auch zur Administration von Docker-Installationen in Private und Public Clouds \cite{dockerMachineOverview}\cite{dockerMachineDriverGeneric}\cite{dockerMachineOverviewCloud}.
 
-  Durch den hohen Bekanntheitsgrad und der Popularität von Docker in Entwickler- und Managementkreisen sind Anbieter von Public-Clouds gezwungen, eine Unterstützung von Docker in ihr eigenes Portfolio aufzunehmen. Tatsächlich reagieren die großen Anbieter wie \emph{Amazon}, \emph{Microsoft}, \emph{IBM} und \emph{Google} mit vielseitigen, häufig Docker-basierten Containerangeboten. Die etablierten Cloud-Ausprägungen SaaS, PaaS und IaaS werden durch explizite Containerangebote ergänzt, sodass zur Zeit der Begriff CaaS (Container as a Service) als weitere Form von Cloud-Angeboten Gestalt annimmt. Die Auswirkungen von Docker auf genannte Anbieter sind in Kapitel \ref{publicCloud} beschrieben.
+  Durch den hohen Bekanntheitsgrad und der Popularität von Docker in Entwickler- und Managementkreisen sind Anbieter von Public-Clouds gezwungen, eine Unterstützung von Docker in ihr eigenes Portfolio aufzunehmen. Tatsächlich reagieren die großen Anbieter wie \emph{Amazon}, \emph{Microsoft}, \emph{IBM} und \emph{Google} mit vielseitigen, häufig Docker-basierten Containerangeboten. Die etablierten Cloud-Ausprägungen SaaS, PaaS und IaaS werden durch explizite Containerangebote ergänzt, sodass zur Zeit der Begriff CaaS (Container as a Service) als weitere Form von Cloud-Angeboten Gestalt annimmt. Die Auswirkungen von Docker auf genannte Anbieter sind in Abschnitt \ref{publicCloud} beschrieben.
 
   Auch in Private Clouds ist Docker ein Thema. Die in Kapitel \ref{secLinux} und \ref{secEcosystem} aufgeführten Eigenschaften von Docker eignen sich für eine unternehmensinterne Anwendung der Technologie, wie in Kapitel \ref{privateCloud} näher erläutert wird.
 
   %Google: Google Container Engine mit Docker Containern. Mit Kubernetes-Schicht dabei. --> komplette FOSS infrastruktur bei google
   %Amazon: Elastic Bean Stack (fuer web applications) und auch EC2-Container als EC2-Container-Service (ECS)
-
-
 
   \section{Public Cloud}
   \label{publicCloud}
