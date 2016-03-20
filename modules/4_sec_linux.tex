@@ -53,19 +53,19 @@
 
 	% Auf technischer Ebene sind zunächst die grundlegenden Mechanismen zur Isolation und Ressourcenverwaltung zu erwähnen, die das Konzept von Containern ermöglichen. Unter Linux sind das die Techniken Namespaces und Control Groups, von denen Docker, \emph{rkt} und andere Linux-basierten Containertechnologien Gebrauch machen.
 
-	Dieses Kapitel stellt die von dem Betriebssystem Linux ermöglichten Sicherheitsmodelle und -mechanismen vor, die Docker im Rahmen dieser beiden Prinzipien unterstützt.
+	Dieses Kapitel stellt die von dem Betriebssystem Linux und dessen Kernel ermöglichten Sicherheitsmechanismen vor, die Docker im Rahmen dieser beiden Prinzipien unterstützt.
 
-	Dazu zählen die Isolierung kritischer Bereiche, die auf Basis des \texttt{chroot}-Befehls in Form von Namespaces, erfolgt (s. Kapitel \ref{secIsolierung}). Außerdem werden Control Groups, kurz Cgroups, vorgestellt, die eine Ressourcenverwaltung implementieren (s. Kapitel \ref{secCgroups}). Während beide Mechanismen eine hohe Sicherheitsrelevanz aufweisen, können sie als Feature-erweiternde Funktionen eines Hostsystems verstanden werden, deren alleiniges Ziel es ist, die Idee von virtuellen Gastsystemen (Containern) zu realisieren. Die in CISSP definierten sicherheitserhöhenden Maßnahmen werden von Namespaces und Cgroups nicht berührt \cite{....}.
-	% TODO: CISSP-Quelle!!
+	Dazu zählt die Isolierung kritischer Bereiche, die auf Basis des \texttt{chroot}-Befehls in Form von Namespaces, erfolgt (s. Abschnitt \ref{secIsolierung}). Außerdem werden Control Groups, kurz Cgroups, vorgestellt, die eine Ressourcenverwaltung implementieren (s. Abschnitt \ref{secCgroups}). Während beide Mechanismen eine hohe Sicherheitsrelevanz aufweisen, können sie als featureerweiternde Funktionen eines Hostsystems verstanden werden, deren alleiniges Ziel es ist, die Idee von virtuellen Gastsystemen, den Containern, zu realisieren. %Die in CISSP definierten sicherheitserhöhenden Maßnahmen werden von Namespaces und Control Groups nicht berührt \cite{....}.
+	% (TODO): CISSP-Quelle!!
 
-	Anschließend werden Zugriffskontrollen erklärt, die in verschiedenen Variationen unter Docker existieren (s. Kapitel \ref{secAccessControls}). Mechanismen dieser Art setzen teilweise Sicherheitsmodelle um, z.B. auf der Basis von sogenannten Capabilities.
+	Anschließend werden Zugriffskontrollen erklärt, die in mehreren Variationen unter Docker existieren (s. Abschnitt \ref{secAccessControls}). Mechanismen dieser Art setzen teilweise Sicherheitsmodelle um, z.B. auf der Basis von sogenannten Capabilities.
 
 	%Auch sind Capability-basierte Sicherheitsfunktionen, wie sie von Linux ermöglicht und in einer Reihe an Werkzeugen Anwendung finden, Gegenstand dieses Kapitels.
 
 	% TODO: Mehr Bezug zur Forschungsfrage schaffen und den Annahmen,Schlussfolgerungen
 
 
-	Wie in Kapitel \ref{introVirtContainer} bereits geschildert, wird Docker zur Zeit nur für Linux angeboten. Aus diesem Grund ist eine Untersuchung von Sicherheitsfeatures anderer Betriebssysteme in diesem Kapitel irrelevant.
+	Wie in Abschnitt \ref{introVirtContainer} bereits geschildert wurde, wird Docker zur Zeit nur für Linux angeboten. Aus diesem Grund ist eine Untersuchung von Sicherheitsfeatures anderer Betriebssysteme in dieser Arbeit irrelevant.
 
   % namespaces/etc (was es ist) in Einleitung mit rein? 1.) Erklaeren, 2.) Security/Docker untersuchen dazu im Security Hauptteil
   % 2 Unterkapitel, inhatliche Überschneidung evtl., Grund nennen warum so gegliedert, ...
@@ -80,14 +80,24 @@
   \label{secIsolierung}
 		Die Isolierung für Container wird unter Linux für die meisten kritischen Bereiche eines Systems über Namespaces realisiert.
 
-		Wenn unter Linux ein neuer Prozess gestartet werden soll, wird über \emph{System Calls} dem Kernel mitgeteilt, einen neuen \emph{namespace} bereitzustellen. Je nach Anforderung gibt es verschiedene \emph{namespaces}, z.B. ein \emph{network namespace}, der dem neuen Prozess ein Netzwerkinterface zuweist. Um Container als isolierte Arbeitsbereiche auf einem Host zu erstellen, werden die \emph{namespaces} des Kernels verwendet. Da Container selbst eine eigene komplette Laufzeitumgebung darstellen sollen, müssen kritische Bereiche des Hosts durch \emph{namespaces} abgedeckt sein, sodass neben dem Netzwerk auch z.B. ein beschränkter Zugriff auf den Arbeitsspeicher und die \acrshort{CPU} gewährleistet ist \cite[S.3]{dockerIntroIEEE}.
+		Da Anwendungen innerhalb von Container eine komplette Laufzeitumgebung angeboten werden muss, müssen alle relevanten Bereiche des Hostsystems durch Namespaces abgedeckt sein.	Wenn unter Linux z.B. ein neuer Prozess gestartet werden soll, wird dem Kernel über \emph{System Calls} mitgeteilt, hierfür einen neuen Namespace bereitzustellen.
 
-		Technisch betrachtet beinhaltet ein \emph{namespace} eine Lookup-Tabelle, die global verfügbare Ressourcen abstrahiert und dem \emph{namespace} bereitstellt. Änderungen globaler Ressourcen sind sichtbar für Prozesse im relevanten \emph{namespace}, jedoch unsichtbar für solche außerhalb \cite[S.1f.]{IBMcheckpointRestart}\cite{namespaces}. Dadurch können \emph{namespaces} als Lösungsansatz betrachtet werden, um das Sicherheitsziel Vertraulichkeit zu erreichen. Sie sind damit der grundlegende Baustein, um eine Containerisolierung unter Linux zu realisieren.
+		%Je nach Anforderung gibt es verschiedene Namespaces: PID-, Netzwerk-, Mount-, User- und UTS-Namespace
 
-		Unter Linux existieren sechs Namespaces, die in die Kategorien IPC, Network, Mount, PID, User und UTS unterteilt sind. Von Docker werden alle verwendet, jedoch wird der User-Namespace erst seit Docker-Version 1.10 unterstützt. Außerdem muss dieser nach aktuellem Stand manuell aktiviert werden, da er standardmäßig nicht zum Einsatz kommt.
-		% TODO: Quelle
+		%, z.B. ein \emph{network namespace}, der dem neuen Prozess ein Netzwerkinterface zuweist.
 
-		Zudem besteht die Möglichkeit, dass bald weitere Namespaces dem bestehenden Set hinzugefügt werden. Zum einen wird derzeit ein eigener Namespace für Control Groups implementiert, ein Mechanismus, der in Kapitel \ref{secCgroups} erläutert wird. Zum anderen ist in Diskussion, für die bestehenden Sicherheitsmodule des Kernels (siehe Kapitel \ref{lsm}), diverse Logfunktionen und Geräte unter Linux (Devices), eigene Namespaces zur Verfügung zu stellen \cite[S.19]{presContainerSec}.
+		%Um Container als isolierte Arbeitsbereiche auf einem Hostsystem zu erstellen, werden die Namespaces des Kernels verwendet.
+
+		%, sodass neben dem Netzwerk auch z.B. ein beschränkter Zugriff auf den Arbeitsspeicher und die \acrshort{CPU} gewährleistet ist \cite[S.3]{dockerIntroIEEE}.
+
+		Aus technischer Sicht beinhaltet ein Namespace eine Baumstruktur zu betrachtender Ressourcen. Diese Struktur ist in einer Lookup-Tabelle abgebildet, die global verfügbare Ressourcen abstrahiert und innerhalb eines Namespaces bereitstellt. Änderungen globaler Ressourcen sind unsichtbar für Prozesse in einem Namespace, jedoch sichtbar für solche außerhalb. Namespaces sind in der Theorie beliebig verschachtelbar. In der Realität wird diese Eigenschaft durch die Größe der Lookup-Tabelle begrenzt \cite[S.1f.]{IBMcheckpointRestart}\cite{namespaces}.
+
+		Dadurch kann das Konzept von Namespaces als Lösungsansatz betrachtet werden, um das Sicherheitsziel Vertraulichkeit zu erreichen. Sie sind der grundlegende Baustein, um eine Containerisolierung unter Linux zu realisieren. Auch addressieren Namespaces den Punkt (1) aus Abschnitt \ref{questionSolutionTheory}.
+
+		Unter Linux existieren sechs Namespaces, die in die Kategorien IPC, Network, Mount, PID, User und UTS unterteilt sind. Von Docker werden alle verwendet, der User-Namespace jedoch wird erst seit Docker-Version 1.10 unterstützt.
+
+		Es besteht die Möglichkeit, dass bald weitere Namespaces dem bestehenden Set hinzugefügt werden. Zum einen wird derzeit ein eigener Namespace für Control Groups implementiert (siehe Abschnitt \ref{secCgroups}). Zum anderen ist in Diskussion, für die bestehenden Sicherheitsmodule des Kernels (siehe Kapitel \ref{lsm}), diverse Logfunktionen und Geräte unter Linux, eigene Namespaces zur Verfügung zu stellen \cite[S.19]{presContainerSec}.
+		% TODO: Mehr Quellen
 
 		% Nach ..(reshetova).. müssen Anforderungen an Prozessisolierung, Dateisystemisolierung, Geräteisolierung, Prozessisolierung und Netzwerklimitierung erfüllt sein.
 
@@ -97,29 +107,42 @@
 		% Unfortunately, the namespace support code is complicated and in the past, various bugs have allowed applications to escape from this namespace isolation and interfere with other containers. The known bugs have been fixed.
 		%		^		\cite{ https://coreos.com/blog/container-security-selinux-coreos.html }
 
-		\subsection{Prozessisolierung durch den \texttt{\acrshort{PID} namespace}}
+		\subsection{Prozessisolierung durch den \acrshort{PID}-Namespace}
 		\label{secIsoProcesses}
 			% TODO: Offenbar gibts Probleme mit PID=0, da dieser Besonderheiten aufweist (siehe Hackernews Link)
 
-			Jeder Container entspricht auf dem Host zunächst einem Prozess. Da die Container untereinander isoliert sein sollen, dürfen auch die zugrundeliegenden Containerprozesse nicht miteinander interferieren.
+			Jeder Container entspricht auf dem Hostsystem zunächst einem Prozess. Da die Container untereinander isoliert sein sollen, dürfen auch die zugrundeliegenden Containerprozesse nicht miteinander interferieren.
 
-			Docker erreicht diese Isolierung auf Prozessebene durch die Nutzung von PID-Namespaces, in die Container eingebettet werden. Nach diesem hierarchischen Konzept ist es einem Prozess X nur möglich, selbsterzeugte Kindprozesse zu beobachten und mit ihnen zu interagieren. Elternprozesse, also Prozesse die in der Prozesshierarchie über X stehen, sind für X unsichtbar. Der Elternprozesse haben jedoch die volle Kontrolle über X und können diesen z.B. jederzeit mit dem Befehl \texttt{kill} beenden. Darüber hinaus haben Elternprozesse die Möglichkeit mit z.B. einem Aufruf von \texttt{ps} alle Kindprozesse zu überwachen.
+			Docker erreicht diese Isolierung auf Prozessebene durch die Nutzung von PID-Namespaces, in die Container eingebettet werden. Nach diesem hierarchischen Konzept ist es einem Prozess nur möglich, selbsterzeugte Kindprozesse zu beobachten und mit ihnen zu interagieren.
 
-			Übertragen auf die containerbasierte Virtualisierung bedeutet das, dass der Host vollen Zugriff auf die laufenden Container hat, Containerprozesse jedoch weder Kenntnis von Hostprozessen noch von Prozessen anderer Container besitzen (vgl. \fig \ref{fig:sec_pidNsHost} und \fig \ref{fig:sec_pidNsContainer}). Diese Eigenschaft macht es Angreifern, ausgehend vom kompromitierten Container, Schaden anzurichten, da sie keine Informationen über Prozesse außerhalb ihrer kontrollierter Container beziehen können.
+			In \fig \ref{fig:sec_pidNs} ist ein Beispiel von PID-Namespaces gegeben. Ein Prozess besitzt die PID 3698, die außerhalb des rot markierten Namespaces gültig ist. Außerdem besitzt er die PID 1, die innerhalb des Namespaces vergeben wurde. Der Elternprozess mit PID 627 ist in der Lage diesen jederzeit mit dem Befehl \texttt{kill} zu beenden oder allgemein Kindprozesse mit einem Aufruf von \texttt{ps} zu überwachen. Der Prozess mit PID 3698 hingegen befindet sich im roten Namespace und hat keine Kenntnis von der übergeordneten Prozesshierarchie.
 
-			Ein weiterer Mechanismus des \emph{\acrshort{PID}-namespace} ist eine Besonderheit des Prozesses mit \texttt{PID=1}. Der initiale Containerprozess kann mit der \texttt{PID=1} gestartet werden, dem es als \emph{init}-ähnlicher Prozess möglich ist, alle Kindprozese zu terminieren sobald er selbst beendet wird. Somit können komplette Container durch einen Hostzugriff auf den Containerprozess mit \texttt{PID=1} umgehend vollständig heruntergefahren werden.
+			%Elternprozesse, also Prozesse die in der Prozesshierarchie über \emph{8,1} stehen, sind für diesen unsichtbar. Der Elternprozesse haben jedoch die volle Kontrolle über X und können diesen z.B. jederzeit mit dem Befehl \texttt{kill} beenden. Darüber hinaus haben Elternprozesse die Möglichkeit mit z.B. einem Aufruf von \texttt{ps} alle Kindprozesse zu überwachen.
 
-			Wie sich der \emph{\acrshort{PID}-namespace} auf einen gestarteten Docker-Container auswirkt, ist in \fig \ref{fig:sec_pidNsHost} und \fig \ref{fig:sec_pidNsContainer} zu sehen.
+			\vspace{0.5cm}
+			\begin{figure}[h]
+					\centering
+					\includegraphics[width=0.9\textwidth]{./images/sec_pidNs.png}
+					\caption{Prozesshierarchie unter Verwendung von PID-Namespaces (eigene Abbildung auf Basis von \cite{nsFigures}).}
+					\label{fig:sec_pidNs}
+			\end{figure}
+
+			Übertragen auf die containerbasierte Virtualisierung bedeutet das, dass das Hostsystem vollen Zugriff auf die laufenden Container hat, Containerprozesse jedoch keine Kenntnis von Prozessen außerhalb des eigenen Namespaces besitzen. Diese Eigenschaft erschwert es Angreifern, ausgehend von \cbroken{}, Schaden anzurichten, da sie keine Informationen über Prozesse außerhalb des eigenen PID-Namespaces erlangen können.
+
+			Ein weiterere nützliche Eigenschaft ist das Setzen der PID auf 1 für einen Prozess, dem ein PID-Namespace zugewiesen wurde. Ein Prozess mit PID 1 ist es möglich, jeder seiner Kindprozesse zu terminieren sobald er selbst beendet wird. Beim Betrieb con Containern kann dieses Feature genutzt werden, um über einen Befehl des Hostsystems einen Container vollständig herunterzufahren.
+
+
+			%Der initiale Containerprozess kann mit der \texttt{PID=1} gestartet werden, dem es als \emph{init}-ähnlicher Prozess möglich ist, alle Kindprozese zu terminieren sobald er selbst beendet wird. Somit können komplette Container durch einen Hostzugriff auf den Containerprozess mit \texttt{PID=1} umgehend vollständig heruntergefahren werden.
+
+			Wie sich dieses Konzept der Geheimhaltung in der Praxis auf gestartete Docker-Container auswirkt, ist in \fig \ref{fig:sec_pidNsHost} und \fig \ref{fig:sec_pidNsContainer} zu sehen. Zum Vergleich ist die gleiche Situation in obiger \fig \ref{fig:sec_pidNs} dargestellt.
 
 			\begin{figure}[h]
 					\centering
 					\includegraphics[width=1.0\textwidth]{./images/sec_pidNsHost.jpg}
-					\caption{Ausschnitt der Ausgabe des Befehls \texttt{ps -eaxfZ} auf einem Docker-Host (eigene Abbildung).}
+					\caption{Ausschnitt der Ausgabe des Befehls \texttt{ps -eaxfZ} auf einem Docker-Hostsystem (eigene Abbildung).}
 					\label{fig:sec_pidNsHost}
 			\end{figure}
 			% TODO: lstlisting hieraus machen bzw. Screenshot mit "BlackOnWhite"-Colorsetting des Terminals machen (gilt fuer alle Terminal Screenshots!)
-
-			\fig \ref{fig:sec_pidNsHost} stellt einen Auschnitt der Ausgabe des Befehls \texttt{ps -eaxfZ} auf dem Host dar. Er enthält die laufenden Docker-Prozesse des Daemons mit \texttt{PID=627} (Zeile 1) sowie die eines Containers, in dem eine Shell gestartet wurde (Zeile 2). Innerhalb der Shell wurde der Befehl \texttt{sleep 1000} zweifach ausgeführt, was die Erstellung zweier neuer Prozesse zur Folge hat (Zeile 3 und 4). Wie zu erkennen ist, sind die Containerprozesse aus Sicht des Hosts mit einer eigenen \texttt{PID} vollkommen transparent.
 
 			\begin{figure}[h]
 					\centering
@@ -127,12 +150,12 @@
 					\caption{Ausgabe des Befehls \texttt{ps -eaxfZ} in einem Docker-Container (eigene Abbildung).}
 					\label{fig:sec_pidNsContainer}
 			\end{figure}
+
+			\fig \ref{fig:sec_pidNsHost} zeigt einen Auschnitt der Ausgabe des Befehls \texttt{ps -eaxfZ} auf dem Hostsystem. Er enthält die laufenden Docker-Prozesse des Daemons mit PID 627 (Zeile 1) sowie die eines Containers, in dem eine Shell gestartet wurde (Zeile 2). Innerhalb der Shell wurde der Befehl \texttt{sleep 1000} zweifach ausgeführt, was die Erstellung zweier neuer Prozesse zur Folge hat (Zeile 3 und 4). Wie zu erkennen ist, sind die einzelnen Containerprozesse aus Sicht des Hostsystems identifizierbar.
+
 			% TODO: lstlisting hieraus machen bzw. Screenshot mit "BlackOnWhite"-Colorsetting des Terminals machen (gilt fuer alle Terminal Screenshots!)
 
-			\fig \ref{fig:sec_pidNsContainer} zeigt die vollständige Ausgabe des gleichen Befehls innerhalb eines Containers. Prozesse außerhalb des Containers sind unsichtbar. Außerdem weisen die Containerprozesse im Vergleich zu \fig \ref{fig:sec_pidNsHost} nun eine andere \texttt{PID} auf. Da die Shell der initiale Containerprozess ist, erhält sie die \texttt{PID=1}.
-
-			%Fast alles bisher:
-
+			\fig \ref{fig:sec_pidNsContainer} zeigt die vollständige Ausgabe des gleichen Befehls innerhalb eines Containers. Prozesse außerhalb des Containers sind nicht sichtbar. Außerdem weisen die Containerprozesse im Vergleich zu \fig \ref{fig:sec_pidNsHost} nun eine andere PID auf. Da die Shell der initiale Containerprozess ist, erhält sie die PID 1.
 
 			% PID namespaces sind hierarchisch http://lwn.net/Articles/259217/
 
@@ -140,50 +163,58 @@
 			% Unterschiede im Contaier lifecycle jedoch (docker sehr gut aufgestellt --> teil von dockers erfolg beruht darauf)
 			%	^		\cite[S.4]{virtVSContainer}
 
-			% TODO: init-ähnlicher Prozess im Glossar erklären
-			% TODO: Grafik mit Prozess PIDs und Hierarchie einbinden
+    \subsection{Dateisystemisolierung durch den Mount-Namespace}
+			Auch das Dateisystem des Hostsystems \(h\) muss vor unrechtmäßigen Zugriffen aus einem Container \cbroken{} geschützt werden.
 
-    \subsection{Dateisystemisolierung durch den \texttt{mount namespace}}
-			Auch das Hostdateisystem muss von unrechtmäßigen Zugriffen aus Containern geschützt werden.
+			Allgemein ist ein Dateisystem, wie eine Prozessstruktur in Abschnitt \ref{secIsoProcesses}, hierarchisch aufgebaut. Erstgenanntes kann mithilfe des Mount-Namespace unterteilt werden, sodass unter Docker jeder Container eine andere Sicht auf die Verzeichnisstruktur des Hostsystems hat. Nur ein bestimmtes Unterverzeichnis ist für einen Container sichtbar, wenn er dieses als Mountpoint einbindet.
 
-			Dateisysteme sind allgemein wie Prozesse in Kapitel \ref{secIsoProcesses} hierarchisch aufgebaut. Diese können mithilfe des \emph{mount namespace} unterteilt werden, sodass unter Docker jeder Container eine andere Sicht auf die Verzeichnisstruktur des Hosts hat. Nur ein bestimmtes Unterverzeichnis ist für einen Container sichtbar, wenn er dieses als Mountpoint einbindet.
+			Das virtuelle \texttt{/proc}-Verzeichnis des Hostsystems bleibt von Mount-Namespaces unberührt, da es essentielle Informationen für jeden Prozess enthält \cite{creatingContainers}\cite{secPart1}. Außerdem erfordern Anwendungen, die innerhalb von Containern laufen, Zugriff auf besagtes Verzeichnis. Als Konsequenz erben Container diese notwendigen Verzeichnisse direkt von ihrem Host.
 
-			Eine Hostverzeichnisse werden jedoch nicht in den \emph{mount namespace} eingezogen, weil sie von den Docker-Containern benötigt werden, um zu operieren.
+			Es enthält aber auch Details des Kernels und anderer Prozesse \cite{proc}. Diese müssen wegen der Existenz von \cbroken{} vor Lese- und Schreibzugriffen geschützt werden. Linux erlaubt es, Verzeichnisse derart freizugeben, dass Prozesse nur lesend mit ihnen in Verbindung treten können. Docker unterstützt das standardmäßige Einbinden ohne Schreibrechte \cite[S.4f.]{dockerSecIntro}.
 
-			Dazu gehören die Verzeichnisse:
 
-			\begin{itemize}
-				\item \texttt{/sys}:
-				\item \texttt{/proc/sys}:
-				\item \texttt{/proc/sysrq - trigger}:
-				\item \texttt{/proc/irq}:
-				\item \texttt{/proc/bus}:
-			\end{itemize}
+			%Einige Verzeichnisse des Hostsystems werden nicht in den Mount-Namespace einbezogen. Sie werden für den Betrieb von Docker-Containern nicht benötigt und enthalten teilweise kritische Informationen,
 
-			Als Konsequenz erben Container diese notwendigen Verzeichnisse direkt von ihrem Host. Docker dämmt dieses Risiko ein, indem es nur einen reinen Lesezugriff ohne Schreibrechte auf diese Verzeichnisse erlaubt \cite[S.4]{dockerSecIntro}. Außerdem ist es Containern unter Docker nicht erlaubt, Hostverzeichnisse erneut einzubinden, um Schreibrechte sicher auszuschließen. Dieses Verbot wird durch die Verweigerung der \emph{capability} \texttt{CAP\_SYS\_ADMIN} für Container erreicht.
+			%Dazu gehören die Verzeichnisse:
+
+			%\begin{itemize}
+				%\item \texttt{/sys}:
+				%\item \texttt{/proc/sys}:
+				%\item \texttt{/proc/sysrq - trigger}:
+				%\item \texttt{/proc/irq}:
+				%\item \texttt{/proc/bus}:
+			%\end{itemize}
+			% TODO: Quelle
+
+			% Docker dämmt dieses Risiko ein, indem es nur einen reinen Lesezugriff ohne Schreibrechte auf diese Verzeichnisse erlaubt \cite[S.4]{dockerSecIntro}.
+
+			Einem Containern ist es nicht erlaubt, Verzeichnisse des Hostsystems erneut einzubinden. Dieses Verbot wird technisch über die Verweigerung der Capability \texttt{CAP\_SYS\_ADMIN} (s. Abschnitt \ref{capability}) erreicht. Ist ein Container im Besitz dieses Rechts, kann dieser Verzeichnisse, deren Zugriff ihm ursprünglich nur lesend gestattet wurde, neu einbinden. Im Rahmen des neuen Mountvorgangs, kann der Container über die Zugriffsart auf einzubindenen Verzeichnisse frei verfügen und ist nicht allein auf das Leserecht beschränkt.
+
+
+			%, um unrechtmäßige Schreibrechte auszuschließen. Dieses Verbot wird durch die Verweigerung der Capability \texttt{CAP\_SYS\_ADMIN} für Container erreicht.
 			% TODO: Einbinden: Dateisysteme werden gemountet unter der Angabe der Berechtigung, also ob read oder write. EIn remount ist daher gefährlich.
 
-			Durch das von Docker genutzte, bereits in Kapitel \ref{dockerImages} beschriebene \emph{\acrshort{COW}}-basierte Dateisystem, ist es jedem Container möglich, Änderungen in seinem durch den \emph{mount namespace} zugewiesenen Verzeichnis zu speichern. Containerdaten interferieren dadurch nicht und sind containerübergreifend nicht sichtbar, auch beim Betrieb von Containern, die auf einem gleichen Basisimage beruhen \cite[S.4]{dockerSecIntro}.
+			Mit dem Konzept von Mount-Namespaces interferieren Daten von Containern nicht. Jede oberste, beschreibbare Schicht eines Containers wird in einem speziell dem Container zugewiesenen Verzeichnis gespeichert. Unter der Annahme, dass es sich bei Mount-Namespaces um ein sicheres Verfahren handelt, kann ein \cbroken{} nicht in Verzeichnisse anderer Container aus \(C\) schreiben.
 
 			% TODO: LSMs tragen hierzu auch bei! erwaehnen
+			% .... nahhh.. besser in LSM-Kapitel erwaehnen, dass LSMs Namespaces verstaerken und weiter absichern
 
-			% Dieser namespace basiert auf chroot()
-			%	^		\cite[S.3]{virtVSContainer}
 
-			%Fast alles bisher:
-			%\cite[S.4]{dockerSec1}
+			%Durch die in \ref{dockerContainer} beschriebene, eigene Schicht von Containern
+			%Durch das von Docker genutzte, bereits in Kapitel \ref{dockerImages} beschriebene \emph{\acrshort{COW}}-basierte Dateisystem, ist es jedem Container möglich, Änderungen in seinem durch den \emph{mount namespace} zugewiesenen Verzeichnis zu speichern. Containerdaten interferieren dadurch nicht und sind containerübergreifend nicht sichtbar, auch beim Betrieb von Containern, die auf einem gleichen Basisimage beruhen \cite[S.4]{dockerSecIntro}.
 
 			% Filesystem Isolation kann mit user namespaces verstaekrt werden, indem user und groups IDs auf wenige rpriveliigierte host uids und group ids gemappt werden. Zusammen mit dem mount namespace und einer pivot_root umgebung kann das den schutz fuer filesystembasierte Attacken erhoehen
 			%		^ 	\cite[S.11]{dockerSec2}
 
 
-    \subsection{\acrshort{IPC}-Isolierung durch den \texttt{\acrshort{IPC}-namespace}}
-			Unter \acrshort{IPC} versteht man ein Sammlung an Tools, die für den Datenaustausch zwischen Prozessen genutzt werden. Dazu gehören z.B. Semaphoren, Message Queues und geteilte Speichersegmente.
+    \subsection{\acrshort{IPC}-Isolierung durch den \acrshort{IPC}-Namespace}
+			Ergänzend zu den PID-Namespaces, die die Sichtbarkeit sowie Kontrolle über Prozesse in der Prozesshierarchie einschränken, kann auch die Kommunikation zwischen Prozessen, die \gls{InterProcessCommunication}, limitiert werden. Für diesen Zweck erlaubt Linux die Erstellung von IPC-Namespaces.
+
 			% TODO: Quelle
 
-			Ergänzend zu dem \emph{\acrshort{PID} namespace}, der die Sichtbarkeit sowie Kontrolle über Prozesse in der Prozesshierarchie einschränkt, kann auch die Kommunikation zwischen Prozessen limitiert werden.
 
-			Docker gewährleistet dies durch den Zuweisung eines \emph{\acrshort{IPC}-namespaces} pro Container, in dem ein Prozesse nur mit anderen Prozessen in Kontakt treten kann, wenn sich diese in einem gleichen \emph{\acrshort{IPC}-namespace} befinden. Eine versehentliche oder beabsichtige Interferenz mit Prozessen des Hosts oder anderer Container wird damit ausgeschlossen.
+
+			Docker gewährleistet dies durch die standardmäßige Zuweisung eines IPC-Namespaces pro Container, in dem ein Prozesse nur mit anderen Prozessen in Kontakt treten kann, wenn sich diese im gleichen IPC-Namespace befinden. Eine versehentliche oder beabsichtige Interferenz zwischen Containern oder zwischen Containern und Docker-unabhängigen Prozessen des Hostsystems wird damit ausgeschlossen.
 
 			%Fast alles bisher:
 			%\cite[S.4]{dockerSec1}
@@ -191,21 +222,20 @@
 			% Problem mit TIPC Extension, wo ipc namespace umgangen werden kann
 			%		^ 	\cite[S.18]{dockerSec2}
 
-    \subsection{Netzwerkisolierung durch den \texttt{network namespace}}
-			Um einen sicheren Betrieb von Docker zu gewährleisten, müssen Container so konfiguriert sein, dass sie weder den Netzwerkverkehr des Hosts noch anderer Container abhören oder manipulieren können.
+    \subsection{Netzwerkisolierung durch den Network-Namespace}
+			Um einen sicheren Betrieb von Docker zu gewährleisten, müssen Container so konfiguriert sein, dass sie weder den Netzwerkverkehr des Hostsystems noch den anderer Container abhören oder manipulieren können.
 
-			Dazu stellt Docker jedem Container einen eigenen unabhängigen Netzwerk-Stack zur Verfügung, der durch \emph{network namespaces} realisiert wird. Jeder Namespace hat seine eigene private IP-Adresse, IP-Routingtabelle, Loopback-Interface und Netzwerkgeräte \cite[S.2f.]{virtVSContainer}. Eine Kommunikation zu anderen Containern auf dem gleichen oder entfernten Hosts geschieht dann über diese dafür vorgesehenen Schnittstellen.
+			Dazu stellt Docker jedem Container einen eigenen unabhängigen Netzwerkstack zur Verfügung, der durch Network-Namespaces realisiert wird. Jeder Namespace hat seine eigene private \acrshort{IP}-Adresse, IP-Routingtabelle, Loopback-Interface und Netzwerkgeräte \cite[S.2f.]{virtVSContainer}. Eine Kommunikation zu anderen Containern auf dem gleichen oder entfernten Hosts geschieht nur über dafür vorgesehene Schnittstellen.
 
-			Um die oben genannten Netzwerkressourcen anzubieten, wird jedem \emph{network namespace} ein eigenes \texttt{/proc/net}-Verzeichnis zugewiesen. Die Nutzung von Befehlen wie \texttt{netstat} und \texttt{ifconfig} wird damit, aus einem \emph{network namespace} heraus, auch ermöglicht \cite[S.7]{IBMcheckpointRestart}.
+			Um die oben genannten Netzwerkressourcen anzubieten, wird jedem Network-Namespace ein eigenes \texttt{/proc/net}-Verzeichnis zugewiesen, das netzwerkspezifische Informationen enthält \cite{proc}. Die Nutzung von Befehlen wie \texttt{netstat} und \texttt{ifconfig} wird damit aus einem Network-Namespace heraus auch ermöglicht \cite[S.7]{IBMcheckpointRestart}.
 
-			Standardmäßig wird von Containern eine \emph{Virtual Ethernet Bridge} namens \texttt{docker0} genutzt, um mit dem Hostsystem und anderen Containern zu kommunizieren. Neu gestartete Container werden dieser Bridge hinzugefügt, indem deren Netzwerkinterface \texttt{eth0} mit der Bridge verbunden wird. Aus Sicht des Hosts ist das Interface \texttt{eth0} ein virtuelles \texttt{veth}-Interface. Angepasste Netzwerktreiber können für Bridges und sogenannte Overlay-Netzwerke, die eine Kommunikation zwischen mehreren Docker-Systemen ermöglichen, erstellt und genutzt werden \cite[S.3]{virtVSContainer}\cite{dockerNetworking}. Aus Gründen der Netzwerksicherheit macht es Sinn eigene Treiber zu verwenden, da die standardmäßige Bridge ohne Filter, die z.B. mit dem Werkzeug \emph{ebtables} erstellt werden können, operiert.
+			Standardmäßig wird von Containern eine \emph{Virtual Ethernet Bridge} mit dem Namen docker0 genutzt, um mit dem Hostsystem und anderen Containern zu kommunizieren. Neu gestartete Container werden dieser Bridge hinzugefügt, indem deren Netzwerkinterface \emph{eth0} mit der Bridge verbunden wird. Aus Sicht des Hostsystems ist das Interface \emph{eth0} ein virtuelles \emph{veth}-Interface. Angepasste Netzwerktreiber können für Bridges und sogenannte Overlaynetzwerke, die eine Kommunikation zwischen mehreren Docker-Systemen ermöglichen, erstellt und genutzt werden \cite[S.3]{virtVSContainer}\cite{dockerNetworking}. Aus Gründen der Netzwerksicherheit macht es Sinn eigene Treiber zu verwenden, da die standardmäßige Bridge ohne Filter operiert. Filter können z.B. mit dem Programm \emph{ebtables} erstellt werden.
 			% Erklärungen von John:
 			% MAC-Flooding: ARP-Tabelle des Opfers wird überfüllt mit falschen Informationen. Angreifer sendet dazu falsche, unterschiedliche ARP-Daten an Opfer, die letzteres in eigenen ARP-TAbelle aufnimmt. Andere Netzteilnehmer (legitime) erreichen das Opfer nicht mehr, da dessen ARP-Tabelle voll ist. Es gibt Angreifer-Tools, die ARP-Pakete vor dem Senden beliebig aendern können (IP und MAC), sodass unique ARP-Eintrag im Zielrechner dazukommt
 			% 		--> Verfügbarkeit, DoS
 			% ARP-Spoofing: ARP-Tabelle wird gezielt manipuliert, also einzelne Einträge. Z.B. sendet Angreifer Gratitiuous ARP raus, um bekanntzugeben, dass Gateway mit IP X jetzt unter neuer MAC zu erreichen ist, also seiner eigenen z.B. Wenn richtig gemacht, kann dann Angreifer kompletten Traffic der Zielrechner als MITM mitlesen.
 			%			--> Wenn nicht weiergeleitet: Verfügbakrit/DoS. Wenn weitergeleitet: Vertraulichkeit, Integrität
 
-			% TODO: Overlay Network als sichere und mächtigere Altnerative erwaehnen
 
 			%Die Bridge leitet ohne Filter alle eingehenden Pakete weiter, welchen Umstand dieses Verbindungsdesign anfällig gegenüber \acrshort{ARP}-Spoofing und \acrshort{MAC-NET}-Flooding macht. Diesem Nachteil kann Abhilfe geschafft werden, indem manuelle Filtermethoden mittels beispielsweise \emph{ebtables} in die Bridge integriert werden, oder ein anderes Verbindungsdesign auf basis virtueller Netzwerke gewählt wird.
 			% todo: Im Glossar die beiden Angriffe erklären?
@@ -223,20 +253,20 @@
 	    % Container werden virtuelle Netzwerkinterfaces zur Verfügung gestellt. Dadurch können z.B. mehrere Container betrieben werden, die Webserver beinhalten, die alle auf Port 80 eingestellt sind. Außerhalb der Container können diese Containerports mithilfe von NAT (sicher NAT?) auf unterschiedliche Ports des Hosts abgebildet werden.
 	    %  ^ \cite[S.3]{dockerIntroIEEE}
 
-    \subsection{Userisolierung (user namespace)}
-			Bislang werden Container unter Docker und anderen linuxbasierten Containerlösungen mit Root-Rechten gestartet. Falls es einem Angreifer in diesem Szenario gelingt, aus der Containerisolation auszubrechen, ist er automatisch Root-User auf dem Host, was ein hohes Sicherheitsrisiko ist. Durch die potentielle Gefahr dieser Vorgehensweise, wird die Einführung von \emph{user namespaces} als Meilenstein der Containersicherheit gewertet.
-			% TODO: Quelle hinzufuegen .. blog artiekl etc.
+    \subsection{Userisolierung durch den User-Namespace}
+			Bislang werden Container unter Docker und anderen Containerlösungen mit Rootrechten gestartet. Falls es einem Angreifer in diesem Szenario gelingt, aus der Isolierung von \cbroken{} auszubrechen, ist er automatisch Root-User auf dem Host, was ein hohes Sicherheitsrisiko birgt. Durch die potentielle Gefahr dieser Vorgehensweise, ist die Einführung von User-Namespaces mit Docker-Version 1.10 ein Meilenstein für die Sicherheit von Docker.
+			% Quelle hinzufuegen .. blog artiekl etc.
 			% schlechte Quelle...: http://rhelblog.redhat.com/2015/07/07/whats-next-for-containers-user-namespaces/
 			% Root-Rechte wurden bisher mit capabilities eingeschränkt.
 
-			Dieser Kernel-\emph{namespace} führt einen Mechanismus ein, unter dem Rootrechte in Containern nicht Rootrechten auf dem Host entsprechen, in anderen Worten ein Root-User im Container auf einen Nicht-Root-User auf dem Host aufgelöst wird.
+			Dieser Namespace führt einen Mechanismus ein, unter dem Rootrechte in Containern nicht Rootrechten auf dem Hostsystem entsprechen. Ein Root-User innerhalb eines Containers wird auf dem Hostsystem auf einem Nicht-Root-User abgebildet.
 
-			Linux verwendet User-IDs (\texttt{uid}) und Group-IDs (\texttt{gid}), um Verzeichnisse und Dateien eines Dateisystems sowie Prozesse mit Eignerinformationen zu versehen. \emph{user namespaces} erlauben unterschiedliche \texttt{uid} und \texttt{gid} innerhalb und außerhalb des \emph{namespace}. Im Kontext des Hosts kann dadurch ein unpriveligierter User (ohne Root-Rechte) existieren, während der gleiche User innerhalb von Containern mit \emph{user namespace} priveligiert ist, also innerhalb des Containers im Besitz von Root-Rechten ist \cite{nsUser}.
+			Linux verwendet User-IDs (UIDs) und Group-IDs (GIDs), um Verzeichnisse und Dateien eines Dateisystems sowie Prozesse mit Eignerinformationen zu versehen. User-Namespaces erlauben unterschiedliche UIDs bzw. GIDs innerhalb und außerhalb des Namespaces. Im Kontext des Hostsystems kann dadurch ein unpriveligierter User ohne Rootrechte existieren, während der gleiche User innerhalb von Containern mithilfe von User-Namespaces priveligiert ist \cite{nsUser}.
 
-			In der Praxis lasen sich mit diesem Konzept jeweils Root-User mit \texttt{uid=0} in Container X und Y auf nicht-priviligierte User, z.B. mit \texttt{uid=1000} und \texttt{uid=2000} des Hosts, abbilden.
+			%In der Praxis lassen sich mit diesem Konzept jeweils Root-User mit UID 0 in Container X und Y auf nicht-priviligierte User, z.B. mit \texttt{uid=1000} und \texttt{uid=2000} des Hosts, abbilden.
 			% TODO: Grafik zur Unterstuetzung waere gut hier...
 
-			Eine Unterstützung von \emph{user namespaces} war seit Docker-Version 1.6 vorgesehen \cite{githubUserNamespaceProposal}. Durch einen Bug der Programmiersprache \emph{Golang} und Integrationschwierigkeiten in die bestehende Docker-Codebasis, kam es jdoch zu Verzögerungen \cite{nsUserGolangBug}\cite{githubUserNamespaceConflict}\cite{githubUserNamespaceIntegration}. Beide Probleme sind jedoch mittlerweise behoben, wie die erfolgreiche Integration von \emph{user namespaces} in aktuelle Releases von Docker bestätigt \cite{githubUserNamespaceIntegration}. In der aktuell neusten Docker-Version 1.10 werden \emph{user namespaces} nicht automatisch verwendet. Sie müssen manuell, wie z.B. in \cite{nsUserEnable} erklärt, aktiviert werden \cite{githubDockerChangelog}. Eine standardmäßige Verwendung des Namespace ist in Zukunft zu erwarten.
+			Eine Unterstützung von User-Namespaces war seit Docker-Version 1.6 vorgesehen \cite{githubUserNamespaceProposal}. Durch einen Bug der Programmiersprache \emph{Golang} und Integrationschwierigkeiten in die bestehende Docker-Codebasis, kam es jdoch zu Verzögerungen \cite{nsUserGolangBug}\cite{githubUserNamespaceConflict}\cite{githubUserNamespaceIntegration}. Beide Probleme sind jedoch mittlerweise behoben, wie die erfolgreiche Integration von User-Namespaces in aktuelle Releases von Docker bestätigt \cite{githubUserNamespaceIntegration}. In der aktuell neusten Docker-Version 1.10 werden besagte Namespaces nicht automatisch verwendet. Sie müssen manuell, wie z.B. in \cite{nsUserEnable} erklärt, aktiviert werden \cite{githubDockerChangelog}. Eine standardmäßige Verwendung des Namespace ist in Zukunft zu erwarten.
 
 			% Mehr (Bessere) Gruende: http://events.linuxfoundation.org/sites/events/files/slides/User%20Namespaces%20-%20ContainerCon%202015%20-%2016-9-final_0.pdf
 			% S.13ff.
@@ -249,7 +279,7 @@
 			% User namespace is the only namespace which can be created without CAP_SYS_ADMIN capability
 			% aus: http://www.haifux.org/lectures/299/netLec7.pdf .... Seite 61
 
-			Auch für Cloudanbieter sind \emph{user namespaces} von Vorteil: Mit einer Auflösung der Container auf Userebene ist es einerseits möglich Servicenutzung auf Userbasis einzugrenzen und andererseits diese auf Userbasis abzurechnen. Wenn ohne \emph{user namespaces} jede gestartete Containerinstanz einem Hostuser mit \texttt{uid=0} zugehörig ist, gestaltet sich die Zuordnung schwieriger \cite[S.3]{nsUserContainerCon}.
+			Auch für Cloudanbieter sind User-Namespaces von Vorteil: Mit einer Auflösung der Container auf Userebene ist es möglich die Nutzung von Diensten auf Userbasis einzugrenzen und abzurechnen \cite[S.3]{nsUserContainerCon}.
 
 		\subsection{\acrshort{UTS}-Isolierung durch den \texttt{\acrshort{UTS}-namespace}}
 			Mit einem \emph{\acrshort{UTS}-namespace} ist es möglich, jedem Container einen eigenen Hostnamen zuzuweisen. Der Container kann diesen Namen abfragen und ändern \cite[S.3]{virtVSContainer}. Dieser Namespace trägt damit nicht zur Containersicherheit bei und ist daher nur aus Gründen der Vollständigkeit an dieser Stelle erwähnt.
@@ -260,10 +290,10 @@
 			% Sonst nur ueber capabilities einschraenkbar (gennant im text: CAP_SYS_MKNOD)
 			%		^ 	\cite[S.12]{dockerSec2}
 
-			In Unix-basierenden Betriebssystemen wie Linux erfolgt der Zugriff auf Hardware über sogenannte \emph{Device Nodes}, die im Dateisystem von speziellen Dateien repräsentiert sind.
+			In Unix-basierenden Betriebssystemen wie Linux erfolgt der Zugriff auf Hardware über sogenannte Device Nodes (Geräte), die im Dateisystem von speziellen Dateien repräsentiert sind.
 			% TODO: Device Nodes ins Glossar aufnehmen. Dort dann sagen, dass es speyielle Files sind etc.
 
-			Ein paar wichtige \emph{Device Nodes} und deren Zuständigkeiten sind im Folgenden aufgeführt.
+			Ein paar wichtige Geräte und deren Zuständigkeiten sind im Folgenden aufgeführt. Das Netzwerkinterface ist auch ein Gerät, welches bereits mit dem Network-Namespace isolierbar ist \cite{deviceNs}.
 
 			\begin{itemize}
 				\item \texttt{/dev/mem}: Arbeitsspeicher
@@ -271,13 +301,16 @@
 				\item \texttt{/dev/tty}: Terminal
 			\end{itemize}
 
-			Wie zu sehen ist, handelt sich dabei um teils äußerst kritische Komponenten einer Maschine, über die Container unter keinen Umständen verfügen dürfen. Deswegen ist es notwendig den Zugriff auf \emph{Device Nodes} stark einzuschränken, um den Host vor Missbrauch zu schützen \cite[S.4]{dockerSec1}.
-			% TODO: Starke Abhängigkeit zu cgroups (guten Übergang machen bzw. Abgrenzung)
+			Wie zu sehen ist, handelt sich dabei um kritische Systemkomponenten, über die Container unter keinen Umständen verfügen dürfen. Deswegen ist es notwendig den Zugriff auf Geräte stark einzuschränken, um den Host vor Missbrauch zu schützen.
+			% (TODO): Starke Abhängigkeit zu cgroups (guten Übergang machen bzw. Abgrenzung)
+
+			Aktuell existiert im Linux-Kernel kein eigener Namespace für Geräte. Die Implementierung von Device-Namespaces erfolgte bereits von \emph{Cellrox}-Mitarbeitern im Jahr 2013 \cite{deviceNsCerrox}. Eine Integration in den Linux-Kernel fand jedoch bislang nicht statt.
+
+			Docker löst dieses Problem, indem es standardmäßig den Zugriff auf Geräte von unpriveligierten Containern untersagt. Über die Befehlssyntax \texttt{docker run --device=DEVICE} können auch unpriveligierten Containern Geräte manuell zur Verwendung freigegeben werden. Priveligierte Container können beliebig auf Geräte zugreifen \cite{dockerRun}.
+
+
 
 			% Standardmaessig haben Container keinen zugriff auf Devices. Kann aber explizit bei container launch anders festgelegt werden \cite[S.4]{dockerSecIntro}
-
-			%Fast alles bisher:
-
 
 			% Problem mit PseudoRandomNumberGenerator in /dev/random und /dev/urandom, da das blocking devices sind
 			%		^ 	\cite[S.18]{dockerSec2}

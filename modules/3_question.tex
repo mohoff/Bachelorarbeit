@@ -114,6 +114,7 @@
     Von einem kompromittiertem Container \cbroken{}, darf der zu schützende Rest des Systems nicht betroffen sein. Die Sicherheitsziele der Vertraulichkeit, Integrität und Verfügbarkeit sollen für \(h\) und \(C\) gewahrt werden.
 
   \section{Theoretischer Lösungsansatz}
+  \label{questionSolutionTheory}
     Die Strategie zur Erfüllung der definierten Sicherheitsanforderungen, beruht unter Docker auf einem zweistufigen Ansatz:
 
     \begin{enumerate}[label=(\arabic*)]
@@ -129,15 +130,17 @@
 
   \section{Umsetzung des Lösungsansatzes} % um Bedrohungspotential zu minimieren.
   \label{questionRealization}
-    Zunächst lassen sich die möglichen Sicherheitsmechanismen in drei Arten unterteilen. Zur Einordnung der folgenden Kapitel, sind diese kurz vorgestellt \cite[S.40]{CISSP}\cite[S.23]{nist}:
+    Zunächst lassen sich die möglichen Sicherheitsmechanismen in drei Arten unterteilen. Zur Einordnung der folgenden Kapitel, sind diese kurz vorgestellt \cite[S.40ff.]{CISSP}\cite[S.23]{nist}:
 
     \begin{itemize}
-      \item \textbf{Technische Kontrollen:} Umfasst alle hardware- und softwarebasierten Mechanismen, z.B. ein Zugriffsschutz unter Verwendung einer \acrshort{MAC}.
+      \item \textbf{Technische Kontrollen:} Umfasst alle hardware- und softwarebasierten Mechanismen, z.B. ein Zugriffsschutz unter Verwendung einer \acrshort{MAC-SEC}.
       \item \textbf{Administrative Kontrollen:} Enthält Managementkontrollen, die z.B. durch Konfigurationen, Entwicklung einer Sicherheitspolitik, Reduzierung der Fehleranfälligkeit durch Automatisierung und Sicherheitsschulungen des Personals umgesetzt werden.
       \item \textbf{Physische Kontrollen:} Beinhalten Mechanismen wie Sicherheitsschleusen, Schlösser und Wachpersonal. Obwohl ein Bezug zum Betrieb von Rechenzentren hergestellt werden kann, haben physische Kontrollen keine spezifische Relevanz für die containerbasierte Virtualisierung und sind aus diesem Grund an dieser Stelle nur zum Zweck der Vollständigkeit aufgeführt.
     \end{itemize}
 
     Docker hat als Softwareprodukt die Möglichkeit, direkt technische Kontrollen in die Codebasis einzubauen bzw. solche, die der Linux-Kernel implementiert, zu unterstützen. Auch administrative Sicherheitsansätze verfolgt Docker, die teilweise durch technische Mittel begünstigt werden.
+
+    Die Umsetzung erfolgt mittels zwei Prinzipien, die am Anfang von Kapitel \ref{secLinux} vorgestellt sind.
 
   \section{Ziel der Arbeit}
     Gegenstand dieser Arbeit ist, die von Docker integrierten softwarebasierten und administrativen Maßnahmen zu analysieren.
