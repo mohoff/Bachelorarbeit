@@ -53,6 +53,7 @@
 \addto{\captionsngerman}{\renewcommand*{\abstractname}{}}
 %\renewcommand{\abstractname}{Abstract}
 \addto{\captionsngerman}{\renewcommand*{\acronymname}{Abkürzungsverzeichnis}}
+\addto{\captionsngerman}{\renewcommand*{\glossaryname}{Glossar}}
 
 % Some global symbols and meta data
 \newcommand{\bibtexFiles}{./bibliography/bookpapermanual,./bibliography/web_docker,./bibliography/web_github,./bibliography/web_homepages,./bibliography/web_misc} % written without extension
@@ -135,7 +136,7 @@
 
   % Glossar
   %\printglossary
-  \printglossaries[type=main,style=long,nonumberlist]
+  \printglossaries%[type=main,style=long,nonumberlist]
 
   % Anhang (falls benötigt)
   \appendix

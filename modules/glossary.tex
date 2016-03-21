@@ -21,63 +21,74 @@
       \item Public Cloud: Dienste werden in Rechenzentren externer Anbieter betrieben. Virtuelle Instanzen werden mit anderen Kunden des Betreibers geteilt. Beispiele: \emph{Amazon Web Services}, \emph{Microsoft Azure}
       \item Hybrid Cloud: Mischform aus Private und Public Cloud. Nahtlose, für den Nutzer unsichtbare Integration der beiden Grundformen.
     \end{itemize}
-  }
+  },
+  nonumberlist
 }
 
 \newglossaryentry{MultiTenantService}
 {%
   name={Multi-Tenant-Service},
-  description={Serveranwendungen bzw. -umgebung, die mehreren Nutzern (ggf. Kunden) gleichzeitig dient}
+  description={Serveranwendungen bzw. -umgebung, die mehreren Nutzern (ggf. Kunden) gleichzeitig dient},
+  nonumberlist
   %Auf dem Server kann die Anwendung, die dieses Prinzip umsetzt, in einer Instanz (ohne Redundanz) laufen \cite{multitenant}
 }
 
 \newglossaryentry{BestPractice}
 {%
   name={Best-Practice},
-  description={Bestimmte, ideale Vorgehensweise für dem Umgang mit einer Sache, die zu einem erwünschten Zustand, z.B. der Erfüllung eines Standards, beiträgt. Im Fall von Docker kann es eine Best-Practice sein, Images zu signieren um deren Integrität zu gewährleisten}
+  description={Bestimmte, ideale Vorgehensweise für dem Umgang mit einer Sache, die zu einem erwünschten Zustand, z.B. der Erfüllung eines Standards, beiträgt. Im Fall von Docker kann es eine Best-Practice sein, Images zu signieren um deren Integrität zu gewährleisten},
+  nonumberlist
 }
 
 \newglossaryentry{ContinuousIntegration}
 {%
   name={Continuous Integration},
-  description={Eine Praxis in der Softwareentwicklung, bei der jeder Entwickler eines Teams seine Arbeit regelmäßig mit anderen Projektkomponenten integriert. Jede Integration wird mit Builds und Tests verfifiziert \cite{ci}}
+  description={Eine Praxis in der Softwareentwicklung, bei der jeder Entwickler eines Teams seine Arbeit regelmäßig mit anderen Projektkomponenten integriert. Jede Integration wird mit Builds und Tests verfifiziert \cite{ci}},
+  nonumberlist
 }
 
 \newglossaryentry{ContinuousDelivery}
 {%
   name={Continuous Delivery},
-  description={Eine Praxis in der Softwareentwicklung, bei der Software zu jeder Zeit in Produktionsumgebungen einsetzbar ist. Basiert auf dem Prinzip der Continuous Integration \cite{cd}}
+  description={Eine Praxis in der Softwareentwicklung, bei der Software zu jeder Zeit in Produktionsumgebungen einsetzbar ist. Basiert auf dem Prinzip der Continuous Integration \cite{cd}},
+  see={ContinuousIntegration},
+  nonumberlist
 }
 
 \newglossaryentry{DevOps}
 {%
   name={DevOps},
-  description={DevOps-Teams sind sowohl für die Entwicklung (\emph{Dev} = Development) von Software als auch dessen Betrieb (\emph{Ops} = Operations) verantwortlich. DevOps-Kulturen bezeichnen allgemein eine enge Zusammenarbeit zwischen Rollen genannter Bereiche. Vorteile der Continuous Integration und Continuous Delivery werden genutzt \cite{devops}}
+  description={DevOps-Teams sind sowohl für die Entwicklung (\emph{Dev} = Development) von Software als auch dessen Betrieb (\emph{Ops} = Operations) verantwortlich. DevOps-Kulturen bezeichnen allgemein eine enge Zusammenarbeit zwischen Rollen genannter Bereiche. Vorteile der Continuous Integration und Continuous Delivery werden genutzt \cite{devops}},
+  nonumberlist
   % Durch die gemeinsame Ergebnisverantwortung fällt der Overhead einer Übergabe, zwischen ansonsten getrennten Teams, weg \cite{devops}}
 }
 
 \newglossaryentry{ImmutableInfrastructure}
 {%
   name={Immutable Infrastructure},
-  description={Konzept für den Betrieb von serverseitiger Software. Verlangt, dass Dienste zustandslos operieren und im Betrieb nicht modifiziert werden dürfen. Dienste werden einmalig beim Startvorgang aus Vorlegen, z.B. einem Dockerfile, erstellt. Daten (Zustand) werden außerhalb besagter Dienste gehalten \cite{unikernelMeetsDocker}\cite{immutableInfrastructure}}
+  description={Konzept für den Betrieb von serverseitiger Software. Verlangt, dass Dienste zustandslos operieren und im Betrieb nicht modifiziert werden dürfen. Dienste werden einmalig beim Startvorgang aus Vorlegen, z.B. einem Dockerfile, erstellt. Daten (Zustand) werden außerhalb besagter Dienste gehalten \cite{unikernelMeetsDocker}\cite{immutableInfrastructure}},
+  nonumberlist
 }
 
 \newglossaryentry{Microservice}
 {%
   name={Microservice},
-  description={Gestaltungsansatz einer Softwarearchitektur, der Dienste als kleine Komponenten realisiert. Diese Komponenten sind voneinander unabhängige Builds, die einzeln instanziierbar sind und über Schnittstellen miteinander kommunizieren . Z.B. ist die 3-Tier-Architektur mit Microservices modular realisierbar \cite{microservices}}
+  description={Gestaltungsansatz einer Softwarearchitektur, der Dienste als kleine Komponenten realisiert. Diese Komponenten sind voneinander unabhängige Builds, die einzeln instanziierbar sind und über Schnittstellen miteinander kommunizieren . Z.B. ist die 3-Tier-Architektur mit Microservices modular realisierbar \cite{microservices}},
+  nonumberlist
 }
 
 \newglossaryentry{Build}
 {%
   name={Build},
-  description={Ein Erstellungsprozess, bei dem Quellcode in ein Objektcode bzw. direkt in ein fertiges Programm automatisch konvertiert wird}
+  description={Ein Erstellungsprozess, bei dem Quellcode in ein Objektcode bzw. direkt in ein fertiges Programm automatisch konvertiert wird},
+  nonumberlist
 }
 
 \newglossaryentry{weicheHarteLimits}
 {%
   name={weiche und harte Limits},
-  description={Numerische Angabe zur maximalen Nutzung einer Ressource. Eine Methode, um Verfügbarkeit zu ermöglichen. Das weiche Limit dient als Richtwert. Das harte Limit stellt den Maximalwert dar. Angestrebeter Zustand: weiches Limit \textless= hartes Limit}
+  description={Numerische Angabe zur maximalen Nutzung einer Ressource. Eine Methode, um Verfügbarkeit zu ermöglichen. Das weiche Limit dient als Richtwert. Das harte Limit stellt den Maximalwert dar. Angestrebeter Zustand: weiches Limit \textless= hartes Limit},
+  nonumberlist
   % In der Implementierung in Solaris, startet bei Überschreitung des weichen Limits ein Timer. Wenn Timer eine bestimmte Zeit überschreitet, wird weiches Limit kurzzeitig wie das harte Limit erzwungen \cite{softHardLimits}}
 }
 
@@ -85,72 +96,84 @@
 {%
   name={Denial of Service},
   description={Allgemeine Bezeichnung von Angriffen, die i.d.R. durch die Überlastung von Ressourcen das Sicherheitsziel der Verfügbarkeit verletzen. Beispiel: Fork-Bomb},
-  see={ForkBomb}
+  see={ForkBomb},
+  nonumberlist
 }
 
 \newglossaryentry{KernelObject}
 {%
   name={Kernelobjekt},
-  description={Datenstrukturen im Kernel, die verschiedene Ressourcen (z.B. Datei, Verzeichnis, etc.) abbildet und von LSMs ausgewertet werden kann \cite{kernelObjects}}
+  description={Datenstrukturen im Kernel, die verschiedene Ressourcen (z.B. Datei, Verzeichnis, etc.) abbildet und von LSMs ausgewertet werden kann \cite{kernelObjects}},
+  nonumberlist
 }
 
 \newglossaryentry{chroot}
 {%
   name={chroot},
-  description={Steht für \texttt{change root} und ist eine Funktion von UNIX-Systemen, um das Root-Verzeichnis des aktuellen Prozesses zu wechseln \cite{chroot}. Grundlegendes Konzept für Linux-Namespaces}
+  description={Steht für \texttt{change root} und ist eine Funktion von Unix-Systemen, um das Root-Verzeichnis des aktuellen Prozesses zu wechseln \cite{chroot}. Grundlegendes Konzept für Linux-Namespaces},
+  nonumberlist
 }
 
 \newglossaryentry{SystemCall}
 {%
   name={System Call},
-  description={Fundamentale Schnittstelle unter Linux, die Anwendungen den Zugriff auf Funktionen des Kernels ermöglicht \cite{systemcall}}
+  description={Fundamentale Schnittstelle unter Linux, die Anwendungen den Zugriff auf Funktionen des Kernels ermöglicht \cite{systemcall}},
+  nonumberlist
 }
 
 \newglossaryentry{CopyOnWrite}
 {%
   name={Copy-On-Write},
-  description={Verfahren, bei dem mehrere Prozesse auf die gleiche, geteilte Ressource zugreifen. Erst wenn ein Prozess die Ressource manipulieren will, erhält dieser eine eigene Kopie der Ressource. Somit ist die Integrität der Ressource für die anderen Prozesse weiterhin gewährleistet \cite{dockerImagesAndContainers}}
+  description={Verfahren, bei dem mehrere Prozesse auf die gleiche, geteilte Ressource zugreifen. Erst wenn ein Prozess die Ressource manipulieren will, erhält dieser eine eigene Kopie der Ressource. Somit ist die Integrität der Ressource für die anderen Prozesse weiterhin gewährleistet \cite{dockerImagesAndContainers}},
+  nonumberlist
 }
 
 \newglossaryentry{Shell}
 {%
   name={Shell},
-  description={Benutzerschnittstelle, die interaktive und kommandobasierte Nutzung von Betriebssystemen und Anwendungen ermöglicht. Unter Linux meist als Bash verfügbar, eine Implementierung der Shell}
+  description={Benutzerschnittstelle, die interaktive und kommandobasierte Nutzung von Betriebssystemen und Anwendungen ermöglicht. Unter Linux meist als Bash verfügbar, eine Implementierung der Shell},
+  nonumberlist
 }
 
 \newglossaryentry{InterProcessCommunication}
 {%
   name={Inter Process Communication},
-  description={Die Kommunikation zwischen Prozessen. Unterstützt durch eine Sammlung von Tools, die z.B. aus Semaphoren, Message Queues und geteilte Speichersegmente bestehen.}
+  description={Die Kommunikation zwischen Prozessen. Unterstützt durch eine Sammlung von Tools, die z.B. aus Semaphoren, Message Queues und geteilte Speichersegmente bestehen.},
+  nonumberlist
 }
 
 
 \newglossaryentry{ZeroDayExploit}
 {%
   name={Zero-Day-Exploit},
-  description={Schwachstelle in einer Software, die Angreifern bekannt ist und von diesen ausgenutzt wird. Ersteller der Software ist die Schwachstelle (noch) nicht bekannt. Aus diesem Grund kann die Sicherheitslücke nicht behoben werden.}
+  description={Schwachstelle in einer Software, die Angreifern bekannt ist und von diesen ausgenutzt wird. Ersteller der Software ist die Schwachstelle (noch) nicht bekannt. Aus diesem Grund kann die Sicherheitslücke nicht behoben werden.},
+  nonumberlist
 }
 
 \newglossaryentry{ResponsibleDisclosure}
 {%
   name={Responsible Disclosure},
-  description={Bezeichnet in der IT eine spezielle Art der Bekanntmachung von Schwachstellen in einer Software. Dabei einigen sich alle Beteiligten darauf, i.d.R. auf Vertrauensbasis, die Schwachstelle einen bestimmten Zeitraum oder bis sie behoben wurde, geheim zu halten}
+  description={Bezeichnet in der IT eine spezielle Art der Bekanntmachung von Schwachstellen in einer Software. Dabei einigen sich alle Beteiligten darauf, i.d.R. auf Vertrauensbasis, die Schwachstelle einen bestimmten Zeitraum oder bis sie behoben wurde, geheim zu halten},
+  nonumberlist
 }
 
 \newglossaryentry{DreiTierArchitektur}
 {%
   name={3-Tier-Architektur},
-  description={Serverarchitektur, die logische Trennung eines Dienstes in drei Schichten vorsieht: Anwendungs-, Logik- und Datenschicht}
+  description={Serverarchitektur, die logische Trennung eines Dienstes in drei Schichten vorsieht: Anwendungs-, Logik- und Datenschicht},
+  nonumberlist
 }
 
 \newglossaryentry{VirtualAppliance}
 {%
   name={Virtual Appliance},
-  description={VM, die Paket aus Anwendung, Bibliothek und Betriebssystem enthält. Kunden erwerben funktionierende VM, anstelle einer alleinigen Anwendung \cite[S.672f.]{tanenbaumOS}}
+  description={VM, die Paket aus Anwendung, Bibliothek und Betriebssystem enthält. Kunden erwerben funktionierende VM, anstelle einer alleinigen Anwendung \cite[S.672f.]{tanenbaumOS}},
+  nonumberlist
 }
 
 \newglossaryentry{ForkBomb}
 {%
   name={Fork Bomb},
-  description={Angriff, der die Ressourcen eines Systems erschöpft, indem ein das schadhafte Programm rekursiv Kopien von sich selbst in einer Endlosschleife erzeugt. Durch den damit verbundenen Speicherbedarf, verletzt der Angriff das Sicherheitsziel der Verfügbarkeit}
+  description={Angriff, der die Ressourcen eines Systems erschöpft, indem ein das schadhafte Programm rekursiv Kopien von sich selbst in einer Endlosschleife erzeugt. Durch den damit verbundenen Speicherbedarf, verletzt der Angriff das Sicherheitsziel der Verfügbarkeit},
+  nonumberlist
 }
