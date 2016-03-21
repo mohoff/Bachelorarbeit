@@ -5,7 +5,34 @@
 \label{secInfrastructure}
   Wie in der Abschnitt \ref{introVirt} des Grunlagenkapitels gezeigt, bietet der Einsatz von Virtualisierungslösungen, insbesondere Containern, in Rechenzentren einige Vorteile.
 
-  Je nach Anforderungen der Anwendung und der verfügbaren unternehmensinternen Ressourcen und externen Anbieter, lässt sich eine Lösung mithilfe \fig .... und \fig ... bilden. Unabhängig von der gewählten Virtualisierungstechnologie, lassen sich die Vorteile von Containern bezüglich Automatisierung, \acrshort{CI} und \acrshort{CD} immer nutzen. Auch wenn sich z.B. ein Unternehmen aus Sicherheitsgründen für eine Private Cloud (\fig 3.1) in Kombination mit einer hypervisorbasierten Virtualisierung (\fig 4.1) entscheidet, können die besagten Vorteile von Containern trotzdem innerhalb einer VM der Private Cloud genutzt werden, indem in die VMs z.B. Docker installiert wird.
+  Je nach Anforderungen der Anwendung und der verfügbaren unternehmensinternen Ressourcen und externen Anbieter, lässt sich eine Lösung mithilfe \fig \ref{fig:infrastructure_cloud} und \fig \ref{fig:infrastructure_deployment} bilden.
+
+  \begin{figure}[!h]
+      \centering
+      \includegraphics[width=0.9\textwidth]{./images/infrastructure_cloud.png}
+      \caption{Verschiedene Arten von Cloud-Infrastrukturen (eigene Abbildung).}
+      \label{fig:infrastructure_cloud}
+  \end{figure}
+  \clearpage
+  \begin{figure}[!h]
+      \centering
+      \includegraphics[width=1\textwidth]{./images/infrastructure_deployment.png}
+      \caption{Verschiedene Möglichkeiten, um Anwendungen mit und ohne Virtualisierung zu betreiben (eigene Abbildung).}
+      \label{fig:infrastructure_deployment}
+  \end{figure}
+
+  Exemplarisch sind zwei Situationen aufgeführt, anhand derer Eigenschaften Lösungsvorschläge aus \fig \ref{fig:infrastructure_cloud} und \ref{fig:infrastructure_deployment} konstruiert werden können:
+
+  \begin{enumerate}
+    \item Ein großes Unternehmen besitzt die Kompetenz und das Kapital, sichere virtuelle Infrastrukturen zu bauen. Außerdem handelt es sich bei der zu betreibenden Anwendung um eine Software zur Stammdatenverwaltung. Die Anwendung ist daher sehr sicherheitskritisch. \\
+    Lösungsmöglichkeiten: Private, Managed Private oder Hybrid Cloud in Kombination mit VMs oder VMs+Container
+    \item Ein kleines Startup ohne Investoren baut einen Online-Kartendienst, der als Prototyp frei verfügbar angeboten werden soll. Hohe Sicherheitsanforderungen existieren nicht, da die Anwendung keine Nutzerdaten speichert. Jedoch soll die Anwendung performant laufen. Außerdem sollen für das Startup vielversprechende Entwicklungsstrategien wie \acrshort{CI} und \gls{ImmutableInfrastructure} getestet werden.  \\
+    Lösungsmöglichkeiten: Public Cloud in Kombination mit Containern
+  \end{enumerate}
+
+  In der Realität sind die Argumentationen weitaus komplexer. Dennoch können bestimmte Lösungsmöglichkeiten in bestimmten Szenarien kategorisch ausgeschlossen werden, während andere attraktiv erscheinen.
+
+  Unabhängig von der gewählten Cloud-Art und Virtualisierungstechnologie, lassen sich die Vorteile von Containern bezüglich Automatisierung, \acrshort{CI} und \acrshort{CD} immer nutzen. Auch wenn sich z.B. ein Unternehmen aus Sicherheitsgründen für eine Private Cloud in Kombination mit einer hypervisorbasierten Virtualisierung entscheidet, können die besagten Vorteile von Containern trotzdem innerhalb einer VM der Private Cloud genutzt werden, indem in die VMs z.B. Docker installiert wird (Architektur \glqq{}VM + Container\grqq{} in \fig \ref{fig:infrastructure_deployment}).
 
   % Neben der technischen Überlegenheit, hat es Docker durch ein sehr erfolgreiches Marketing geschafft, als Heilmittel vieler Probleme in IT-Abteilungen in Unternehmen geschätzt zu werden.
 

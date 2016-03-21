@@ -119,22 +119,40 @@
 			Bekannte hypervisorbasierte Technologien sind die kommerziellen Vertreter \emph{ESXi} der Firma \emph{VMware} und \emph{Hyper-V} von \emph{Mircosoft}, sowie die Open-Source-Vertreter \emph{Xen} und \emph{KVM} \cite[S.1]{dockerLXCKub}.
       %TODO: mehr Quellen
 
-      Generell werden Hypervisor in solche von Typ 1 und Typ 2 unterschieden.
+      Generell werden Hypervisor in solche von Typ-1 und Typ-2 unterschieden.
 
 			%TODO: Bild dazu
 
 
 			%Unter beiden Typen wird jedoch eine vollständige Abstraktion von Ressourcen des Hostsystems erzielt. VMs werden in beiden Fällen wie reale Systeme gestartet und unterliegen der Illusion als alleiniges, natives System zu operieren \cite[S.665f.]{tanenbaumOS}.
 
-			\subsubsection{Hypervisor Typ 1}
-				Der Typ 1 Hypervisor operiert direkt auf der Hardware des Hosts und stellt ein minimales, speziell für den Betrieb von VMs ausgelegtes Betriebssystem dar. Dessen Aufgabe ist es, Kopien der realen Hardware bereitzustellen, die von VMs genutzt werden können. Wenn in der VM ein Befehl ausgeführt, wird dieser an den Hypervisor weitergeleitet, der den Befehl untersucht. Handelt es sich um einen Befehl des Betriebssystem der VM, wird dieser auf dem Hostsystem ausgeführt. Im Fall eines Aufrufs einer Anwendung innerhalb der VM, emuliert der Hypervisor für diesen Aufruf die Aktion der realen Hardware \cite[S.663ff.]{tanenbaumOS}.
+			\subsubsection{Hypervisor Typ-1}
+				Der Typ-1 Hypervisor operiert direkt auf der Hardware und stellt ein minimales, speziell für den Betrieb von VMs ausgelegtes Betriebssystem dar. Die Architektur eines solchen Hypervisors ist in \fig \ref{fig:intro_hypervisor1} abgebildet.
 
-			\subsubsection{Hypervisor Typ 2}
-				Hypervisor des Typs 2 arbeiten nicht direkt auf der Hardware, sondern innerhalb eines Hostsystem, das wiederum selbst direkt auf die Hardware zugreift. In dieser Variante ist der Hypervisor eine gewöhnliche Anwendung, die auf dem Hostsystem ausgeführt wird.
+				\begin{figure}[h]
+	          \centering
+	          \includegraphics[width=0.7\textwidth]{./images/intro_hypervisor1.png}
+	          \caption{Architektur eines Systems mit Typ-1 Hypervisor (eigene Abbildung auf der Basis von \cite[S.107]{tanenbaumOS}).}
+	          \label{fig:intro_hypervisor1}
+	      \end{figure}
 
-				Falls ein Aufruf aus dem Gastsystem einen Hardwarezugriff benötigt, wird die Hardware - wie auch bei Typ 1 - emuliert. Erfordert ein Aufruf keinen Hardwarezugriff, wird dieser innerhalb des Gastsystems verarbeitet und verlässt dieses nicht.
+				%Dessen Aufgabe ist es, Kopien der realen Hardware bereitzustellen, die von VMs genutzt werden können. Wenn in der VM ein Befehl ausgeführt, wird dieser an den Hypervisor weitergeleitet, der den Befehl untersucht. Handelt es sich um einen Befehl des Betriebssystem der VM, wird dieser auf dem Typ-1 Hypervisor ausgeführt. Im Fall eines Aufrufs einer Anwendung innerhalb der VM, emuliert der Hypervisor für diesen Aufruf die Aktion der realen Hardware \cite[S.663ff.]{tanenbaumOS}.
 
-				Im Durchschnitt führt die zusätzliche Softwareschicht des Hypervisors Typ 2 trotz verschiedener Optimierungsmöglichkeiten, z.B. der sogenannten Paravirtualisierung, zu höheren Leistungseinbußen wie jenen unter Typ 1 \cite[S.666f.]{tanenbaumOS}.
+			\subsubsection{Hypervisor Typ-2}
+				Ein Typ-2 Hypervisor arbeiten nicht direkt auf der Hardware, sondern innerhalb eines Hostbetriebssystem, das wiederum selbst direkt auf die Hardware zugreift. Die Architektur dieses Art von Hypervisor ist in \fig \ref{fig:intro_hypervisor2} dargestellt.
+
+				\begin{figure}[h]
+	          \centering
+	          \includegraphics[width=0.7\textwidth]{./images/intro_hypervisor2.png}
+	          \caption{Architektur eines Systems mit Typ-2 Hypervisor (eigene Abbildung auf der Basis von \cite[S.107]{tanenbaumOS}).}
+	          \label{fig:intro_hypervisor2}
+	      \end{figure}
+
+				In dieser Variante ist der Hypervisor eine gewöhnliche Anwendung, die auf dem Hostsystem ausgeführt wird.
+
+				%Falls ein Aufruf aus dem Gastsystem einen Hardwarezugriff benötigt, wird die Hardware - wie auch bei Typ-1 - emuliert. Erfordert ein Aufruf keinen Hardwarezugriff, wird dieser innerhalb des Gastsystems verarbeitet und verlässt dieses nicht.
+
+				Im Durchschnitt führt die zusätzliche Softwareschicht des Hypervisors Typ-2 trotz verschiedener Optimierungsmöglichkeiten, z.B. der sogenannten Paravirtualisierung, zu höheren Leistungseinbußen wie jenen unter Typ-1 \cite[S.666f.]{tanenbaumOS}.
 
 				%Die Aufrufe eines in dieser Anwendung installierten Betriebssystems, werden mithilfe einer sogenannten Binärübersetzung in Prozeduren des Hypervisors übersetzt, sofern der initiierte Befehl einen Hardwarezugriff verlangt.
 
@@ -245,7 +263,7 @@
     % Auch checken: Statistika, google trends
 
 
-    Der große Vorteil von Docker gegenüber älteren Containerlösungen, wie z.B. dem Docker-Vorgänger \emph{LXC}, ist der Grad an Abstraktion und die Bedienungsfreundlichkeit, die Nutzern ermöglicht wird. Während sich Lösungen vor Docker auf dem Markt durch deren schwierige Installation und Management sowie schwachen Automatisierungsfunktionen nicht etablieren konnten, addressiert Docker genau diese Schwachpunkte \cite[S.7]{dockerBook} und bietet parallel viele Tools für Entwickler an. Auch die IT-Konzepte \emph{Continuous Delivery}, \emph{Continuous Integration}, \emph{Immutable Infrastructure}, \emph{Microservices} und \emph{DevOps}-Teams werden durch die Eigenschaften von Docker begünstigt.
+    Der große Vorteil von Docker gegenüber älteren Containerlösungen, wie z.B. dem Docker-Vorgänger \emph{LXC}, ist der Grad an Abstraktion und die Bedienungsfreundlichkeit, die Nutzern ermöglicht wird. Während sich Lösungen vor Docker auf dem Markt durch deren schwierige Installation und Management sowie schwachen Automatisierungsfunktionen nicht etablieren konnten, addressiert Docker genau diese Schwachpunkte \cite[S.7]{dockerBook} und bietet parallel viele Tools für Entwickler an. Auch die IT-Konzepte \emph{\gls{ContinuousDelivery}}, \emph{gls{ContinuousIntegration}}, \emph{\gls{ImmutableInfrastructure}}, \emph{\glspl{Microservice}} und \emph{\gls{DevOps}}-Teams werden durch die Eigenschaften von Docker begünstigt.
 
 		Je nach Anwendungsfall können Container Testumgebungen, Anwendungen bzw. Teile davon, oder Replikate komplexer Anwendungen für Entwicklungs- und Produktionszwecke abbilden. Container nehmen dadruch die Rolle austauschbarer, kombinierbarer und portierbarer Module einer Architektur ein, die mithilfe besagter IT-Konzepte automatisierbar ist \cite[S.12]{dockerBook}.
 

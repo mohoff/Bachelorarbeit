@@ -19,17 +19,21 @@
   \section{Identifikation des Systems}
     Das Systemmodell von hypervisorbasierten Systemen kann nicht verwendet werden, da das Design der Containersysteme stark von Erstgenannten abweicht. Während nach \cite[S.125]{CISSP} virtuelle Maschinen als eigener Sicherheitsmechanismus des Betriebssystems aufgelistet ist, stimmt das für die Containersysteme und deren Architektur nicht. Andere Sicherheitsfeatures des Hostsystems müssen aktiviert werden, um die Containersicherheit zu erhöhen.
 
-    \emph{Bild zum Systemmodell}
-    % TODO!
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.8\textwidth]{./images/question_model1.png}
+        \caption{Erster Entwurf eines Systemmodells mit Hostsystem und Containern (eigene Abbildung).}
+        \label{fig:question_model1}
+    \end{figure}
 
-    Das Systemmodell ist zunächst definiert als ein Hostsystem \(h\) und einer Containermenge \(M\), die aus den Containern \(m_1,m_2,\dotsc,m_n\) besteht. Die Container werden von einem Docker-Daemon verwaltet, der in \(h\) läuft.
+    Das Systemmodell ist zunächst wie in \fig \ref{fig:question_model1} definiert: Es existiert ein Hostsystem \(h\) und eine Containermenge \(M\), die aus den Containern \(c_1,c_2,\dotsc,c_n\) besteht. Die Container werden von einem Docker-Daemon verwaltet, der zusammen mit Linux in \(h\) läuft.
 
     Verteilte Docker-Systeme, in denen mehrere Hosts miteinander kommunizieren, werden in dieser Arbeit nicht betrachtet. Aus diesem Grund existiert in diesem Systemmodell nur ein Hostsystem \(h\) mit Docker-Installation, das alle Container in \(M\) verwaltet.
 
   \section{Identifikation der Bedrohungen}
     In diesem Schritt werden die verschiedenen Bedrohungsarten auf Basis des zuvor definierten Systemmodells erörtert.
 
-    Aus \fig \ref{fig:systemModel} und der Funktionsweise von Docker (s. Abschnitt \ref{dockerIntro}) können zwei unterschiedliche Gefahrenquellen (A) und (B) identifiziert werden:
+    Aus \fig \ref{fig:question_model1} und der Funktionsweise von Docker (s. Abschnitt \ref{dockerIntro}) können zwei unterschiedliche Gefahrenquellen (A) und (B) identifiziert werden:
 
     \begin{enumerate}[label=(\Alph*)]
       \item \textbf{Docker-Spezifika:} In Containern werden Anwendungen ausgeführt, die nicht zwangsweise vertrauenswürdig sind. Wenn beispielweise Containerimages von einer öffentlichen Registry, wie dem \emph{Docker Hub}, bezogen werden, existiert keine Garantie, dass aus diesen Images gestartete Container nicht gegen die Sicherheitsziele der Vertraulichkeit, Integrität und Verfügbarkeit verstoßen. Durch die Komplexität moderner Anwendungen und deren Abhängigkeiten zu Bibliotheken, ist es selbst bei quelloffenen Anwendungen schwierig, diese als vertrauenswürdig einzustufen. Deswegen muss davon ausgegangen werden, dass in Containern willkürliche Programme ablaufen (\emph{interne Gefahrenquellen}), die - versehentlich oder beabsichtigt - den Host schädigen können.
@@ -45,7 +49,9 @@
 
     \textbf{Schlussfolgerung}: Ein Container ist nicht vertrauenswürdig. Bei der Konstruktion einer Sicherheitsarchitektur muss davon ausgegangen werden, dass ein Container von einem Angreifer kontrolliert wird.
 
-    Mithilfe dieser Erkenntnis kann das Systemmodell unter Einbeziehung eines Angreifermodells erweitert werden. \(M\) wird in zwei echte, nicht-leere Teilmengen \(C\) und \(\overline{C}\) unterteilt. \(C\) enthält korrekt funktionierende, legitime Container und \(\overline{C}\) kompromittierte Container.
+    Mithilfe dieser Erkenntnis kann das Systemmodell unter Einbeziehung eines Angreifermodells erweitert werden. Die Erweiterung ist in \fig \ref{fig:question_model2} dargestellt.
+
+    \(M\) wird in zwei echte, nicht-leere Teilmengen \(C\) und \(\overline{C}\) unterteilt. \(C\) enthält korrekt funktionierende, legitime Container und \(\overline{C}\) kompromittierte Container.
     % TODO: oder besser: \(C\) mit der Eigenschaft \(\{\}\neq C \subset M \quad\) enthält korrekt funktionierende.....
     % TODO: Schreiben, dass C und \overline{C} komplementär sind?
 
@@ -59,7 +65,14 @@
       M = C \cup \overline{C} = \{m \; | \; m\in C \; \text{oder} \; m\in \overline{C}\}
     \end{equation}
 
-    Per Konvention wird fortan ein beliebiges Element der Menge \(C\) als \cvalid{} und ein beliebiges Element der Menge \(\overline{C}\) als \cbroken{} notiert.
+    Per Konvention wird fortan, wie in \fig \ref{fig:question_model2}, ein beliebiges Element der Menge \(C\) als \cvalid{} und ein beliebiges Element der Menge \(\overline{C}\) als \cbroken{} notiert.
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.8\textwidth]{./images/question_model2.png}
+        \caption{Erweiterung des Systemmodells um Angreiferszenario (eigene Abbildung).}
+        \label{fig:question_model2}
+    \end{figure}
 
     %\begin{equation}
     %  C = \{c_1,c_2,\dotsc,c_i\;|\;0 < i < n \land C \neq \{\} \land i+j = N\}

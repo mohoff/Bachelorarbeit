@@ -188,7 +188,7 @@
 
 			% Docker dämmt dieses Risiko ein, indem es nur einen reinen Lesezugriff ohne Schreibrechte auf diese Verzeichnisse erlaubt \cite[S.4]{dockerSecIntro}.
 
-			Einem Containern ist es nicht erlaubt, Verzeichnisse des Hostsystems erneut einzubinden. Dieses Verbot wird technisch über die Verweigerung der Capability \texttt{CAP\_SYS\_ADMIN} (s. Abschnitt \ref{capability}) erreicht. Ist ein Container im Besitz dieses Rechts, kann dieser Verzeichnisse, deren Zugriff ihm ursprünglich nur lesend gestattet wurde, neu einbinden. Im Rahmen des neuen Mountvorgangs, kann der Container über die Zugriffsart auf einzubindenen Verzeichnisse frei verfügen und ist nicht allein auf das Leserecht beschränkt.
+			Einem Containern ist es nicht erlaubt, Verzeichnisse des Hostsystems erneut einzubinden. Dieses Verbot wird technisch über die Verweigerung der Capability \texttt{CAP\_SYS\_ADMIN} (s. Abschnitt \ref{capabilities}) erreicht. Ist ein Container im Besitz dieses Rechts, kann dieser Verzeichnisse, deren Zugriff ihm ursprünglich nur lesend gestattet wurde, neu einbinden. Im Rahmen des neuen Mountvorgangs, kann der Container über die Zugriffsart auf einzubindenen Verzeichnisse frei verfügen und ist nicht allein auf das Leserecht beschränkt.
 
 
 			%, um unrechtmäßige Schreibrechte auszuschließen. Dieses Verbot wird durch die Verweigerung der Capability \texttt{CAP\_SYS\_ADMIN} für Container erreicht.

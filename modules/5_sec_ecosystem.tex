@@ -149,6 +149,25 @@
         %\label{fig:sec_authzDeny}
     %\end{figure}
 
+    \begin{figure}
+      \centering
+      \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{./images/sec_authzAllow.png}
+        \caption{Erfolgreiche Authorisierung}
+        \label{fig:sec_authzAllow}
+      \end{subfigure}%
+      \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{./images/sec_authzDeny.png}
+        \caption{Fehlgeschlagene Authorisierung}
+        \label{fig:sec_authzDeny}
+      \end{subfigure}
+      \caption{Ablaufdiagramm einer Befehlsausführung mit dem Authorisierungs-Plugins \emph{AuthZ} von Docker \cite{githubAuthZExtended}.}
+      \label{fig:sec_authz}
+    \end{figure}
+    % (TODO): Evtl. untereinander machen da zu wenig Platz. Oder Grafik neu machen mit weniger/groesserem Text
+    % Laut Patrick: Groesse OK!
 
 
     Die Struktur von Anfragen und Antworten, die über das HTTP-Protokoll ausgetauscht werden, sind in \cite{githubAuthZExtended} spezifiziert.
