@@ -52,8 +52,8 @@
 		Systeme können auf mehrere Arten unterschieden werden, z.B. in physische und virtuelle Systeme:
 
 		\begin{itemize}
-			\item \textbf{Physisches System}: System, das direkt auf der Hardware läuft.
-			\item \textbf{Virtuelles System}: System, das virtuell innerhalb eines anderen physischen oder virtuellen Systems läuft.
+			\item \textbf{Physisches System}: System, das direkt auf der Hardware ausgeführt wird.
+			\item \textbf{Virtuelles System}: System, das virtuell innerhalb eines anderen physischen oder virtuellen Systems ausgeführt wird.
 		\end{itemize}
 
 		Eine weitere Unterschiedung trennt Systeme nach ihrer Rolle:
@@ -174,11 +174,12 @@
 
 			Die Isolation basiert auf dem Konzept von Kontexten, die unter Linux \emph{Namespaces} genannt werden. Diese, sowie \emph{Control Groups}, die für das Ressourcenmanagement verantwortlich sind, werden in den Kapiteln \ref{secIsolierung} und \ref{secCgroups} genauer betrachtet \cite[S.4]{dockerSecIntro}.
 
-      Container sind durch den Unix-Befehl \texttt{\acrshort{chroot}} inspriert, der schon seit 1979 im Linux-Kernel integriert ist. In \emph{FreeBSD} wurde eine erweiterte Variante von \texttt{chroot} verwendet, um sogenannte \emph{Jails} (\emph{FreeBSD}-spezifischer Begriff) umzusetzen \cite{jails}. In \emph{Solaris}, ein von dem Unternehmen \emph{Oracle} entwickeltes Betriebssystem für Servervirtualisierungen \cite{solaris}, wurde dieser Mechanismus in Form von \emph{Zones} (\emph{Solaris}-spezifischer Begriff) \cite{zones} weiter verbessert. Auch proprietäre Lösungen von \emph{HP} und \emph{IBM} erschienen auf dem Markt \cite[S.2]{dockerLXCKub}.
+			% Need to link acronym and glossary entry for chroot separately here, so cross references are generated properly
+      Container sind durch den Unix-Befehl \texttt{\acrshort{chroot}} inspriert, der schon seit 1979 im Linux-Kernel integriert ist. In \emph{FreeBSD} wurde eine erweiterte Variante von \texttt{\gls{chrootGlossary}} verwendet, um sogenannte \emph{Jails} (\emph{FreeBSD}-spezifischer Begriff) umzusetzen \cite{jails}. In \emph{Solaris}, ein von dem Unternehmen \emph{Oracle} entwickeltes Betriebssystem für Servervirtualisierungen \cite{solaris}, wurde dieser Mechanismus in Form von \emph{Zones} (\emph{Solaris}-spezifischer Begriff) \cite{zones} weiter verbessert. Auch proprietäre Lösungen von \emph{HP} und \emph{IBM} erschienen auf dem Markt \cite[S.2]{dockerLXCKub}.
 
 			Durch die kontinuierliche Weiterentwicklung von Containern in den letzten Jahren, können diese heutzutage laut \cite[S.7]{dockerBook} als vollwertige Systeme betrachtet werden, nicht mehr als - wie ursprünglich vorgesehen - reine Ausführungsumgebungen auf Basis von \texttt{chroot}.
 
-			Dieses Design hat einen entscheidenen Nachteil gegenüber dem Hypervisormodell, der auch Docker betrifft: Das Betriebssystem im Hostsystem muss Linux-basiert sein \cite[S.6]{dockerBook}. Allerdings streben \emph{Docker} und \emph{Microsoft} eine native Docker-Lösung für \emph{Microsoft Windows Server 2016} an \cite{dockerWindowsSupport}.
+			Dieses Design hat einen entscheidenen Nachteil gegenüber dem Hypervisormodell, der auch Docker betrifft: das Betriebssystem im Hostsystem muss Linux-basiert sein \cite[S.6]{dockerBook}. Allerdings streben \emph{Docker} und \emph{Microsoft} eine native Docker-Lösung für \emph{Microsoft Windows Server 2016} an \cite{dockerWindowsSupport}.
 			%Durch das \emph{Open Container Project} (siehe Kapitel \ref{dockerContainerformate}) ist es dem Unterstützer \emph{Microsoft} nun möglich, den Windows-Kernel für das neue standardisierte Containerformat vorzubereiten .
 			% Mittels github.com/mircrosoft/hcsshim
 
@@ -240,10 +241,10 @@
 			Unter Integrität versteht man die Zusicherung, dass bestimmte Daten original und vollständig vorliegen, sowie nachweisbar nicht manipuliert wurden. Ein Sicherheitsmechanismus, der die Integrität sicherstellen soll, bewirkt z.B., dass es nur dem Besitzer einer Datei möglich ist, diese zu modifizieren. In Multi-Tenancy-Systemen muss beispielsweise gewährleistet werden, dass die Daten der einzelnen Kunden geschützt werden und kein Kunde die Integrität von Daten anderen Kunden verletzen kann.
 
     \subsection{Verfügbarkeit}
-			Die Verfügbarkeit bezeichnet die Eigenschaft eines Systems, Anfragen jederzeit zu verarbeiten und andere Systeme nicht negativ zu beeinflussen. Angriffe gegen die Verfügbarkeit werden als \gls{DenialOfService}-Angriffe bezeichnet. Z.B. muss in Multi-Tenancy-Systemen sichergestellt sein, dass ein Kunde nicht die Ressourcen anderer Kunden erschöpft.
+			Die Verfügbarkeit bezeichnet die Eigenschaft eines Systems, Anfragen jederzeit zu verarbeiten und andere Systeme nicht negativ zu beeinflussen. Angriffe gegen die Verfügbarkeit werden als \gls{DenialOfService}-Angriffe bezeichnet. Beispielsweise muss in Multi-Tenancy-Systemen sichergestellt sein, dass ein Kunde nicht die Ressourcen anderer Kunden erschöpft.
 
 		\subsection{Authentizität}
-			Authentizität bezeichnet die Sicherstellung der Echtheit und Überprüfbarkeit. I.d.R. wird die Identifikation eines Nutzers im Rahmen einer Authentifizierung auf Echtheit geprüft. In einem System muss z.B. sichergestellt werden, dass nur bestimmte Nutzer Zugriff auf eine sicherheitskritische Ressource erlangen.
+			Authentizität bezeichnet die Sicherstellung der Echtheit und Überprüfbarkeit. Es wird die Identifikation eines Nutzers im Rahmen einer Authentifizierung auf Echtheit geprüft. Kommt z.B. in Client-Server-Modellen vor, unter denen die Echtheit von Kommunikationspartnern geprüft werden muss.
 
 
 			%, kurz \acrshort{DoS}-Attacke, die ein System mit einer Anfragenflut stört bis es unbenutzbar wird und im System gehaltene Ressourcen nicht zugreifbar sind.
