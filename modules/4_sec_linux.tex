@@ -42,12 +42,12 @@
 \label{secLinux}
 	Die Docker-Entwickler haben in den letzten Monaten die Integrations- und Anpassungsmöglichkeiten zusätzlicher Sicherheitsmaßnahmen, v.a. die von Mandatory Access Controls (MACs), stark verbessert, da die Containersicherheit für \emph{Docker} nach eigenen Aussagen höchste Priorität hat \cite{githubDockerRoadmap}\cite{githubDockerChangelog}.
 
-	Auch die Tatsache, dass sich zur Zeit die Konkurrenz \emph{CoreOS} mit der Containerlösung \emph{rkt} als sicherheitsfokusierte Alternative zu Docker auf dem Virtualisierungsmarkt etablieren will \cite{coreosAnnouncementRkt10}, ist Anreiz für \emph{Docker} die Sicherheit ihrer eigenen Entwicklung nicht zu vernachlässigen. Die Veröffentlichung des großen Sicherheitsupdates für Docker mit der Version 1.10 am 4. Februar 2016 geschah wenige Stunden nach der Ankündigung der Version 1.0 von \emph{rkt} seitens \emph{CoreOS} \cite{hnAnnouncementDocker110}\cite{hnAnnouncementRkt10}, was eine starke Konkurrenz zwischen den beiden Anbietern vermuten lässt. % /erkenntlich macht..
+	Auch die Tatsache, dass sich zur Zeit die Konkurrenz \emph{CoreOS} mit der Containerlösung \emph{rkt} als sicherheitsfokusierte Alternative zu Docker auf dem Virtualisierungsmarkt etablieren will \cite{coreosAnnouncementRkt10}, ist Anreiz für \emph{Docker}, die Sicherheit ihrer eigenen Entwicklung nicht zu vernachlässigen. Die Veröffentlichung des großen Sicherheitsupdates für Docker mit der Version 1.10 am 4. Februar 2016 geschah wenige Stunden nach der Ankündigung der Version 1.0 von \emph{rkt} seitens \emph{CoreOS} \cite{hnAnnouncementDocker110}\cite{hnAnnouncementRkt10}, was eine starke Konkurrenz zwischen den beiden Anbietern vermuten lässt. % /erkenntlich macht..
 
-	Die allgemeine Vorgehensweise von Docker beruht auf den beiden Prinzipien \emph{Defense In Depth} und \emph{Principle Of Least Privilege}, um einen möglichst sicheren Betrieb von Containern zu ermöglichen.
+	Die allgemeine Vorgehensweise von Docker beruht auf den beiden Prinzipien \emph{Defense In Depth} und \emph{Principle Of Least Privilege}, um einen möglichst sicheren Betrieb von Containern zu realisieren.
 
 	\begin{itemize}
-			\item \emph{Defense In Depth}: Es werden möglichst viele, unabhängige Sicherheitsschichten kombiniert aktiviert, um die Gesamtsicherheit eines Systems zu erhöhen. Der Funktionsumfang der einzelnen Mechanismen kann sich - wie auch in der vorliegenden Sicherheitsarchitektur von Docker der Fall ist - mit Mechanismen anderer Schichten überschneiden.
+			\item \emph{Defense In Depth}: Es werden möglichst viele, unabhängige Sicherheitsschichten kombiniert aktiviert, um die Gesamtsicherheit eines Systems zu erhöhen. Der Funktionsumfang der einzelnen Mechanismen kann sich - wie es auch in der vorliegenden Sicherheitsarchitektur von Docker der Fall ist - mit Mechanismen anderer Schichten überschneiden.
 			\item \emph{Principle Of Least Privilege}: Die angewandten Sicherheitsmechanismen bewirken, dass die von Docker initiierte Aktionen eingeschränkt werden. Docker ist nur befugt Operationen auszuführen, die dazu dienen, seinen Zweck als Containertechnologie zu erfüllen. Alle anderen Privilegien werden Docker verwehrt.
 	\end{itemize}
 
@@ -80,7 +80,7 @@
   \label{secIsolierung}
 		Die Isolierung für Container wird unter Linux für die meisten kritischen Bereiche eines Systems über Namespaces realisiert.
 
-		Da Anwendungen innerhalb von Container eine komplette Laufzeitumgebung angeboten werden muss, müssen alle relevanten Bereiche des Hostsystems durch Namespaces abgedeckt sein.	Wenn unter Linux z.B. ein neuer Prozess gestartet werden soll, wird dem Kernel über \emph{System Calls} mitgeteilt, hierfür einen neuen Namespace bereitzustellen.
+		Da Anwendungen innerhalb von Containern eine komplette Laufzeitumgebung angeboten werden muss, müssen alle relevanten Bereiche des Hostsystems durch Namespaces abgedeckt sein.	Wenn unter Linux z.B. ein neuer Prozess gestartet werden soll, wird dem Kernel über \emph{System Calls} mitgeteilt, hierfür einen neuen Namespace bereitzustellen.
 
 		%Je nach Anforderung gibt es verschiedene Namespaces: PID-, Netzwerk-, Mount-, User- und UTS-Namespace
 
@@ -92,7 +92,7 @@
 
 		Aus technischer Sicht beinhaltet ein Namespace eine Baumstruktur zu betrachtender Ressourcen. Diese Struktur ist in einer Lookup-Tabelle abgebildet, die global verfügbare Ressourcen abstrahiert und innerhalb eines Namespaces bereitstellt. Änderungen globaler Ressourcen sind unsichtbar für Prozesse in einem Namespace, jedoch sichtbar für solche außerhalb. Namespaces sind in der Theorie beliebig verschachtelbar. In der Realität wird diese Eigenschaft durch die Größe der Lookup-Tabelle begrenzt \cite[S.1f.]{IBMcheckpointRestart}\cite{namespaces}.
 
-		Dadurch kann das Konzept von Namespaces als Lösungsansatz betrachtet werden, um das Sicherheitsziel Vertraulichkeit zu erreichen. Sie sind der grundlegende Baustein, um eine Containerisolierung unter Linux zu realisieren. Auch addressieren Namespaces den Punkt (1) aus Abschnitt \ref{questionSolutionTheory}.
+		Dadurch kann das Konzept von Namespaces als Lösungsansatz betrachtet werden, um das Sicherheitsziel der Vertraulichkeit zu erreichen. Sie sind der grundlegende Baustein, um eine Containerisolierung unter Linux zu realisieren. Auch addressieren Namespaces den Punkt (1) aus Abschnitt \ref{questionSolutionTheory}.
 
 		Unter Linux existieren sechs Namespaces, die in die Kategorien IPC, Network, Mount, PID, User und UTS unterteilt sind. Von Docker werden alle verwendet, der User-Namespace jedoch wird erst seit Docker-Version 1.10 unterstützt.
 
@@ -115,7 +115,7 @@
 
 			Docker erreicht diese Isolierung auf Prozessebene durch die Nutzung von PID-Namespaces, in die Container eingebettet werden. Nach diesem hierarchischen Konzept ist es einem Prozess nur möglich, selbsterzeugte Kindprozesse zu beobachten und mit ihnen zu interagieren.
 
-			In \fig \ref{fig:sec_pidNs} ist ein Beispiel von PID-Namespaces gegeben. Ein Prozess besitzt die PID 3698, die außerhalb des rot markierten Namespaces gültig ist. Außerdem besitzt er die PID 1, die innerhalb des Namespaces vergeben wurde. Der Elternprozess mit PID 627 ist in der Lage diesen jederzeit mit dem Befehl \texttt{kill} zu beenden oder allgemein Kindprozesse mit einem Aufruf von \texttt{ps} zu überwachen. Der Prozess mit PID 3698 hingegen befindet sich im roten Namespace und hat keine Kenntnis von der übergeordneten Prozesshierarchie.
+			In \fig \ref{fig:sec_pidNs} ist ein Beispiel von PID-Namespaces gegeben. Ein Prozess besitzt die PID 3698, die außerhalb des rot markierten Namespaces gültig ist. Außerdem besitzt er die PID 1, die innerhalb des Namespaces vergeben wurde. Der Elternprozess mit PID 627 ist in der Lage, diesen jederzeit mit dem Befehl \texttt{kill} zu beenden oder allgemein Kindprozesse mit einem Aufruf von \texttt{ps} zu überwachen. Der Prozess mit PID 3698 hingegen befindet sich im roten Namespace und hat keine Kenntnis von der übergeordneten Prozesshierarchie.
 
 			%Elternprozesse, also Prozesse die in der Prozesshierarchie über \emph{8,1} stehen, sind für diesen unsichtbar. Der Elternprozesse haben jedoch die volle Kontrolle über X und können diesen z.B. jederzeit mit dem Befehl \texttt{kill} beenden. Darüber hinaus haben Elternprozesse die Möglichkeit mit z.B. einem Aufruf von \texttt{ps} alle Kindprozesse zu überwachen.
 
@@ -127,9 +127,9 @@
 					\label{fig:sec_pidNs}
 			\end{figure}
 
-			Übertragen auf die containerbasierte Virtualisierung bedeutet das, dass das Hostsystem vollen Zugriff auf die laufenden Container hat, Containerprozesse jedoch keine Kenntnis von Prozessen außerhalb des eigenen Namespaces besitzen. Diese Eigenschaft erschwert es Angreifern, ausgehend von \cbroken{}, Schaden anzurichten, da sie keine Informationen über Prozesse außerhalb des eigenen PID-Namespaces erlangen können.
+			Übertragen auf die containerbasierte Virtualisierung bedeutet dies, dass das Hostsystem vollen Zugriff auf die laufenden Container hat, Containerprozesse jedoch keine Kenntnis von Prozessen außerhalb des eigenen Namespaces besitzen. Diese Eigenschaft erschwert es Angreifern, ausgehend von \cbroken{}, Schaden anzurichten, da sie keine Informationen über Prozesse außerhalb des eigenen PID-Namespaces erlangen können.
 
-			Ein weiterere nützliche Eigenschaft ist das Setzen der PID auf 1 für einen Prozess, dem ein PID-Namespace zugewiesen wurde. Ein Prozess mit PID 1 ist es möglich, jeder seiner Kindprozesse zu terminieren sobald er selbst beendet wird. Beim Betrieb con Containern kann dieses Feature genutzt werden, um über einen Befehl des Hostsystems einen Container vollständig herunterzufahren.
+			Eine weitere nützliche Eigenschaft ist das Setzen der PID auf 1 für einen Prozess, dem ein PID-Namespace zugewiesen wurde. Einem Prozess mit PID 1 ist es möglich, jeder seiner Kindprozesse zu terminieren sobald er selbst beendet wird. Beim Betrieb von Containern kann dieses Feature genutzt werden, um über einen Befehl des Hostsystems einen Container vollständig herunterzufahren.
 
 
 			%Der initiale Containerprozess kann mit der \texttt{PID=1} gestartet werden, dem es als \emph{init}-ähnlicher Prozess möglich ist, alle Kindprozese zu terminieren sobald er selbst beendet wird. Somit können komplette Container durch einen Hostzugriff auf den Containerprozess mit \texttt{PID=1} umgehend vollständig heruntergefahren werden.
@@ -188,7 +188,7 @@
 
 			% Docker dämmt dieses Risiko ein, indem es nur einen reinen Lesezugriff ohne Schreibrechte auf diese Verzeichnisse erlaubt \cite[S.4]{dockerSecIntro}.
 
-			Einem Containern ist es nicht erlaubt, Verzeichnisse des Hostsystems erneut einzubinden. Dieses Verbot wird technisch über die Verweigerung der Capability \texttt{CAP\_SYS\_ADMIN} (s. Abschnitt \ref{capabilities}) erreicht. Ist ein Container im Besitz dieses Rechts, kann dieser Verzeichnisse, deren Zugriff ihm ursprünglich nur lesend gestattet wurde, neu einbinden. Im Rahmen des neuen Mountvorgangs, kann der Container über die Zugriffsart auf einzubindenen Verzeichnisse frei verfügen und ist nicht allein auf das Leserecht beschränkt.
+			Einem Container ist es nicht erlaubt, Verzeichnisse des Hostsystems erneut einzubinden. Dieses Verbot wird technisch über die Verweigerung der Capability \texttt{CAP\_SYS\_ADMIN} (s. Abschnitt \ref{capabilities}) erreicht. Ist ein Container im Besitz dieses Rechts, kann dieser Verzeichnisse, deren Zugriff ihm ursprünglich nur lesend gestattet wurde, neu einbinden. Im Rahmen des neuen Mountvorgangs kann der Container über die Zugriffsart auf einzubindende Verzeichnisse frei verfügen und ist nicht allein auf das Leserecht beschränkt.
 
 
 			%, um unrechtmäßige Schreibrechte auszuschließen. Dieses Verbot wird durch die Verweigerung der Capability \texttt{CAP\_SYS\_ADMIN} für Container erreicht.
@@ -214,7 +214,7 @@
 
 
 
-			Docker gewährleistet dies durch die standardmäßige Zuweisung eines IPC-Namespaces pro Container, in dem ein Prozesse nur mit anderen Prozessen in Kontakt treten kann, wenn sich diese im gleichen IPC-Namespace befinden. Eine versehentliche oder beabsichtige Interferenz zwischen Containern oder zwischen Containern und Docker-unabhängigen Prozessen des Hostsystems wird damit ausgeschlossen.
+			Docker gewährleistet dies durch die standardmäßige Zuweisung eines IPC-Namespaces pro Container, indem ein Prozess nur mit anderen Prozessen in Kontakt treten kann, wenn sich diese im gleichen IPC-Namespace befinden. Eine versehentliche oder beabsichtige Interferenz zwischen Containern oder zwischen Containern und Docker-unabhängigen Prozessen des Hostsystems wird damit ausgeschlossen.
 
 			%Fast alles bisher:
 			%\cite[S.4]{dockerSec1}
@@ -227,9 +227,9 @@
 
 			Dazu stellt Docker jedem Container einen eigenen unabhängigen Netzwerkstack zur Verfügung, der durch Network-Namespaces realisiert wird. Jeder Namespace hat seine eigene private \acrshort{IP}-Adresse, IP-Routingtabelle, Loopback-Interface und Netzwerkgeräte \cite[S.2f.]{virtVSContainer}. Eine Kommunikation zu anderen Containern auf dem gleichen oder entfernten Hosts geschieht nur über dafür vorgesehene Schnittstellen.
 
-			Um die oben genannten Netzwerkressourcen anzubieten, wird jedem Network-Namespace ein eigenes \texttt{/proc/net}-Verzeichnis zugewiesen, das netzwerkspezifische Informationen enthält \cite{proc}. Die Nutzung von Befehlen wie \texttt{netstat} und \texttt{ifconfig} wird damit aus einem Network-Namespace heraus auch ermöglicht \cite[S.7]{IBMcheckpointRestart}.
+			Um die oben genannten Netzwerkressourcen anzubieten, wird jedem Network-Namespace ein eigenes \texttt{/proc/net}-Verzeichnis zugewiesen, das netzwerkspezifische Informationen enthält \cite{proc}. Die Nutzung von Befehlen wie \texttt{netstat} und \texttt{ifconfig} wird damit auch aus einem Network-Namespace heraus ermöglicht \cite[S.7]{IBMcheckpointRestart}.
 
-			Standardmäßig wird von Containern eine \emph{Virtual Ethernet Bridge} mit dem Namen docker0 genutzt, um mit dem Hostsystem und anderen Containern zu kommunizieren. Neu gestartete Container werden dieser Bridge hinzugefügt, indem deren Netzwerkinterface \emph{eth0} mit der Bridge verbunden wird. Aus Sicht des Hostsystems ist das Interface \emph{eth0} ein virtuelles \emph{veth}-Interface. Angepasste Netzwerktreiber können für Bridges und sogenannte Overlaynetzwerke, die eine Kommunikation zwischen mehreren Docker-Systemen ermöglichen, erstellt und genutzt werden \cite[S.3]{virtVSContainer}\cite{dockerNetworking}. Aus Gründen der Netzwerksicherheit macht es Sinn eigene Treiber zu verwenden, da die standardmäßige Bridge ohne Filter operiert. Filter können z.B. mit dem Programm \emph{ebtables} erstellt werden.
+			Standardmäßig wird von Containern eine \emph{Virtual Ethernet Bridge} mit dem Namen docker0 genutzt, um mit dem Hostsystem und anderen Containern zu kommunizieren. Neu gestartete Container werden dieser Bridge hinzugefügt, indem deren Netzwerkinterface \emph{eth0} mit der Bridge verbunden wird. Aus Sicht des Hostsystems ist das Interface \emph{eth0} ein virtuelles \emph{veth}-Interface. Angepasste Netzwerktreiber können für Bridges und sogenannte Overlaynetzwerke, die eine Kommunikation zwischen mehreren Docker-Systemen ermöglichen, erstellt und genutzt werden \cite[S.3]{virtVSContainer}\cite{dockerNetworking}. Aus Gründen der Netzwerksicherheit macht es Sinn, eigene Treiber zu verwenden, da die standardmäßige Bridge ohne Filter operiert. Filter können z.B. mit dem Programm \emph{ebtables} erstellt werden.
 			% Erklärungen von John:
 			% MAC-Flooding: ARP-Tabelle des Opfers wird überfüllt mit falschen Informationen. Angreifer sendet dazu falsche, unterschiedliche ARP-Daten an Opfer, die letzteres in eigenen ARP-TAbelle aufnimmt. Andere Netzteilnehmer (legitime) erreichen das Opfer nicht mehr, da dessen ARP-Tabelle voll ist. Es gibt Angreifer-Tools, die ARP-Pakete vor dem Senden beliebig aendern können (IP und MAC), sodass unique ARP-Eintrag im Zielrechner dazukommt
 			% 		--> Verfügbarkeit, DoS
@@ -259,14 +259,14 @@
 			% schlechte Quelle...: http://rhelblog.redhat.com/2015/07/07/whats-next-for-containers-user-namespaces/
 			% Root-Rechte wurden bisher mit capabilities eingeschränkt.
 
-			Dieser Namespace führt einen Mechanismus ein, unter dem Rootrechte in Containern nicht Rootrechten auf dem Hostsystem entsprechen. Ein Root-User innerhalb eines Containers wird auf dem Hostsystem auf einem Nicht-Root-User abgebildet.
+			Dieser Namespace führt einen Mechanismus ein, unter dem Rootrechte in Containern nicht Rootrechten auf dem Hostsystem entsprechen. Ein Root-User innerhalb eines Containers wird im Hostsystem auf einem Nicht-Root-User abgebildet.
 
 			Linux verwendet User-IDs (UIDs) und Group-IDs (GIDs), um Verzeichnisse und Dateien eines Dateisystems sowie Prozesse mit Eignerinformationen zu versehen. User-Namespaces erlauben unterschiedliche UIDs bzw. GIDs innerhalb und außerhalb des Namespaces. Im Kontext des Hostsystems kann dadurch ein unpriveligierter User ohne Rootrechte existieren, während der gleiche User innerhalb von Containern mithilfe von User-Namespaces priveligiert ist \cite{nsUser}.
 
 			%In der Praxis lassen sich mit diesem Konzept jeweils Root-User mit UID 0 in Container X und Y auf nicht-priviligierte User, z.B. mit \texttt{uid=1000} und \texttt{uid=2000} des Hosts, abbilden.
 			% TODO: Grafik zur Unterstuetzung waere gut hier...
 
-			Eine Unterstützung von User-Namespaces war seit Docker-Version 1.6 vorgesehen \cite{githubUserNamespaceProposal}. Durch einen Bug der Programmiersprache \emph{Golang} und Integrationschwierigkeiten in die bestehende Docker-Codebasis, kam es jdoch zu Verzögerungen \cite{nsUserGolangBug}\cite{githubUserNamespaceConflict}\cite{githubUserNamespaceIntegration}. Beide Probleme sind jedoch mittlerweise behoben, wie die erfolgreiche Integration von User-Namespaces in aktuelle Releases von Docker bestätigt \cite{githubUserNamespaceIntegration}. In der aktuell neusten Docker-Version 1.10 werden besagte Namespaces nicht automatisch verwendet. Sie müssen manuell, wie z.B. in \cite{nsUserEnable} erklärt, aktiviert werden \cite{githubDockerChangelog}. Eine standardmäßige Verwendung des Namespace ist in Zukunft zu erwarten.
+			Eine Unterstützung von User-Namespaces war seit Docker-Version 1.6 vorgesehen \cite{githubUserNamespaceProposal}. Durch einen Bug der Programmiersprache \emph{Golang} und Integrationschwierigkeiten in die bestehende Docker-Codebasis kam es jedoch zu Verzögerungen \cite{nsUserGolangBug}\cite{githubUserNamespaceConflict}\cite{githubUserNamespaceIntegration}. Beide Probleme sind mittlerweile behoben, wie die erfolgreiche Integration von User-Namespaces in aktuelle Releases von Docker bestätigt \cite{githubUserNamespaceIntegration}. In der aktuell neusten Docker-Version 1.10 werden besagte Namespaces nicht automatisch verwendet. Sie müssen manuell, wie z.B. in \cite{nsUserEnable} erklärt, aktiviert werden \cite{githubDockerChangelog}. Eine standardmäßige Verwendung des Namespace ist in Zukunft zu erwarten.
 
 			% Mehr (Bessere) Gruende: http://events.linuxfoundation.org/sites/events/files/slides/User%20Namespaces%20-%20ContainerCon%202015%20-%2016-9-final_0.pdf
 			% S.13ff.
@@ -279,11 +279,11 @@
 			% User namespace is the only namespace which can be created without CAP_SYS_ADMIN capability
 			% aus: http://www.haifux.org/lectures/299/netLec7.pdf .... Seite 61
 
-			Auch für Cloudanbieter sind User-Namespaces von Vorteil: Mit einer Auflösung der Container auf Userebene ist es möglich die Nutzung von Diensten auf Userbasis einzugrenzen und abzurechnen \cite[S.3]{nsUserContainerCon}.
+			Auch für Cloudanbieter sind User-Namespaces von Vorteil: Mit einer Auflösung der Container auf Userebene ist es möglich, die Nutzung von Diensten auf Userbasis einzugrenzen und abzurechnen \cite[S.3]{nsUserContainerCon}.
 
 		\subsection{\acrshort{UTS}-Isolierung durch den \texttt{\acrshort{UTS}-namespace}}
 			Mit einem \emph{\acrshort{UTS}-namespace} ist es möglich, jedem Container einen eigenen Hostnamen zuzuweisen. Der Container kann diesen Namen abfragen und ändern \cite[S.3]{virtVSContainer}. Dieser Namespace trägt damit nicht zur Containersicherheit bei und ist daher nur aus Gründen der Vollständigkeit an dieser Stelle erwähnt.
-
+d
 		\subsection{Geräteisolierung}
 			% Es gibt keinen richtigen Namespace dafuer, da linux device driver (die physischen devices kontrollieren), nicht namespace aware sind und damit nicht sicher in containern verwendet werden koennen
 			% Nur die Cells-Implementierung baut einen 'device namespace'
@@ -301,7 +301,7 @@
 				\item \texttt{/dev/tty}: Terminal
 			\end{itemize}
 
-			Wie zu sehen ist, handelt sich dabei um kritische Systemkomponenten, über die Container unter keinen Umständen verfügen dürfen. Deswegen ist es notwendig den Zugriff auf Geräte stark einzuschränken, um den Host vor Missbrauch zu schützen.
+			Wie zu sehen ist, handelt sich dabei um kritische Systemkomponenten, über die Container unter keinen Umständen verfügen dürfen. Deswegen ist es notwendig, den Zugriff auf Geräte stark einzuschränken, um den Host vor Missbrauch zu schützen.
 			% (TODO): Starke Abhängigkeit zu cgroups (guten Übergang machen bzw. Abgrenzung)
 
 			Aktuell existiert im Linux-Kernel kein eigener Namespace für Geräte. Die Implementierung von Device-Namespaces erfolgte bereits von \emph{Cellrox}-Mitarbeitern im Jahr 2013 \cite{deviceNsCerrox}. Eine Integration in den Linux-Kernel fand jedoch bislang nicht statt.
@@ -322,7 +322,7 @@
   \label{secCgroups}
 		\acrshort{DoS}-Angriffe beabsichtigen das Sicherheitsziel der Verfügbarkeit zu verletzen und gehören in \gls{MultiTenantService}-Systemen zu einem verbreiteten Angriffsmuster \cite[S.5]{dockerSec1}. Um die Verfügbarkeit von Containern sicherzustellen, bietet der Linux-Kernel sogenannte Control Groups (\acrshort{cgroups}) an.
 
-		Alle gängigen Linux-basierten Containerlösungen, darunter auch Docker, nutzen aktuell Control Groups, um Ressourcen für Container zu verwalten \cite[S.16]{dockerSec2}. Der Einsatz von Cgroups unter Docker umfasst - wie im Quellcode von \emph{runC} zu sehen ist - die Kontrolle über \acrshort{CPU}, Arbeitsspeicher, Geräte, Netzwerkinterfaces und \acrshort{I/O}-Operationen auf Speichermedien wie \acrshort{HDD}, \acrshort{SSD} und \acrshort{USB}-Speicher \cite{cgroupsRedhat}\cite{githubRunCCgroups}. Die Verwaltung von Letzteren wurden mit dem neusten Docker-Release, Version 1.10, erweitert \cite{docker110}.
+		Alle gängigen Linux-basierten Containerlösungen, darunter auch Docker, nutzen aktuell Control Groups, um Ressourcen für Container zu verwalten \cite[S.16]{dockerSec2}. Der Einsatz von Cgroups unter Docker umfasst - wie im Quellcode von \emph{runC} zu sehen ist - die Kontrolle über \acrshort{CPU}, Arbeitsspeicher, Geräte, Netzwerkinterfaces und \acrshort{I/O}-Operationen auf Speichermedien wie \acrshort{HDD}, \acrshort{SSD} und \acrshort{USB}-Speicher \cite{cgroupsRedhat}\cite{githubRunCCgroups}. Die Verwaltung von Letzteren wurde mit dem neusten Docker-Release, Version 1.10, erweitert \cite{docker110}.
 
 		% \emph{control groups}, oder auch verkürzt \emph{cgroups} genannt, ist hierbei das Schlüsselfeature des Linuxkernels, um dieser Art von Angriff entgegenzuwirken. Sie stellen sicher, dass jeder Container nur begrenzt Hostressourcen beansprucht. Mit Docker lassen sich Limits und Bedingungen individuell pro Container anpassen, z.B. an einen bestimmten Container gerichtetes Arbeitsspeicherlimit in Bytes, das ihm maximal im Betrieb zur Verfügung steht \cite[S.4]{dockerSecIntro}.
 		% --> Quelle aus docker docs findbar?
@@ -343,14 +343,14 @@
 
 		Viele Containertechnologien erweiterten deswegen Resource Limits mit eigenen Features. Z.B. fügten die Entwickler von \emph{FreeBSD} für den Betrieb von \emph{Jails} sogenannte \emph{Hierarchical Resource Limits} hinzu \cite{freeBsdRCTL}. \emph{Solaris} bietet die Nutzung von \emph{Resource Pools} an, die eine Partitionierung von Ressourcen implementieren \cite{cgroupsUniHierarchyDoc}. Auch \emph{OpenVZ} und \emph{Linux-VServer} erweitern die Ressource Limits, sodass weiche und harte Limits pro Container definiert werden können \cite[S.15f.]{dockerSec2}.
 
-		Die Nachteile von Ressource Limits wurden mit der Implementierung von Control Groups für den Linux-Kernel behoben. Mit diesem relativ neuen Mechanismus werden Prozesse in hierarchischen Gruppen angeordnet, die individuell verwaltet werden und deren Attribute vererbt werden können. Neben vielseitiger und feingranularer Funktionen zum Management von z.B. CPU- und Speicherressourcen, können unter Control Groups komplexe Verfahren implementiert werden, die zur Korrektur von limitüberschreitender Prozesse dienen \cite{cgroupsRedhat}. Die Implementierung von Control Groups wurde ab 2012 weiter verbessert, sodass eine Update unter dem Namen \emph{Unified Control Group Hierarchy} im Jahr 2014 in den Linux-Kernel integriert wurde \cite{cgroupsFixing}\cite{cgroupsUniHierarchy}. Von Docker wird dieses Update noch nicht verwendet \cite{githubCgroupsUniHierNotSupported}. In zukünftige Kernelversionen soll ein neuer Control Groups-Namespace implementiert werden, der auf der \emph{Unified Hierarchy} basiert \cite{cgroupNs}.
+		Die Nachteile von Ressource Limits wurden mit der Implementierung von Control Groups für den Linux-Kernel behoben. Mit diesem relativ neuen Mechanismus werden Prozesse in hierarchischen Gruppen angeordnet, die individuell verwaltet werden und deren Attribute vererbt werden können. Neben vielseitiger und feingranularer Funktionen zum Management von z.B. CPU- und Speicherressourcen, können unter Control Groups komplexe Verfahren implementiert werden, die zur Korrektur von limitüberschreitender Prozesse dienen \cite{cgroupsRedhat}. Die Implementierung von Control Groups wurde weiter verbessert, sodass ein Update unter dem Namen \emph{Unified Control Group Hierarchy} im Jahr 2014 in den Linux-Kernel integriert wurde \cite{cgroupsFixing}\cite{cgroupsUniHierarchy}. Von Docker wird dieses Update noch nicht verwendet \cite{githubCgroupsUniHierNotSupported}. In zukünftigen Kernelversionen soll ein neuer Control Groups-Namespace implementiert werden, der auf der \emph{Unified Hierarchy} basiert \cite{cgroupNs}.
 
 		Wichtig zu erwähnen ist, dass die Implementierung von Control Groups, verglichen mit der von Ressource Limits, angeblich nicht vollständig ist. Das Feature, Dateisysteme als Ressourcen mit Control Groups zu steuern, fehlt nach Aussagen von Reshetova et al. \cite[S.19]{dockerSec2}. Auch im aktuellen Quellcode von \emph{runC} ist eine Schnittstelle zum Dateisystem als \glqq{}nicht unterstützt\grqq{} gekennzeichnet und wird demzufolge auch nicht von Docker genutzt \cite{githubRunCCgroups}. Diskussionen im \emph{GitHub}-Repository von Docker verweisen in Bezug zu diesem Feature auf Abhängigkeiten zur Art des Dateisystems. Offenbar lassen sich Kontingente für die Nutzung von Dateisystemen nur mit \emph{Device Mapper} und \emph{Brtfs} softwaretechnisch lösen. \emph{AuFS} ermöglicht dieses Feature hingegen nur indirekt über die Zuweisung von Festplattenpartitionen fester Größe. Diese Gegebenheit lässt vermuten, dass eine universelle Lösung aktuell an der Breite unterstützter Dateisysteme scheitert \cite{githubDockerIssueFsQuota}. Die neusten Entwicklungen sehen jedoch eine Implementierung von Kontingenten vor \cite{githubDockerPullBrtfs}.
 
 		Es ist zu erwarten, dass die fehlenden Funktionen von Control Groups sowie die ausstehende Unterstützung der \emph{Unified Hierarchy} zukünftig im Rahmen der Integration des Control Groups-Namespace stattfindet.
 		%Eine weitere einheitliche Verwaltung von Ressourcen auf der Basis von Control Groups ist vorgesehen \cite[S.16+19]{dockerSec2}.
 
-		Für Docker-Version 1.11 wurde außerdem die Unterstützung von \acrshort{PID}-Control Groups angekündigt. Sie sollen ergänzen zu den bereits unterstützten Ressourcentypen die Anzahl der erlaubten Prozesse innerhalb eines Containers regulieren \cite{githubCgroupPID}\cite{docker110Security}. Dieses Update verhindert das Angriffsmuster sogenannter \glspl{ForkBomb}.
+		Für Docker-Version 1.11 wurde außerdem die Unterstützung von \acrshort{PID}-Control Groups angekündigt. Sie sollen ergänzend zu den bereits unterstützten Ressourcentypen die Anzahl der erlaubten Prozesse innerhalb eines Containers regulieren \cite{githubCgroupPID}\cite{docker110Security}. Dieses Update verhindert das Angriffsmuster sogenannter \glspl{ForkBomb}.
 		% TODO: Abgleichen mit ... Local DoS: Fork-bomb (siehe \cite[S.793]{linuxInterface})
 
 		% TODO: Evtl. stress test aus
@@ -387,27 +387,27 @@
   \section{Einschränkung von Zugriffsrechten}
 		\label{secAccessControls}
 
-		Auf Basis der in \ref{questionEffects} erarbeiteten Annahme, dass Angreifer ausgehend von \cbroken{} Angriffe gegen die Sicherheitziele von \(h\) und \(C\) ausüben kann, müssen weitere Sicherheitsmechanismen verwendet werden, um letztere zu schützen. Diese zusätzlichen Mechanismen realisieren Zugriffskontrollen, die auch dann die Sicherheit von \(h\) und \(C\) wahren, wenn es einem Angreifer möglich ist, seine Privilegien in \cbroken{} unrechtmäßig auszudehnen.
+		Auf Basis der in \ref{questionEffects} erarbeiteten Annahme, dass Angreifer ausgehend von \cbroken{} Angriffe gegen die Sicherheitziele von \(h\) und \(C\) ausüben können, müssen weitere Sicherheitsmechanismen verwendet werden, um letztere zu schützen. Diese zusätzlichen Mechanismen realisieren Zugriffskontrollen, die auch dann die Sicherheit von \(h\) und \(C\) wahren, wenn es einem Angreifer möglich ist, seine Privilegien in \cbroken{} unrechtmäßig auszudehnen.
 
-		Die in diesem Kapitel vorgestellten Maßnahmen zur Zugriffskontrolle addressieren Punkt (2) des Lösungsansatzes aus Abschnitt \ref{questionSolutionTheory}.
+		Die in diesem Kapitel vorgestellten Maßnahmen zur Zugriffskontrolle adressieren Punkt (2) des Lösungsansatzes aus Abschnitt \ref{questionSolutionTheory}.
 
-		Zunächst werden zwei grundsätzliche Sicherheitsrisiken von Betriebssystemen, insbesondere Linux, vorgestellt, die in diesem Kapitel mit geeigneten Lösungsansätzen addressiert werden.
+		Zunächst werden zwei grundsätzliche Sicherheitsrisiken von Betriebssystemen, insbesondere Linux, vorgestellt, die in diesem Kapitel mit geeigneten Lösungsansätzen adressiert werden.
 
 		\begin{itemize}
 			\item	Wie die regelmäßige Entdeckung neuer Schwachstellen zeigt, sind Programmierfehler in Anwendungen und im Kernel nicht auszuschließen. Eine schnelle Behebung von Sicherheitslücken ist nur dann möglich, wenn diese den Entwicklern bekannt sind. Vor sogenannten \glspl{ZeroDayExploit} existiert kein Schutz.
-			\item	Standardmäßig kontrolliert Linux den Zugriff auf Ressourcen anhand der Identität des anfragenden Users. Diese sogenannte \emph{Discretionary Access Control} (\acrshort{DAC}) implementiert eine einfache Form des Konzepts \emph{Access Control List} (\acrshort{ACL}). Wie folgendes Beispiel zeigt, kann ein nicht-priveligierter \cbroken{} kann die DAC einfach umgehen.
+			\item	Standardmäßig kontrolliert Linux den Zugriff auf Ressourcen anhand der Identität des anfragenden Users. Diese sogenannte \emph{Discretionary Access Control} (\acrshort{DAC}) implementiert eine einfache Form des Konzepts \emph{Access Control List} (\acrshort{ACL}). Wie folgendes Beispiel zeigt, kann ein nicht-priveligierter \cbroken{} die DAC einfach umgehen.
 
 			\emph{Ping} und andere Tools werden standardmäßig mit Rootrechten ausgeführt und können von beliebigen Nutzern im System gestartet werden. Die Rootrechte bewirken, dass die DAC Programmen dieser Art jeglichen Zugriff erlaubt. Damit ist auch \cbroken{} fähig, Programme wie \emph{Ping} auszuführen und über deren Sicherheitslücken mit Rootrechten auf das Hostsystem zu wirken \cite[S.26]{SELinuxApparmor}.
 		\end{itemize}
 
-		Sicherheitslücken, insbesondere Zero-Day-Exploits in weit verbreiteten Programmen, stellen somit eine Gefahr für den sicheren Betrieb von Linux und Containern dar. Es macht daher Sinn das Betriebssystem präventiv zu schützen, indem der potentielle Schaden genannter Gefahren auf Basis des \emph{Principle Of Least Privilege} eingedämmt wird.
+		Sicherheitslücken, insbesondere Zero-Day-Exploits in weit verbreiteten Programmen, stellen somit eine Gefahr für den sicheren Betrieb von Linux und Containern dar. Es ist daher sinnvoll, das Betriebssystem präventiv zu schützen, indem der potentielle Schaden genannter Gefahren auf Basis des \emph{Principle Of Least Privilege} eingedämmt wird.
 
-		Linux bietet verschiedene Möglichkeiten an, Mechanismen auf Basis dieses Prinzips zu nutzen. Diejenigen Möglichkeiten, für die Docker eine individuelle Unterstützung bietet, werden in diesem Kapitel vorgestellt. Einige der erklärten Mechanismen bieten anpassbare Sicherheitskonfiguration, z.B. in der Form von Profilen, an. Dadurch ist eine Begrenzung oder Ausdehnung von Rechten systemweit oder individuell pro Container möglich.
+		Linux bietet verschiedene Möglichkeiten an, Mechanismen auf Basis dieses Prinzips zu nutzen. Diejenigen Möglichkeiten, für die Docker eine individuelle Unterstützung bietet, werden in diesem Kapitel vorgestellt. Einige der erklärten Mechanismen bieten anpassbare Sicherheitskonfiguration an, z.B. in der Form von Profilen, an. Dadurch ist eine Begrenzung oder Ausdehnung von Rechten systemweit oder individuell pro Container möglich.
 
-		Es existieren noch weitere Sicherheitserweiterungen für den Linux-Kernel, wie z.B. \emph{grsecurity} \cite{grsecurity}. Durch deren anwendungsunabhängige Natur erfordern diese allerdings keine Unterstützung seitens Docker \cite{dockerSecurity}. Aus diesem Grund wird diese Art von Sicherheitserweiterung in dieser Arbeit nicht weiter betrachtet.
+		Es existieren noch weitere Sicherheitserweiterungen für den Linux-Kernel wie z.B. \emph{grsecurity} \cite{grsecurity}. Durch deren anwendungsunabhängige Natur erfordern diese allerdings keine Unterstützung seitens Docker \cite{dockerSecurity}. Aus diesem Grund wird diese Art von Sicherheitserweiterung in dieser Arbeit nicht weiter betrachtet.
 		% TODO: Quellen für grsecurity und PAX.
 
-		Unter Linux sind Prozesse und Nutzer unter Linux eng gebunden. Jeder Prozess agiert in der Rolle eines Nutzers, von dem er gestartet wurde.	Zur Veranschaulichung werden in den folgenden Abschnitten Prozesse, die als Akteure Zugriffe erfragen können, als Subjekte bezeichnet. Ressourcen, auf die ein Zugriff erfolgen kann, sind im Gegensatz dazu als Objekte notiert. Objekte umfassen alle jene Ressourcen, die von einem Kernel in interne \glslink{KernelObject}{Kernelobjekte} aufgelöst werden können, also z.B. Dateien, Verzeichnisse, Sockets, Geräte, etc. Der Zugriff eines Subjekts auf ein Objekt wird zugelassen, sofern das Subjekt das dafür notwendige Recht - oder gleichbedeutend: Privileg - besitzt.
+		Unter Linux sind Prozesse und Nutzer unter Linux eng gebunden. Jeder Prozess agiert in der Rolle eines Nutzers, von dem er gestartet wurde.	Zur Veranschaulichung werden in den folgenden Abschnitten Prozesse, die als Akteure Zugriffe erfragen können, als Subjekte bezeichnet. Ressourcen, auf die ein Zugriff erfolgen kann, sind im Gegensatz dazu als Objekte notiert. Objekte umfassen all jene Ressourcen, die von einem Kernel in interne \glslink{KernelObject}{Kernelobjekte} aufgelöst werden können, also z.B. Dateien, Verzeichnisse, Sockets, Geräte, etc. Der Zugriff eines Subjekts auf ein Objekt wird zugelassen, sofern das Subjekt das dafür notwendige Recht - oder gleichbedeutend: Privileg - besitzt.
 		% Oben behandelte Namespaces hatten schon einige Bugs. Alle zwar bisher behoben, trotzdem Beweis dafür, dass Namespace- und Cgroups-Sicherheit allein nicht aussreichen, um Container zu isolieren.
 
 
@@ -426,7 +426,7 @@
 			Im Laufe der Jahre sind durch Linux-Erweiterungen weitere Privilegien entstanden, die in Summe mehr als 32 Elemente umfassen. Aus diesem Grund wurde das Funktionsspektrum von v.a. zwei Capabilities, \texttt{CAP\_NET\_ADMIN} und \texttt{CAP\_SYS\_ADMIN}, überladen, um auch die neuen Privilegien nutzen zu können \cite[S.40f.]{SELinuxApparmor}.
 			%Bei den beiden genannten Capabilities handelt es sich dadurch um die mächtigsten Vertreter. Beide sind nur mit Bedacht zu gewähren.
 
-			Container sind unter Docker standardmäßig in der Lage 14 Capabilities zu verwenden \cite{githubCapabilities}. Mit den Parametern \texttt{--cap-add} und \texttt{--cap-drop} des Docker-Befehls \texttt{run} können Capabilities zusätzlich beim Startvorgang von Containern individuell genehmigt oder verweigert werden. In Version 1.10 und neuer ist jedoch zu beachten, dass das \emph{Seccomp}-Standardprofil manuelle Änderungen des verwendeten Capability-Sets überschreibt. Mit \texttt{--cap-*} definierte Capabilities werden nur beachtet, wenn das \emph{Seccomp}-Profil deaktiviert wurde \cite{dockerRun}. \emph{Seccomp} ist in Abschnitt \ref{seccomp} erklärt.
+			Container sind unter Docker standardmäßig in der Lage 14 Capabilities zu verwenden \cite{githubCapabilities}. Mit den Parametern \texttt{--cap-add} und \texttt{--cap-drop} des Docker-Befehls \texttt{run} können Capabilities zusätzlich beim Startvorgang von Containern individuell genehmigt oder verweigert werden. In Version 1.10 ist jedoch zu beachten, dass das \emph{Seccomp}-Standardprofil manuelle Änderungen des verwendeten Capability-Sets überschreibt. Mit \texttt{--cap-*} definierte Capabilities werden nur beachtet, wenn das \emph{Seccomp}-Profil deaktiviert wurde \cite{dockerRun}. \emph{Seccomp} ist in Abschnitt \ref{seccomp} erklärt.
 
 
 			% TODO: Table in Appendix mit Auflistung von Capabilities und englische Erklärung dazu in \cite[S.801f.]{linuxInterface}. ?
@@ -457,7 +457,7 @@
 			Durch eine Erweiterung von Namespaces können Module der LSM eventuell zukünftig über Namespaces verwaltet werden.
 			% TODO: Quelle
 
-			Die Kontrolle unter LSM geschieht, wie in \fig \ref{fig:sec_LSMHook} dargestellt, in Form eines LSM-Hooks. Unter einem Hook ist ein zwischengeschaltener Aufruf gemeint, der einen \emph{System Call} unterbricht und die Weiterverarbeitung dessen in einem Sicherheitsmodul, wie \emph{SELinux}, anstößt. Erst nach einer Antwort eines oder mehrerer hintereinander geschaltener Module, wird die normale Weiterausführung des \emph{System Calls} fortgesetzt bzw. für den Fall, dass das Modul die Weiterausführung blockiert, verweigert.
+			Die Kontrolle unter LSM geschieht, wie in \fig \ref{fig:sec_LSMHook} dargestellt, in Form eines LSM-Hooks. Unter einem Hook ist ein zwischengeschalteter Aufruf gemeint, der einen \emph{System Call} unterbricht und die Weiterverarbeitung dessen in einem Sicherheitsmodul, wie \emph{SELinux}, anstößt. Erst nach einer Antwort eines oder mehrerer hintereinander geschaltener Module, wird die normale Weiterausführung des \emph{System Calls} fortgesetzt bzw. für den Fall, dass das Modul die Weiterausführung blockiert, verweigert.
 
 			\begin{figure}[h]
 					\centering
@@ -466,9 +466,9 @@
 					\label{fig:sec_LSMHook}
 			\end{figure}
 
-			Der Ausführungszeitpunkt des Hooks bietet den Vorteil, dass der komplette Kontext der Zugriffsanfrage an dieser Stelle vorliegt und vollständig von einem LSM-Modul ausgewertet werden kann \cite[S.2]{LSMFramework}. Neben der Kompatiblität zum DAC-Mechanismus, wird dadurch zusätzlich die Granularität der Zugriffskontrolle verbessert \cite{LSMDesign}.
+			Der Ausführungszeitpunkt des Hooks bietet den Vorteil, dass der komplette Kontext der Zugriffsanfrage an dieser Stelle vorliegt und vollständig von einem LSM-Modul ausgewertet werden kann \cite[S.2]{LSMFramework}. Dadurch wird neben der Kompatiblität zum DAC-Mechanismus zusätzlich die Granularität der Zugriffskontrolle verbessert \cite{LSMDesign}.
 
-			An dieser Stelle ist wichtig zu erwähnen, dass Module des LSM-Frameworks den nativen DAC-Mechanismus nicht überschreiben, sondern ergänzen. Wie in \fig \ref{fig:sec_LSMHook} dargestellt, greift der LSM-Hook erst nachdem ein Nutzer einen sicherheitskritischen \emph{System Call} ausführt hat, das angefragte Objekt aufgelöst, ein Fehler-Check abgeschlossen und der Zugriff über den DAC-Mechanismus genehmigt wurde. Erst wenn der Kernel versucht auf das aufgelöste \glslink{KernelObject}{Kernelobjekt} zuzugreifen, wird der Hook ausgeführt, der den Zugriff in das zugehörige LSM-Modul weiterleitet. Das Modul genehmigt oder verweigert den Zugriff anhand den ihm vorliegenden Attribute im Sicherheitskontext.
+			An dieser Stelle ist wichtig zu erwähnen, dass Module des LSM-Frameworks den nativen DAC-Mechanismus nicht überschreiben, sondern ergänzen. Wie in \fig \ref{fig:sec_LSMHook} dargestellt, greift der LSM-Hook erst nachdem ein Nutzer einen sicherheitskritischen \emph{System Call} ausführt hat, das angefragte Objekt aufgelöst, ein Fehler-Check abgeschlossen und der Zugriff über den DAC-Mechanismus genehmigt wurde. Erst wenn der Kernel versucht auf das aufgelöste \glslink{KernelObject}{Kernelobjekt} zuzugreifen, wird der Hook ausgeführt, der den Zugriff in das zugehörige LSM-Modul weiterleitet. Das Modul genehmigt oder verweigert den Zugriff anhand den ihm vorliegenden Attributen im Sicherheitskontext.
 
 			Durch diese Reihenfolge ist sichergestellt, dass die Nutzung einer LSM-Schnittstelle optional ist und unabhängig von der DAC funktioniert \cite{centOsMCS}. Deswegen können auch Anwendungen, die das LSM-Framework nicht unterstützen, weiterhin funktionieren. Außerdem ist durch den rein erweiternden Charakter die Gefahr ausgeschlossen, mit \emph{SELinux} oder \emph{AppArmor} neue Sicherheitslücken in das System einzuführen.
 			% logische UND-Verknüpfung von DAC und MAC erwähnen?
@@ -517,7 +517,7 @@
 				\emph{AppArmor} unterstützt drei Betriebsmodi, die jeweils folgenden Zweck erfüllen \cite[S.82]{SELinuxApparmor}:
 				\begin{itemize}
 					\item \emph{Audit}-Modus: Alle erlaubten Zugriffe werden protokolliert.
-					\item \emph{Complain}-Modus: Ein Lernmodus, bei dem das Verhalten einer Anwendungen beobachtet wird und aus diesem ein automatisch generiertes Sicherheitsprofil erstellt wird \cite{linuxSecOverview}. In diesem Modus werden Zugriffe, die gegen die Profilregeln verstoßen, nur aufgezeichnet und nicht unterbunden.
+					\item \emph{Complain}-Modus: Ein Lernmodus, bei dem das Verhalten einer Anwendung beobachtet wird und aus diesem ein automatisch generiertes Sicherheitsprofil erstellt wird \cite{linuxSecOverview}. In diesem Modus werden Zugriffe, die gegen die Profilregeln verstoßen, nur aufgezeichnet und nicht unterbunden.
 					\item \emph{Enforce}-Modus: Die Regeln eines Profils werden erzwungen. Verstöße werden protokolliert.
 				\end{itemize}
 
@@ -544,12 +544,12 @@
 							...
 						}
 					\end{lstlisting}
-					Die erste Zeile markiert den Start \texttt{docker-default} mit zwei Flags. Das Flag \texttt{attach\_disconnected} gibt an, dass Verzeichnisse außerhalb eines Namespace direkt in das Rootverzeichnis eingefügt werden \cite{apparmorPolicyReference}. Die Angabe von \texttt{mediate\_deleted} bewirkt eine versuchte Auflösung eines im Speicher gelöschten Objekts anhand dessen Pfad im Dateisystem \cite{apparmorFAQ}. Beide Flags wirken sich nicht direkt auf die Zugriffsverwaltung unter Docker aus und sind nur zur Vollständigkeit erwähnt.
+					Die erste Zeile markiert den Start \texttt{docker-default} mit zwei Flags. Das Flag \texttt{attach\_disconnected} gibt an, dass Verzeichnisse außerhalb eines Namespace direkt in das Rootverzeichnis eingefügt werden \cite{apparmorPolicyReference}. Die Angabe von \texttt{mediate\_deleted} bewirkt eine versuchte Auflösung eines im Speicher gelöschten Objekts anhand dessen Pfades im Dateisystem \cite{apparmorFAQ}. Beide Flags wirken sich nicht direkt auf die Zugriffsverwaltung unter Docker aus und sind nur zur Vollständigkeit erwähnt.
 
 					\begin{lstlisting}
 						#include <abstractions/base>
 					\end{lstlisting}
-					Hiermit werden einige Zugriffsregeln eingebunden, die von fast allen Programm benötigt werden \cite[S.100]{SELinuxApparmor}.
+					Hiermit werden einige Zugriffsregeln eingebunden, die von fast allen Programmen benötigt werden \cite[S.100]{SELinuxApparmor}.
 
 					\begin{lstlisting}
 						network,
@@ -565,7 +565,7 @@
 					  deny @{PROC}/sys/[^k]** w,
 					  deny @{PROC}/sys/kernel/{?,??,[^s][^h][^m]**} w,
 					\end{lstlisting}
-					Diese Anweisungen regeln den Schreibzugriff im Verzeichnis \texttt{/proc/}. Effektiv wird das Schreibrecht auf alle Dateien und Verzeichnisse untersagt, die nicht in \texttt{/proc/<number>/} und \texttt{/proc/sys/kernel/shm*} liegen. Erstere, numerischen Verzeichnisse geben Zugriff auf prozessspezifische Daten. Jede Nummer repräsentiert eine Prozess-ID der aktuell laufenden Prozesse. Dateien im Verzeichnis \texttt{/proc/sys/kernel/}, deren Name mit \texttt{shm} beginnt, beziehen sich auf geteilte Speicherbereiche, den \emph{Shared Memory} von Prozessen \cite{apparmorShm}.
+					Diese Anweisungen regeln den Schreibzugriff im Verzeichnis \texttt{/proc/}. Effektiv wird das Schreibrecht auf alle Dateien und Verzeichnisse untersagt, die nicht in \texttt{/proc/<number>/} und \texttt{/proc/sys/kernel/shm*} liegen. Erstere, numerische Verzeichnisse geben Zugriff auf prozessspezifische Daten. Jede Nummer repräsentiert eine Prozess-ID der aktuell laufenden Prozesse. Dateien im Verzeichnis \texttt{/proc/sys/kernel/}, deren Name mit \texttt{shm} beginnt, beziehen sich auf geteilte Speicherbereiche, den \emph{Shared Memory} von Prozessen \cite{apparmorShm}.
 
 					\begin{lstlisting}
 						deny @{PROC}/sysrq-trigger rwklx,
@@ -573,7 +573,7 @@
 					  deny @{PROC}/kmem rwklx,
 					  deny @{PROC}/kcore rwklx,
 					\end{lstlisting}
-					Mittels dieser Direktiven wird Docker das Lese-, Schreib-, Dateisperrungs-, Linkerzeugungs- und Ausführrecht (in dieser Reihenfolge) für angegebene Dateien verwehrt. Mithilfe von \texttt{sysrq-trigger} können Aktionen programmatisch ausgeführt werden, die auch über die \emph{Magischen S-Abf-Tasten} bewirkt werden können. Darunter fallen u.a. kritische Befehle zur Terminierung von Prozessen oder dem Neustart des Betriebssystems \cite{apparmorMagicSysRQ}\cite{apparmorSysrqTrigger}.
+					Mittels dieser Direktiven wird Docker das Lese"~, Schreib"~, Dateisperrungs"~, Linkerzeugungs"~ und Ausführrecht (in dieser Reihenfolge) für angegebene Dateien verwehrt. Mithilfe von \texttt{sysrq-trigger} können Aktionen programmatisch ausgeführt werden, die auch über die \emph{Magischen S-Abf-Tasten} bewirkt werden können. Darunter fallen u.a. kritische Befehle zur Terminierung von Prozessen oder dem Neustart des Betriebssystems \cite{apparmorMagicSysRQ}\cite{apparmorSysrqTrigger}.
 
 					Die Einträge \texttt{mem}, \texttt{kmem} und \texttt{kcore} beinhalten Speicherbereiche des Kernels.
 					% TODO: Quelle dazu... Buch, da online keine richtige quelle ausser stackoverflow existiert
@@ -592,7 +592,7 @@
 						deny /sys/firmware/efi/efivars/** rwklx,
 						deny /sys/kernel/security/** rwklx,
 					\end{lstlisting}
-					Diese Liste untersagt, abgesehen von einem Lesezugriff, alle anderen Privilegien aus dem bereits geschilderten Rechteset für das Verzeichnis \texttt{/sys/}. Die Ausnahme bilden effektiv Dateien und Unterverzeichnisse in \texttt{/sys/fs/cgroups/}. Damit ist es Containern möglich Informationen über Control Groups des Hostsystems zu beziehen.
+					Diese Liste untersagt, abgesehen von einem Lesezugriff, alle anderen Privilegien aus dem bereits geschilderten Rechteset für das Verzeichnis \texttt{/sys/}. Die Ausnahme bilden effektiv Dateien und Unterverzeichnisse in \texttt{/sys/fs/cgroups/}. Damit ist es Containern möglich, Informationen über Control Groups des Hostsystems zu beziehen.
 
 					Zusätzlich darf von Dateien und Unterordnern in \texttt{/sys/firmware/efi/efivars/} und \texttt{/sys/kernel/security} nicht gelesen werden. Das erstgenannte Verzeichnis bietet Informationen über einige Bootvariablen. Zweitgenanntes gewährt Einblick in die aktuelle Konfiguration von Sicherheitsmodulen wie \emph{AppArmor} und \emph{SELinux} \cite{apparmorEFI}\cite{apparmorSecurityFS}\cite{apparmorLWNSecurityFS}.
 
