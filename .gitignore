@@ -8,6 +8,7 @@
 *.acr
 *.alg
 *.bbl
+*.bcf
 *.blg
 *.dvi
 *.glg
@@ -22,6 +23,7 @@
 *.out
 *.synctex.gz
 *.glsdefs
+*.xml
 
 # Custom
 output/

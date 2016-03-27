@@ -11,67 +11,50 @@
 \newacronym{OSI}{OSI}{Open Systems Interconnection (Modell)}
 \newacronym{COW}{COW}{Copy-On-Write}
 \newacronym{LSM}{LSM}{Linux Security Modules}
-\newacronym{MAC-SEC}{MAC}{Mandatory Access Control (Zugriffskontrolle)}
-\newacronym{MAC-NET}{MAC}{Media Access Control (Netzwerkkommunikation)}
+\newacronym{MAC-SEC}{MAC}{Mandatory Access Control} %  (Zugriffskontrolle)
+% \newacronym{MAC-NET}{MAC}{Media Access Control (Netzwerkkommunikation)}
 \newacronym{RBAC}{RBAC}{Role-Based Access Control}
-
 \newacronym{LXC}{LXC}{Linux Containers}
-
-%\newacronym{HPC}{HPC}{High Performance Computing}
-
 \newacronym{SELinux}{SELinux}{Security Encanced Linux}
 \newacronym{AppArmor}{AppArmor}{Application Armor}
-
-\newacronym[see={[Glossary:]{ContinuousIntegration}}]{CI}{CI}{Continuous Integration}
-\newacronym[see={[Glossary:]{ContinuousDelivery}}]{CD}{CD}{Continuous Delivery}
-\newacronym[see={[Glossary:]{InterProcessCommunication}}]{IPC}{IPC}{Inter Process Communication}
-\newacronym[see={[Glossary:]{DenialOfService}}]{DoS}{DoS}{Denial of Service}
-\newacronym[see={[Glossary:]{chrootGlossary}}]{chroot}{chroot}{change root}
-
 \newacronym{JSON}{JSON}{JavaScript Object Notation}
 \newacronym{MITM}{MITM}{Man-In-The-Middle}
-
 \newacronym{CISSP}{CISSP}{Certified Information Systems Security Professional}
-
 \newacronym{OCF}{OCF}{Open Container Format}
 \newacronym{OCP}{OCP}{Open Container Project}
 \newacronym{runC}{runC}{runContainer}
-
 \newacronym{IP}{IP}{Internet Protocol}
 \newacronym{HTTP}{HTTP}{Hypertext Transfer Protocol}
 \newacronym{HTTPS}{HTTPS}{Hypertext Transfer Protocol Secure}
 \newacronym{TLS}{TLS}{Transport Layer Security}
-
 \newacronym{NSA}{NSA}{National Security Agency}
-
 \newacronym{PID}{PID}{Process ID, Process Identifier}
 \newacronym{UTS}{UTS}{UNIX Time Sharing}
-
 \newacronym{ARP}{ARP}{Address Resolution Protocol}
-
 \newacronym{MCS}{MCS}{Multi-Categegory Security}
 \newacronym{MLS}{MLS}{Multi-Level Security}
-
 \newacronym{rlimits}{rlimits}{Resource Limits}
 \newacronym{cgroups}{cgroups}{Control Groups}
 \newacronym{I/O}{I/O}{Input and Output}
 \newacronym{HDD}{HDD}{Hard Disk Drive}
 \newacronym{SSD}{SSD}{Solid State Drive}
 \newacronym{USB}{USB}{Universal Serial Bus}
-
 \newacronym{ACL}{ACL}{Access Control List}
 \newacronym{DAC}{DAC}{Discretionary Access Control}
-
 \newacronym{CA}{CA}{Certificate Authority}
-
 \newacronym{CLI}{CLI}{Command-Line Interface}
 \newacronym{GUI}{GUI}{Graphical User Interface}
-
 \newacronym{TUF}{TUF}{The Update Framework}
-
 \newacronym{CVE}{CVE}{Common Vulnerabilities and Exposures}
-
 \newacronym{TOML}{TOML}{Tom's Obvious, Minimal Language}
-
 \newacronym{LTS}{LTS}{Long Term Support}
 \newacronym{RHEL}{RHEL}{Red Hat Enterprise Linux}
+
+% This syntax is supposed to do cross referencing, but doesn't work with nonumberlist.
+%\newacronym[see={[Glossar:]{ContinuousIntegration}}]{CI}{CI}{Continuous Integration}
+% Thus manual cross references...
+\newacronym{CI}{CI}{Continuous Integration, \textit{s. Glossar:} \gls{ContinuousIntegration}}
+\newacronym{CD}{CD}{Continuous Delivery, \textit{s. Glossar:} \gls{ContinuousDelivery}}
+\newacronym{IPC}{IPC}{Inter Process Communication, \textit{s. Glossar:} \mbox{\gls{InterProcessCommunication}}} % Visual fix with mbox{} to prevent new line for last syllable.
+\newacronym{DoS}{DoS}{Denial of Service, \textit{s. Glossar:} \gls{DenialOfService}}
+\newacronym{chroot}{chroot}{change root, \textit{s. Glossar:} \gls{chrootGlossary}}

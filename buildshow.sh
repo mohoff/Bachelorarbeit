@@ -5,6 +5,11 @@
 # by Moritz Hoffmann                            #
 #################################################
 
+# Helper function. Moves tmp files to a subdir
+clear_dir(){
+  mv -f *.log *.aux *.bib *.bbl *.bcf *.blg *.lof *.lot *.toc *.out *.glo *.glg *.gls *.glsdefs *.ist *.acn *.acr *.alg *.xml output/
+}
+
 # Check for one input parameter specifying file or filename of .tex and .bib file.
 if [ $# -eq 0 ]
   then
@@ -13,7 +18,7 @@ if [ $# -eq 0 ]
 fi
 
 # Check for mandatory packages to build pdf.
-NEEDED="texlive texlive-lang-german texlive-bibtex-extra texlive-latex-extra texlive-generic-extra"
+NEEDED="texlive texlive-lang-german texlive-bibtex-extra texlive-latex-extra texlive-generic-extra biber"
 printf "\n"
 for pkg in $NEEDED; do
   if dpkg --get-selections | grep -q "^$pkg[[:space:]]*install$" >/dev/null; then
@@ -33,8 +38,8 @@ printf "\n"
 file="$1"
 filename="${file%%.*}"
 
-# Clear directory. Move tmp files to a subdir
-mv -f *.log *.aux *.bbl *.blg *.lof *.lot *.toc *.out *.glo *.glg *.gls *.glsdefs *.ist *.acn *.acr *.alg output/
+# Clear dir
+clear_dir
 
 # Proper order for building latex sources with bibtex extra.
 # Show output of last build only.
@@ -42,7 +47,9 @@ mv -f *.log *.aux *.bbl *.blg *.lof *.lot *.toc *.out *.glo *.glg *.gls *.glsdef
   pdflatex "$filename"
   makeglossaries "$filename"
   pdflatex "$filename"
-  bibtex "$filename"
+  makeglossaries "$filename"
+  #bibtex "$filename"
+  biber "$filename"
   pdflatex "$filename"
 #} &> /dev/null
 pdflatex "$filename"
@@ -50,7 +57,8 @@ printf "\n"
 
 # Move all output files in an output directory. Keep copy of output pdf.
 mkdir -p output
-mv -f *.log *.aux *.bbl *.blg *.lof *.lot *.toc *.out *.glo *.glg *.gls *.glsdefs *.ist *.acn *.acr *.alg output/
+# Clear dir
+clear_dir
 cp "$filename".pdf output/
 
 # Open output pdf with system's default pdf viewer.

@@ -59,10 +59,10 @@
 		Eine weitere Unterscheidung trennt Systeme nach ihrer Rolle:
 
 		\begin{itemize}
-			\item \textbf{Hostsystem:} Physisches oder virtuelles System, das virtuelle Systeme (Gastsysteme) betreibt. In einem Hostsystem läuft eine Virtualisierungssoftware wie z.B. Docker, die die Instanziierung von Gastsystemem ermöglicht.\\
-			\emph{Beispiel: Linux-Distribution mit Docker-Installation}
-			\item \textbf{Gastsystem:} Virtuelles System, das im Kontext eines übergeordneten Hostsystems läuft.\\
-			\emph{Beispiel: Docker-Container}
+			\item \textbf{Hostsystem}: Physisches oder virtuelles System, das virtuelle Systeme (Gastsysteme) betreibt. In einem Hostsystem läuft eine Virtualisierungssoftware wie z.B. Docker, die die Instanziierung von Gastsystemem ermöglicht.\\
+			\textbf{Beispiel}: Linux-Distribution mit Docker-Installation
+			\item \textbf{Gastsystem}: Virtuelles System, das im Kontext eines übergeordneten Hostsystems läuft.\\
+			\textbf{Beispiel}: Docker-Container
 		\end{itemize}
 
 
@@ -316,7 +316,7 @@
       \begin{figure}[h]
           \centering
           \includegraphics[width=0.9\textwidth]{./images/intro_dockerHost.jpg}
-          \caption{Aufbau eines Docker-Hostsystems \cite[S.3]{dockerSecIntro}.}
+          \caption{Aufbau eines Docker"=Hostsystems \cite[S.3]{dockerSecIntro}.}
           \label{fig:intro_dockerHost}
       \end{figure}
 
@@ -398,7 +398,7 @@
 			Images bilden als unveränderbare Dateien die Basis von Containern. Sie sind einfach portierbar und können geteilt, gespeichert und aktualisiert werden. Images sind durch ein \emph{Union}-Dateisystem in Schichten unterteilt, die überlagert ein Image ergeben, das als Container gestartet werden kann \cite[S.11]{dockerBook}. Die von Docker unterstützten \emph{Union}-Dateisysteme, wie z.B. \emph{AuFS}, \emph{Brtfs} und \emph{Device Mapper} basieren auf dem \emph{\gls{CopyOnWrite}}-Modell \cite[S.8]{dockerBook}\cite[S.3]{dockerIntroIEEE}\cite[S.4]{dockerSecIntro}.
 			% TODO: Zusatz: "Die Docker alle unterstuetzt (mit Storage Drivern)"
 
-			Genauer gesagt besteht ein Image aus einem Manifest, das ein oder mehrere Schichten (Layers) referenziert. Images und Schichten sind jeweils über Hashwerte eindeutig referenzierbar und liegen auf dem Docker-Hostsystem im Verzeichnis \texttt{/var/lib/docker/graph/}. Im Unterordner eines Images liegen mehrere, für ein Image spezifische Dateien (s. \fig \ref{fig:intro_dockerImageVZ}), u.a. das Manifest in der Datei \texttt{json}, das in einer \acrshort{JSON}-Struktur vorliegt und neben Metainformationen auch Details des Dockerfiles, aus dem das Image generiert wurde, beinhaltet \cite{githubDockerGlossary}.
+			Genauer gesagt besteht ein Image aus einem Manifest, das ein oder mehrere Schichten (Layers) referenziert. Images und Schichten sind jeweils über Hashwerte eindeutig referenzierbar und liegen auf dem Docker"=Hostsystem im Verzeichnis \texttt{/var/lib/docker/graph/}. Im Unterordner eines Images liegen mehrere, für ein Image spezifische Dateien (s. \fig \ref{fig:intro_dockerImageVZ}), u.a. das Manifest in der Datei \texttt{json}, das in einer \acrshort{JSON}-Struktur vorliegt und neben Metainformationen auch Details des Dockerfiles, aus dem das Image generiert wurde, beinhaltet \cite{githubDockerGlossary}.
 
 			\begin{figure}[!htbp]
           \centering
@@ -458,7 +458,7 @@
     \subsection{Container}
 		\label{dockerContainer}
       % Metapher mit dem Docker-Wal, der Container lädt: Docker als Frachtschiff, mit dem Container verschifft werden.
-			Ein Container ist die laufende Instanz eines Images, die in Sekundenbruchteilen startet \cite[S.1]{dockerIntroIEEE}. Er existiert als Gastsystem auf einem Docker-Hostsystem und kann mehrere Anwendungen betreiben. Nach dem Konzept von \emph{Microservices} läuft in einem Container nur eine Anwendung.
+			Ein Container ist die laufende Instanz eines Images, die in Sekundenbruchteilen startet \cite[S.1]{dockerIntroIEEE}. Er existiert als Gastsystem auf einem Docker"=Hostsystem und kann mehrere Anwendungen betreiben. Nach dem Konzept von \emph{Microservices} läuft in einem Container nur eine Anwendung.
 
       Ein Container wird über eine Reihe an Operationen gesteuert. Diese umfassen das Erstellen, Starten, Stoppen, Neustarten und Beenden eines Containers. Welchen Inhalt einen Container hat, also ob ein Container z.B. auf einem Datenbank- oder Webserver-Image beruht, ist dafür unerheblich \cite[S.12]{dockerBook}\cite[S.2]{dockerLXCKub}.
 

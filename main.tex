@@ -20,14 +20,15 @@
 \usepackage{ltxtable}
 \usepackage{subcaption}
 \usepackage{chngcntr} % Change counter (start numeric page numbering on first content page)
-\usepackage[acronym]{glossaries} % Add parameter [toc] to include glossary in index page. Needs to be defined after package 'hyperref' so glossary occurances are linked.
+\usepackage[acronym,nopostdot,nonumberlist]{glossaries} % Add parameter [toc] to include glossary in index page. Needs to be defined after package 'hyperref' so glossary occurances are linked.
+\usepackage[backend=biber,style=numeric]{biblatex}
+
+%\addbibresource[<options for bib resources>]{./bibliography/bookpapermanual.bib}
 
 \makeglossaries % Generates (one or multiple) glossaries
 
 % Add glossary entries
 \loadglsentries{./modules/glossary}
-%\input{./modules/glossary} % Adds wrong page references in glossary
-%\glsaddall                 % Adds wrong page references in glossary
 
 % Add acronym entries
 \include{./modules/acronyms}
@@ -58,8 +59,9 @@
 \renewcommand{\arraystretch}{2} % for vertical table cell padding
 
 % Some global symbols and meta data
-\newcommand{\bibtexFiles}{./bibliography/bookpapermanual,./bibliography/web_docker,./bibliography/web_github,./bibliography/web_homepages,./bibliography/web_misc} % written without extension
-%\newcommand{\bibtexFilePath}{./modules/bibliography.bib} % written without extension
+\newcommand{\bibtexFiles}{./bibliography/bookpapermanual,./bibliography/web_docker,./bibliography/web_github,./bibliography/web_homepages,./bibliography/web_misc} % written
+% TEST \newcommand{\bibtexFiles}{./bibliography/bookpapermanual,./bibliography/web_docker,./bibliography/web_github,./bibliography/web_homepages} % written
+% TEST \newcommand{\bibtexFilePath}{./modules/bibliography.bib} % written without extension
 \newcommand{\Autor}{Moritz Hoffmann}
 \newcommand{\Email}{mh203@hdm-stuttgart.de}
 \newcommand{\Matrikelnummer}{26135}
@@ -73,6 +75,8 @@
     \par\noindent\makebox[2.5in]{\hrulefill} \hfill\makebox[2.0in]{\hrulefill}%
     \par\noindent\makebox[2.5in][l]{Unterschrift}      \hfill\makebox[2.0in][l]{Datum}%
 }
+\DeclareUnicodeCharacter{0301}{\'}
+
 \newcommand{\cvalid}{\(c\)}
 \newcommand{\cbroken}{\(\overline{c}\)}
 
@@ -86,6 +90,8 @@
     pdfcreator={\Autor},
     pdfkeywords={Docker, Sicherheit, Virtualisierung}
 }
+
+\bibliography{\bibtexFiles}
 
 % Add hyphenations
 \include{./modules/hyphenation}
@@ -145,8 +151,11 @@
     % Evtl. beispielhafte Dockerfiles anzeigen (oder das inline)
 
   % Quellenverzeichnis
-  \bibliographystyle{plain} %plain
-  \bibliography{\bibtexFiles} % Specify name of .bib file. Use of this is deprecated.
-  % NOT DEPRACTED, BUT NOT WORKING :/
-  %\addbibresource{\bibtexFilePath}
+  % aus http://tex.stackexchange.com/questions/15653/line-breaking-of-urls-in-bibliographies
+  \begingroup
+    %\raggedright
+    \sloppy
+    \printbibliography
+  \endgroup
+
 \end{document}

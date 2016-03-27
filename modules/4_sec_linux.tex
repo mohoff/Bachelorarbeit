@@ -139,7 +139,7 @@
 			\begin{figure}[h]
 					\centering
 					\includegraphics[width=1.0\textwidth]{./images/sec_pidNsHost.jpg}
-					\caption{Ausschnitt der Ausgabe des Befehls \texttt{ps -eaxfZ} auf einem Docker-Hostsystem (eigene Abbildung).}
+					\caption{Ausschnitt der Ausgabe des Befehls \texttt{ps -eaxfZ} auf einem Docker"=Hostsystem (eigene Abbildung).}
 					\label{fig:sec_pidNsHost}
 			\end{figure}
 			% TODO: lstlisting hieraus machen bzw. Screenshot mit "BlackOnWhite"-Colorsetting des Terminals machen (gilt fuer alle Terminal Screenshots!)
@@ -163,12 +163,12 @@
 			% Unterschiede im Contaier lifecycle jedoch (docker sehr gut aufgestellt --> teil von dockers erfolg beruht darauf)
 			%	^		\cite[S.4]{virtVSContainer}
 
-    \subsection{Dateisystemisolierung durch den Mount-Namespace}
+    \subsection{Dateisystemisolierung durch den Mount"=Namespace}
 			Auch das Dateisystem des Hostsystems \(h\) muss vor unrechtmäßigen Zugriffen aus einem Container \cbroken{} geschützt werden.
 
-			Allgemein ist ein Dateisystem, wie eine Prozessstruktur in Abschnitt \ref{secIsoProcesses}, hierarchisch aufgebaut. Erstgenanntes kann mithilfe des Mount-Namespace unterteilt werden, sodass unter Docker jeder Container eine andere Sicht auf die Verzeichnisstruktur des Hostsystems hat. Nur ein bestimmtes Unterverzeichnis ist für einen Container sichtbar, wenn er dieses als Mountpoint einbindet.
+			Allgemein ist ein Dateisystem, wie eine Prozessstruktur in Abschnitt \ref{secIsoProcesses}, hierarchisch aufgebaut. Erstgenanntes kann mithilfe des Mount"=Namespace unterteilt werden, sodass unter Docker jeder Container eine andere Sicht auf die Verzeichnisstruktur des Hostsystems hat. Nur ein bestimmtes Unterverzeichnis ist für einen Container sichtbar, wenn er dieses als Mountpoint einbindet.
 
-			Das virtuelle \texttt{/proc}-Verzeichnis des Hostsystems bleibt von Mount-Namespaces unberührt, da es essentielle Informationen für jeden Prozess enthält \cite{creatingContainers}\cite{secPart1}. Außerdem erfordern Anwendungen, die innerhalb von Containern laufen, Zugriff auf besagtes Verzeichnis. Als Konsequenz erben Container diese notwendigen Verzeichnisse direkt von ihrem Host.
+			Das virtuelle \texttt{/proc}-Verzeichnis des Hostsystems bleibt von Mount"=Namespaces unberührt, da es essentielle Informationen für jeden Prozess enthält \cite{creatingContainers}\cite{secPart1}. Außerdem erfordern Anwendungen, die innerhalb von Containern laufen, Zugriff auf besagtes Verzeichnis. Als Konsequenz erben Container diese notwendigen Verzeichnisse direkt von ihrem Host.
 
 			Es enthält aber auch Details des Kernels und anderer Prozesse \cite{proc}. Diese müssen wegen der Existenz von \cbroken{} vor Lese- und Schreibzugriffen geschützt werden. Linux erlaubt es, Verzeichnisse derart freizugeben, dass Prozesse nur lesend mit ihnen in Verbindung treten können. Docker unterstützt das standardmäßige Einbinden ohne Schreibrechte \cite[S.4f.]{dockerSecIntro}.
 
@@ -194,7 +194,7 @@
 			%, um unrechtmäßige Schreibrechte auszuschließen. Dieses Verbot wird durch die Verweigerung der Capability \texttt{CAP\_SYS\_ADMIN} für Container erreicht.
 			% TODO: Einbinden: Dateisysteme werden gemountet unter der Angabe der Berechtigung, also ob read oder write. EIn remount ist daher gefährlich.
 
-			Mit dem Konzept von Mount-Namespaces interferieren Daten von Containern nicht. Jede oberste, beschreibbare Schicht eines Containers wird in einem speziell dem Container zugewiesenen Verzeichnis gespeichert. Unter der Annahme, dass es sich bei Mount-Namespaces um ein sicheres Verfahren handelt, kann ein \cbroken{} nicht in Verzeichnisse anderer Container aus \(C\) schreiben.
+			Mit dem Konzept von Mount"=Namespaces interferieren Daten von Containern nicht. Jede oberste, beschreibbare Schicht eines Containers wird in einem speziell dem Container zugewiesenen Verzeichnis gespeichert. Unter der Annahme, dass es sich bei Mount"=Namespaces um ein sicheres Verfahren handelt, kann ein \cbroken{} nicht in Verzeichnisse anderer Container aus \(C\) schreiben.
 
 			% TODO: LSMs tragen hierzu auch bei! erwaehnen
 			% .... nahhh.. besser in LSM-Kapitel erwaehnen, dass LSMs Namespaces verstaerken und weiter absichern
@@ -222,12 +222,12 @@
 			% Problem mit TIPC Extension, wo ipc namespace umgangen werden kann
 			%		^ 	\cite[S.18]{dockerSec2}
 
-    \subsection{Netzwerkisolierung durch den Network-Namespace}
+    \subsection{Netzwerkisolierung durch den Network"=Namespace}
 			Um einen sicheren Betrieb von Docker zu gewährleisten, müssen Container so konfiguriert sein, dass sie weder den Netzwerkverkehr des Hostsystems noch den anderer Container abhören oder manipulieren können.
 
-			Dazu stellt Docker jedem Container einen eigenen unabhängigen Netzwerkstack zur Verfügung, der durch Network-Namespaces realisiert wird. Jeder Namespace hat seine eigene private \acrshort{IP}-Adresse, IP-Routingtabelle, Loopback-Interface und Netzwerkgeräte \cite[S.2f.]{virtVSContainer}. Eine Kommunikation zu anderen Containern auf dem gleichen oder entfernten Hosts geschieht nur über dafür vorgesehene Schnittstellen.
+			Dazu stellt Docker jedem Container einen eigenen unabhängigen Netzwerkstack zur Verfügung, der durch Network"=Namespaces realisiert wird. Jeder Namespace hat seine eigene private \acrshort{IP}-Adresse, IP-Routingtabelle, Loopback-Interface und Netzwerkgeräte \cite[S.2f.]{virtVSContainer}. Eine Kommunikation zu anderen Containern auf dem gleichen oder entfernten Hosts geschieht nur über dafür vorgesehene Schnittstellen.
 
-			Um die oben genannten Netzwerkressourcen anzubieten, wird jedem Network-Namespace ein eigenes \texttt{/proc/net}-Verzeichnis zugewiesen, das netzwerkspezifische Informationen enthält \cite{proc}. Die Nutzung von Befehlen wie \texttt{netstat} und \texttt{ifconfig} wird damit auch aus einem Network-Namespace heraus ermöglicht \cite[S.7]{IBMcheckpointRestart}.
+			Um die oben genannten Netzwerkressourcen anzubieten, wird jedem Network"=Namespace ein eigenes \texttt{/proc/net}-Verzeichnis zugewiesen, das netzwerkspezifische Informationen enthält \cite{proc}. Die Nutzung von Befehlen wie \texttt{netstat} und \texttt{ifconfig} wird damit auch aus einem Network"=Namespace heraus ermöglicht \cite[S.7]{IBMcheckpointRestart}.
 
 			Standardmäßig wird von Containern eine \emph{Virtual Ethernet Bridge} mit dem Namen docker0 genutzt, um mit dem Hostsystem und anderen Containern zu kommunizieren. Neu gestartete Container werden dieser Bridge hinzugefügt, indem deren Netzwerkinterface \emph{eth0} mit der Bridge verbunden wird. Aus Sicht des Hostsystems ist das Interface \emph{eth0} ein virtuelles \emph{veth}-Interface. Angepasste Netzwerktreiber können für Bridges und sogenannte Overlaynetzwerke, die eine Kommunikation zwischen mehreren Docker-Systemen ermöglichen, erstellt und genutzt werden \cite[S.3]{virtVSContainer}\cite{dockerNetworking}. Aus Gründen der Netzwerksicherheit macht es Sinn, eigene Treiber zu verwenden, da die standardmäßige Bridge ohne Filter operiert. Filter können z.B. mit dem Programm \emph{ebtables} erstellt werden.
 			% Erklärungen von John:
@@ -293,7 +293,7 @@ d
 			In Unix-basierenden Betriebssystemen wie Linux erfolgt der Zugriff auf Hardware über sogenannte Device Nodes (Geräte), die im Dateisystem von speziellen Dateien repräsentiert sind.
 			% TODO: Device Nodes ins Glossar aufnehmen. Dort dann sagen, dass es speyielle Files sind etc.
 
-			Ein paar wichtige Geräte und deren Zuständigkeiten sind im Folgenden aufgeführt. Das Netzwerkinterface ist auch ein Gerät, welches bereits mit dem Network-Namespace isolierbar ist \cite{deviceNs}.
+			Ein paar wichtige Geräte und deren Zuständigkeiten sind im Folgenden aufgeführt. Das Netzwerkinterface ist auch ein Gerät, welches bereits mit dem Network"=Namespace isolierbar ist \cite{deviceNs}.
 
 			\begin{itemize}
 				\item \texttt{/dev/mem}: Arbeitsspeicher
@@ -304,7 +304,7 @@ d
 			Wie zu sehen ist, handelt sich dabei um kritische Systemkomponenten, über die Container unter keinen Umständen verfügen dürfen. Deswegen ist es notwendig, den Zugriff auf Geräte stark einzuschränken, um den Host vor Missbrauch zu schützen.
 			% (TODO): Starke Abhängigkeit zu cgroups (guten Übergang machen bzw. Abgrenzung)
 
-			Aktuell existiert im Linux-Kernel kein eigener Namespace für Geräte. Die Implementierung von Device-Namespaces erfolgte bereits von \emph{Cellrox}-Mitarbeitern im Jahr 2013 \cite{deviceNsCerrox}. Eine Integration in den Linux-Kernel fand jedoch bislang nicht statt.
+			Aktuell existiert im Linux-Kernel kein eigener Namespace für Geräte. Die Implementierung von Device-Namespaces erfolgte bereits von \emph{Cellrox}"=Mitarbeitern im Jahr 2013 \cite{deviceNsCerrox}. Eine Integration in den Linux-Kernel fand jedoch bislang nicht statt.
 
 			Docker löst dieses Problem, indem es standardmäßig den Zugriff auf Geräte von unpriveligierten Containern untersagt. Über die Befehlssyntax \texttt{docker run --device=DEVICE} können auch unpriveligierten Containern Geräte manuell zur Verwendung freigegeben werden. Priveligierte Container können beliebig auf Geräte zugreifen \cite{dockerRun}.
 
@@ -318,7 +318,7 @@ d
 			% Problem mit HotPlug Support unter Linux
 			%		^ 	\cite[S.19]{dockerSec2}
 
-	\section{Ressourcenverwaltung durch Control Groups}
+	\section{Ressourcenverwaltung durch Control\\Groups}
   \label{secCgroups}
 		\acrshort{DoS}-Angriffe beabsichtigen das Sicherheitsziel der Verfügbarkeit zu verletzen und gehören in \gls{MultiTenantService}-Systemen zu einem verbreiteten Angriffsmuster \cite[S.5]{dockerSec1}. Um die Verfügbarkeit von Containern sicherzustellen, bietet der Linux-Kernel sogenannte Control Groups (\acrshort{cgroups}) an.
 
@@ -414,7 +414,7 @@ d
 
     \subsection{Capabilities}
 		\label{capabilities}
-			Capabilities sind ein Feature, um den traditionellen DAC-Mechanismus zu verfeinern. Es existieren verschiedene Definitionen des Begriffs \glqq{}Capability\grqq{}. In dieser Arbeit sind unter diesem Begriff die POSIX-Capabilities gemeint, die seit Version 2.2.11 des Kernels in Linux fest integriert sind \cite[S.42]{SELinuxApparmor}.
+			Capabilities sind ein Feature, um den traditionellen DAC"=Mechanismus zu verfeinern. Es existieren verschiedene Definitionen des Begriffs \glqq{}Capability\grqq{}. In dieser Arbeit sind unter diesem Begriff die POSIX-Capabilities gemeint, die seit Version 2.2.11 des Kernels in Linux fest integriert sind \cite[S.42]{SELinuxApparmor}.
 
 			Als Linux-natives Feature werden Capabilities nicht nur von Docker-Prozessen direkt verwendet, sondern auch die beiden \acrshort{MAC-SEC}s \emph{AppArmor} und \emph{SELinux} machen indirekt Gebrauch von ihnen. Letztere sind in den Abschnitten \ref{apparmor} und \ref{selinux} beschrieben.
 
@@ -450,7 +450,7 @@ d
 
     \subsection{Mandatory Access Control (\acrshort{MAC-SEC}) und Linux Security Modules (\acrshort{LSM}s)}
 		\label{lsm}
-			Wie bereits erwähnt, erfüllt der DAC-Mechanismus nicht moderne Anforderungen an die Sicherheit in Containersystemen, da er z.B. von Tools wie \emph{Ping} umgangen werden kann. Aus diesem Grund integriert Docker die beiden MAC-Mechanismen \emph{\acrshort{SELinux}} und \emph{\acrshort{AppArmor}}, die anhand eines identitätsunabhängigen Regelwerks zusätzliche Sicherheit bieten. Unter Einbeziehung dieser Kontrollen kann der Zugriff von \cbroken{} eingeschränkt werden, selbst wenn dieser über Sicherheitslücken in den Besitz von Rootrechten gelangen konnte.
+			Wie bereits erwähnt, erfüllt der DAC"=Mechanismus nicht moderne Anforderungen an die Sicherheit in Containersystemen, da er z.B. von Tools wie \emph{Ping} umgangen werden kann. Aus diesem Grund integriert Docker die beiden MAC-Mechanismen \emph{\acrshort{SELinux}} und \emph{\acrshort{AppArmor}}, die anhand eines identitätsunabhängigen Regelwerks zusätzliche Sicherheit bieten. Unter Einbeziehung dieser Kontrollen kann der Zugriff von \cbroken{} eingeschränkt werden, selbst wenn dieser über Sicherheitslücken in den Besitz von Rootrechten gelangen konnte.
 
 			Die Integration der beiden MACs geschieht modular über das \emph{Linux Security Modules}-Framework (\acrshort{LSM}), das inzwischen standardmäßig in den Kernel eingebaut ist. Module, die in das Framework eingebettet werden, sind kombinierbar. Mehrere Sicherheitsmechanismen können so konsekutiv umgesetzt werden, um eine \emph{Defense In Depth} umzusetzen \cite[S.3]{LSMFramework}.
 
@@ -466,11 +466,11 @@ d
 					\label{fig:sec_LSMHook}
 			\end{figure}
 
-			Der Ausführungszeitpunkt des Hooks bietet den Vorteil, dass der komplette Kontext der Zugriffsanfrage an dieser Stelle vorliegt und vollständig von einem LSM-Modul ausgewertet werden kann \cite[S.2]{LSMFramework}. Dadurch wird neben der Kompatiblität zum DAC-Mechanismus zusätzlich die Granularität der Zugriffskontrolle verbessert \cite{LSMDesign}.
+			Der Ausführungszeitpunkt des Hooks bietet den Vorteil, dass der komplette Kontext der Zugriffsanfrage an dieser Stelle vorliegt und vollständig von einem LSM-Modul ausgewertet werden kann \cite[S.2]{LSMFramework}. Dadurch wird neben der Kompatiblität zum DAC"=Mechanismus zusätzlich die Granularität der Zugriffskontrolle verbessert \cite{LSMDesign}.
 
-			An dieser Stelle ist wichtig zu erwähnen, dass Module des LSM-Frameworks den nativen DAC-Mechanismus nicht überschreiben, sondern ergänzen. Wie in \fig \ref{fig:sec_LSMHook} dargestellt, greift der LSM-Hook erst nachdem ein Nutzer einen sicherheitskritischen \emph{System Call} ausführt hat, das angefragte Objekt aufgelöst, ein Fehler-Check abgeschlossen und der Zugriff über den DAC-Mechanismus genehmigt wurde. Erst wenn der Kernel versucht auf das aufgelöste \glslink{KernelObject}{Kernelobjekt} zuzugreifen, wird der Hook ausgeführt, der den Zugriff in das zugehörige LSM-Modul weiterleitet. Das Modul genehmigt oder verweigert den Zugriff anhand den ihm vorliegenden Attributen im Sicherheitskontext.
+			An dieser Stelle ist wichtig zu erwähnen, dass Module des LSM-Frameworks den nativen DAC"=Mechanismus nicht überschreiben, sondern ergänzen. Wie in \fig \ref{fig:sec_LSMHook} dargestellt, greift der LSM-Hook erst nachdem ein Nutzer einen sicherheitskritischen \emph{System Call} ausführt hat, das angefragte Objekt aufgelöst, ein Fehler-Check abgeschlossen und der Zugriff über den DAC"=Mechanismus genehmigt wurde. Erst wenn der Kernel versucht auf das aufgelöste \glslink{KernelObject}{Kernelobjekt} zuzugreifen, wird der Hook ausgeführt, der den Zugriff in das zugehörige LSM-Modul weiterleitet. Das Modul genehmigt oder verweigert den Zugriff anhand den ihm vorliegenden Attributen im Sicherheitskontext.
 
-			Durch diese Reihenfolge ist sichergestellt, dass die Nutzung einer LSM-Schnittstelle optional ist und unabhängig von der DAC funktioniert \cite{centOsMCS}. Deswegen können auch Anwendungen, die das LSM-Framework nicht unterstützen, weiterhin funktionieren. Außerdem ist durch den rein erweiternden Charakter die Gefahr ausgeschlossen, mit \emph{SELinux} oder \emph{AppArmor} neue Sicherheitslücken in das System einzuführen.
+			Durch diese Reihenfolge ist sichergestellt, dass die Nutzung des LSMs optional ist und unabhängig von der DAC funktioniert \cite{centOsMCS}. Deswegen können auch Anwendungen, die das LSM-Framework nicht unterstützen, weiterhin funktionieren. Außerdem ist durch den rein erweiternden Charakter die Gefahr ausgeschlossen, mit \emph{SELinux} oder \emph{AppArmor} neue Sicherheitslücken in das System einzuführen.
 			% logische UND-Verknüpfung von DAC und MAC erwähnen?
 
 			Die Vorgehensweise unterscheidet sich damit grundlegend von der regulären Implementierung einer MAC, da letztere durch ihre obligatorische Natur normalerweise zu Beginn einer Zugriffskontrolle ausgeführt wird \cite[S.3]{LSMFramework}.
@@ -532,7 +532,7 @@ d
 
 					Das Standardprofil \texttt{docker-default} wurde während der Erstellung dieser Arbeit aktualisiert. Aus der Commit-Nachricht geht allerdings nicht hervor, ob damit eine Sicherheitslücke geschlossen wurde oder die Änderungen im Zuge einer Funktionsänderung von Containern entstanden sind \cite{githubAppArmorProfileContainerFix}.
 
-					Die aktuelle Implementierung des Profils, die auf einem Docker-Hostsystem lokal mit dem Konsolenbefehl \texttt{cat /etc/apparmor.d/docker} ausgegeben werden kann, wird im Folgenden gruppiert und chronologisch in der Reihenfolge des Vorkommens analysiert.
+					Die aktuelle Implementierung des Profils, die auf einem Docker"=Hostsystem lokal mit dem Konsolenbefehl \texttt{cat /etc/apparmor.d/docker} ausgegeben werden kann, wird im Folgenden gruppiert und chronologisch in der Reihenfolge des Vorkommens analysiert.
 
 					\begin{lstlisting}
 						#include <tunables/global>
@@ -640,7 +640,7 @@ d
 
 
 
-				Auf eine Anwendung abgestimmtes \emph{SELinux}-Regelwerk wird mit der sicherheitskritischen Anwendung zusammen verteilt. Bei der Installation wird dann auch die anwendungsspezifische Regelwerk in das LSM geladen, sodass der Sicherheitsmechanismus nicht manuell administriert werden muss. Das Regelwerk bei der ersten Verwendung der Anwendung sofort aktiv.
+				Auf eine Anwendung abgestimmtes \emph{SELinux}-Regelwerk wird mit der sicherheitskritischen Anwendung zusammen verteilt. Bei der Installation wird dann auch das anwendungsspezifische Regelwerk in das LSM geladen, sodass der Sicherheitsmechanismus nicht manuell administriert werden muss. Das Regelwerk ist bei der ersten Verwendung der Anwendung sofort aktiv.
 
 				Die Funktionsweise zweier \emph{SELinux}-Bausteine, \emph{Type Enforcement} und \emph{Multi-Category Security}, werden im Folgenden erklärt. Ein dritter Baustein, \emph{Multi-Level Security}, wird in dieser Arbeit nicht behandelt, da dieser unter Docker keine Verwendung findet.
 				% Multi-Level Security (MLS) ist verwandt mit MCS. Aber kein Einsatz unter Docker. MLS beruht auf Konzept von "Domination".
@@ -656,23 +656,23 @@ d
 				\paragraph{Type Enforcement (TE)}
 					Die wichtigste Komponente von \emph{SELinux} ist das \emph{Type Enforcement}. Im Rahmen dieses Konzepts werden jedem Subjekt und jedem Objekt ein Typ zugeweisen, deren Auswertung bei jeder Zugriffsoperation zwischen Subjekt und Objekt stattfindet. Der Typ ist im Label an dritter Stelle definiert.
 
-					In der Praxis existieren für jede Anwendung eigene Typen, da jede Anwendung spezielle Rechte benötigt, um ihre Funktion zu erfüllen. Jedem Docker-Prozess ist z.B. der Typ \texttt{docker\_t} zugewiesen, der gleichzeitig eine gemeinsame Domäne für besagte Prozesse definiert. Im \emph{SELinux}-Regelwerk ist festgelegt, dass Prozesse eines Typs nur auf Objekte vollen Zugriff hat, die mit bestimmten Labeltypen versehen sind. Im konkreten Fall von \texttt{docker\_t} umfasst diese Konfiguration ein Objektset, das u.a. aus den Typen \texttt{docker\_config\_t}, \texttt{docker\_log\_t} und \texttt{svirt\_sandbox\_file\_t} besteht \cite{githubSELinuxProfileTE}. Versucht ein Docker-Prozess auf Objekte zuzugreifen, deren Typ nicht in \cite{githubSELinuxProfileTE} gelistet ist, wird die Operation unterbunden.
+					In der Praxis existieren für jede Anwendung eigene Typen, da jede Anwendung spezielle Rechte benötigt, um ihre Funktion zu erfüllen. Jedem Docker-Prozess ist z.B. der Typ \texttt{docker\_t} zugewiesen, der gleichzeitig eine gemeinsame Domäne für besagte Prozesse definiert. Im \emph{SELinux}-Regelwerk ist festgelegt, dass Prozesse eines Typs nur auf Objekte vollen Zugriff hat, die mit bestimmten Labeltypen versehen sind. Im konkreten Fall von \texttt{docker\_t} umfasst diese Konfiguration ein Objektset, das u.a. aus den Typen \texttt{docker\_config\_t}, \texttt{docker\_log\_t} und \texttt{svirt\_sandbox\_file\_t} besteht \cite{githubSELinuxProfileTE}. Versucht ein Prozess unter Docker auf Objekte zuzugreifen, deren Typ nicht in \cite{githubSELinuxProfileTE} gelistet ist, wird die Operation unterbunden.
 
 					Da in \emph{SELinux}-Umgebungen jedem Objekt im Hostsystem ein Label zugewiesen ist, wird eine zuverlässige Kontrolle von Objektzugriffen über die Auswertung von Typen ermöglicht. Subjekte, die mit dem Typ \texttt{docker\_t} aus der Docker-Domäne stammen, sind streng von Objekten anderer Domänen abgegrenzt und können nicht mit diesen interagieren.
 
 				\paragraph{Multi-Category Security (MCS)}
 					% TODO: Einarbeiten, dass mit Kateogiren die Vertraulichkeit erfüllt wird: Kategorisierung führt dazu, dass nur solche Prozesse auf Objekte haben, die derselben Kategorie angehören.
 					% TODO: Systemintegrität und Domänen mit Type Enforcement realisiert! Prozesse laufen innerhalb einer Domäne und Objekte haben einen Typ. Durch Regeln wird bestimmt, welche Domänen auf welche Typen zugreifen dürfen.
-					Durch das einheitliche Regelwerk für alle Docker-Prozesse, ist mit einem \emph{Type Enforcement} gewährleistet, dass ein kompromittierter Container \cbroken{} nicht unbefugt auf geschützte oder unrelevante Daten außerhalb der Docker-Domäne  zugreifen darf. Docker-unspezifische Subjekte und Objekte werden dadruch im Hostsystem geschützt.
+					Durch das einheitliche Regelwerk für alle Docker-Prozesse ist mit einem \emph{Type Enforcement} gewährleistet, dass ein kompromittierter Container \cbroken{} nicht unbefugt auf geschützte oder unrelevante Daten außerhalb der Docker-Domäne  zugreifen darf. Docker-unspezifische Subjekte und Objekte werden dadurch im Hostsystem geschützt.
 
-					MCS implementiert eine Möglichkeit, \cbroken{} den Zugriff auf \cvalid zu verweigern. Mit \emph{Type Enforcement} ist das nicht realisierbar, da \cbroken{} und \cvalid{} beide durch den identischen Typ \texttt{docker\_t} der Docker-Domäne zugehörig sind.
+					MCS implementiert eine Möglichkeit, \cbroken{} den Zugriff auf \cvalid{} zu verweigern. Mit \emph{Type Enforcement} ist das nicht realisierbar, da \cbroken{} und \cvalid{} beide durch den identischen Typ \texttt{docker\_t} der Docker-Domäne zugehörig sind.
 
-					Theoretisch wäre die Funktion der MCS auch mit dem\emph{Type Enforcement} realisierbar, wenn jeder Container mit einem eigenen Typ operiert. Die Domäne würde dabei nicht für alle Docker-Subjekte gelten, sondern nur für solche eines Containers. Diese feinere Typenunterteilung wirkt sich aber auf die Komplexität des Regelwerks negativ aus. In der Praxis wird deswegen der MCS-Mechanismus für dieses Sicherheitsfeature eingesetzt.
+					Theoretisch wäre die Funktion der MCS auch mit dem\emph{Type Enforcement} realisierbar, wenn jeder Container mit einem eigenen Typ operiert. Die Domäne würde dabei nicht für alle Docker-Subjekte gelten, sondern nur für die eines Containers. Diese feinere Typenunterteilung wirkt sich aber auf die Komplexität des Regelwerks negativ aus. In der Praxis wird deswegen der MCS-Mechanismus für dieses Sicherheitsfeature eingesetzt.
 					% TODO: Quelle!
 					% ist aber sehr aufwendig...
 
 
-					Der MCS-Mechanismus arbeitet mit dem letzten Teil des Labels: dem Level. Das Level unterteilt sich durch den Aufbau der Schreibweise \texttt{sensitivity[:category-set]} in eine Sensitivität, oder auch Schutzstufe genannt, und optionalen Kategorien. Für die MCS sind die Kategorien von Bedeutung. Die Schutzstufe wird ignoriert, weil sie nur unter der von Docker nicht verwendeten \acrshort{MLS} Anwendung findet. Im Fall von Docker hat die Schutzstufe deswegen einen konstanten Wert von \texttt{s0} \cite{selinuxRedhatMCS}\cite{selinuxRedhatMCS}.
+					Der MCS-Mechanismus arbeitet mit dem letzten Teil des Labels: dem Level. Das Level unterteilt sich durch den Aufbau der Schreibweise \texttt{sensitivity[:category-set]} in eine Sensitivität, oder auch Schutzstufe genannt, und optionalen Kategorien. Für die MCS sind die Kategorien von Bedeutung. Die Schutzstufe wird ignoriert, weil sie nur unter der von Docker nicht verwendeten \acrshort{MLS} Anwendung findet. Im Fall von Docker hat die Schutzstufe deswegen einen konstanten Wert von \texttt{s0} \cite{selinuxRedhatMCS}\cite{selinuxJamesMorrisMCS}.
 					% Quellen!
 					%\cite{ https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Security-Enhanced_Linux/chap-Security-Enhanced_Linux-SELinux_Contexts.html } \cite{ http://james-morris.livejournal.com/5583.html }
 
@@ -684,7 +684,7 @@ d
 					% Quelle!
 					% war glaub ich auch aus learningDocker....s201
 
-					Damit erfüllt MCS die zuvor beschriebene Anforderung. Einem \cbroken{} ist es ihm Rahmen einer korrekt implementierten MCS unter \emph{SELinux} nicht mehr möglich, Schaden an zu schützenden Containern aus \(C\) auszuüben.
+					Damit erfüllt MCS die zuvor beschriebene Anforderung. Einem \cbroken{} ist es im Rahmen einer korrekt implementierten MCS unter \emph{SELinux} nicht mehr möglich, Schaden an zu schützenden Containern aus \(C\) auszuüben.
 					% Verständnisproblem: Auch wenn Angreifer Root-Rechte erwirkt? Ist er dann noch "im Container"?
 
 
@@ -727,7 +727,7 @@ d
 
 			%Das hat die positive Auswirkung, dass \emph{Seccomp}-Profile auch von nicht-priveligierten Nutzern geladen werden können. Mit LSMs ist dies nicht möglich.
 			% 	^		\cite{ https://lwn.net/Articles/443099/ }
-			Die Verwendung von \emph{Seccomp} für einen Prozess bewirkt, dass dieser in einen \glqq{}sicheren\grqq{} Zustand übergeht, sodass er nur noch zuvor definierte \emph{System Calls} ausführen kann.
+			Die Verwendung von \emph{Seccomp} für einen Prozess bewirkt, dass dieser in einen \glqq{}sicheren\grqq{} Zustand übergeht, sodass er nur noch die zuvor definierte \emph{System Calls} ausführen kann.
 			%		^		\cite{ wikipedia :( }
 
 			% x86_x64 hat mehr als 600 System Calls. bzw. mehrere hundert
@@ -742,7 +742,7 @@ d
 
 			Mithilfe der \emph{Seccomp}-Anweisungen \texttt{allow}, \texttt{deny}, \texttt{trap}, \texttt{kill} und \texttt{trace} sind neben der Sperrung noch weitere Aktionen möglich, die zur Kontrolle von \emph{System Calls} dienen \cite{docker110Security}.
 
-			Seit Oktober 2015 ist eine \emph{Seccomp}-Unterstützung für Docker in Planung und Entwicklung \cite{githubGeneralSecProfiles}\cite{githubSeccompIntegration}. Diese wurde in Form eines \emph{Seccomp}-Standardprofils und der Option eigene Profile einzubinden, in aktuell neusten Docker-Version 1.10 im Februar 2016, hinzugefügt \cite{githubDockerChangelog}\cite{githubSeccompDoc}\cite{githubSeccompProfile}\cite{docker110Security}. Das Standardprofil basiert seit Ende 2015 auf einer Whitelist (davor einer Blacklist). Dadurch blockiert es alle \emph{System Calls}, die nicht in der Whitelist als erlaubte Operationen aufgeführt sind \cite{githubSeccompDoc}. Im Vergleich zu einer Blacklist führt das zu einer höheren Sicherheit, da die Menge der erlaubten Aktionen auch dann integer ist, wenn der Grundmenge neue \emph{System Calls}  hinzugefügt werden.
+			Seit Oktober 2015 ist eine \emph{Seccomp}-Unterstützung für Docker in Planung und in der Entwicklung \cite{githubGeneralSecProfiles}\cite{githubSeccompIntegration}. Diese wurde in Form eines \emph{Seccomp}"=Standardprofils und der Option, eigene Profile einzubinden, in der aktuell neusten Docker-Version 1.10 im Februar 2016, hinzugefügt \cite{githubDockerChangelog}\cite{githubSeccompProfile}\cite{githubSeccompDoc}\cite{docker110Security}. Das Standardprofil basiert seit Ende 2015 auf einer Whitelist (davor einer Blacklist). Dadurch blockiert es alle \emph{System Calls}, die nicht in der Whitelist als erlaubte Operationen aufgeführt sind \cite{githubSeccompDoc}. Im Vergleich zu einer Blacklist führt das zu einer höheren Sicherheit, da die Menge der erlaubten Aktionen auch dann integer ist, wenn der Grundmenge neue \emph{System Calls}  hinzugefügt werden.
 
 			Eine aktuelle Liste der explizit erlaubten \emph{System Calls} ist in \cite{githubSeccompProfile} und \cite{githubSeccompDoc} zu finden.
 
