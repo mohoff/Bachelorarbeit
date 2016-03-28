@@ -8,7 +8,7 @@
 % \usepackage{url} or
 \usepackage{hyperref}
 \usepackage{graphicx}
-%\usepackage{titlesec}
+\usepackage{titlesec}
 \usepackage[parfill]{parskip} % Use an empty half line between two paragraphs (instead of line indent)
 \usepackage{setspace}
 \usepackage{listings} % Enables code blocks
@@ -57,6 +57,11 @@
 \addto{\captionsngerman}{\renewcommand*{\acronymname}{Abkürzungsverzeichnis}}
 \addto{\captionsngerman}{\renewcommand*{\glossaryname}{Glossar}}
 \renewcommand{\arraystretch}{2} % for vertical table cell padding
+
+\titleformat{\chapter}%[display]
+% ORIGINAL: {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+{\normalfont\huge\bfseries}{\thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter} {0pt}{20pt}{40pt} %{0pt}{50pt}{40pt}
 
 % Some global symbols and meta data
 \newcommand{\bibtexFiles}{./bibliography/bookpapermanual,./bibliography/web_docker,./bibliography/web_github,./bibliography/web_homepages,./bibliography/web_misc} % written

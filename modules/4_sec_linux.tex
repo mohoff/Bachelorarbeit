@@ -96,7 +96,7 @@
 
 		Unter Linux existieren sechs Namespaces, die in die Kategorien IPC, Network, Mount, PID, User und UTS unterteilt sind. Von Docker werden alle verwendet, der User-Namespace jedoch wird erst seit Docker-Version 1.10 unterstützt.
 
-		Es besteht die Möglichkeit, dass bald weitere Namespaces dem bestehenden Set hinzugefügt werden. Zum einen wird derzeit ein eigener Namespace für Control Groups implementiert (s. Abschnitt \ref{secCgroups}). Zum anderen ist in Diskussion, für die bestehenden Sicherheitsmodule des Kernels (s. Kapitel \ref{lsm}), diverse Logfunktionen und Geräte unter Linux, eigene Namespaces zur Verfügung zu stellen \cite[S.19]{presContainerSec}.
+		Es besteht die Möglichkeit, dass bald weitere Namespaces dem bestehenden Set hinzugefügt werden. Zum einen wird derzeit ein eigener Namespace für Control Groups implementiert (s. Abschnitt \ref{secCgroups}). Zum anderen ist in Diskussion, für die bestehenden Sicherheitsmodule des Kernels (s. Abschnitt \ref{lsm}), diverse Logfunktionen und Geräte unter Linux, eigene Namespaces zur Verfügung zu stellen \cite[S.19]{presContainerSec}.
 		% TODO: Mehr Quellen
 
 		% Nach ..(reshetova).. müssen Anforderungen an Prozessisolierung, Dateisystemisolierung, Geräteisolierung, Prozessisolierung und Netzwerklimitierung erfüllt sein.
@@ -163,7 +163,7 @@
 			% Unterschiede im Contaier lifecycle jedoch (docker sehr gut aufgestellt --> teil von dockers erfolg beruht darauf)
 			%	^		\cite[S.4]{virtVSContainer}
 
-    \subsection{Dateisystemisolierung durch den Mount"=Namespace}
+    \subsection{Dateisystemisolierung durch den Mount"=\\Namespace}
 			Auch das Dateisystem des Hostsystems \(h\) muss vor unrechtmäßigen Zugriffen aus einem Container \cbroken{} geschützt werden.
 
 			Allgemein ist ein Dateisystem, wie eine Prozessstruktur in Abschnitt \ref{secIsoProcesses}, hierarchisch aufgebaut. Erstgenanntes kann mithilfe des Mount"=Namespace unterteilt werden, sodass unter Docker jeder Container eine andere Sicht auf die Verzeichnisstruktur des Hostsystems hat. Nur ein bestimmtes Unterverzeichnis ist für einen Container sichtbar, wenn er dieses als Mountpoint einbindet.
@@ -222,7 +222,7 @@
 			% Problem mit TIPC Extension, wo ipc namespace umgangen werden kann
 			%		^ 	\cite[S.18]{dockerSec2}
 
-    \subsection{Netzwerkisolierung durch den Network"=Namespace}
+    \subsection{Netzwerkisolierung durch den Network"=\\Namespace}
 			Um einen sicheren Betrieb von Docker zu gewährleisten, müssen Container so konfiguriert sein, dass sie weder den Netzwerkverkehr des Hostsystems noch den anderer Container abhören oder manipulieren können.
 
 			Dazu stellt Docker jedem Container einen eigenen unabhängigen Netzwerkstack zur Verfügung, der durch Network"=Namespaces realisiert wird. Jeder Namespace hat seine eigene private \acrshort{IP}-Adresse, IP-Routingtabelle, Loopback-Interface und Netzwerkgeräte \cite[S.2f.]{virtVSContainer}. Eine Kommunikation zu anderen Containern auf dem gleichen oder entfernten Hosts geschieht nur über dafür vorgesehene Schnittstellen.
