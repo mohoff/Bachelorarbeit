@@ -45,14 +45,6 @@
   isbn      = {3827323637}
 }
 
-@book{linuxMagazineSec,
-  title     = {Security - IT-Sicherheit unter Linux von A bis Z},
-  editor    = {Stefan Fischer et al},
-  year      = {2008},
-  publisher = {Linux Magazine},
-  isbn      = {3939551126}
-}
-
 @book{linuxInterface,
   title     = {The Linux Programming Interface - A Linux and UNIX System Programming Handbook},
   author    = {Michael Kerrisk},
@@ -66,7 +58,10 @@
   author  = {James Turnbull},
   year    = {2014},
   month   = {September},
-  edition = {1.2.0}
+  edition = {1.2.0},
+  isbn    = {0988820234},
+  url     = {https://www.dockerbook.com/},
+  urldate = {2016-03-22}
 }
 
 @book{learningDocker,
@@ -87,26 +82,45 @@
   isbn      = {0849339316}
 }
 
-% ARTICLES (auch Papers hier?)
-@article{containerVirtPerformance,
-  title   = {Performance Evaluation of Container-based Virtualization for High Performance Computing Environments},
-  author  = {Miguel G. Xavier and Marcelo V. Neves and Fabio D. Rossi and Tiago C. Ferreto and Timoteo Lange and Cesar A. F. De Rose},
-  journal = {IEEE PDP 2013},
-  year    = {2012}
+% COLLECTIONS
+@collection{linuxMagazineSec,
+  title     = {Security - IT-Sicherheit unter Linux von A bis Z},
+  editor    = {Stefan Fischer et al},
+  year      = {2008},
+  publisher = {Linux New Media},
+  isbn      = {3939551126}
 }
 
+% CONFERENCES
+@conference{containerVirtPerformance,
+  title     = {Performance Evaluation of Container-based Virtualization for High Performance Computing Environments},
+  author    = {Miguel G. Xavier and Marcelo V. Neves and Fabio D. Rossi and Tiago C. Ferreto and Timoteo Lange and Cesar A. F. De Rose},
+  publisher = {IEEE},
+  year      = {2013},
+  month     = {Februar},
+  pages     = {233-240}
+}
+
+@conference{virtVSContainer,
+  title     = {Virtualization vs Containerization to support PaaS},
+  author    = {Rajdeep Duo and A Reddy Raja and Dharmesh Kakadia},
+  publisher = {IEEE},
+  booktitle = {International Conference on Cloud Engineering},
+  year      = {2014},
+  month     = {März},
+  pages     = {610-614}
+}
+
+% ARTICLES (auch Papers hier?)
+
+% siehe http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=7093032
 @article{dockerIntroIEEE,
   title   = {Docker},
   author  = {Charles Anderson},
   journal = {IEEE Software},
-  year    = {2015}
-}
-
-@article{virtVSContainer,
-  title   = {Virtualization vs Containerization to support PaaS},
-  author  = {Rajdeep Duo and A Reddy Raja and Dharmesh Kakadia},
-  journal = {IEEE International Conference on Cloud Engineering},
-  year    = {2014}
+  volume  = {32},
+  year    = {2015},
+  month   = {April}
 }
 
 @article{dockerLXCKub,

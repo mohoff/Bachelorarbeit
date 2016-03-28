@@ -81,7 +81,7 @@
 
       Sicherheitsfeatures von \emph{Azure} können, wie Docker, als Erweiterungen in VMs integriert werden. Diese beinhalten u.\,a. Datenverschlüsselung, Firewalls, Intrusion Detection und Anti-Malware Software. Diese Module können unabhängig von Docker für jede VM aktiviert werden \cite{azureDockerExtensionSecurity}. Da diese Module dadurch keinen Bezug zur Art der Virtualisierung haben und für jede VM unabhängig von Docker aktiviert werden können, sind diese Sicherheitsfeatures an dieser Stelle nur kurz erwähnt.
 
-    \subsection{Beispiel: \emph{IBM} \emph{SoftLayer}}
+    \subsection{Beispiel: \emph{IBM SoftLayer}}
     \label{softlayer}
       Zwischen \emph{Docker} und \emph{IBM} existiert eine Partnerschaft, die eine enge Integration von Docker in das Portfolio von \emph{IBM Cloud} mit sich bringt. Während \emph{IBM Cloud} überwiegend PaaS-Angebote, insbesondere \emph{Bluemix}, umfasst, ist \emph{SoftLayer} ein von \emph{IBM} erworbenes Unternehmen, deren Geschäftsmodell auf IaaS beruht \cite{IBMDockerServices}. Nach der Definition von Brendan Burns, die CaaS als Mischform aus PaaS und IaaS beschreibt (s. Abschnitt \ref{publicCloud}), deckt \emph{Bluemix} seit der Einführung von Docker-basierten \emph{IBM Containers} im September 2015 auch CaaS-Angebote ab \cite{IBMContainerLaunch}. Das Portfolio von \emph{IBM Cloud} wird wiederum auf der Infrastruktur von \emph{SoftLayer} betrieben \cite{IBMPartnershipDocker}.
 
@@ -176,9 +176,9 @@
 
     Private Clouds werden u.\,a. als kommerzielle Produkte angeboten. Beispielsweise verkauft \emph{Microsoft} die Lösung \emph{Windows Azure Pack}, welche auf proprietärer Software von \emph{Microsoft} basiert und in Rechenzentren von Kunden installiert wird. Im Open-Source-Bereich dominiert \emph{OpenStack} als Implementierung für Private und Hybrid Clouds, das nun vorgestellt wird.
 
-    \subsection{Beispiel: OpenStack}
+    \subsection{Beispiel: \emph{OpenStack}}
       %Private Clouds werden häufig mit der Softwareplattform \emph{OpenStack} in Verbindung gebracht.
-      \emph{OpenStack} ist eine Open-Source-Software unter der Apache 2-Lizenz, die es erlaubt, Cloud-Angebote nach dem IaaS-Modell zu realisieren. Grundlegende Komponenten, die in einem Rechenzentrum existieren, werden über einige Module angeboten. Beispielsweise wird Rechenkapazität mit Nova, Orchestrierung mit Heat und Speicherkapazität mit Swift und Cinder abgebildet. Die einzelnen Komponenten können über eine Vielzahl an APIs miteinander kommunizieren und erfüllen, meist in Kombination, die jeweiligen Anforderungen an eine IaaS-Lösung.
+      \emph{OpenStack} ist eine Open-Source-Software unter der \emph{Apache 2}-Lizenz, die es erlaubt, Cloud-Angebote nach dem IaaS-Modell zu realisieren. Grundlegende Komponenten, die in einem Rechenzentrum existieren, werden über einige Module angeboten. Beispielsweise wird Rechenkapazität mit Nova, Orchestrierung mit Heat und Speicherkapazität mit Swift und Cinder abgebildet. Die einzelnen Komponenten können über eine Vielzahl an APIs miteinander kommunizieren und erfüllen, meist in Kombination, die jeweiligen Anforderungen an eine IaaS-Lösung.
 
       Durch die Vielseitigkeit und Größe von \emph{OpenStack}, wird der Technologie eine hohe Komplexität und eine lange Einarbeitungszeit nachgesagt. \emph{SUSE} und andere Linux-Anbieter profitieren von dieser Eigenschaft, indem sie z.\,B. mit \emph{SUSE OpenStack Cloud} eigene \emph{OpenStack}-Lösungen anbieten, die Kunden laut \emph{SUSE} eine einfach realisierbare Private Cloud ermöglicht \cite{SusePrivateCloud}\cite[S.2,4]{golemOpenStack}.
 
@@ -203,9 +203,9 @@
 
   \section{Hybrid Cloud}
   \label{hybridCloud}
-    Hybrid Clouds bezwecken eine Kombination aus Private und Public Cloud. Beide Arten von Clouds bieten Schnittstellen an, die eine Kommunikation der beiden Arten ermöglicht. Für Benutzer von Cloud-Diensten ist die technische und meist geographische Trennung der beiden Infrastrukturen unsichtbar, da diese im Hintergrund von einer Hybrid-Cloud-Lösung verwaltet wird.
+    Hybrid Clouds bezwecken eine Kombination aus Private und Public Cloud. Beide Arten von Clouds bieten Schnittstellen an, die eine Kommunikation der beiden Arten ermöglicht. Für Benutzer von Cloud-Diensten ist die technische und meist geographische Trennung der beiden Infrastrukturen unsichtbar, da diese im Hintergrund von einer Hybrid Cloud-Lösung verwaltet wird.
 
-    Durch die Verknüpfung von unternehmensinternen und -externen Rechenzentren ist die Kompatibilität zwischen beiden Infrastrukturen von großer Bedeutung. \emph{OpenStack} eignet sich daher auch für dieses Szenario, da Abhängigkeiten zu Hybrid-Cloud-Produkten mit kommerziellen Technologien vermieden werden. Durch die zunehmende Akzeptanz von \emph{OpenStack} und dessen Integrationsmöglichkeiten in kommerzielle Produkte wird sowohl die bereits genannte, notwendige Kompatibilität gewährleistet, als auch ein sogenannter \emph{Vendor-Lock-In} vermieden. Durch die Verwendung von \emph{OpenStack} kann einfach zwischen Anbietern gewechselt werden. Außerdem können die Angebote von Hybrid-Cloud-Lösungen auf der Basis der zugrundeliegenden Open-Source-Technologie transparent miteinander verglichen werden.
+    Durch die Verknüpfung von unternehmensinternen und -externen Rechenzentren ist die Kompatibilität zwischen beiden Infrastrukturen von großer Bedeutung. \emph{OpenStack} eignet sich daher auch für dieses Szenario, da Abhängigkeiten zu Hybrid Cloud-Produkten mit kommerziellen Technologien vermieden werden. Durch die zunehmende Akzeptanz von \emph{OpenStack} und dessen Integrationsmöglichkeiten in kommerzielle Produkte wird sowohl die bereits genannte, notwendige Kompatibilität gewährleistet, als auch ein sogenannter \emph{Vendor-Lock-In} vermieden. Durch die Verwendung von \emph{OpenStack} kann einfach zwischen Anbietern gewechselt werden. Außerdem können die Angebote von Hybrid Cloud-Lösungen auf der Basis der zugrundeliegenden Open-Source-Technologie transparent miteinander verglichen werden.
 
     Mit dem Freiheitsgrad einer von \emph{OpenStack} realisierten IaaS-Lösung lassen sich eine Vielzahl von Betriebssystemen und Virtualisierungstechnologien nutzen. Dadurch ist auch der Betrieb von Containern mit Docker und Kubernetes, insbesondere durch das Modul Magnum, jederzeit möglich.
 

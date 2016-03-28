@@ -7,15 +7,19 @@
   url = {https://github.com/docker/docker},
 	urldate = {2016-01-11}
 }
+
 @misc{githubDockerContribution,
   title = {Contribution Guidelines for Docker},
+  author = {John Costa and Solomon Hykes et al},
   url = {https://github.com/docker/docker/blob/64e8fa9199fb345e017c8ef5299ca69cee01ab4c/CONTRIBUTING.md},
 	urldate = {2016-02-28}
 }
 
 @misc{githubDockerfileNginx,
-  title = {Offizielles Dockerfile für Nginx Webserver},
+  title = {Offizielles Dockerfile für Webserver Nginx},
   author = {Pilwon Huh et al},
+  year = {2014},
+  month = {Dezember},
   url = {https://github.com/dockerfile/nginx/blob/d5d34a100d01b2d27d0fa1662854fbe3b05325aa/Dockerfile},
 	urldate = {2016-01-27}
 }
@@ -28,58 +32,69 @@
 
 @misc{githubDockerIssueFsQuota,
   title = {Add quota support for storage backends \#3804},
+  author = {Fabian Jakobs et al},
   url = {https://github.com/docker/docker/issues/3804},
 	urldate = {2016-01-28}
 }
 
 @misc{githubDockerPullBrtfs,
   title = {Add disk quota support for btrfs \#19651},
+  author = {Zhu Guihua et al},
   url = {https://github.com/docker/docker/pull/19651},
 	urldate = {2016-01-28}
 }
 
 @misc{githubDockerChangelog,
-  title = {GitHub Repository CHANGELOG von Docker},
-  url = {https://github.com/docker/docker/blob/master/CHANGELOG.md},
-	urldate = {2016-02-05}
+  title = {Docker GitHub Repository - CHANGELOG.md},
+  author = {Tibor Vass et al},
+  url = {https://github.com/docker/docker/blob/b5725434c6b01f5e25841d0d5165fd5b68187dca/CHANGELOG.md},
+	urldate = {2016-03-25}
 }
 
 @misc{githubDockerRoadmap,
-  title = {GitHub Repository ROADMAP von Docker},
-  url = {https://github.com/docker/docker/blob/master/ROADMAP.md},
+  title = {Docker GitHub Repository - ROADMAP.md},
+  author = {Arnaud Porterie et al},
+  url = {https://github.com/docker/docker/blob/3b65dda2edb6dc6c16dae4da3b866fd0251d0f36/ROADMAP.md},
   urldate = {2016-03-15}
 }
 
 @misc{githubDockerGlossary,
-  title = {GitHub Repository Glossar von Docker},
-  url = {https://github.com/docker/distribution/blob/master/docs/glossary.md},
+  title = {Docker GitHub Repository - GLOSSARY.md},
+  author = {Sven Dowideit et al},
+  url = {https://github.com/docker/distribution/blob/64bc8af1b93bd849f2cce82d868c70354416d404/docs/glossary.md},
 	urldate = {2016-01-21}
 }
 
 @misc{dockerRunCGithub,
-  title = {GitHub Repository von \emph{runC}},
+  title = {runC GitHub Repository},
   url = {https://github.com/opencontainers/runc},
 	urldate = {2016-01-21}
 }
 
 @misc{githubUserNamespaceProposal,
   title = {Proposal: Support for user namespaces \#7906},
+  author = {Dinesh Subhraveti et al},
   url = {https://github.com/docker/docker/issues/7906},
 	urldate = {2016-01-28}
 }
+
 @misc{githubUserNamespaceIntegration,
   title = {Phase 1 implementation of user namespaces as a remapped container root \#12648},
+  author = {Phil Estes et al},
   url = {https://github.com/docker/docker/pull/12648},
 	urldate = {2016-01-28}
 }
+
 @misc{githubUserNamespaceConflict,
   title = {User namespaces - Phase 1 \#15187},
+  author = {Arnaud Porterie et al},
   url = {https://github.com/docker/docker/issues/15187},
 	urldate = {2016-01-28}
 }
 
 @misc{githubCgroupsUniHierNotSupported,
   title = {Docker does not run with unified cgroup hierarchy \#16238},
+  author = {Dimitri John Ledkov and Sebastiaan van Stijn et al},
   url = {https://github.com/docker/docker/issues/16238},
 	urldate = {2016-03-10}
 }
@@ -87,12 +102,9 @@
 @misc{githubCgroupPID,
   title = {Add PIDs cgroup support to Docker \#18697},
   author = {Aleksa Sarai},
-  year = {2015},
-  month = {Dezember},
   url = {https://github.com/docker/docker/pull/18697},
 	urldate = {2016-03-17}
 }
-
 
 @misc{githubGeneralSecProfiles,
   title = {Docker Security Profiles (seccomp, apparmor, etc) \#17142},
@@ -105,68 +117,84 @@
 
 @misc{githubCapabilities,
   title = {Standard-Capabilities von Docker},
-  url = {https://github.com/docker/docker/blob/master/daemon/execdriver/native/template/default_template_linux.go},
+  author = {Daniel J Walsh and Jessie Frazelle et al},
+  url = {https://github.com/docker/docker/blob/2210b15e08b8a81bb7c22b34036a5d0336fa04ef/daemon/execdriver/native/template/default_template_linux.go},
 	urldate = {2016-02-17}
 }
 
 @misc{githubSELinuxPolicyIssue,
   title = {Add docker seliux policy for rpm \#15832},
+  author = {Jessie Frazelle and Eric Windisch et al},
   url = {https://github.com/docker/docker/pull/15832},
 	urldate = {2016-02-03}
 }
 
 @misc{githubSELinuxProfile,
   title = {SELinux default policy profile},
-  url = {https://github.com/docker/docker/tree/master/contrib/docker-engine-selinux},
+  author = {Kenfe-Mickaël Laventure et al},
+  url = {https://github.com/docker/docker/tree/00bf3c85d04f58a86f96ff63a3bd7eeaaa5f76fe/contrib/docker-engine-selinux},
 	urldate = {2016-02-03}
 }
 
 @misc{githubSELinuxProfileTE,
   title = {SELinux default policy profile - docker.te},
-  url = {https://github.com/docker/docker/blob/master/contrib/docker-engine-selinux/docker.te},
-	urldate = {2016-02-17}
+  author = {Kenfe-Mickaël Laventure et al},
+  url = {https://github.com/docker/docker/blob/00bf3c85d04f58a86f96ff63a3bd7eeaaa5f76fe/contrib/docker-engine-selinux/docker.te},
+	urldate = {2016-03-24}
 }
 
 @misc{githubAppArmorDoc,
   title = {AppArmor security profiles for Docker},
+  author = {David Calavera et al},
   url = {https://github.com/docker/docker/blob/master/docs/security/apparmor.md},
 	urldate = {2016-02-05}
 }
 
 @misc{githubAppArmorProfileContainer,
   title = {AppArmor profile template for containers},
-  url = {https://github.com/docker/docker/tree/master/profiles/apparmor},
-	urldate = {2016-02-09}
+  author = {Aleksa Sarai et al},
+  url = {https://github.com/docker/docker/tree/d274456f3eb9f2a3dc518985ec22d236d3bc3f6c/profiles/apparmor},
+	urldate = {2016-03-24}
 }
+
 @misc{githubAppArmorProfileContainerFix,
   title = {Commit - fix proc regex},
+  author = {Jessie Frazelle et al},
   url = {https://github.com/docker/docker/commit/2b4f64e59018c21aacbf311d5c774dd5521b5352},
 	urldate = {2016-02-09}
 }
 
 @misc{githubAppArmorProfileDaemon,
   title = {AppArmor profile template for the daemon},
-  url = {https://github.com/docker/docker/blob/master/contrib/apparmor/template.go},
-	urldate = {2016-02-03}
+  author = {Jessie Frazelle et al},
+  url = {https://github.com/docker/docker/blob/4bf7a84c969b9309b0534a61af55b8bb824acc0a/contrib/apparmor/template.go},
+	urldate = {2016-03-24}
 }
 
 @misc{githubSeccompDoc,
   title = {Seccomp security profiles for Docker},
-  url = {https://github.com/docker/docker/blob/master/docs/security/seccomp.md},
+  author = {Jessie Frazelle et al},
+  url = {https://github.com/docker/docker/blob/cb9aeb0413ca75bb3af7fa723a1f2e6b2bdbcb0e/docs/security/seccomp.md},
 	urldate = {2016-02-05}
 }
+
 @misc{githubSeccompIntegration,
   title = {Phase 1: Initial seccomp support \#17989},
+  author = {Jessie Frazelle et al},
   url = {https://github.com/docker/docker/pull/17989},
 	urldate = {2016-02-05}
 }
+
 @misc{githubSeccompProfile,
   title = {Seccomp default profile},
-  url = {https://github.com/docker/docker/blob/master/profiles/seccomp/default.json},
-  urldate = {2016-02-18}
+  author = {Jessie Frazelle et al},
+  url = {https://github.com/docker/docker/blob/96896f2d0bc16269778dd4f60a4920b49953ffed/profiles/seccomp/default.json},
+  urldate = {2016-03-24}
 }
+
 @misc{githubSeccompProfileHistory,
   title = {Commit History - Seccomp default profile},
+  author = {Jessie Frazelle et al},
   url = {https://github.com/docker/docker/commits/37d35f3c280dc27a00f2baa16431d807b24f8b92/daemon/execdriver/native/seccomp_default.go},
 	urldate = {2016-02-09}
 }
@@ -189,7 +217,7 @@
 }
 
 @misc{githubImageUUID,
-  title = {GitHub Repository - Image UUID Implementation},
+  title = {Image UUID Implementation},
   author = {Stephen Day and Arnaud Porterie},
   year = {2015},
   month = {Juli},
@@ -197,17 +225,15 @@
 	urldate = {2016-02-28}
 }
 
-
 @misc{githubNotary,
-  title = {GitHub Repository - Docker Notary},
+  title = {Docker GitHub Repository - Notary},
   url = {https://github.com/docker/notary},
 	urldate = {2016-02-24}
 }
 
 @misc{githubPluginList,
   title = {Understanding Engine Plugins},
-  year = {2016},
-  month = {Februar},
+  author = {David Calavera et al},
   url = {https://github.com/docker/docker/blob/cc085be7cc19d2d1aed39c243b6990a7d04ee639/docs/extend/plugins.md},
   urldate = {2016-02-26}
 }
@@ -222,14 +248,12 @@
 @misc{githubAuthZKerberosSupport,
   title = {Adding Kerberos support to Docker \#13697},
   author = {Dima Stopel},
-  year = {2015},
-  month = {Juni},
   url = {https://github.com/docker/docker/issues/13697#issue-84531039},
   urldate = {2016-02-26}
 }
 
 @misc{githubAuthNLaydown,
-  title = {Comment on won\'t-fix status of \emph{AuthN} in Issue: Add authentication to the docker daemon \#18514},
+  title = {Comment on won\'t-fix status of AuthN in Issue: Add authentication to the docker daemon \#18514},
   author = {David Calavera},
   year = {2016},
   month = {Februar},
@@ -248,6 +272,7 @@
 
 @misc{githubAuthZExtended,
   title = {Extended Documentation: Create an authorization plugin},
+  author = {Sebastiaan van Stijn et al},
   year = {2016},
   month = {Januar},
   url = {https://github.com/docker/docker/blob/e310d070f498a2ac494c6d3fde0ec5d6e4479e14/docs/extend/authorization.md},
@@ -265,7 +290,7 @@
 
 @misc{githubAuthZPluginInfrastructure,
   title = {Docker authorization plug-in infrastructure \#15365},
-  author = {Liron Levin},
+  author = {Liron Levin et al},
   year = {2015},
   month = {August},
   url = {https://github.com/docker/docker/pull/15365},
@@ -284,8 +309,8 @@
 @misc{githubDockerBenchTests,
   title = {Docker Bench tests},
   author = {Diogo Mónica and Thomas Sjögren et al},
-  url = {https://github.com/docker/docker-bench-security/tree/master/tests},
-	urldate = {2016-03-02}
+  url = {https://github.com/docker/docker-bench-security/tree/d3ff26c5fa7dd79ef992645f228fdafcc6493ce4/tests},
+	urldate = {2016-03-24}
 }
 
 @misc{githubPostgresCredentialCheck,
@@ -317,7 +342,7 @@
 
 @misc{githubBaneTOML,
   title = {Bane - TOML configuration file},
-  author = {Thomas Sjögren},
+  author = {Thomas Sjögren and Jessie Frazelle},
   year = {2015},
   month = {November},
   url = {https://github.com/jfrazelle/bane/blob/0ceb725f531cfb95a82a3586f6318343f3f8d17c/sample.toml},
@@ -334,7 +359,7 @@
 }
 
 @misc{githubAzureVMExtension,
-  title = {README.md of GitHub Repository - Azure Virtual Machine Extension for Docker},
+  title = {Azure Virtual Machine Extension for Docker GitHub Repository - README.md},
   author = {Ahmet Alp Balkan et al},
   year = {2016},
   month = {März},
@@ -343,7 +368,8 @@
 }
 
 @misc{githubDockerSlim,
-  title = {Readme-Datei von docker-slim},
+  title = {docker-slim GitHub Repository - README.md},
+  author = {Kyle Quest et al},
   url = {https://github.com/cloudimmunity/docker-slim/blob/bfe1202c60ffad5b1ac9abb46e0d557eadfe15e1/README.md},
 	urldate = {2016-03-20}
 }
