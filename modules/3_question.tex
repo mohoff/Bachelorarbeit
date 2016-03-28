@@ -5,9 +5,9 @@
 \label{question}
   Die Wertschöpfung moderner IT-Unternehmen beruht auf dem Angebot von Diensten, die über das Internet den Nutzern zur Verfügung gestellt werden. Die Dienste werden von Anwendungen realisiert, die i.d.R. in Rechenzentren betrieben werden. Der überwiegende Vermögensgegenstand in diesem Modell ist die Software, die in den Rechenzentren produktiv läuft. Der Wert dieser ist direkt abhängig von Eigenschaften wie der Leistung und Sicherheit eines Rechenzentrums.
 
-  Kunden, die ihr Produkt über Rechenzentren anbieten, sind u.a. an Sicherheitsfeatures interessiert, die die Sicherheitsziele aus Abschnitt \ref{introSecGoals} sicherstellen. Je nach Anwendungsfall kommt diesen Zielen unterschiedliche Wichtigkeit zu. Die Erfüllung der Sicherheitsziele muss für einen sicheren Betrieb auf Anwendungs-, Virtualisierungs- und Netzwerkebene gegeben sein.
+  Kunden, die ihr Produkt über Rechenzentren anbieten, sind u.\,a. an Sicherheitsfeatures interessiert, die die Sicherheitsziele aus Abschnitt \ref{introSecGoals} sicherstellen. Je nach Anwendungsfall kommt diesen Zielen unterschiedliche Wichtigkeit zu. Die Erfüllung der Sicherheitsziele muss für einen sicheren Betrieb auf Anwendungs-, Virtualisierungs- und Netzwerkebene gegeben sein.
 
-  Die Betreiber von Rechenzentren streben gleichzeitig einen möglichst effizienten Betrieb der Kundensysteme in der eigenen Infrastruktur an. Wie in Kapitel \ref{basics} gezeigt, bietet der Einsatz von Containertechnologien aus Sicht der Leistung, Effizienz sowie administrativen Faktoren, attraktive Eigenschaften für die Betreiber von Rechenzentren. Mit gegebener Hardware lassen sich z.B. mit Containertechnologien durchschnittlich mehr Kundenanwendungen realisieren, wie wenn letztere mit der konventionellen Hypervisortechnologie betrieben werden.
+  Die Betreiber von Rechenzentren streben gleichzeitig einen möglichst effizienten Betrieb der Kundensysteme in der eigenen Infrastruktur an. Wie in Kapitel \ref{basics} gezeigt, bietet der Einsatz von Containertechnologien aus Sicht der Leistung, Effizienz sowie administrativen Faktoren, attraktive Eigenschaften für die Betreiber von Rechenzentren. Mit gegebener Hardware lassen sich z.\,B. mit Containertechnologien durchschnittlich mehr Kundenanwendungen realisieren, wie wenn letztere mit der konventionellen Hypervisortechnologie betrieben werden.
 
   % Die Betreiber von Rechenzentren wiederum müssen diese Nachfrage befriedigen.
   % Dabei streben sie einen möglichst effizienten
@@ -146,8 +146,8 @@
     Zunächst lassen sich die möglichen Sicherheitsmechanismen in drei Arten unterteilen. Zur Einordnung der folgenden Kapitel sind diese kurz vorgestellt \cite[S.40ff.]{CISSP}\cite[S.23]{nist}:
 
     \begin{itemize}
-      \item \textbf{Technische Kontrollen}: Umfasst alle hardware- und softwarebasierten Mechanismen, z.B. ein Zugriffsschutz unter Verwendung einer \acrshort{MAC-SEC}.
-      \item \textbf{Administrative Kontrollen}: Enthält Managementkontrollen, die z.B. durch Konfigurationen, Entwicklung einer Sicherheitspolitik, Reduzierung der Fehleranfälligkeit durch Automatisierung und Sicherheitsschulungen des Personals umgesetzt werden.
+      \item \textbf{Technische Kontrollen}: Umfasst alle hardware- und softwarebasierten Mechanismen, z.\,B. ein Zugriffsschutz unter Verwendung einer \acrshort{MAC-SEC}.
+      \item \textbf{Administrative Kontrollen}: Enthält Managementkontrollen, die z.\,B. durch Konfigurationen, Entwicklung einer Sicherheitspolitik, Reduzierung der Fehleranfälligkeit durch Automatisierung und Sicherheitsschulungen des Personals umgesetzt werden.
       \item \textbf{Physische Kontrollen}: Beinhalten Mechanismen wie Sicherheitsschleusen, Schlösser und Wachpersonal. Obwohl ein Bezug zum Betrieb von Rechenzentren hergestellt werden kann, haben physische Kontrollen keine spezifische Relevanz für die containerbasierte Virtualisierung und sind aus diesem Grund an dieser Stelle nur zum Zweck der Vollständigkeit aufgeführt.
     \end{itemize}
 
@@ -187,7 +187,7 @@
 
   %Das zentrale Konzept, auf dem alle Containertechnologien beruhen, ist das der Isolierung. Im Kontext von Containern kann die Isolierung definiert werden als Trennung zwischen Containern und einem Host, sowie die Trennung zwischen Containern \cite[S.1]{dockerSec2}.
 
-  %Auf einem System mit Host und einem oder mehreren Containern, stellt sich zunächst die Frage welche Art und Richtung von Kommunikation zwischen diesen beiden Komponenten erlaubt und nicht erlaubt sein soll. Dadurch, dass der Docker-Daemon auf dem Host läuft und es dessen Aufgabe ist u.a. den Container-Lifecycle zu kontrollieren, braucht dieser Zugriff auf die Container. Verallgemeinert ist also die Kommunikation von Host zu Container erforderlich und damit erlaubt.
+  %Auf einem System mit Host und einem oder mehreren Containern, stellt sich zunächst die Frage welche Art und Richtung von Kommunikation zwischen diesen beiden Komponenten erlaubt und nicht erlaubt sein soll. Dadurch, dass der Docker-Daemon auf dem Host läuft und es dessen Aufgabe ist u.\,a. den Container-Lifecycle zu kontrollieren, braucht dieser Zugriff auf die Container. Verallgemeinert ist also die Kommunikation von Host zu Container erforderlich und damit erlaubt.
 
   %Was in einem Container passiert, ist zweitrangig, da der Container bei Fehlfunkionen jederzeit seitens des Hosts neu gestartet werden kann. Wichtig ist aber, dass der Container selbst von der Außenwelt, also dem Host und anderen Container, isoliert ist und seine Aufrufe gegen den Hostkernel streng limitiert sind und diese den Host nicht beeinträchtigen können.
 
@@ -227,7 +227,7 @@
 
 
   % Technische Sicherheit
-  %Um Frage (1.) zu beantworten, wird im ersten Hauptkapitel die intrinsische Sicherheit von Docker untersucht. Damit ist eine Reihe von Sicherheitsfeatures des Linux Kernels gemeint, die u.a. Docker nutzt, um nach Aussage von \emph{Docker} sichere Container zu ermöglichen. Genauer werden Mechanismen zur Isolation, Ressourcen- und Zugriffsverwaltung betrachtet, da sie direkt mit den erwünschten Sicherheitszielen aus Kapitel \ref{introSecGoals} in Bezug stehen.
+  %Um Frage (1.) zu beantworten, wird im ersten Hauptkapitel die intrinsische Sicherheit von Docker untersucht. Damit ist eine Reihe von Sicherheitsfeatures des Linux Kernels gemeint, die u.\,a. Docker nutzt, um nach Aussage von \emph{Docker} sichere Container zu ermöglichen. Genauer werden Mechanismen zur Isolation, Ressourcen- und Zugriffsverwaltung betrachtet, da sie direkt mit den erwünschten Sicherheitszielen aus Kapitel \ref{introSecGoals} in Bezug stehen.
 
   %Des Weiteren stellt sich die Frage, ob die Arbeit mit Docker und seinen Containern sicher ist. Wie in der \hyperref[dockerIntro]{Einführung zu Docker} beschrieben, stellt Docker zusammen mit anderen Anbietern einen Workflow und eine Palette an Tools zur Verfügung, die die Arbeit mit Containern erleichtern sollen. Wie diese Tools zur Sicherheit bzw. Angreifbarkeit von Docker-Systemen beitragen, wird im Kontext von den Sicherheitszielen betrachtet.
   % Technische und administrative Sicherheit

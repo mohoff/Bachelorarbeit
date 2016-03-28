@@ -32,7 +32,7 @@
 
   In der Realität sind die Argumentationen weitaus komplexer. Dennoch können bestimmte Lösungsmöglichkeiten in bestimmten Szenarien kategorisch ausgeschlossen werden, während andere attraktiv erscheinen.
 
-  Unabhängig von der gewählten Cloud-Art und Virtualisierungstechnologie lassen sich die Vorteile von Containern bezüglich Automatisierung, \acrshort{CI} und \acrshort{CD} immer nutzen. Auch wenn sich z.B. ein Unternehmen aus Sicherheitsgründen für eine Private Cloud in Kombination mit einer hypervisorbasierten Virtualisierung entscheidet, können trotzdem die besagten Vorteile von Containern innerhalb einer VM der Private Cloud genutzt werden, indem in die VMs z.B. Docker installiert wird (Architektur \glqq{}VM + Container\grqq{} in \fig \ref{fig:infrastructure_deployment}).
+  Unabhängig von der gewählten Cloud-Art und Virtualisierungstechnologie lassen sich die Vorteile von Containern bezüglich Automatisierung, \acrshort{CI} und \acrshort{CD} immer nutzen. Auch wenn sich z.\,B. ein Unternehmen aus Sicherheitsgründen für eine Private Cloud in Kombination mit einer hypervisorbasierten Virtualisierung entscheidet, können trotzdem die besagten Vorteile von Containern innerhalb einer VM der Private Cloud genutzt werden, indem in die VMs z.\,B. Docker installiert wird (Architektur \glqq{}VM + Container\grqq{} in \fig \ref{fig:infrastructure_deployment}).
 
   % Neben der technischen Überlegenheit, hat es Docker durch ein sehr erfolgreiches Marketing geschafft, als Heilmittel vieler Probleme in IT-Abteilungen in Unternehmen geschätzt zu werden.
 
@@ -54,7 +54,7 @@
 
   \section{Public Cloud}
   \label{publicCloud}
-    Während der Begriff CaaS von Unternehmen hauptsächlich für Marketingzwecke genutzt wird, sind sich selbst die großen Vertreter auf dem Virtualisierungsmarkt nicht über die Bedeutung des Begriffs einig. \emph{Google} z.B. versteht nach Aussage von Brendan Burns darunter eine Mischform aus PaaS und IaaS, die von ihrer eigenen Entwicklung \emph{Kubernetes} ermöglicht wird \cite[S.12]{slideshareContainerKubernetes}.
+    Während der Begriff CaaS von Unternehmen hauptsächlich für Marketingzwecke genutzt wird, sind sich selbst die großen Vertreter auf dem Virtualisierungsmarkt nicht über die Bedeutung des Begriffs einig. \emph{Google} z.\,B. versteht nach Aussage von Brendan Burns darunter eine Mischform aus PaaS und IaaS, die von ihrer eigenen Entwicklung \emph{Kubernetes} ermöglicht wird \cite[S.12]{slideshareContainerKubernetes}.
     % TODO: Kann man hier sagen "nach Aussage von Google"? Weil die Aussage eigtl. von Vortrag von Brendan Burns kommt, also einem Google-Mitarbeiter.
     \emph{Docker} hingegen umschreibt bei der eigenen Definition von CaaS das Konzept von DevOps, das einen von Docker ermöglichten, flexiblen Workflow der Zukunft realisiert. \glqq{}Der Weg zu CaaS ist mit Docker gepflastert\grqq{} ist eine Aussage eines Artikels des offiziellen Docker-Blogs \cite{dockerCAAS}.
 
@@ -62,7 +62,7 @@
 
     Fest steht, dass Docker als disruptive Technologie von allen Anbietern von Public Clouds akzeptiert und unterstützt werden muss. Diese Tatsache beruht weniger auf der technischen Überlegenheit von Docker gegenüber anderen Containerlösungen oder der hypervisorbasierten Virtualisierung, sondern auf einem einfachen, automatisierbaren Workflow, der im Modell von \emph{Continuous Integration} und \emph{Continuous Delivery} von Docker ermöglicht wird. Die Innovation, mit der sich IT-Unternehmen aktuell konfrontiert sehen, geschieht dadurch vorrangig auf Prozess- und Geschäftsebene.
 
-    Wie große Public Cloud-Anbieter Docker in ihr bestehendes Produktportfolio integrieren und welche Sicherheitsfeatures diese anbieten, ist am Beispiel von \emph{Azure} von \emph{Microsoft} und \emph{SoftLayer} von \emph{IBM} in den nächsten Abschnitten aufgezeigt. Beide Parteien werben mit einer engen \emph{Docker}-Partnerschaft und guten Integrationsmöglichkeiten von Docker in die eigene Infrastruktur \cite{dockerPartnershipMicrosoft}\cite{dockerPartnershipIBM}. Für beide Produkte stellt \emph{Docker} eigene Treiber zur Verfügung, die von der \emph{Docker Machine} eingebunden werden können \cite{dockerMachineDriverAzure}\cite{dockerMachineDriverSoftlayer}. Die Treiber enthalten Daten wie z.B. eine Kundennummer, Anmeldeinformationen und andere plattformspezifische Einstellungen der Public Cloud.
+    Wie große Public Cloud-Anbieter Docker in ihr bestehendes Produktportfolio integrieren und welche Sicherheitsfeatures diese anbieten, ist am Beispiel von \emph{Azure} von \emph{Microsoft} und \emph{SoftLayer} von \emph{IBM} in den nächsten Abschnitten aufgezeigt. Beide Parteien werben mit einer engen \emph{Docker}-Partnerschaft und guten Integrationsmöglichkeiten von Docker in die eigene Infrastruktur \cite{dockerPartnershipMicrosoft}\cite{dockerPartnershipIBM}. Für beide Produkte stellt \emph{Docker} eigene Treiber zur Verfügung, die von der \emph{Docker Machine} eingebunden werden können \cite{dockerMachineDriverAzure}\cite{dockerMachineDriverSoftlayer}. Die Treiber enthalten Daten wie z.\,B. eine Kundennummer, Anmeldeinformationen und andere plattformspezifische Einstellungen der Public Cloud.
 
     \subsection{Beispiel: \emph{Microsoft Azure}}
     \label{azure}
@@ -79,7 +79,7 @@
       %Im Vergleich zur Konkurrenz werden \emph{Azure} gute Integrationsmöglichkeiten von Public und Private Clouds auf Basis von \emph{Windows Server} nachgesagt, was \emph{Microsoft} zu einem attraktiven Anbieter von Hybrid Clouds macht \cite{IBMDockerOpenStack}.
       % TODO: Kann man das als Quelle ueberhaupt nehmen? Seeehr gewagte These, aber in wissenschaftlichen Papern steht sowas auch nicht....
 
-      Sicherheitsfeatures von \emph{Azure} können, wie Docker, als Erweiterungen in VMs integriert werden. Diese beinhalten u.a. Datenverschlüsselung, Firewalls, Intrusion Detection und Anti-Malware Software. Diese Module können unabhängig von Docker für jede VM aktiviert werden \cite{azureDockerExtensionSecurity}. Da diese Module dadurch keinen Bezug zur Art der Virtualisierung haben und für jede VM unabhängig von Docker aktiviert werden können, sind diese Sicherheitsfeatures an dieser Stelle nur kurz erwähnt.
+      Sicherheitsfeatures von \emph{Azure} können, wie Docker, als Erweiterungen in VMs integriert werden. Diese beinhalten u.\,a. Datenverschlüsselung, Firewalls, Intrusion Detection und Anti-Malware Software. Diese Module können unabhängig von Docker für jede VM aktiviert werden \cite{azureDockerExtensionSecurity}. Da diese Module dadurch keinen Bezug zur Art der Virtualisierung haben und für jede VM unabhängig von Docker aktiviert werden können, sind diese Sicherheitsfeatures an dieser Stelle nur kurz erwähnt.
 
     \subsection{Beispiel: \emph{IBM} \emph{SoftLayer}}
     \label{softlayer}
@@ -109,11 +109,11 @@
       % Treiber: https://docs.docker.com/machine/drivers/soft-layer/
       % http://blog.softlayer.com/tag/docker
 
-      % Wird von moovel für car2Go Carsharing Service verwendet (siehe startseite softlayer)
+      % Wird von moovel für car2Go Carsharing Service verwendet (s. startseite softlayer)
       % manches auf Basis von OpenStack (http://www.ibm.com/cloud-computing/de/de/infrastructure/)
 
       % DockerHub ist von SoftLayer gehostet
-      % u.a. \cite{http://www.businesscloudnews.com/2014/06/11/ibm-links-up-with-docker-takes-it-to-softlayer/}
+      % u.\,a. \cite{http://www.businesscloudnews.com/2014/06/11/ibm-links-up-with-docker-takes-it-to-softlayer/}
       % aber da gibts bestimmt bessere Quellen
 
       % While many people share images on the public Docker registry, security-minded organizations will want to create a private registry by leveraging SoftLayer object storage. You can create Docker images for a private registry that will store all its information with object storage. Registries are then easy to create and move to new hosts or between data centers.
@@ -174,24 +174,24 @@
 
     Das potentiell geringere Sicherheitsrisiko in Private Clouds kann sich auch auf die Art der gewählten Virtualisierungsarchitektur auswirken. Der reine Betrieb von Containern auf einem Docker"=Hostsystem ist ohne die Unterstützung von Hypervisortechnologien, je nach Sicherheitsanforderungen, möglich.
 
-    Private Clouds werden u.a. als kommerzielle Produkte angeboten. Z.B. verkauft \emph{Microsoft} die Lösung \emph{Windows Azure Pack}, welche auf proprietärer Software von \emph{Microsoft} basiert und in Rechenzentren von Kunden installiert wird. Im Open-Source-Bereich dominiert \emph{OpenStack} als Implementierung für Private und Hybrid Clouds, das nun vorgestellt wird.
+    Private Clouds werden u.\,a. als kommerzielle Produkte angeboten. Beispielsweise verkauft \emph{Microsoft} die Lösung \emph{Windows Azure Pack}, welche auf proprietärer Software von \emph{Microsoft} basiert und in Rechenzentren von Kunden installiert wird. Im Open-Source-Bereich dominiert \emph{OpenStack} als Implementierung für Private und Hybrid Clouds, das nun vorgestellt wird.
 
     \subsection{Beispiel: OpenStack}
       %Private Clouds werden häufig mit der Softwareplattform \emph{OpenStack} in Verbindung gebracht.
       \emph{OpenStack} ist eine Open-Source-Software unter der Apache 2-Lizenz, die es erlaubt, Cloud-Angebote nach dem IaaS-Modell zu realisieren. Grundlegende Komponenten, die in einem Rechenzentrum existieren, werden über einige Module angeboten. Beispielsweise wird Rechenkapazität mit Nova, Orchestrierung mit Heat und Speicherkapazität mit Swift und Cinder abgebildet. Die einzelnen Komponenten können über eine Vielzahl an APIs miteinander kommunizieren und erfüllen, meist in Kombination, die jeweiligen Anforderungen an eine IaaS-Lösung.
 
-      Durch die Vielseitigkeit und Größe von \emph{OpenStack}, wird der Technologie eine hohe Komplexität und eine lange Einarbeitungszeit nachgesagt. \emph{SUSE} und andere Linux-Anbieter profitieren von dieser Eigenschaft, indem sie z.B. mit \emph{SUSE OpenStack Cloud} eigene \emph{OpenStack}-Lösungen anbieten, die Kunden laut \emph{SUSE} eine einfach realisierbare Private Cloud ermöglicht \cite{SusePrivateCloud}\cite[S.2,4]{golemOpenStack}.
+      Durch die Vielseitigkeit und Größe von \emph{OpenStack}, wird der Technologie eine hohe Komplexität und eine lange Einarbeitungszeit nachgesagt. \emph{SUSE} und andere Linux-Anbieter profitieren von dieser Eigenschaft, indem sie z.\,B. mit \emph{SUSE OpenStack Cloud} eigene \emph{OpenStack}-Lösungen anbieten, die Kunden laut \emph{SUSE} eine einfach realisierbare Private Cloud ermöglicht \cite{SusePrivateCloud}\cite[S.2,4]{golemOpenStack}.
 
       Das Startup \emph{Platform 9} verspricht \emph{OpenStack}-as-a-Service; ein Angebot, das die Komplexität von \emph{OpenStack} für Kunden verbergen soll \cite{platform9}.
 
-      Trotz der Komplexität integrieren viele Anbieter auf dem Cloud-Markt vermehrt \emph{OpenStack} in ihr Portfolio. Unterstützer von \emph{OpenStack} sind u.a. \emph{SUSE}, \emph{Red Hat}, \emph{IBM}, \emph{Oracle} und \emph{Intel} \cite{heiseOpenStack}\cite{IBMDockerOpenStack}. Auch die steigende Nachfrage nach Hybrid Clouds in der Industrie, begünstigt \emph{OpenStack}, wie in Abschnitt \ref{hybridCloud} gezeigt wird.
+      Trotz der Komplexität integrieren viele Anbieter auf dem Cloud-Markt vermehrt \emph{OpenStack} in ihr Portfolio. Unterstützer von \emph{OpenStack} sind u.\,a. \emph{SUSE}, \emph{Red Hat}, \emph{IBM}, \emph{Oracle} und \emph{Intel} \cite{heiseOpenStack}\cite{IBMDockerOpenStack}. Auch die steigende Nachfrage nach Hybrid Clouds in der Industrie, begünstigt \emph{OpenStack}, wie in Abschnitt \ref{hybridCloud} gezeigt wird.
       % \cite{https://opensource.com/resources/what-is-openstack}.
       % Wird als Zukunft von Cloud-Computing gehandelt.
 
       Die Entwicklung von \emph{OpenStack} ist mit der Verbesserung bestehender und Erstellung neuer Modulfunktionen sehr aktiv. Anfang 2015 wurde mit \emph{Projekt Magnum} ein weiteres Modul angekündigt, das Docker und \emph{Kubernetes} in \emph{OpenStack} verfügbar macht \cite{openStackMagnum}. Davor war ein Betrieb von Containern nur über den Treiber \emph{Nova-Docker} für das Modul Nova möglich, dessen Funktionsumfang im Zusammenhang mit Containern sehr begrenzt ist \cite{heiseOpenStackContainer}\cite{openStackDocker}.
       Magnum nutzt die bestehenden Funktionen von Nova und Heat, die virtuelle Instanzen verwalten und fügt Schnittstellen hinzu, um mit Docker- und Kubernetes-Installationen innerhalb der virtuellen Instanzen zu kommunizieren \cite{openStackMagnum}.
 
-      %Neben der neuen Integration von Magnum, unterstützt \emph{OpenStack} auch viele Hypervisortechnologien wie z.B. \emph{KVM}, \emph{XEN}, \emph{Hyper-V} von \emph{Microsoft} und \emph{vSphere} von \emph{VMware}.
+      %Neben der neuen Integration von Magnum, unterstützt \emph{OpenStack} auch viele Hypervisortechnologien wie z.\,B. \emph{KVM}, \emph{XEN}, \emph{Hyper-V} von \emph{Microsoft} und \emph{vSphere} von \emph{VMware}.
 
       Auch für \emph{OpenStack} bietet Docker einen eigenen Treiber an \cite{dockerMachineDriverOpenStack}.
 

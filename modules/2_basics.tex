@@ -24,11 +24,11 @@
 				Realisierung von Multi-Tenancy-Umgebungen
 				& Abgrenzung von Kundeninstanzen durch Isolierung. \\
 				\hline
-				Realisierung bestimmter Architekturen, wie z.B. einer \emph{\gls{DreiTierArchitektur}}
+				Realisierung bestimmter Architekturen, wie z.\,B. einer \emph{\gls{DreiTierArchitektur}}
 				& Reproduzierbarkeit, flexible Koppelung mit unabhängigen Netzwerkfunktionen von virtuellen Systemen. \\
 				\hline
 				Unterstützung von Legacy-Code und mehrerer Software-Versionen
-				& Gute Migrationseigenschaften, hoher Grad an Kompatibilität, Unabhängigkeit von Hardware und Betriebssystemen z.B. mit \emph{\glspl{VirtualAppliance}} möglich.\\
+				& Gute Migrationseigenschaften, hoher Grad an Kompatibilität, Unabhängigkeit von Hardware und Betriebssystemen z.\,B. mit \emph{\glspl{VirtualAppliance}} möglich.\\
 				\hline
 				Administration und Wartbarkeit
 				& Zentralisiert für physische und virtuelle Systeme möglich, auch mit Unterstützung von Tools. Senkung von Administrationskosten \cite[S.1]{bsiVirt}\cite[S.661]{tanenbaumOS}. \\
@@ -41,15 +41,15 @@
 		\end{table}
 
 		%Wie in Tabelle \ref{tab:virtAdvantages} stichpunktartig zusammengefasst ist, bietet der Einsatz von serverseitiger Virtualisierung eine Reihe von Vorteilen, die ein rein physischer Betrieb von Servern nicht in dem Maß bieten kann.
-		Die Virtualisierungsmerkmale aus Tabelle \ref{tab:virtAdvantages} eröffneten IT-Unternehmen neue Geschäftsmodelle, auf denen der Erfolg von heutigen Cloud-Anbietern wie \emph{Amazon}, \emph{Google} und \emph{Microsoft} beruht. Selbst einhergehende Nachteile der Virtualisierung, wie z.B. Leistungsverluste und in dieser Arbeit untersuchte Sicherheitsrisiken, scheinen, basierend auf dem Erfolg genannter Anbieter, nicht ins Gewicht zu fallen.
+		Die Virtualisierungsmerkmale aus Tabelle \ref{tab:virtAdvantages} eröffneten IT-Unternehmen neue Geschäftsmodelle, auf denen der Erfolg von heutigen Cloud-Anbietern wie \emph{Amazon}, \emph{Google} und \emph{Microsoft} beruht. Selbst einhergehende Nachteile der Virtualisierung, wie z.\,B. Leistungsverluste und in dieser Arbeit untersuchte Sicherheitsrisiken, scheinen, basierend auf dem Erfolg genannter Anbieter, nicht ins Gewicht zu fallen.
 
 		%Aus technischer Sicht, werden bei der in dieser Arbeit relevanten Virtualisierung ein oder mehrere virtuelle Systeme auf einem physischen System betrieben \cite[S.8]{advancedServerVirt}.
     %Bei der Virtualisierung, deren Anfänge sich auf IBM-Forschungsprojekte von 1964 zurückführen lassen, werden ein oder mehrere virtuelle Systeme auf einem physischen System betrieben \cite[S.8]{advancedServerVirt}.
 		%Diese Systeme können kombiniert in Rechenzentren als eine Serverinfrastruktur betrachtet werden. In dieser können physische und virtuelle Komponenten gemeinsam administriert werden \cite[S.661]{tanenbaumOS}.
 
-		Die Absicht der in dieser Arbeit relevanten Virtualisierung ist es, die in Tabelle \ref{tab:virtAdvantages} genannten Vorteile zu erreichen, indem ein System in ein oder mehrere Systeme aufgeteilt wird. Per Definition besteht ein System aus allen Ressourcen, die eine Anwendung benötigt, um fehlerfrei laufen zu können \cite[S.106]{tanenbaumOS}. Technisch gesehen beinhaltet es ein Betriebssystem und zugehörige Peripheriegeräte, wie z.B. eine Netzwerkkarte.
+		Die Absicht der in dieser Arbeit relevanten Virtualisierung ist es, die in Tabelle \ref{tab:virtAdvantages} genannten Vorteile zu erreichen, indem ein System in ein oder mehrere Systeme aufgeteilt wird. Per Definition besteht ein System aus allen Ressourcen, die eine Anwendung benötigt, um fehlerfrei laufen zu können \cite[S.106]{tanenbaumOS}. Technisch gesehen beinhaltet es ein Betriebssystem und zugehörige Peripheriegeräte, wie z.\,B. eine Netzwerkkarte.
 
-		Systeme können auf mehrere Arten unterschieden werden, z.B. in physische und virtuelle Systeme:
+		Systeme können auf mehrere Arten unterschieden werden, z.\,B. in physische und virtuelle Systeme:
 
 		\begin{itemize}
 			\item \textbf{Physisches System}: System, das direkt auf der Hardware ausgeführt wird.
@@ -59,7 +59,7 @@
 		Eine weitere Unterscheidung trennt Systeme nach ihrer Rolle:
 
 		\begin{itemize}
-			\item \textbf{Hostsystem}: Physisches oder virtuelles System, das virtuelle Systeme (Gastsysteme) betreibt. In einem Hostsystem läuft eine Virtualisierungssoftware wie z.B. Docker, die die Instanziierung von Gastsystemem ermöglicht.\\
+			\item \textbf{Hostsystem}: Physisches oder virtuelles System, das virtuelle Systeme (Gastsysteme) betreibt. In einem Hostsystem läuft eine Virtualisierungssoftware wie z.\,B. Docker, die die Instanziierung von Gastsystemem ermöglicht.\\
 			\textbf{Beispiel}: Linux-Distribution mit Docker-Installation
 			\item \textbf{Gastsystem}: Virtuelles System, das im Kontext eines übergeordneten Hostsystems läuft.\\
 			\textbf{Beispiel}: Docker-Container
@@ -69,7 +69,7 @@
 		%Virtuelle und physische Systeme können dabei als minimale oder vollständige Betriebssysteme vorliegen. Systeme können in Rechenzentren eine Serverinfrastruktur bilden, in der virtuelle als auch physische Komponenten gemeinsam verwaltet werden .
 
 		%Die Unterscheidung in virtuelle und physische Systeme ist nicht von Bedeutung, wenn allein der Begriff \glqq{}System\grqq{} aufgeführt ist. %Wenn die Abgrenzung minimaler Betriebssysteme von vollständigen Betriebssystemen notwendig ist, wird das jeweilige Attribut an entsprechender Stelle verwendet. Standardmäßig ist allgemein von einem (Betriebs-)System die Rede.
-		%Per Definition in dieser Arbeit, besteht ein System aus einem Betriebssystem und zugehörigen Peripheriegeräte, wie z.B. einer Netzwerkkarte.
+		%Per Definition in dieser Arbeit, besteht ein System aus einem Betriebssystem und zugehörigen Peripheriegeräte, wie z.\,B. einer Netzwerkkarte.
 
 		%Ein System, das mehrere virtuelle Systeme betreibt, wird allgemein als Host oder Hostsystem bezeichnet. Systeme, die einzeln oder parallel virtualisiert auf einem solchen Host laufen, werden als (virtuelle) Gastsysteme bezeichnet.
 
@@ -149,7 +149,7 @@
 
 				%Falls ein Aufruf aus dem Gastsystem einen Hardwarezugriff benötigt, wird die Hardware - wie auch bei Typ-1 - emuliert. Erfordert ein Aufruf keinen Hardwarezugriff, wird dieser innerhalb des Gastsystems verarbeitet und verlässt dieses nicht.
 
-				Im Durchschnitt führt die zusätzliche Softwareschicht des Hypervisors Typ-2 trotz verschiedener Optimierungsmöglichkeiten, z.B. der sogenannten Paravirtualisierung, zu höheren Leistungseinbußen wie jenen unter Typ-1 \cite[S.666f.]{tanenbaumOS}.
+				Im Durchschnitt führt die zusätzliche Softwareschicht des Hypervisors Typ-2 trotz verschiedener Optimierungsmöglichkeiten, z.\,B. der sogenannten Paravirtualisierung, zu höheren Leistungseinbußen wie jenen unter Typ-1 \cite[S.666f.]{tanenbaumOS}.
 
 				%Die Aufrufe eines in dieser Anwendung installierten Betriebssystems, werden mithilfe einer sogenannten Binärübersetzung in Prozeduren des Hypervisors übersetzt, sofern der initiierte Befehl einen Hardwarezugriff verlangt.
 
@@ -177,12 +177,12 @@
 			Durch die kontinuierliche Weiterentwicklung von Containern in den letzten Jahren, können diese heutzutage laut \cite[S.7]{dockerBook} als vollwertige Systeme betrachtet werden, nicht mehr als - wie ursprünglich vorgesehen - reine Ausführungsumgebungen auf Basis von \texttt{chroot}.
 
 			Dieses Design hat einen entscheidenen Nachteil gegenüber dem Hypervisormodell, der auch Docker betrifft: das Betriebssystem im Hostsystem muss Linux-basiert sein \cite[S.6]{dockerBook}. Allerdings streben \emph{Docker} und \emph{Microsoft} eine native Docker-Lösung für \emph{Microsoft Windows Server 2016} an \cite{dockerWindowsSupport}.
-			%Durch das \emph{Open Container Project} (siehe Kapitel \ref{dockerContainerformate}) ist es dem Unterstützer \emph{Microsoft} nun möglich, den Windows-Kernel für das neue standardisierte Containerformat vorzubereiten .
+			%Durch das \emph{Open Container Project} (s. Kapitel \ref{dockerContainerformate}) ist es dem Unterstützer \emph{Microsoft} nun möglich, den Windows-Kernel für das neue standardisierte Containerformat vorzubereiten .
 			% Mittels github.com/mircrosoft/hcsshim
 
 			Ein großer Vorteil jedoch, der sich durch das schlanke Design von Containern ergibt, ist eine fast native Performance dieser \cite[S.1]{containerVirtPerformance}, da der Hypervisor in diesem Modell nicht existiert. Unter dem Gesichtspunkt der Rechenleistung, kommt es bei Containerlösungen im Durchschnitt zu einem Verlust von ca. 4\%, wenn dieser mit der nativen Leistung derselben Hardwarekonfiguration verglichen wird \cite[S.4]{containerVirtPerformance}\cite[S.5]{IBMcontVMcomparison}. In traditionellen Virtualisierungen beansprucht der Hypervisor allein etwa 10-20\% der Hostkapazität \cite[S.2]{dockerIntroIEEE}\cite[S.5]{IBMcontVMcomparison}. Ein Benchmarktest, der den Durchsatz (Operationen pro Sekunde) einer \emph{VoltDB}-Konfiguration \cite{voltdb} auf hypervisor- und containerbasierten Systemen gegenüberstellt, kommt zu dem Ergebnis, dass Container eine fünffache Leistung aufweisen \cite[S.2f.]{voltdbBenchmark}.
 
-			In der Praxis ermöglichen diese Verhältnisse eine hohe Dichte an Containern und führen zu einer besseren Resourcenausnutzung \cite[S.7f.]{dockerBook}. Der resultierende Leistungsgewinn ist v.a. für \emph{High Performance Computing}, sowie ressourcenbeschränkte Umgebungen wie mobile Geräte und \emph{Embedded Systems}, wichtig \cite[S.1]{dockerSec2}.
+			In der Praxis ermöglichen diese Verhältnisse eine hohe Dichte an Containern und führen zu einer besseren Resourcenausnutzung \cite[S.7f.]{dockerBook}. Der resultierende Leistungsgewinn ist v.\,a. für \emph{High Performance Computing}, sowie ressourcenbeschränkte Umgebungen wie mobile Geräte und \emph{Embedded Systems}, wichtig \cite[S.1]{dockerSec2}.
 
       Aus dem Blickwinkel der Sicherheit kann das Fehlen eines Hypervisors kontrovers interpretiert werden: Zum einen schrumpft die Angriffsfläche des Hostsystems, da nicht das gesamte Betriebssystem virtualisiert wird \cite[S.6]{dockerBook}. Je weniger Hostsystemfunktionen virtualisiert werden, desto geringer wird auch das Sicherheitsrisiko, das eine Funktion von einem Angreifer missbraucht wird. Zum anderen ist das Konzept eines geteilten Kernels generell unsicherer, da die Sicherheitsziele hierbei durch zusätzliche Mechanismen gewahrt werden müssen.
 
@@ -203,7 +203,7 @@
 
       % Unbedingt Quelle containerVirtPerformance anschauen, da werden mehrere Containerloesungen miteinander verglichen.
 
-      Docker ist wie in Kapitel \ref{introVirtContainer} zuvor erwähnt, nicht die erste containerbasierte Virtualisierungslösung. Einige ältere Containersysteme, wie z.B. \emph{Solaris Zones}, existieren bereits länger als Docker, erlangten allerdings nie die Popularität von Docker.
+      Docker ist wie in Kapitel \ref{introVirtContainer} zuvor erwähnt, nicht die erste containerbasierte Virtualisierungslösung. Einige ältere Containersysteme, wie z.\,B. \emph{Solaris Zones}, existieren bereits länger als Docker, erlangten allerdings nie die Popularität von Docker.
 			%Der anhaltende Erfolg von Docker beruht jedoch überwiegend nicht auf den technischen Eigenschaften, die sich von jener der Konkurrenz wie \emph{LXC} und \emph{rkt} abheben, sondern vielmehr auf den Tools und einem effizienten Workflow, den \emph{Docker} seinen Kunden anbietet.
 
 			% Vergleich zu lmctfy von Google oder LXC oder OpenVZ?
@@ -232,16 +232,16 @@
 
 
     \subsection{Vertraulichkeit}
-			Die Vertraulichkeit steht für das Konzept von Geheimhaltung. In Computersystemen können die z.B. in Kapitel \ref{secLinux} beschriebenen Mechanismen von Linux aktiviert werden, um eine bestimmte Information vor unauthorisierten Zugriffen zu schützen. Somit haben ausschließlich Befugte Zugang zu kritischen Information. In einem Multi-Tenancy-System ist es beispielsweise notwendig, Kundeninformationen von unberechtigten Nutzern geheimzuhalten.
+			Die Vertraulichkeit steht für das Konzept von Geheimhaltung. In Computersystemen können die z.\,B. in Kapitel \ref{secLinux} beschriebenen Mechanismen von Linux aktiviert werden, um eine bestimmte Information vor unauthorisierten Zugriffen zu schützen. Somit haben ausschließlich Befugte Zugang zu kritischen Information. In einem Multi-Tenancy-System ist es beispielsweise notwendig, Kundeninformationen von unberechtigten Nutzern geheimzuhalten.
 
     \subsection{Integrität}
-			Unter Integrität versteht man die Zusicherung, dass bestimmte Daten original und vollständig vorliegen, sowie nachweisbar nicht manipuliert wurden. Ein Sicherheitsmechanismus, der die Integrität sicherstellen soll, bewirkt z.B., dass es nur dem Besitzer einer Datei möglich ist, diese zu modifizieren. In Multi-Tenancy-Systemen muss beispielsweise gewährleistet werden, dass die Daten der einzelnen Kunden geschützt werden und kein Kunde die Integrität von Daten anderen Kunden verletzen kann.
+			Unter Integrität versteht man die Zusicherung, dass bestimmte Daten original und vollständig vorliegen, sowie nachweisbar nicht manipuliert wurden. Ein Sicherheitsmechanismus, der die Integrität sicherstellen soll, bewirkt z.\,B., dass es nur dem Besitzer einer Datei möglich ist, diese zu modifizieren. In Multi-Tenancy-Systemen muss beispielsweise gewährleistet werden, dass die Daten der einzelnen Kunden geschützt werden und kein Kunde die Integrität von Daten anderen Kunden verletzen kann.
 
     \subsection{Verfügbarkeit}
 			Die Verfügbarkeit bezeichnet die Eigenschaft eines Systems, Anfragen jederzeit zu verarbeiten und andere Systeme nicht negativ zu beeinflussen. Angriffe gegen die Verfügbarkeit werden als \gls{DenialOfService}-Angriffe bezeichnet. Beispielsweise muss in Multi-Tenancy-Systemen sichergestellt sein, dass ein Kunde nicht die Ressourcen anderer Kunden erschöpft.
 
 		\subsection{Authentizität}
-			Authentizität bezeichnet die Sicherstellung der Echtheit und Überprüfbarkeit. Es wird die Identifikation eines Nutzers im Rahmen einer Authentifizierung auf Echtheit geprüft. Kommt z.B. in Client-Server-Modellen vor, unter denen die Echtheit von Kommunikationspartnern geprüft werden muss.
+			Authentizität bezeichnet die Sicherstellung der Echtheit und Überprüfbarkeit. Es wird die Identifikation eines Nutzers im Rahmen einer Authentifizierung auf Echtheit geprüft. Kommt z.\,B. in Client-Server-Modellen vor, unter denen die Echtheit von Kommunikationspartnern geprüft werden muss.
 
 
 			%, kurz \acrshort{DoS}-Attacke, die ein System mit einer Anfragenflut stört bis es unbenutzbar wird und im System gehaltene Ressourcen nicht zugreifbar sind.
@@ -261,7 +261,7 @@
     % Auch checken: Statistika, google trends
 
 
-    Der große Vorteil von Docker gegenüber älteren Containerlösungen, wie z.B. dem Docker-Vorgänger \emph{LXC}, ist der Grad an Abstraktion und die Bedienungsfreundlichkeit, die Nutzern ermöglicht wird. Während sich Lösungen vor Docker auf dem Markt durch deren schwierige Installation und Management sowie schwachen Automatisierungsfunktionen nicht etablieren konnten, adressiert Docker genau diese Schwachpunkte \cite[S.7]{dockerBook} und bietet parallel viele Tools für Entwickler an. Auch die IT-Konzepte \emph{\gls{ContinuousDelivery}}, \emph{\gls{ContinuousIntegration}}, \emph{\gls{ImmutableInfrastructure}}, \emph{\glspl{Microservice}} und \emph{\gls{DevOps}}-Teams werden durch die Eigenschaften von Docker begünstigt.
+    Der große Vorteil von Docker gegenüber älteren Containerlösungen, wie z.\,B. dem Docker-Vorgänger \emph{LXC}, ist der Grad an Abstraktion und die Bedienungsfreundlichkeit, die Nutzern ermöglicht wird. Während sich Lösungen vor Docker auf dem Markt durch deren schwierige Installation und Management sowie schwachen Automatisierungsfunktionen nicht etablieren konnten, adressiert Docker genau diese Schwachpunkte \cite[S.7]{dockerBook} und bietet parallel viele Tools für Entwickler an. Auch die IT-Konzepte \emph{\gls{ContinuousDelivery}}, \emph{\gls{ContinuousIntegration}}, \emph{\gls{ImmutableInfrastructure}}, \emph{\glspl{Microservice}} und \emph{\gls{DevOps}}-Teams werden durch die Eigenschaften von Docker begünstigt.
 
 		Je nach Anwendungsfall können Container Testumgebungen, Anwendungen bzw. Teile davon, oder Replikate komplexer Anwendungen für Entwicklungs- und Produktionszwecke abbilden. Container nehmen dadruch die Rolle austauschbarer, kombinierbarer und portierbarer Module einer Architektur ein, die mithilfe besagter IT-Konzepte automatisierbar ist \cite[S.12]{dockerBook}.
 
@@ -279,7 +279,7 @@
     %Eine bekannte Herausforderung in der Softwareentwicklung ist Code, der in der Umgebung eines Entwicklers fehlerfrei ausgeführt wird, jedoch in Produktionsumgebungen Fehler verursacht. In der Regel fallen beide Umgebungen in unterschiedliche personelle Zuständigkeitsbereiche, was vereinfacht eine fe
 		%hleranfällige Übergabe von Entwicklungs- nach Produktionsumgebung mit sich zieht. Diesem Umstand wurde in der Industrie teilweise mit der Einführung von \emph{\gls{DevOps}}-Teams entgegengewirkt.
 
-    %Das Kernproblem im genanntem Szenario sind die Entwicklungs- und Produktionsumgebung, zwischen denen Code ausgetauscht wird, da diese sich in Größe, Form und Administration unterscheiden können. Einen anderen Ansatz diese Problem auf eine technische Art und Weise zu lösen, bieten Container. Quellcode - bzw. dessen ausführbarer Build - wird inklusive Ausführungsumgebung flexibel von einem Laptop, auf dem er entwickelt wurde, auf physische oder virtuelle Test- und später Produktionsserver übertragen. Letztere liegen in der Praxis häufig in einer externen Cloud-Infrastuktur, wie z.B. \emph{Azure} des Dienstleisters \emph{Microsoft}. Mit hoher Wahrscheinlichkeit sind die Anwendungscontainer unabhängig von der Infrastruktur sofort startfähig. Dieser kurzlebige Zyklus zwischen Entwicklung, Testen und produktivem Deployment, erlaubt einen effizienten und konsistenten Workflow \cite[S.8,12]{dockerBook}, der mit den Konzepten der \emph{Continuous Integration} und \emph{Continuous Delivery} kombinierbar ist. Durch Container, die zustandslos Anwendungen beinhalten, sowie einer statischen Containervorlage, die unter Docker als Dockerfile existiert, wird auch eine sogenannte \emph{Immutable Infrastructure} begünstigt.
+    %Das Kernproblem im genanntem Szenario sind die Entwicklungs- und Produktionsumgebung, zwischen denen Code ausgetauscht wird, da diese sich in Größe, Form und Administration unterscheiden können. Einen anderen Ansatz diese Problem auf eine technische Art und Weise zu lösen, bieten Container. Quellcode - bzw. dessen ausführbarer Build - wird inklusive Ausführungsumgebung flexibel von einem Laptop, auf dem er entwickelt wurde, auf physische oder virtuelle Test- und später Produktionsserver übertragen. Letztere liegen in der Praxis häufig in einer externen Cloud-Infrastuktur, wie z.\,B. \emph{Azure} des Dienstleisters \emph{Microsoft}. Mit hoher Wahrscheinlichkeit sind die Anwendungscontainer unabhängig von der Infrastruktur sofort startfähig. Dieser kurzlebige Zyklus zwischen Entwicklung, Testen und produktivem Deployment, erlaubt einen effizienten und konsistenten Workflow \cite[S.8,12]{dockerBook}, der mit den Konzepten der \emph{Continuous Integration} und \emph{Continuous Delivery} kombinierbar ist. Durch Container, die zustandslos Anwendungen beinhalten, sowie einer statischen Containervorlage, die unter Docker als Dockerfile existiert, wird auch eine sogenannte \emph{Immutable Infrastructure} begünstigt.
     %TODO: Reinarbeiten: Unterschiedliche "Cuts" im Schichtenmodell von Visulisierung. Alt: Zwischen Guest und App. NEU: Zwischen Guest und Host.
 
 		% TODO: Tooling, Workflow
@@ -308,10 +308,10 @@
           \label{fig:intro_dockerArchitecture}
       \end{figure}
 
-      Der Daemon kann von einer Registry Images (siehe Abschnitt \ref{dockerImages} und \ref{dockerRegistries}) beziehen, z.B. dem öffentlichen \emph{Docker Hub}.
+      Der Daemon kann von einer Registry Images (s. Abschnitt \ref{dockerImages} und \ref{dockerRegistries}) beziehen, z.\,B. dem öffentlichen \emph{Docker Hub}.
       % Kommunikation zwischen Client und Server via TCPIP oder Unix Sockets?
 
-      Der Docker-Host selbst ist wie in \fig \ref{fig:intro_dockerHost} dargestellt, aufgebaut. In einem Hostsystem läuft ein Linux-Betriebssystem, auf dem die Docker-Engine installiert ist. Die Engine verwaltet den Betrieb von Containern (siehe Abschnitt \ref{dockerContainer}), in denen in \fig \ref{fig:intro_dockerHost} die Applikationen A-E laufen. Wie auch in der Grafik zu sehen ist, teilen sich die Container gemeinsam verwendete Bibliotheken. Diese Eigenschaft wird in Abschnitt \ref{dockerImages} näher untersucht.
+      Der Docker-Host selbst ist wie in \fig \ref{fig:intro_dockerHost} dargestellt, aufgebaut. In einem Hostsystem läuft ein Linux-Betriebssystem, auf dem die Docker-Engine installiert ist. Die Engine verwaltet den Betrieb von Containern (s. Abschnitt \ref{dockerContainer}), in denen in \fig \ref{fig:intro_dockerHost} die Applikationen A-E laufen. Wie auch in der Grafik zu sehen ist, teilen sich die Container gemeinsam verwendete Bibliotheken. Diese Eigenschaft wird in Abschnitt \ref{dockerImages} näher untersucht.
 
       \begin{figure}[h]
           \centering
@@ -324,7 +324,7 @@
 		\label{dockerDockerfile}
       Ein Dockerfile ist eine Datei mit selbigem Namen, die die Erstellung eines Images mithilfe einer oder mehrerer Anweisungen spezifiziert. Anweisungen werden konsekutiv ausgeführt und führen jeweils zu einer neuen Schicht eines Images, die später in Summe das Image ergeben. Damit stellen Dockerfiles eine einfache Möglichkeit dar, Images auf Basis einer Vorlage automatisiert zu generieren.
 
-			Eine Anweisung kann z.B. ein Tool installieren oder starten, eine Umgebungsvariable festgelegen oder einen Port öffnen. Ein exemplarisches Dockerfile ist im Folgenden dargestellt \cite{githubDockerfileNginx}.
+			Eine Anweisung kann z.\,B. ein Tool installieren oder starten, eine Umgebungsvariable festgelegen oder einen Port öffnen. Ein exemplarisches Dockerfile ist im Folgenden dargestellt \cite{githubDockerfileNginx}.
 
 			\begin{lstlisting}
 				FROM ubuntu
@@ -345,7 +345,7 @@
 			%\begin{itemize}
 				%\item \texttt{FROM}: Setzt das Basisimage für alle folgenden Anweisungen. Jedes Dockerfile muss diese Anweisung am Anfang enthalten.
 				%\item \texttt{RUN}: Führt angehängten Befehl während des \gls{Build}vorgangs aus. Mit \texttt{\&\&} können mehrere Befehle konsekutiv ausgeführt werden.
-				%\item \texttt{WORKDIR}: Setzt das Arbeitsverzeichnis, von dem aus z.B. alle folgenden \texttt{RUN}- und \texttt{CMD}-Anweisungen ausgeführt werden. Kann mehrmals pro Dockerfile vorkommen.
+				%\item \texttt{WORKDIR}: Setzt das Arbeitsverzeichnis, von dem aus z.\,B. alle folgenden \texttt{RUN}- und \texttt{CMD}-Anweisungen ausgeführt werden. Kann mehrmals pro Dockerfile vorkommen.
 				%\item \texttt{CMD}: Führt angehängten Befehl aus, wenn der Container gestartet wird. Pro Dockerfile kann es nur eine \texttt{CMD}-Anweisung geben.
 				%\item \texttt{EXPOSE}: Öffnet angegebenen Port des Containers zur Laufzeit, in obigem Beispiel Port 80 und 443 für \acrshort{HTTP} und \acrshort{HTTPS}. Gebunden wird dieser standardmäßig auf dem Host auf einen \glqq{}registered\grqq{} Port (1024-49151).
 			%\end{itemize}
@@ -385,20 +385,20 @@
 
 		\subsection{Containerformate \emph{\acrshort{LXC}}, \emph{libcontainer} und \emph{\acrshort{OCF}}}
 		\label{dockerContainerformate}
-			Containerformate bilden das Herzstück der containerbasierten Virtualisierung. In ihnen ist in Form einer \acrshort{API} definiert, auf welche Art und Weise Container mit dem Hostsystem kommunizieren. Es wird z.B. festgelegt, wie das Dateisystem des Hostsystems verwendet wird, welche Features genutzt werden dürfen und wie die allgemeine Laufzeitumgebung von Containern spezifiziert ist.
+			Containerformate bilden das Herzstück der containerbasierten Virtualisierung. In ihnen ist in Form einer \acrshort{API} definiert, auf welche Art und Weise Container mit dem Hostsystem kommunizieren. Es wird z.\,B. festgelegt, wie das Dateisystem des Hostsystems verwendet wird, welche Features genutzt werden dürfen und wie die allgemeine Laufzeitumgebung von Containern spezifiziert ist.
 
 			Dockers Containerformat hat sich in den letzten Monaten oft verändert, daher soll an dieser Stelle auf die neusten Entwicklungen eingegangen werden.
 
 			Im ersten Release von Docker wurde die Ausführungsumgebung \emph{LXC} verwendet, die im März 2014 von der \emph{Docker}-eigenen Entwicklung \emph{libcontainer} abgelöst wurde. \emph{libcontainer} ist komplett in der Programmiersprache \emph{Golang} implementiert und kann ohne weitere Abhängigkeiten mit dem Linux-Kernel kommunizieren \cite{dockerLibcontainer}.
 
-			Ende Juni 2015 kündigte Docker an, zusammen mit mehr als 20 Vertretern aus der Industrie, u.a. \emph{Google}, \emph{IBM} und \emph{VMware}, einen neuen Standard \emph{Open Container Format} (\emph{\acrshort{OCF}}) zu schaffen, welcher im Rahmen des \emph{Open Container Project}s (\emph{\acrshort{OCP}}) entstehen soll \cite{dockerOCP}. Gleichzeitig stellte \emph{\acrshort{runC}} vor, das eine Implementierung des \emph{OCF} darstellt und maßgeblich auf dem alten Format \emph{libcontainer} beruht \cite{dockerRunC}\cite{dockerRunCGithub}\cite{runC}.
+			Ende Juni 2015 kündigte Docker an, zusammen mit mehr als 20 Vertretern aus der Industrie, u.\,a. \emph{Google}, \emph{IBM} und \emph{VMware}, einen neuen Standard \emph{Open Container Format} (\emph{\acrshort{OCF}}) zu schaffen, welcher im Rahmen des \emph{Open Container Project}s (\emph{\acrshort{OCP}}) entstehen soll \cite{dockerOCP}. Gleichzeitig stellte \emph{\acrshort{runC}} vor, das eine Implementierung des \emph{OCF} darstellt und maßgeblich auf dem alten Format \emph{libcontainer} beruht \cite{dockerRunC}\cite{dockerRunCGithub}\cite{runC}.
 
 		\subsection{Image}
     \label{dockerImages}
-			Images bilden als unveränderbare Dateien die Basis von Containern. Sie sind einfach portierbar und können geteilt, gespeichert und aktualisiert werden. Images sind durch ein \emph{Union}-Dateisystem in Schichten unterteilt, die überlagert ein Image ergeben, das als Container gestartet werden kann \cite[S.11]{dockerBook}. Die von Docker unterstützten \emph{Union}-Dateisysteme, wie z.B. \emph{AuFS}, \emph{Brtfs} und \emph{Device Mapper} basieren auf dem \emph{\gls{CopyOnWrite}}-Modell \cite[S.8]{dockerBook}\cite[S.3]{dockerIntroIEEE}\cite[S.4]{dockerSecIntro}.
+			Images bilden als unveränderbare Dateien die Basis von Containern. Sie sind einfach portierbar und können geteilt, gespeichert und aktualisiert werden. Images sind durch ein \emph{Union}-Dateisystem in Schichten unterteilt, die überlagert ein Image ergeben, das als Container gestartet werden kann \cite[S.11]{dockerBook}. Die von Docker unterstützten \emph{Union}-Dateisysteme, wie z.\,B. \emph{AuFS}, \emph{Brtfs} und \emph{Device Mapper} basieren auf dem \emph{\gls{CopyOnWrite}}-Modell \cite[S.8]{dockerBook}\cite[S.3]{dockerIntroIEEE}\cite[S.4]{dockerSecIntro}.
 			% TODO: Zusatz: "Die Docker alle unterstuetzt (mit Storage Drivern)"
 
-			Genauer gesagt besteht ein Image aus einem Manifest, das ein oder mehrere Schichten (Layers) referenziert. Images und Schichten sind jeweils über Hashwerte eindeutig referenzierbar und liegen auf dem Docker"=Hostsystem im Verzeichnis \texttt{/var/lib/docker/graph/}. Im Unterordner eines Images liegen mehrere, für ein Image spezifische Dateien (s. \fig \ref{fig:intro_dockerImageVZ}), u.a. das Manifest in der Datei \texttt{json}, das in einer \acrshort{JSON}-Struktur vorliegt und neben Metainformationen auch Details des Dockerfiles, aus dem das Image generiert wurde, beinhaltet \cite{githubDockerGlossary}.
+			Genauer gesagt besteht ein Image aus einem Manifest, das ein oder mehrere Schichten (Layers) referenziert. Images und Schichten sind jeweils über Hashwerte eindeutig referenzierbar und liegen auf dem Docker"=Hostsystem im Verzeichnis \texttt{/var/lib/docker/graph/}. Im Unterordner eines Images liegen mehrere, für ein Image spezifische Dateien (s. \fig \ref{fig:intro_dockerImageVZ}), u.\,a. das Manifest in der Datei \texttt{json}, das in einer \acrshort{JSON}-Struktur vorliegt und neben Metainformationen auch Details des Dockerfiles, aus dem das Image generiert wurde, beinhaltet \cite{githubDockerGlossary}.
 
 			\begin{figure}[!htbp]
           \centering
@@ -409,7 +409,7 @@
 
 			Images werden schrittweise aus den Anweisungen eines Dockerfiles erstellt. Die Schichten eines Images stellen i.d.R. eine minimale Ausführungsumgebung mit Bibliotheken, Binaries und Hilfspaketen sowie den Quellcode der Anwendung, die im Container ausgeführt werden soll, dar. Die Schichtenstruktur erlaubt es, Images modular aufzubauen, sodass sich Änderungen eines Images nur auf eine Schicht auswirken.
 
-			Soll z.B. in ein bestehendes Image der Webserver \emph{Nginx} integriert werden, kann dieser mit dem Kommando \texttt{apt-get install nginx} innerhalb eines Containers zur Laufzeit installiert werden, was eine neue Schicht im Image zur Folge hat.
+			Soll z.\,B. in ein bestehendes Image der Webserver \emph{Nginx} integriert werden, kann dieser mit dem Kommando \texttt{apt-get install nginx} innerhalb eines Containers zur Laufzeit installiert werden, was eine neue Schicht im Image zur Folge hat.
 
 			Mit mehreren ähnlichen Images ist gewährleistet, dass nur die konkreten Unterschiede zwischen diesen als eigene Schichten hinterlegt sind. Eine gemeinsame Codebasis, die von mehreren Images genutzt wird, liegt in wenigen Schichten vor, die sich die Images teilen \cite[S.3]{dockerIntroIEEE}.
 
@@ -425,7 +425,7 @@
 
       % Copy-on-write erklären.
 
-      Wie in \fig \ref{fig:intro_dockerPull} dargestellt, kann über die \gls{Shell} z.B. das Image eines \emph{CentOS}-Betriebssystems mit dem Befehl \texttt{docker pull nginx} aus dem \emph{Docker Hub} (siehe Abschnitt \ref{dockerRegistries}) bezogen werden \cite{dockerHubNginx}\cite{dockerPull}. Wie in \fig \ref{fig:intro_imagelayers} und \fig \ref{fig:intro_dockerPull} zu sehen ist, werden sechs Schichten heruntergeladen, die jeweils über einen Hashwert identifiziert werden und zusammengefügt das angefragte Image \texttt{centos:7.2.1511} ergeben.
+      Wie in \fig \ref{fig:intro_dockerPull} dargestellt, kann über die \gls{Shell} z.\,B. das Image eines \emph{CentOS}-Betriebssystems mit dem Befehl \texttt{docker pull nginx} aus dem \emph{Docker Hub} (s. Abschnitt \ref{dockerRegistries}) bezogen werden \cite{dockerHubNginx}\cite{dockerPull}. Wie in \fig \ref{fig:intro_imagelayers} und \fig \ref{fig:intro_dockerPull} zu sehen ist, werden sechs Schichten heruntergeladen, die jeweils über einen Hashwert identifiziert werden und zusammengefügt das angefragte Image \texttt{centos:7.2.1511} ergeben.
 
 			\begin{figure}[!htbp]
           \centering
@@ -460,7 +460,7 @@
       % Metapher mit dem Docker-Wal, der Container lädt: Docker als Frachtschiff, mit dem Container verschifft werden.
 			Ein Container ist die laufende Instanz eines Images, die in Sekundenbruchteilen startet \cite[S.1]{dockerIntroIEEE}. Er existiert als Gastsystem auf einem Docker"=Hostsystem und kann mehrere Anwendungen betreiben. Nach dem Konzept von \emph{Microservices} läuft in einem Container nur eine Anwendung.
 
-      Ein Container wird über eine Reihe an Operationen gesteuert. Diese umfassen das Erstellen, Starten, Stoppen, Neustarten und Beenden eines Containers. Welchen Inhalt einen Container hat, also ob ein Container z.B. auf einem Datenbank- oder Webserver-Image beruht, ist dafür unerheblich \cite[S.12]{dockerBook}\cite[S.2]{dockerLXCKub}.
+      Ein Container wird über eine Reihe an Operationen gesteuert. Diese umfassen das Erstellen, Starten, Stoppen, Neustarten und Beenden eines Containers. Welchen Inhalt einen Container hat, also ob ein Container z.\,B. auf einem Datenbank- oder Webserver-Image beruht, ist dafür unerheblich \cite[S.12]{dockerBook}\cite[S.2]{dockerLXCKub}.
 
 			Beispielsweise wird ein Container über das Kommando \texttt{docker run IMAGE} gestartet und über \texttt{docker rm CONTAINER} gestoppt.
 
@@ -502,12 +502,12 @@
           \label{fig:intro_registry}
       \end{figure}
 
-			Um Images in einem Repository voneinander zu unterscheiden, werden diese mit sogenannten Tags gekennzeichnet, um mehrere Versionen eines Images in einem Repository zu markieren. Die Images werden nach dem Schema \texttt{<repository>:<tag>} identifiziert. Es gibt z.B. im offiziellen Repository des Webservers \emph{Nginx} mehrere Images mit den Tags \texttt{latest}, \texttt{1}, \texttt{1.9} und \texttt{1.9.9} \cite{dockerHubNginx}.
+			Um Images in einem Repository voneinander zu unterscheiden, werden diese mit sogenannten Tags gekennzeichnet, um mehrere Versionen eines Images in einem Repository zu markieren. Die Images werden nach dem Schema \texttt{<repository>:<tag>} identifiziert. Es gibt z.\,B. im offiziellen Repository des Webservers \emph{Nginx} mehrere Images mit den Tags \texttt{latest}, \texttt{1}, \texttt{1.9} und \texttt{1.9.9} \cite{dockerHubNginx}.
 			%Wenn beim Herunterladen kein Tag angegeben ist, wird automatisch die aktuellste Imageversion mit dem Tag \texttt{latest} bezogen.
 
       % es gibt eine Trusted Registry. Die noch erklären.
 
-      % Bsp. geben für z.B. Ubuntu mit vielen Unterversionen und dem Identifier "latest".
+      % Bsp. geben für z.\,B. Ubuntu mit vielen Unterversionen und dem Identifier "latest".
 
       % Weitere beispiele aus dockerBook: Nginx web server, MySQL Datenbank
 
