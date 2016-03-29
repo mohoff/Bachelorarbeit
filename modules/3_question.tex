@@ -36,11 +36,11 @@
     Aus \fig \ref{fig:question_model1} und der Funktionsweise von Docker (s. Abschnitt \ref{dockerIntro}) können zwei unterschiedliche Gefahrenquellen (A) und (B) identifiziert werden:
 
     \begin{enumerate}[label=(\Alph*)]
-      \item \textbf{Docker-Spezifika}: In Containern werden Anwendungen ausgeführt, die nicht zwangsweise vertrauenswürdig sind. Wenn beispielweise Containerimages von einer öffentlichen Registry, wie dem \emph{Docker Hub}, bezogen werden, existiert keine Garantie, dass aus diesen Images gestartete Container nicht gegen die Sicherheitsziele der Vertraulichkeit, Integrität und Verfügbarkeit verstoßen. Durch die Komplexität moderner Anwendungen und deren Abhängigkeiten zu Bibliotheken ist es selbst bei quelloffenen Anwendungen schwierig, diese als vertrauenswürdig einzustufen. Deswegen muss davon ausgegangen werden, dass in Containern willkürliche Programme ablaufen (\emph{interne Gefahrenquellen}), die - versehentlich oder beabsichtigt - den Host schädigen können.
+      \item \textbf{Docker-Spezifika}: In Containern werden Anwendungen ausgeführt, die nicht zwangsweise vertrauenswürdig sind. Wenn beispielsweise Containerimages von einer öffentlichen Registry, wie dem \emph{Docker Hub}, bezogen werden, existiert keine Garantie, dass aus diesen Images gestartete Container nicht gegen die Sicherheitsziele der Vertraulichkeit, Integrität und Verfügbarkeit verstoßen. Durch die Komplexität moderner Anwendungen und deren Abhängigkeiten zu Bibliotheken ist es selbst bei quelloffenen Anwendungen schwierig, diese als vertrauenswürdig einzustufen. Deswegen muss davon ausgegangen werden, dass in Containern willkürliche Programme ablaufen (\emph{interne Gefahrenquellen}), die - versehentlich oder beabsichtigt - den Host schädigen können.
 
       Außerdem kann jederzeit ein Fehler in der Codebasis von Docker entdeckt werden, der die Sicherheit von Docker"=Hostsystemen und Containern beeinträchtigt.
 
-      \item \textbf{Container als Server im Internet}: Viele Container stellen einen Dienst über das Internet zur Verfügung und stehen dadurch mit der Außenwelt in Kontakt. Ein Webserver beispielsweise kann als Containerapplikation betrieben werden, indem er über einen Port Anfragen von Clients entgegennimmt und diese nach abgeschlossener Verarbeitung beantwortet. Die Notwendigkeit, Containerschnittstellen über das Internet anzubieten, kann von Angreifern (\emph{externe Gefahrenquellen}) ausgenutzt werden, um Sicherheitsziele zu verletzen. Der Schutz des Netzwerks und die Verbindung von Hosts an das Internet müssen unabhängig von der eingesetzten Containertechnologie realisiert werden.
+      \item \textbf{Container als Server im Internet}: Viele Container stellen einen Dienst über das Internet zur Verfügung und stehen dadurch mit der Außenwelt in Kontakt. Ein Webserver beispielsweise kann als Containerapplikation betrieben werden, indem er über einen Port Anfragen von Clients entgegen nimmt und diese nach abgeschlossener Verarbeitung beantwortet. Die Notwendigkeit, Containerschnittstellen über das Internet anzubieten, kann von Angreifern (\emph{externe Gefahrenquellen}) ausgenutzt werden, um Sicherheitsziele zu verletzen. Der Schutz des Netzwerks und die Verbindung von Hosts an das Internet müssen unabhängig von der eingesetzten Containertechnologie realisiert werden.
     \end{enumerate}
 
   \section{Auswirkungen der identifizierten Risiken}
@@ -70,7 +70,7 @@
     \begin{figure}[h]
         \centering
         \includegraphics[width=0.8\textwidth]{./images/question_model2.png}
-        \caption{Erweiterung des Systemmodells um Angreiferszenario (eigene Abbildung).}
+        \caption{Erweiterung des Systemmodells um ein Angreiferszenario (eigene Abbildung).}
         \label{fig:question_model2}
     \end{figure}
 
@@ -112,7 +112,7 @@
       \item \textbf{Integrität}: \cbroken{} kann Aktionen ausführen, die Daten von \(h\) und \(C\) manipulieren. \\
       \textbf{Beispiele}: Überschreiben oder Löschen von Daten anderer Container
       \item \textbf{Verfügbarkeit}: \cbroken{} kann Aktionen ausführen, um die von \(h\) vorgesehenen Mechanismen zur Aufrechterhaltung der Verfügbarkeit zu umgehen. Die Funktionstüchtigkeit von \(h\) und \(C\) kann dadurch beeinträchtigt werden. \\
-      \textbf{Beispiele}: \acrshort{DoS}-Angriffe wie Erschöpfung von Host-Ressourcen
+      \textbf{Beispiele}: \acrshort{DoS}-Angriffe wie Erschöpfung von Hostsystemressourcen
     \end{itemize}
 
     %- Container compromise: compromise C k ∈ C by means of illegitimate
@@ -158,7 +158,7 @@
   \section{Ziel der Arbeit}
     Gegenstand dieser Arbeit ist, die von Docker integrierten softwarebasierten und administrativen Maßnahmen zu analysieren.
 
-    Im Rahmen der Arbeit werden die Sicherheitsmaßnahmen sowie deren Einstatz unter Docker vorgestellt. Die in diesem Kapitel erarbeiteten Annahmen und Schlussfolgerungen bilden dabei die Basis der Untersuchung. Die einzelnen Sicherheitsmerkmale sind dabei unabhängig von der Infrastruktur. Das bedeutet, dass sie bei einem lokalen Betrieb von Docker auf Computern von Entwicklern, bis hin zu Docker-Installationen in Cloud"=Infrastrukturen relevant sind.
+    Im Rahmen der Arbeit werden die Sicherheitsmaßnahmen sowie deren Einsatz unter Docker vorgestellt. Die in diesem Kapitel erarbeiteten Annahmen und Schlussfolgerungen bilden dabei die Basis der Untersuchung. Die einzelnen Sicherheitsmerkmale sind dabei unabhängig von der Infrastruktur. Das bedeutet, dass sie bei einem lokalen Betrieb von Docker auf Computern von Entwicklern, bis hin zu Docker-Installationen in Cloud"=Infrastrukturen relevant sind.
 
     In dieser Arbeit wird auch betrachtet, welche Integrationsmöglichkeiten für Docker in Cloud"=Infrastrukturen existieren und welche speziellen Sicherheitskomponenten einsetzbar sind bzw. in welchem Umfang diese von externen Dienstleistern angeboten werden.
 

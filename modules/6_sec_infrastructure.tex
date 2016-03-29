@@ -3,7 +3,7 @@
 
 \chapter{Docker in Cloud"=Infrastrukturen}
 \label{secInfrastructure}
-  Wie in der Abschnitt \ref{introVirt} des Grunlagenkapitels gezeigt, bietet der Einsatz von Virtualisierungslösungen, insbesondere Containern, in Rechenzentren einige Vorteile.
+  Wie in der Abschnitt \ref{introVirt} des Grundlagenkapitels gezeigt, bietet der Einsatz von Virtualisierungslösungen, insbesondere Containern, in Rechenzentren einige Vorteile.
 
   Je nach Anforderungen der Anwendung und der verfügbaren unternehmensinternen Ressourcen und externen Anbieter, lässt sich eine Lösung mithilfe \fig \ref{fig:infrastructure_cloud} und \fig \ref{fig:infrastructure_deployment} bilden.
 
@@ -72,7 +72,7 @@
 
       Die Docker-Erweiterung lässt sich sowohl über eine Webanwendung als auch über ein CLI-Tool installieren. Auch Zertifikate zur Sicherung der Kommunikation (s. Abschnitt \ref{conClientServer}) können bei der Einrichtung ausgewählt werden \cite{azureDockerExtension}\cite{azureDockerExtensionCLI}.
 
-      Unter \emph{Azure} kann Docker ausschließlich innerhalb einer VM betrieben werden. Grund hierfür ist, dass \emph{Mircosoft} sein eigenes Betriebssystem \emph{Windows Server} sowie seinen eigenen Hypervisor \emph{Hyper-V} nutzt, um VMs zu realisieren. Eine direkte Installation von Docker auf diesem Betriebssystem ist ausgeschlosen, da Docker aktuell nur in Kombination mit einem Linux-Betriebssystem läuft.
+      Unter \emph{Azure} kann Docker ausschließlich innerhalb einer VM betrieben werden. Grund hierfür ist, dass \emph{Mircosoft} sein eigenes Betriebssystem \emph{Windows Server} sowie seinen eigenen Hypervisor \emph{Hyper-V} nutzt, um VMs zu realisieren. Eine direkte Installation von Docker auf diesem Betriebssystem ist ausgeschlossen, da Docker aktuell nur in Kombination mit einem Linux-Betriebssystem läuft.
 
       Diese Einschränkung soll mit der nächsten Version des Serverbetriebssystems von \emph{Microsoft}, \emph{Windows Server 2016}, aufgehoben werden. \emph{Windows Server 2016}, das aktuell als Technical Preview 4 vorliegt, verspricht Docker nativ, ohne die Hilfe eines Hypervisors, zu unterstützen. Der Betrieb von Containern auf der Plattform \emph{Azure} wird bereits in den Ausprägungen \emph{Windows Server Containers} und \emph{Hyper-V Containers} diversifiziert. Ersteres sieht die zukünftige Möglichkeit vor, Docker direkt auf \emph{Windows Server 2016} auszuführen. Letztere meint den Betrieb von Containern innerhalb einer VM, wie er aktuell von \emph{Azure} angeboten wird \cite{dockerPartnershipMicrosoft}\cite{azureWindowsContainers}.
 
@@ -165,7 +165,7 @@
     % Evtl. Bullets draus machen. 1. keine Trennung nach Kunden 2. Verfügbarkeit weiterhin wichtig 3. Vertraulichkeit und Integrität weniger 4. Vertraute Anwendungen/Umgebung 5. Keine böswilligen Absichten anderer Instanzen bzw. geringere Gefahr anderer Instanzen
     mehrere Kunden müssen nicht mehr, wie es in Public Clouds der Fall ist, voneinander isoliert werden. Eine Trennung innerhalb der Private Cloud gibt es nur noch nach Anwendungen, die nicht miteinander interferieren sollen.
 
-    Während Sicherheitsmechanismen, um die Verfügbarkeit dieser Anwendungen sicherzustellen, weiterhin wichtig sind, kommt solchen, die die Vertrauchlichkeit und Integrität gewährleisten sollen, tendentiell weniger Bedeutung in Private Clouds als in Public Clouds zu. Diese Schlussfolgerung beruht auf der Annahme, dass Anwendungen der Private Cloud von Natur aus vertrauenswürdiger sind, da sie vollständig beobachtet und kontrolliert werden können, sowie oftmals von eigenen Unternehmensmitarbeitern entwickelt wurden.
+    Während Sicherheitsmechanismen, um die Verfügbarkeit dieser Anwendungen sicherzustellen, weiterhin wichtig sind, kommt solchen, die die Vertraulichkeit und Integrität gewährleisten sollen, tendenziell weniger Bedeutung in Private Clouds als in Public Clouds zu. Diese Schlussfolgerung beruht auf der Annahme, dass Anwendungen der Private Cloud von Natur aus vertrauenswürdiger sind, da sie vollständig beobachtet und kontrolliert werden können, sowie oftmals von eigenen Unternehmensmitarbeitern entwickelt wurden.
     % TODO: Wichtig ist hierbei, dass Private Cloud per Definition im Glossar wirklich unternehmenseigenen Rechenzentren meint, also on-premise, nicht off-premise gehosted bei Drittanbietern.
 
     Diese Sicherheitsvorteile existieren in diesem Ausmaß nicht in Private Clouds, die in Rechenzentren Dritter betrieben werden. Diese Konstellation wird auch als Managed Private Cloud bezeichnet.
@@ -189,7 +189,7 @@
       % Wird als Zukunft von Cloud-Computing gehandelt.
 
       Die Entwicklung von \emph{OpenStack} ist mit der Verbesserung bestehender und Erstellung neuer Modulfunktionen sehr aktiv. Anfang 2015 wurde mit \emph{Projekt Magnum} ein weiteres Modul angekündigt, das Docker und \emph{Kubernetes} in \emph{OpenStack} verfügbar macht \cite{openStackMagnum}. Davor war ein Betrieb von Containern nur über den Treiber \emph{Nova-Docker} für das Modul Nova möglich, dessen Funktionsumfang im Zusammenhang mit Containern sehr begrenzt ist \cite{heiseOpenStackContainer}\cite{openStackDocker}.
-      Magnum nutzt die bestehenden Funktionen von Nova und Heat, die virtuelle Instanzen verwalten und fügt Schnittstellen hinzu, um mit Docker- und Kubernetes-Installationen innerhalb der virtuellen Instanzen zu kommunizieren \cite{openStackMagnum}.
+      Magnum nutzt die bestehenden Funktionen von Nova und Heat, die virtuelle Instanzen verwalten und fügt Schnittstellen hinzu, um mit Docker- und \emph{Kubernetes}-Installationen innerhalb der virtuellen Instanzen zu kommunizieren \cite{openStackMagnum}.
 
       %Neben der neuen Integration von Magnum, unterstützt \emph{OpenStack} auch viele Hypervisortechnologien wie z.\,B. \emph{KVM}, \emph{XEN}, \emph{Hyper-V} von \emph{Microsoft} und \emph{vSphere} von \emph{VMware}.
 
@@ -205,9 +205,9 @@
   \label{hybridCloud}
     Hybrid Clouds bezwecken eine Kombination aus Private und Public Cloud. Beide Arten von Clouds bieten Schnittstellen an, die eine Kommunikation der beiden Arten ermöglicht. Für Benutzer von Cloud-Diensten ist die technische und meist geographische Trennung der beiden Infrastrukturen unsichtbar, da diese im Hintergrund von einer Hybrid Cloud-Lösung verwaltet wird.
 
-    Durch die Verknüpfung von unternehmensinternen und -externen Rechenzentren ist die Kompatibilität zwischen beiden Infrastrukturen von großer Bedeutung. \emph{OpenStack} eignet sich daher auch für dieses Szenario, da Abhängigkeiten zu Hybrid Cloud-Produkten mit kommerziellen Technologien vermieden werden. Durch die zunehmende Akzeptanz von \emph{OpenStack} und dessen Integrationsmöglichkeiten in kommerzielle Produkte wird sowohl die bereits genannte, notwendige Kompatibilität gewährleistet, als auch ein sogenannter \emph{Vendor-Lock-In} vermieden. Durch die Verwendung von \emph{OpenStack} kann einfach zwischen Anbietern gewechselt werden. Außerdem können die Angebote von Hybrid Cloud-Lösungen auf der Basis der zugrundeliegenden Open-Source-Technologie transparent miteinander verglichen werden.
+    Durch die Verknüpfung von unternehmensinternen und -externen Rechenzentren ist die Kompatibilität zwischen beiden Infrastrukturen von großer Bedeutung. \emph{OpenStack} eignet sich daher auch für dieses Szenario, da Abhängigkeiten zu Hybrid Cloud-Produkten mit kommerziellen Technologien vermieden werden. Durch die zunehmende Akzeptanz von \emph{OpenStack} und dessen Integrationsmöglichkeiten in kommerzielle Produkte wird sowohl die bereits genannte, notwendige Kompatibilität gewährleistet, als auch ein sogenannter \emph{Vendor-Lock-In} vermieden. Durch die Verwendung von \emph{OpenStack} kann einfach zwischen Anbietern gewechselt werden. Außerdem können die Angebote von Hybrid Cloud-Lösungen auf der Basis der zugrunde liegenden Open-Source-Technologie transparent miteinander verglichen werden.
 
-    Mit dem Freiheitsgrad einer von \emph{OpenStack} realisierten IaaS-Lösung lassen sich eine Vielzahl von Betriebssystemen und Virtualisierungstechnologien nutzen. Dadurch ist auch der Betrieb von Containern mit Docker und Kubernetes, insbesondere durch das Modul Magnum, jederzeit möglich.
+    Mit dem Freiheitsgrad einer von \emph{OpenStack} realisierten IaaS-Lösung lassen sich eine Vielzahl von Betriebssystemen und Virtualisierungstechnologien nutzen. Dadurch ist auch der Betrieb von Containern mit Docker und \emph{Kubernetes}, insbesondere durch das Modul Magnum, jederzeit möglich.
 
     % TODO:Trend zu hybrid Cloud erwähnen, und Sicherheitsfolgen. Aber Begriff noch sehr schwammig... fehlt es an konkreten teschnischen Lösungen, oder? Sagt ja eigentlich nur aus, dass public und private Cloud nahtlos ineinander integriert werden... was das aus anwendungssicher auch immer zu bedeuten hat.
 

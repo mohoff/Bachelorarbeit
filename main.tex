@@ -80,7 +80,10 @@
     \par\noindent\makebox[2.5in]{\hrulefill} \hfill\makebox[2.0in]{\hrulefill}%
     \par\noindent\makebox[2.5in][l]{Unterschrift}      \hfill\makebox[2.0in][l]{Datum}%
 }
+% Prevents strange unicode errors while compiling. Might be corrupted white spaces from copy pastes
 \DeclareUnicodeCharacter{0301}{\'}
+\DeclareUnicodeCharacter{00AD}{}
+
 
 \newcommand{\cvalid}{\(c\)}
 \newcommand{\cbroken}{\(\overline{c}\)}
