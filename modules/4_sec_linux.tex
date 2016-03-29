@@ -281,8 +281,8 @@
 
 			Auch für Cloudanbieter sind User-Namespaces von Vorteil: Mit einer Auflösung der Container auf Userebene ist es möglich, die Nutzung von Diensten auf Userbasis einzugrenzen und abzurechnen \cite[S.3]{nsUserContainerCon}.
 
-		\subsection{\acrshort{UTS}-Isolierung durch den \texttt{\acrshort{UTS}-namespace}}
-			Mit einem \emph{\acrshort{UTS}-namespace} ist es möglich, jedem Container einen eigenen Hostnamen zuzuweisen. Der Container kann diesen Namen abfragen und ändern \cite[S.3]{virtVSContainer}. Dieser Namespace trägt damit nicht zur Containersicherheit bei und ist daher nur aus Gründen der Vollständigkeit an dieser Stelle erwähnt.
+		\subsection{\acrshort{UTS}-Isolierung durch den UTS-Namespace}
+			Mit einem UTS-Namespace ist es möglich, jedem Container einen eigenen Hostnamen zuzuweisen. Der Container kann diesen Namen abfragen und ändern \cite[S.3]{virtVSContainer}. Dieser Namespace trägt damit nicht zur Containersicherheit bei und ist daher nur aus Gründen der Vollständigkeit an dieser Stelle erwähnt.
 d
 		\subsection{Geräteisolierung}
 			% Es gibt keinen richtigen Namespace dafuer, da linux device driver (die physischen devices kontrollieren), nicht namespace aware sind und damit nicht sicher in containern verwendet werden koennen
@@ -709,7 +709,7 @@ d
 					% The Multi-Level Security technology refers to a security scheme that enforces the Bell-La Padula Mandatory Access Model. Under MLS, users and processes are called subjects, and files, devices, and other passive components of the system are called objects. Both subjects and objects are labeled with a security level, which entails a subject's clearance or an object's classification. Each security level is composed of a sensitivity and a category, for example, an internal release schedule is filed under the internal documents category with a confidential sensitivity.
 
 
-    \subsection{Seccomp}
+    \subsection{\acrshort{Seccomp}}
 		\label{seccomp}
 			% TODO: https://lwn.net/Articles/443099/ und https://lwn.net/Articles/441232/
 			% TODO: und vllt https://lwn.net/Articles/443110/
@@ -735,7 +735,7 @@ d
 			% This feature is available only if the kernel is configured with CONFIG_SECCOMP enabled.
 			%		^		\cite{ https://github.com/docker/docker/blob/master/docs/security/seccomp.md }
 
-			Das originale Seccomp, auch als \emph{Mode 1} bekannt, stellt nur den Zugriff auf vier \emph{System Calls} zur Verfügung: \texttt{read}, \texttt{write}, \texttt{exit} und \texttt{sigreturn}. Diese vier Aufrufe repräsentieren ein minimales Set an Operationen, die eine nicht vertrauenswürdige Anwendung ausführen darf \cite{linuxSecOverview}.
+			Das originale \emph{Seccomp}, auch als \emph{Mode 1} bekannt, stellt nur den Zugriff auf vier \emph{System Calls} zur Verfügung: \texttt{read}, \texttt{write}, \texttt{exit} und \texttt{sigreturn}. Diese vier Aufrufe repräsentieren ein minimales Set an Operationen, die eine nicht vertrauenswürdige Anwendung ausführen darf \cite{linuxSecOverview}.
 
 			Ein Update \emph{Mode 2} macht das Set an erlaubten \emph{System Calls} mithilfe von Filtern frei konfigurierbar und führt ein \emph{Audit Logging} ein	\cite{linuxSecOverview}\cite{seccompGitDesc}.
 
