@@ -50,7 +50,7 @@
     Für Cloud-Anbieter stellt Docker einige Speichertreiber zur Verfügung, z.\,B. für Amazons S3 \cite{dockerStorageDriverS3}, Microsofts Azure \cite{dockerStorageDriverAzure}, und OpenStacks Swift \cite{dockerStorageDriverSwift}. Bei Bedarf können eigene Speichertreiber mithilfe einer API implementiert werden \cite{dockerStorageDriver}.
     % \cite[S.5]{dockerSecIntro}
 
-    Neben der Vertraulichkeit von Images bieten private Registries den Vorteil, dass sich die Speicherung und Verteilung von Images an den internen und häufig durch \emph{Continuous Integration} und \emph{Continuous Delivery} automatisierten Softwareentwicklungsprozess anpassen lassen.
+    Neben der Vertraulichkeit von Images bieten private Registries den Vorteil, dass sich die Speicherung und Verteilung von Images an den internen und häufig durch \emph{Continuous Integration} (\acrshort{CI}) und \emph{Continuous Delivery} (\acrshort{CD}) automatisierten Softwareentwicklungsprozess anpassen lassen.
 
     Außerdem lässt sich das \emph{Docker Hub} in einer privaten Registry spiegeln. Bei dem Herunterladen von Images aus der öffentlichen Registry kann somit auf eine externe Verbindung verzichtet werden, sofern die Spiegelung in Form einer privaten Registry im eigenen Netz existiert. Docker kann mit der Option \texttt{--registry-mirror=ADDRESS} angewiesen werden, anstelle des \emph{Docker Hubs} eine Spiegelung zu verwenden \cite{dockerRegistryMirror}. Diese Form der Redundanz ist eine Maßnahme, um die Verfügbarkeit von Images sowie Geschwindigkeit der Image-Downloads zu erhöhen.
 
@@ -205,13 +205,13 @@
     Um die Zusammenarbeit im Docker-Projekt zu organisieren, wurden Regeln und Konventionen formuliert, die auch die Sicherheit betreffen \cite{githubDockerContribution}. Zusammen mit den Sicherheitsrichtlinien aus der offiziellen Docker-Homepage, ergeben sich folgende weitere, sicherheitsrelevante Eigenschaften von Docker.
 
     \begin{itemize}
-      \item Prinzip von \emph{Responsible Disclosure} wird als Hauptbestandteil der Sicherheitspolitik von Docker umgesetzt. Konform dazu können entdeckte Schwachstellen jederzeit an eine zentrale E-Mail-Adresse kommuniziert werden \cite{dockerSecurityPortal}.
+      \item Prinzip von \emph{\acrshort{ResponsibleDisclosure}} wird als Hauptbestandteil der Sicherheitspolitik von Docker umgesetzt. Konform dazu können entdeckte Schwachstellen jederzeit an eine zentrale E-Mail-Adresse kommuniziert werden \cite{dockerSecurityPortal}.
       \item Wartung einer zentralen \acrshort{CVE}-Datenbank, die bekannte Sicherheitsrisiken von Docker enthält. Die darin veröffentlichten Informationen erfüllen das Prinzip \emph{Responsible Disclosure} \cite{dockerCVEList}.
       \item Externe Sicherheitsfirmen werden vierteljährlich beauftragt, Sicherheitsaudits und Penetrationstests zur Kontrolle der Codebasis und Infrastruktur durchzuführen \cite[S.5]{dockerSecIntro}.
     \end{itemize}
 
-  \section{Best-Practices für die Sicherheit}
-    In den folgenden Abschnitten sind verschiedene Best-Practices im Umgang mit Docker aufgezählt.
+  \section{\glspl{BestPractice} für die Sicherheit}
+    In den folgenden Abschnitten sind verschiedene \glspl{BestPractice} im Umgang mit Docker aufgezählt.
 
     Während insgesamt weitaus mehr Best-Pracices existieren, sind im Folgenden nur jene ausgewählt, die Bezug zu den meisten Anwendungsfällen haben.
 

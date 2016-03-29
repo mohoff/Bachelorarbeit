@@ -40,7 +40,7 @@
 
 \chapter{Sicherheit durch Linux-Funktionen}
 \label{secLinux}
-	Die Docker-Entwickler haben in den letzten Monaten die Integrations- und Anpassungsmöglichkeiten zusätzlicher Sicherheitsmaßnahmen, v.\,a. die von Mandatory Access Controls (MACs), stark verbessert, da die Containersicherheit für \emph{Docker} nach eigenen Aussagen höchste Priorität hat \cite{githubDockerRoadmap}\cite{githubDockerChangelog}.
+	Die Docker-Entwickler haben in den letzten Monaten die Integrations- und Anpassungsmöglichkeiten zusätzlicher Sicherheitsmaßnahmen, v.\,a. die von Mandatory Access Controls (\acrshort{MAC-SEC}s), stark verbessert, da die Containersicherheit für \emph{Docker} nach eigenen Aussagen höchste Priorität hat \cite{githubDockerRoadmap}\cite{githubDockerChangelog}.
 
 	Auch die Tatsache, dass sich zur Zeit die Konkurrenz \emph{CoreOS} mit der Containerlösung \emph{rkt} als sicherheitsfokusierte Alternative zu Docker auf dem Virtualisierungsmarkt etablieren will \cite{coreosAnnouncementRkt10}, ist Anreiz für \emph{Docker}, die Sicherheit ihrer eigenen Entwicklung nicht zu vernachlässigen. Die Veröffentlichung des großen Sicherheitsupdates für Docker mit der Version 1.10 am 4. Februar 2016 geschah wenige Stunden nach der Ankündigung der Version 1.0 von \emph{rkt} seitens \emph{CoreOS} \cite{hnAnnouncementDocker110}\cite{hnAnnouncementRkt10}, was eine starke Konkurrenz zwischen den beiden Anbietern vermuten lässt. % /erkenntlich macht..
 
@@ -80,7 +80,7 @@
   \label{secIsolierung}
 		Die Isolierung für Container wird unter Linux für die meisten kritischen Bereiche eines Systems über Namespaces realisiert.
 
-		Da Anwendungen innerhalb von Containern eine komplette Laufzeitumgebung angeboten werden muss, müssen alle relevanten Bereiche des Hostsystems durch Namespaces abgedeckt sein.	Wenn unter Linux z.\,B. ein neuer Prozess gestartet werden soll, wird dem Kernel über \emph{System Calls} mitgeteilt, hierfür einen neuen Namespace bereitzustellen.
+		Da Anwendungen innerhalb von Containern eine komplette Laufzeitumgebung angeboten werden muss, müssen alle relevanten Bereiche des Hostsystems durch Namespaces abgedeckt sein.	Wenn unter Linux z.\,B. ein neuer Prozess gestartet werden soll, wird dem Kernel über \emph{\glspl{SystemCall}} mitgeteilt, hierfür einen neuen Namespace bereitzustellen.
 
 		%Je nach Anforderung gibt es verschiedene Namespaces: PID-, Netzwerk-, Mount-, User- und UTS-Namespace
 
@@ -94,7 +94,7 @@
 
 		Dadurch kann das Konzept von Namespaces als Lösungsansatz betrachtet werden, um das Sicherheitsziel der Vertraulichkeit zu erreichen. Sie sind der grundlegende Baustein, um eine Containerisolierung unter Linux zu realisieren. Auch addressieren Namespaces den Punkt (1) aus Abschnitt \ref{questionSolutionTheory}.
 
-		Unter Linux existieren sechs Namespaces, die in die Kategorien IPC, Network, Mount, PID, User und UTS unterteilt sind. Von Docker werden alle verwendet, der User-Namespace jedoch wird erst seit Docker-Version 1.10 unterstützt.
+		Unter Linux existieren sechs Namespaces, die in die Kategorien \acrshort{IPC}, Network, Mount, \acrshort{PID}, User und \acrshort{UTS} unterteilt sind. Von Docker werden alle verwendet, der User-Namespace jedoch wird erst seit Docker-Version 1.10 unterstützt.
 
 		Es besteht die Möglichkeit, dass bald weitere Namespaces dem bestehenden Set hinzugefügt werden. Zum einen wird derzeit ein eigener Namespace für Control Groups implementiert (s. Abschnitt \ref{secCgroups}). Zum anderen ist in Diskussion, für die bestehenden Sicherheitsmodule des Kernels (s. Abschnitt \ref{lsm}), diverse Logfunktionen und Geräte unter Linux, eigene Namespaces zur Verfügung zu stellen \cite[S.19]{presContainerSec}.
 		% TODO: Mehr Quellen
@@ -261,7 +261,7 @@
 
 			Dieser Namespace führt einen Mechanismus ein, unter dem Rootrechte in Containern nicht Rootrechten auf dem Hostsystem entsprechen. Ein Root-User innerhalb eines Containers wird im Hostsystem auf einem Nicht-Root-User abgebildet.
 
-			Linux verwendet User-IDs (UIDs) und Group-IDs (GIDs), um Verzeichnisse und Dateien eines Dateisystems sowie Prozesse mit Eignerinformationen zu versehen. User-Namespaces erlauben unterschiedliche UIDs bzw. GIDs innerhalb und außerhalb des Namespaces. Im Kontext des Hostsystems kann dadurch ein unpriveligierter User ohne Rootrechte existieren, während der gleiche User innerhalb von Containern mithilfe von User-Namespaces priveligiert ist \cite{nsUser}.
+			Linux verwendet User-IDs (\acrshort{UID}s) und Group-IDs (\acrshort{GID}s), um Verzeichnisse und Dateien eines Dateisystems sowie Prozesse mit Eignerinformationen zu versehen. User-Namespaces erlauben unterschiedliche UIDs bzw. GIDs innerhalb und außerhalb des Namespaces. Im Kontext des Hostsystems kann dadurch ein unpriveligierter User ohne Rootrechte existieren, während der gleiche User innerhalb von Containern mithilfe von User-Namespaces priveligiert ist \cite{nsUser}.
 
 			%In der Praxis lassen sich mit diesem Konzept jeweils Root-User mit UID 0 in Container X und Y auf nicht-priviligierte User, z.\,B. mit \texttt{uid=1000} und \texttt{uid=2000} des Hosts, abbilden.
 			% TODO: Grafik zur Unterstuetzung waere gut hier...
@@ -336,7 +336,7 @@ d
 
 		Neben dem Ressourcenmanagement bieten Control Groups auch Nutzungsstatistiken an. Diese sind unter Docker mit dem Befehl \texttt{docker stats CONTAINER [CONTAINER]} für ein oder mehrere Container abrufbar \cite{dockerMetrics}.
 
-		Control Groups sind historisch aus dem Konzept von sogenannten Ressource Limits, auch Rlimits genannt, gewachsen. Mit Ressource Limits werden \gls{weicheHarteLimits} definiert, die jedem Prozess zugewiesen werden. Der Betrieb von Containern verlangt jedoch eine Ressourcenverteilung auf Containerbasis. Wie in Abschnitt \ref{secIsoProcesses} gezeigt wurde, entspricht ein Container einem Set an Prozessen.
+		Control Groups sind historisch aus dem Konzept von sogenannten Ressource Limits gewachsen. Mit Ressource Limits werden \gls{weicheHarteLimits} definiert, die jedem Prozess zugewiesen werden. Der Betrieb von Containern verlangt jedoch eine Ressourcenverteilung auf Containerbasis. Wie in Abschnitt \ref{secIsoProcesses} gezeigt wurde, entspricht ein Container einem Set an Prozessen.
 		% TODO: rlimits abgleichen mit \cite[fundamentalkapitel]{linuxInterface}
 
 		%Dieses minimale Konzept auf Prozessebene ist für den Betrieb moderner Container jedoch unzureichend, da u.\,a. keine Beschränkungen auf Containerebene, also für Prozessgruppen, vorgenommen werden können. % z.\,B. keine Aktionen festgelegt werden können, die ausgeführt werden, wenn ein solches Limit erreicht ist. Außerdem können die \acrshort{CPU} und der Speicher nur begrenzt von \emph{\acrlong{rlimits}} kontrolliert werden.
@@ -414,9 +414,9 @@ d
 
     \subsection{Capabilities}
 		\label{capabilities}
-			Capabilities sind ein Feature, um den traditionellen DAC"=Mechanismus zu verfeinern. Es existieren verschiedene Definitionen des Begriffs \glqq{}Capability\grqq{}. In dieser Arbeit sind unter diesem Begriff die POSIX-Capabilities gemeint, die seit Version 2.2.11 des Kernels in Linux fest integriert sind \cite[S.42]{SELinuxApparmor}.
+			Capabilities sind ein Feature, um den traditionellen DAC"=Mechanismus zu verfeinern. Es existieren verschiedene Definitionen des Begriffs \glqq{}Capability\grqq{}. In dieser Arbeit sind unter diesem Begriff die \acrshort{POSIX}-Capabilities gemeint, die seit Version 2.2.11 des Kernels in Linux fest integriert sind \cite[S.42]{SELinuxApparmor}.
 
-			Als Linux-natives Feature werden Capabilities nicht nur von Docker-Prozessen direkt verwendet, sondern auch die beiden \acrshort{MAC-SEC}s \emph{AppArmor} und \emph{SELinux} machen indirekt Gebrauch von ihnen. Letztere sind in den Abschnitten \ref{apparmor} und \ref{selinux} beschrieben.
+			Als Linux-natives Feature werden Capabilities nicht nur von Docker-Prozessen direkt verwendet, sondern auch die beiden \acrshort{MAC-SEC}s \emph{\acrshort{AppArmor}} und \emph{\acrshort{SELinux}} machen indirekt Gebrauch von ihnen. Letztere sind in den Abschnitten \ref{apparmor} und \ref{selinux} beschrieben.
 
 			Capabilities verfeinern die DAC, indem alle unter Linux erwirkbaren Rechte in kleine Einheiten unterteilt sind. Genauer gesagt ermöglicht das Feature, dass die dem Rootnutzer zustehenden Rechte in individuelle, voneinander unabhängige Einheiten unterteilt werden. Jede priveligierte Aktion ist auf eine Capability abgebildet. Nicht-priveligierten Subjekten ist es mithilfe von Capabilities möglich, priveligierte Operationen auszuführen, sofern sie die dafür notwendige Capability besitzen \cite[S.33]{linuxInterface}\cite[S.39]{SELinuxApparmor}.
 			% TODO: "priveligierte Aktion" -- zuvor definieren, dass priveligiert == "Root-Rechte benötigt" ist.
@@ -454,10 +454,9 @@ d
 
 			Die Integration der beiden MACs geschieht modular über das \emph{Linux Security Modules}-Framework (\acrshort{LSM}), das inzwischen standardmäßig in den Kernel eingebaut ist. Module, die in das Framework eingebettet werden, sind kombinierbar. Mehrere Sicherheitsmechanismen können so konsekutiv umgesetzt werden, um eine \emph{Defense In Depth} umzusetzen \cite[S.3]{LSMFramework}.
 
-			Durch eine Erweiterung von Namespaces können Module der LSM eventuell zukünftig über Namespaces verwaltet werden.
-			% TODO: Quelle
+			Durch eine Erweiterung von Namespaces können Module der LSM eventuell zukünftig über Namespaces verwaltet werden \cite{nsHooksLSM}.
 
-			Die Kontrolle unter LSM geschieht, wie in \fig \ref{fig:sec_LSMHook} dargestellt, in Form eines LSM-Hooks. Unter einem Hook ist ein zwischengeschalteter Aufruf gemeint, der einen \emph{System Call} unterbricht und die Weiterverarbeitung dessen in einem Sicherheitsmodul, wie \emph{SELinux}, anstößt. Erst nach einer Antwort eines oder mehrerer hintereinander geschaltener Module, wird die normale Weiterausführung des \emph{System Calls} fortgesetzt bzw. für den Fall, dass das Modul die Weiterausführung blockiert, verweigert.
+			Die Kontrolle unter LSM geschieht, wie in \fig \ref{fig:sec_LSMHook} dargestellt, in Form eines LSM-Hooks. Unter einem Hook ist ein zwischengeschalteter Aufruf gemeint, der einen \emph{System Call} unterbricht und die Weiterverarbeitung dessen in einem Sicherheitsmodul, wie \emph{\acrshort{SELinux}}, anstößt. Erst nach einer Antwort eines oder mehrerer hintereinander geschaltener Module, wird die normale Weiterausführung des \emph{System Calls} fortgesetzt bzw. für den Fall, dass das Modul die Weiterausführung blockiert, verweigert.
 
 			\begin{figure}[h]
 					\centering
@@ -653,19 +652,19 @@ d
 
 				% TODO: https://coreos.com/blog/container-security-selinux-coreos.html
 
-				\paragraph{Type Enforcement (TE)}
+				\paragraph{Type Enforcement (\acrshort{TE})}
 					Die wichtigste Komponente von \emph{SELinux} ist das \emph{Type Enforcement}. Im Rahmen dieses Konzepts werden jedem Subjekt und jedem Objekt ein Typ zugeweisen, deren Auswertung bei jeder Zugriffsoperation zwischen Subjekt und Objekt stattfindet. Der Typ ist im Label an dritter Stelle definiert.
 
 					In der Praxis existieren für jede Anwendung eigene Typen, da jede Anwendung spezielle Rechte benötigt, um ihre Funktion zu erfüllen. Jedem Docker-Prozess ist z.\,B. der Typ \texttt{docker\_t} zugewiesen, der gleichzeitig eine gemeinsame Domäne für besagte Prozesse definiert. Im \emph{SELinux}-Regelwerk ist festgelegt, dass Prozesse eines Typs nur auf Objekte vollen Zugriff hat, die mit bestimmten Labeltypen versehen sind. Im konkreten Fall von \texttt{docker\_t} umfasst diese Konfiguration ein Objektset, das u.\,a. aus den Typen \texttt{docker\_config\_t}, \texttt{docker\_log\_t} und \texttt{svirt\_sandbox\_file\_t} besteht \cite{githubSELinuxProfileTE}. Versucht ein Prozess unter Docker auf Objekte zuzugreifen, deren Typ nicht in \cite{githubSELinuxProfileTE} gelistet ist, wird die Operation unterbunden.
 
 					Da in \emph{SELinux}-Umgebungen jedem Objekt im Hostsystem ein Label zugewiesen ist, wird eine zuverlässige Kontrolle von Objektzugriffen über die Auswertung von Typen ermöglicht. Subjekte, die mit dem Typ \texttt{docker\_t} aus der Docker-Domäne stammen, sind streng von Objekten anderer Domänen abgegrenzt und können nicht mit diesen interagieren.
 
-				\paragraph{Multi-Category Security (MCS)}
+				\paragraph{Multi-Category Security (\acrshort{MCS})}
 					% TODO: Einarbeiten, dass mit Kateogiren die Vertraulichkeit erfüllt wird: Kategorisierung führt dazu, dass nur solche Prozesse auf Objekte haben, die derselben Kategorie angehören.
 					% TODO: Systemintegrität und Domänen mit Type Enforcement realisiert! Prozesse laufen innerhalb einer Domäne und Objekte haben einen Typ. Durch Regeln wird bestimmt, welche Domänen auf welche Typen zugreifen dürfen.
 					Durch das einheitliche Regelwerk für alle Docker-Prozesse ist mit einem \emph{Type Enforcement} gewährleistet, dass ein kompromittierter Container \cbroken{} nicht unbefugt auf geschützte oder unrelevante Daten außerhalb der Docker-Domäne  zugreifen darf. Docker-unspezifische Subjekte und Objekte werden dadurch im Hostsystem geschützt.
 
-					MCS implementiert eine Möglichkeit, \cbroken{} den Zugriff auf \cvalid{} zu verweigern. Mit \emph{Type Enforcement} ist das nicht realisierbar, da \cbroken{} und \cvalid{} beide durch den identischen Typ \texttt{docker\_t} der Docker-Domäne zugehörig sind.
+					\acrshort{MCS} implementiert eine Möglichkeit, \cbroken{} den Zugriff auf \cvalid{} zu verweigern. Mit \emph{Type Enforcement} ist das nicht realisierbar, da \cbroken{} und \cvalid{} beide durch den identischen Typ \texttt{docker\_t} der Docker-Domäne zugehörig sind.
 
 					Theoretisch wäre die Funktion der MCS auch mit dem\emph{Type Enforcement} realisierbar, wenn jeder Container mit einem eigenen Typ operiert. Die Domäne würde dabei nicht für alle Docker-Subjekte gelten, sondern nur für die eines Containers. Diese feinere Typenunterteilung wirkt sich aber auf die Komplexität des Regelwerks negativ aus. In der Praxis wird deswegen der MCS-Mechanismus für dieses Sicherheitsfeature eingesetzt.
 					% TODO: Quelle!
