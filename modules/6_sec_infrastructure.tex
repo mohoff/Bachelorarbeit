@@ -25,10 +25,12 @@
 
   \begin{enumerate}
     \item Ein großes Unternehmen besitzt die Kompetenz und das Kapital, sichere virtuelle Infrastrukturen zu bauen. Außerdem handelt es sich bei der zu betreibenden Anwendung um eine Software zur Stammdatenverwaltung. Die Anwendung ist daher sehr sicherheitskritisch. \\
-    \textbf{Lösungsmöglichkeiten}: Private, Managed Private oder Hybrid Cloud in Kombination mit VMs oder VMs+Container
+    \textbf{Lösungsmöglichkeiten}: Private, Managed Private oder Hybrid Cloud in Kombination mit VMs oder VMs+Container.
     \item Ein kleines Startup ohne Investoren baut einen Online-Kartendienst, der als Prototyp frei verfügbar angeboten werden soll. Hohe Sicherheitsanforderungen existieren nicht, da die Anwendung keine Nutzerdaten speichert. Jedoch soll die Anwendung performant laufen. Außerdem sollen für das Startup vielversprechende Entwicklungsstrategien wie \acrshort{CI} und \gls{ImmutableInfrastructure} getestet werden.  \\
-    \textbf{Lösungsmöglichkeiten}: Public Cloud in Kombination mit Containern
+    \textbf{Lösungsmöglichkeiten}: Public Cloud in Kombination mit Containern.
   \end{enumerate}
+
+  \clearpage
 
   In der Realität sind die Argumentationen weitaus komplexer. Dennoch können bestimmte Lösungsmöglichkeiten in bestimmten Szenarien kategorisch ausgeschlossen werden, während andere attraktiv erscheinen.
 
@@ -171,6 +173,8 @@
     Diese Sicherheitsvorteile existieren in diesem Ausmaß nicht in Private Clouds, die in Rechenzentren Dritter betrieben werden. Diese Konstellation wird auch als Managed Private Cloud bezeichnet.
 
     Wie die Bezeichnung aussagt, werden Managed Private Clouds von externen Anbietern verwaltet. Jedoch bezieht der Kunde hierbei keine mit anderen Kunden geteilte Instanz, sondern erhält eine im Rechenzentrum physisch getrennte, dedizierte Infrastruktur \cite{softlayerPrivateCloud}.
+
+    \clearpage
 
     Das potentiell geringere Sicherheitsrisiko in Private Clouds kann sich auch auf die Art der gewählten Virtualisierungsarchitektur auswirken. Der reine Betrieb von Containern auf einem Docker"=Hostsystem ist ohne die Unterstützung von Hypervisortechnologien, je nach Sicherheitsanforderungen, möglich.
 

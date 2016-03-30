@@ -28,6 +28,8 @@
 
     Das Systemmodell ist zunächst wie in \fig \ref{fig:question_model1} definiert: Es existiert ein Hostsystem \(h\) und eine Containermenge \(M\), die aus den Containern \(c_1,c_2,\dotsc,c_n\) besteht. Die Container werden von einem Docker-Daemon verwaltet, der zusammen mit Linux in \(h\) läuft.
 
+    \clearpage
+
     Verteilte Docker-Systeme, in denen mehrere Hosts miteinander kommunizieren, werden in dieser Arbeit nicht betrachtet. Aus diesem Grund existiert in diesem Systemmodell nur ein Hostsystem \(h\) mit Docker-Installation, das alle Container in \(M\) verwaltet.
 
   \section{Identifikation der Bedrohungen}
@@ -111,6 +113,7 @@
       \textbf{Beispiele}: \acrshort{MITM}-Angriff, Lesen von Daten anderer Container
       \item \textbf{Integrität}: \cbroken{} kann Aktionen ausführen, die Daten von \(h\) und \(C\) manipulieren. \\
       \textbf{Beispiele}: Überschreiben oder Löschen von Daten anderer Container
+      \clearpage
       \item \textbf{Verfügbarkeit}: \cbroken{} kann Aktionen ausführen, um die von \(h\) vorgesehenen Mechanismen zur Aufrechterhaltung der Verfügbarkeit zu umgehen. Die Funktionstüchtigkeit von \(h\) und \(C\) kann dadurch beeinträchtigt werden. \\
       \textbf{Beispiele}: \acrshort{DoS}-Angriffe wie Erschöpfung von Hostsystemressourcen
     \end{itemize}
@@ -153,8 +156,10 @@
 
     Docker hat als Softwareprodukt die Möglichkeit, direkt technische Kontrollen in die Codebasis einzubauen bzw. solche, die der Linux-Kernel implementiert, zu unterstützen. Auch verfolgt Docker administrative Sicherheitsansätze, die teilweise durch technische Mittel begünstigt werden.
 
-    Die Umsetzung erfolgt mittels zweier Prinzipien, die am Anfang von Kapitel \ref{secLinux} vorgestellt sind.
+    Die Umsetzung erfolgt mittels zweier Prinzipien, die zu Beginn von Kapitel \ref{secLinux} vorgestellt sind.
 
+  \clearpage
+  
   \section{Ziel der Arbeit}
     Gegenstand dieser Arbeit ist, die von Docker integrierten softwarebasierten und administrativen Maßnahmen zu analysieren.
 

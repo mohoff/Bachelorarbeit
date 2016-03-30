@@ -47,17 +47,19 @@
   \section{Private Registries}
     Docker bietet neben der Nutzung des öffentlichen \emph{Docker Hubs} an, private Registries zu erstellen. Diese können dann, z.\,B. von einer Firewall gesichert, in einer unternehmenseigenen Infrastruktur oder in Rechenzentren externer Cloud-Anbieter betrieben werden. Private Registries können als Containeranwendung zur Verfügung gestellt werden \cite{dockerRegistry}.
 
+    \clearpage
+
     Für Cloud-Anbieter stellt Docker einige Speichertreiber zur Verfügung, z.\,B. für Amazons S3 \cite{dockerStorageDriverS3}, Microsofts Azure \cite{dockerStorageDriverAzure}, und OpenStacks Swift \cite{dockerStorageDriverSwift}. Bei Bedarf können eigene Speichertreiber mithilfe einer API implementiert werden \cite{dockerStorageDriver}.
     % \cite[S.5]{dockerSecIntro}
 
     Neben der Vertraulichkeit von Images bieten private Registries den Vorteil, dass sich die Speicherung und Verteilung von Images an den internen und häufig durch \emph{Continuous Integration} (\acrshort{CI}) und \emph{Continuous Delivery} (\acrshort{CD}) automatisierten Softwareentwicklungsprozess anpassen lassen.
 
-    Außerdem lässt sich das \emph{Docker Hub} in einer privaten Registry spiegeln. Bei dem Herunterladen von Images aus der öffentlichen Registry kann somit auf eine externe Verbindung verzichtet werden, sofern die Spiegelung in Form einer privaten Registry im eigenen Netz existiert. Docker kann mit der Option \texttt{--registry-mirror=ADDRESS} angewiesen werden, anstelle des \emph{Docker Hubs} eine Spiegelung zu verwenden \cite{dockerRegistryMirror}. Diese Form der Redundanz ist eine Maßnahme, um die Verfügbarkeit von Images sowie Geschwindigkeit der Image-Downloads zu erhöhen.
+    Außerdem lässt sich das \emph{Docker Hub} in einer privaten Registry spiegeln. Bei dem Herunterladen von Images aus der öffentlichen Registry kann somit auf eine externe Verbindung verzichtet werden, sofern die Spiegelung in Form einer privaten Registry im eigenen Netz existiert. Docker kann mit der Option \texttt{-{}-registry-mirror=ADDRESS} angewiesen werden, anstelle des \emph{Docker Hubs} eine Spiegelung zu verwenden \cite{dockerRegistryMirror}. Diese Form der Redundanz ist eine Maßnahme, um die Verfügbarkeit von Images sowie Geschwindigkeit der Image-Downloads zu erhöhen.
 
     Der Zugriff auf eine Registry kann über \acrshort{HTTPS} und der Verwendung von Zertifikaten abgesichert werden \cite{dockerRegistry} (vgl. Abschnitt \ref{conClientServer}).
 
   \section{Verfikation und Verteilung von Images}
-    Der Sicherheitsforscher Jonathan Rudenberg hat im Dezember 2014 drei Sicherheitsrisiken im Zusammenhang mit Dockers damaliger Verifikation und Verteilung von Images aufgedeckt \cite{githubRegistryV1Issues}\cite{registryV1IssuesRudenberg}. Durch die Verwendung des \texttt{docker pull}-Befehls ist es möglich, manipulierte Images zu beziehen, die bereits beim Entpacken auf dem lokalen Hostsystem beliebige Dateien überschreiben können \cite{registryV1IssuesRedHat}. Sowohl die Datenintegrität als auch die Verfügbarkeit des Hostsystems sind durch eine solche Sicherheitslücke direkt gefährdet. Wie in Abschnitt \ref{tuf} zu sehen ist, kann auch die Aktualität von Images sowie die Authentizität von Personen und Organisationen, die Images veröffentlichen, darunter leiden.
+    Der Sicherheitsforscher Jonathan Rudenberg hat im Dezember 2014 drei Sicherheitsrisiken im Zusammenhang mit Dockers damaliger Verifikation und Verteilung von Images aufgedeckt \cite{githubRegistryV1Issues}\cite{registryV1IssuesRudenberg}. Durch die Verwendung des Befehls \texttt{docker pull} ist es möglich, manipulierte Images zu beziehen, die bereits beim Entpacken auf dem lokalen Hostsystem beliebige Dateien überschreiben können \cite{registryV1IssuesRedHat}. Sowohl die Datenintegrität als auch die Verfügbarkeit des Hostsystems sind durch eine solche Sicherheitslücke direkt gefährdet. Wie in Abschnitt \ref{tuf} zu sehen ist, kann auch die Aktualität von Images sowie die Authentizität von Personen und Organisationen, die Images veröffentlichen, darunter leiden.
 
     In Docker wurden seit Version 1.8 schrittweise Mechanismen implementiert, die die Verifikation einerseits und das Verteilungsmodell von Images andererseits verbessern sollen. Diese umgesetzten, sich teilweise überschneidenden Ansätze sind im Folgenden unter den Aspekten Verifikation und Verteilung aufgeteilt.
 
@@ -78,6 +80,8 @@
       % registry v2: content based layer IDs und signed image manifests
       % davor registry v1: abgesehen von https (nur kommunikation), kein integritaetscheck des inhalts von images. Ausserdem willkuerliche Image IDs
       %   ^   \cite[S.27]{presContainerDockerSec}
+
+      \clearpage
 
     \subsection{Integration von \emph{The Update Framework} (\acrshort{TUF})}
     \label{tuf}
@@ -105,7 +109,7 @@
 
     Clients und Daemons können sich mittels Zertifikate gegenseitig sicher über HTTPS authentifizieren. Unbefugte, fremde Daemons oder Clients können dadurch nicht mit einem vertrauenswürdigen Komplementär interagieren. Die Authentifizierung kann demnach uni- oder bidirektional erfolgen. Durch die sichere Kommunikation mittels HTTPS, das auf dem Protokoll \acrshort{TLS} basiert, erfüllen die Daten auf dem Übertragungsweg die Sicherheitsziele Vertraulichkeit und Integrität.
 
-    Die entsprechende Konfiguration eines Daemons kann z.\,B. mit dem Befehl \texttt{docker daemon --tlsverify --tlscacert=CA.pem --tlscert=SERVER-CERT.pem --tlskey=SERVER-KEY.pem} vorgenommen werden. Analog dazu erfolgt die clientseitige Einstellung über \texttt{docker --tlsverify --tlscacert=CA.pem --tlscert=CERT.pem --tlskey=KEY.pem COMMAND}. Der Parameter \texttt{--tlsverify} gibt jeweils an, dass der Kommunikationspartner authentifiziert werden muss. Die Authfikation geschieht über die Parameterwerte \texttt{--tlscert} und \texttt{--tlskey} des Kommunikationspartners, die zusammen die Identität dessen bekannt geben. Unter Angabe eines \acrshort{CA}-Zertifikats mit Parameter \texttt{--tlscacert} hat die Authentifizierung nur dann Erfolg, wenn das Zertifikat des Kommunikationspartners von dieser \acrshort{CA} ausgestellt wurde \cite{dockerSecurityHTTPS}. In einer Unternehmensinfrastruktur kann so die Kommunikation durch eine unternehmenseigene CA weiter eingegrenzt werden. Eine detailreichere Beschreibung der verschiedenen Betriebsmodi ist unter \cite{dockerSecurityHTTPS} gegeben.
+    Die entsprechende Konfiguration eines Daemons kann z.\,B. mit dem Befehl \texttt{docker daemon -{}-tlsverify -{}-tlscacert=CA.pem -{}-tlscert=SERVER-C}\\ \texttt{ERT.pem -{}-tlskey=SERVER-KEY.pem} vorgenommen werden. Analog dazu erfolgt die clientseitige Einstellung über \texttt{docker -{}-tlsverify -{}-tlscacert=C}\\ \texttt{A.pem -{}-tlscert=CERT.pem -{}-tlskey=KEY.pem COMMAND}. Der Parameter \texttt{-{}-tlsverify} gibt jeweils an, dass der Kommunikationspartner authentifiziert werden muss. Die Authfikation geschieht über die Parameterwerte \texttt{-{}-tlscert} und \texttt{-{}-tlskey} des Kommunikationspartners, die zusammen die Identität dessen bekannt geben. Unter Angabe eines \acrshort{CA}-Zertifikats mit Parameter \texttt{-{}-tlscacert} hat die Authentifizierung nur dann Erfolg, wenn das Zertifikat des Kommunikationspartners von dieser \acrshort{CA} ausgestellt wurde \cite{dockerSecurityHTTPS}. In einer Unternehmensinfrastruktur kann so die Kommunikation durch eine unternehmenseigene CA weiter eingegrenzt werden. Eine detailreichere Beschreibung der verschiedenen Betriebsmodi ist unter \cite{dockerSecurityHTTPS} gegeben.
 
     Über die Umgebungsvariable \texttt{DOCKER\_TLS\_VERIFY} sowie der Speicherung der notwendigen Zertifikate und Schlüssel unter \texttt{.docker/} im Homeverzeichnis, kann die Konfiguration der Authentifizierung einmalig für die zukünftige Kommunikation vorgenommen werden \cite{dockerSecurityHTTPS}.
 
@@ -123,7 +127,11 @@
 
     Ergänzend dazu war auch ein Authentifizierungsplugin \emph{AuthN} geplant, das Nutzer, vor deren Autorisierung durch \emph{AuthZ}, authentifiziert \cite{githubAuthZDockerAccessControl}. Am 23. Februar 2016 hat jedoch ein Docker-Mitarbeiter bekannt gegeben, dass die Integration von \emph{AuthN} eingestellt wird. Grund hierfür ist, dass die Authentifizierung - nach der Meinung einiger Docker-Entwickler - leicht außerhalb des Daemons stattfinden kann, z.\,B. mit dem Authentifizierungsdienst Kerberos \cite{kerberos}\cite{githubAuthZKerberosSupport}\cite{githubAuthNLaydown}.
 
-    Das Sicherheitsplugin \emph{AuthZ} verfolgt das Ziel ein Framework bereitzustellen, über das es Administratoren möglich ist, eine nutzer- und rollenbasierte Sicherheitspolitik (\acrshort{RBAC}) umzusetzen. Diese umfasst Regeln, die die Benutzung des Docker-Daemons betreffen. Nach der ursprünglichen Implementierung von \emph{Twistlock} sind die Regeln in eine JSON-Struktur gefasst \cite{githubAuthZJSON}. Ohne ein solches Plugin ist jedem Nutzer, der den Docker-Daemon ausführen kann, die komplette Kontrolle über das Docker-System gegeben. Insbesondere in Multi-Tenant-Umgebungen macht es aber Sinn, verschiedenen Nutzern im Rahmen eines RBAC-Sicherheitsmodells eine bestimmte Rolle zuzuweisen, die deren Rechte definiert. Ein einfacher Anwendungsfall könnte folgende Regeln beinhalten \cite{authzTwistlock}:
+    Das Sicherheitsplugin \emph{AuthZ} verfolgt das Ziel ein Framework bereitzustellen, über das es Administratoren möglich ist, eine nutzer- und rollenbasierte Sicherheitspolitik (\acrshort{RBAC}) umzusetzen. Diese umfasst Regeln, die die Benutzung des Docker-Daemons betreffen. Nach der ursprünglichen Implementierung von \emph{Twistlock} sind die Regeln in eine JSON-Struktur gefasst \cite{githubAuthZJSON}. Ohne ein solches Plugin ist jedem Nutzer, der den Docker-Daemon ausführen kann, die komplette Kontrolle über das Docker-System gegeben. Insbesondere in Multi-Tenant-Umgebungen macht es aber Sinn, verschiedenen Nutzern im Rahmen eines RBAC-Sicherheitsmodells eine bestimmte Rolle zuzuweisen, die deren Rechte definiert.
+
+    \clearpage
+
+    Ein einfacher Anwendungsfall könnte folgende Regeln beinhalten \cite{authzTwistlock}:
     % TODO: Einarbeiten: Abbildung administrativer Sicherheitsmodelle (durch technische Mechanismen?)
 
     \begin{itemize}
@@ -132,21 +140,7 @@
         \item User \emph{Admin} darf jede Operation \texttt{docker \dots} über den Daemon ausführen.
     \end{itemize}
 
-    Aus Sicht der Architektur funktioniert die Autorisierung, wie sie in \fig \ref{fig:sec_authz} illustriert ist. Die Anfragen von lokalen oder entfernten Clients werden, wie in Abschnitt \ref{dockerArchitecture} beschrieben, an einen Daemon geschickt. Dieser führt nun nicht umgehend die Befehle der Clients aus, sondern leitet die Anfrage an das \emph{AuthZ}-Framework weiter. Genauer erhält \emph{AuthZ} einen Nutzerkontext und einen Befehlskontext, die, anhand der zuvor definierten Regeln, ausgewertet werden. Anhand der dem Plugin vorliegenden Parameter entscheidet es, ob der Nutzer berechtigt ist, den angefragten Befehl auszuführen. Falls das nicht der Fall ist, wird eine Fehlernachricht über den Daemon an den Client gesendet (vgl. \fig \ref{fig:sec_authzDeny}). Falls die Anfrage genehmigt wurde, führt der Daemon den darin enthaltenen Befehl aus und kontaktiert das Plugin ein zweites Mal mit dem Ergebnis des ausgeführten Befehls (vgl. \fig \ref{fig:sec_authzAllow}). \emph{AuthZ} hat hierbei die Gelegenheit, die Antwort zu modifizieren, bevor sie zum Client gesendet wird \cite{authzTwistlock}\cite{githubAuthZDraft}.
-
-    %\begin{figure}[h]
-        %\centering
-        %\includegraphics[width=0.9\textwidth]{./images/sec_authzAllow.png}
-        %\caption{Ablaufdiagramm einer Befehlsausführung mit \emph{AuthZ} im Fall einer erfolgreichen Authorisierung \cite{githubAuthZExtended}.}
-        %\label{fig:sec_authzAllow}
-    %\end{figure}
-
-    %\begin{figure}[h]
-        %\centering
-        %\includegraphics[width=0.9\textwidth]{./images/sec_authzAllow.png}
-        %\caption{Ablaufdiagramm einer Befehlsausführung mit \emph{AuthZ} im Fall einer fehlgeschlagenen Authorisierung \cite{githubAuthZExtended}.}
-        %\label{fig:sec_authzDeny}
-    %\end{figure}
+    Aus Sicht der Architektur funktioniert die Autorisierung, wie sie in \fig \ref{fig:sec_authz} illustriert ist.
 
     \begin{figure}
       \centering
@@ -168,6 +162,24 @@
     % (TODO): Evtl. untereinander machen da zu wenig Platz. Oder Grafik neu machen mit weniger/groesserem Text
     % Laut Patrick: Groesse OK!
 
+    Die Anfragen von lokalen oder entfernten Clients werden, wie in Abschnitt \ref{dockerArchitecture} beschrieben, an einen Daemon geschickt. Dieser führt nun nicht umgehend die Befehle der Clients aus, sondern leitet die Anfrage an das \emph{AuthZ}-Framework weiter. Genauer erhält \emph{AuthZ} einen Nutzerkontext und einen Befehlskontext, die, anhand der zuvor definierten Regeln, ausgewertet werden. Anhand der dem Plugin vorliegenden Parameter entscheidet es, ob der Nutzer berechtigt ist, den angefragten Befehl auszuführen. Falls das nicht der Fall ist, wird eine Fehlernachricht über den Daemon an den Client gesendet (vgl. \fig \ref{fig:sec_authzDeny}). Falls die Anfrage genehmigt wurde, führt der Daemon den darin enthaltenen Befehl aus und kontaktiert das Plugin ein zweites Mal mit dem Ergebnis des ausgeführten Befehls (vgl. \fig \ref{fig:sec_authzAllow}). \emph{AuthZ} hat hierbei die Gelegenheit, die Antwort zu modifizieren, bevor sie zum Client gesendet wird \cite{authzTwistlock}\cite{githubAuthZDraft}.
+
+    %\begin{figure}[h]
+        %\centering
+        %\includegraphics[width=0.9\textwidth]{./images/sec_authzAllow.png}
+        %\caption{Ablaufdiagramm einer Befehlsausführung mit \emph{AuthZ} im Fall einer erfolgreichen Authorisierung \cite{githubAuthZExtended}.}
+        %\label{fig:sec_authzAllow}
+    %\end{figure}
+
+    %\begin{figure}[h]
+        %\centering
+        %\includegraphics[width=0.9\textwidth]{./images/sec_authzAllow.png}
+        %\caption{Ablaufdiagramm einer Befehlsausführung mit \emph{AuthZ} im Fall einer fehlgeschlagenen Authorisierung \cite{githubAuthZExtended}.}
+        %\label{fig:sec_authzDeny}
+    %\end{figure}
+
+
+
 
     Die Struktur von Anfragen und Antworten, die über das HTTP-Protokoll ausgetauscht werden, sind in \cite{githubAuthZExtended} spezifiziert.
 
@@ -181,6 +193,8 @@
     \end{lstlisting}
 
     Da es sich bei diesen sicherheitsrelevanten Plugins um ein sehr neues Feature von Docker handelt, war die offizielle Dokumentation zum Zeitpunkt der Erstellung dieser Arbeit nicht vollständig. Insbesondere die fehlende Spezifikation des Formats eines \emph{AuthZ}-Regelwerks im Docker-Repository lässt vermuten, dass eine vollständige Einführung von \emph{AuthZ} erst im Rahmen zukünftiger Docker-Veröffentlichungen stattfindet.
+
+  \clearpage
 
   \section{Open-Source-Charakter und Sicherheitspolitik von Docker}
   \label{opensource}
@@ -247,7 +261,7 @@
     \subsection{Verwaltung von Credentials}
       Informationen zu Benutzernamen und Passwörtern sollten nicht statisch als Zeichenketten in ein Image integriert sein. Vielmehr sollen Credentials generell als Umgebungsvariablen mit der \texttt{ENV}-Direktive der Dockerfiles in Images verfügbar gemacht werden.
 
-      Beispielsweise setzen die Entwickler von der Datenbank \emph{Postgres} diese Praxis in ihrem \emph{Postgres}-Image um, indem sie die Umgebungsvariablen \texttt{POSTGRES\_USER} und \texttt{POSTGRES\_PASSWORD} definieren, die beim Startvorgang des Containers abgefragt werden \cite{dockerHubPostgres}\cite{githubPostgresCredentialCheck}.
+      Beispielsweise setzen die Entwickler von der Datenbank \emph{Postgres} diese Praxis in ihrem \emph{Postgres}-Image um, indem sie die beiden Linux-Umgebungsvariablen \texttt{POSTGRES\_USER} und \texttt{POSTGRES\_PASSWORD} definieren, die beim Startvorgang des Containers abgefragt werden \cite{dockerHubPostgres}\cite{githubPostgresCredentialCheck}.
 
   \section{Tools}
     Im Docker-Ökosystem existieren zahlreiche Tools, die entweder den Funktionsumfang von Docker erweitern oder zusätzliche Möglichkeiten bieten, Docker-Container zu verwalten. Neben Veröffentlichungen von \emph{Docker}, z.\,B. mit \emph{Docker Swarm}, \emph{Docker Compose} und \emph{Docker Datacenter}, können auch einige Entwicklungen von Drittanbietern verwendet werden. Diese umfassen beispielsweise \emph{Kubernetes} \cite{kubernetes}, \emph{Shipyard} \cite{shipyard} und \emph{docker-slim} \cite{githubDockerSlim}. Die genannten Tools decken teilweise gleiche Features ab oder bauen im Fall von \emph{Docker Swarm} und \emph{Shipyard} aufeinander auf.
@@ -266,7 +280,7 @@
     % s. https://github.com/docker/docker/blob/master/docs/extend/plugins.md
     % Vieles in Docker-main integriert oder pluggable gemacht mit plugin framework.
 
-    \subsection{Kubernetes}
+    \subsection{\emph{Kubernetes}}
       %\emph{orchestration, management fokus, sicherheitsrelevant?}
       % neueres Cluster-Management Tool von Google
       % Hat Relevanz fuer Herr Fahner/Daimler
@@ -287,16 +301,15 @@
       % Soll in Datencentern die Arbeit mit Containern vereinfachen.
       % (Bringt angeblich tolles Networking-Feature mit.)
 
-    \subsection{docker-slim}
+    \subsection{\emph{docker-slim}}
       \emph{docker-slim} ist ein Werkzeug, das u.\,a. automatisch Sicherheitsprofile erstellt. Es untersucht dabei Anwendungen, die in einem Container laufen und zeichnet Zugriffe dieser auf, z.\,B. die verwendeten \emph{System Calls}. Aus diesen Aufzeichnungen und einer Analyse der statischen Daten eines Images werden Profile für \emph{Seccomp} und \emph{AppArmor} erstellt, die anschließend verwendet werden können. Die Generierung eines \emph{AppArmor}-Profils ist aktuell in der Entwicklungsphase \cite{githubDockerSlim}.
 
-    \subsection{Bane}
+    \subsection{\emph{Bane}}
       Auch das von Docker-Mitarbeiterin Jessie Frazelle entwickelte Werkzeug \emph{Bane} hat zum Ziel, \emph{AppArmor}-Profile automatisch zu generieren. Im Gegensatz zu \emph{docker-slim} analysiert es nicht Images und Container, sondern übersetzt Anweisungen einer gut lesbaren Konfigurationsdatei in ein \emph{AppArmor}-Profil. Der Vorteil der Konfigurationsdatei gegenüber einer Datei, die ein \emph{AppArmor}-Profil enthält, ist, dass sich ausdrucksstärkere, kategorisierbare Anweisungen formulieren lassen, sodass zum Erstellen der Datei keine speziellen \emph{AppArmor}-Kenntnisse erforderlich sind \cite{githubBane}.
 
       Ein beispielhafter Ausschnitt einer Konfigurationsdatei im \acrshort{TOML}-Format könnte folgendermaßen aussehen \cite{githubBaneTOML}:
 
       \begin{lstlisting}
-        ...
         [Filesystem]
         WritablePaths = [
         	"/var/run/nginx.pid"
@@ -314,7 +327,6 @@
       Bei der Übersetzung in ein valides \emph{AppArmor}-Profil, entstehen daraus folgende Zeilen \cite{githubBaneAppArmorSample}:
 
       \begin{lstlisting}
-        ...
         /var/run/nginx.pid w,
         /usr/sbin/nginx ix,
         deny /bin/sh mrwklx,

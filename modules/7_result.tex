@@ -15,11 +15,11 @@
   Wie die Ergebnisse aus Kapitel \ref{secInfrastructure} zeigen, bieten alle bekannten Anbieter von Public Clouds sowie \emph{OpenStack} als Lösungsansatz von Private Clouds, dokumentierte Integrationsmöglichkeiten für Docker an. Spezielle Sicherheitsmerkmale in Cloud"=Infrastrukturen existieren innerhalb eines Docker"=Hostsystems nicht. Allgemeine, sicherheitsrelevante Merkmale innerhalb dieses Systems wurden in Kapitel \ref{secLinux} und \ref{secEcosystem} behandelt. In Cloud"=Infrastrukturen rücken vielmehr die Netzwerksicherheit sowie Verwaltungsaspekte in den Vordergrund, die im Fall einiger Public Cloud-Anbietern mit separaten Komponenten realisierbar sind.
   % Diese Behauptung ist nur dann gültig, wenn eine in Kapitel \ref{...} vorgeschlagene Einteilung von Kunden und Anwendungen mit VMs und Containern
 
+  \clearpage
+
   Ein weiterer wichtiger Punkt in der Sicherheit von Cloud"=Infrastrukturen ist die Art des Cloud-Angebots: Die am meisten verbreiteten Typen SaaS, PaaS und IaaS weisen in ihrer Natur unterschiedliche Sicherheitsmerkmale auf. Da man als Nutzer von IaaS einen hohen Freiheitsgrad bei der Architektur eigener Dienste erhält, sind auch Sicherheitseigenschaften der genutzten Infrastruktur eigenverantwortlich umzusetzen. Diese Verantwortung wird durch den engeren Rahmen von SaaS und PaaS generell auf den Betreiber der Infrastruktur übertragen.
 
   Docker, welches unter PaaS und IaaS verwendet werden kann, unterscheidet sich nicht unter beiden Angebotstypen. Damit sind auch die Sicherheitseigenschaften von Docker für PaaS und IaaS identisch. Spezielle Anforderungen an die Sicherheit für Anwendungen können umgesetzt werden, indem die in Kapitel \ref{secLinux} und \ref{secEcosystem} vorgestellten Methoden und Mechanismen aktiviert werden oder weitere Sicherheitsinstanzen außerhalb des Docker-Ökosystems hinzugezogen werden. Letztere können z.\,B. Firewalls oder eine Authentifizierung über \emph{Kerberos} darstellen.
-
-
 
   % Aus alleiniger Sicherheitssicht die Frage: Ist Sicherheit essentiell, verzichtet ein Unternehmen lieber auf Performancegewinne bei Cotnainern und setzt auf bewaehrte Hypervisor.
   % Allerdings sehen aktuelle Entwicklungen vor, Container innerhalb von Hypervisor-basierten Gastsystemen zu betreiben, da der durch Container ermöglichte Workflow mit CI und CD durch v.\,a. hohen Automatisierungsgrad sehr effizient ist.
@@ -29,6 +29,8 @@
   Bereits im Docker-Projekt existiert eine firmenübergreifende, interdisziplinäre Zusammenarbeit von Entwicklern, um die Technologie zu erweitern und abzusichern. Durch die Kooperation von Organisationen und Unternehmen der letzten Monate im Rahmen des \acrshort{OCP} weitete sich die Zusammenarbeit aus, um ein standardisiertes und universales Containerformat zu erstellen und zu etablieren.
 
   \emph{Docker} ist dadurch gezwungen, sein aktuelles Geschäftsmodell zu überdenken. Mit dem quelloffenen OCF wird ein Industriestandard geschaffen, mit dem sich Docker nur noch am Rande profilieren kann. Durch die Standardisierung von Containern ist zu erwarten, dass sich das ursprüngliche Innovationspotential von Containern, das allein \emph{Docker} ausnutzen konnte, auf die Orchestrierung und Verwaltung von Containern verschiebt. \emph{Docker} wird es in diesem Bereich schwieriger haben den Markt zu dominieren, da sich die Konkurrenz zu \emph{Docker Swarm} mit \emph{Kubernetes} von \emph{Google} und \emph{Marathon} von \emph{Mesosphere} bereits heute großer Beliebtheit erfreut.
+
+  \clearpage
 
   Als Reaktion seitens \emph{Docker} zeigen die jüngsten Aktivitäten im eigenen Blog, dass das Unternehmen den öffentlichen Fokus seiner Arbeit zunehmend auf Unternehmenslösungen und die Bereitstellung von Images und Werkzeugen setzt.
 
